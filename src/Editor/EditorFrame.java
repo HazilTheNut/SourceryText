@@ -1,5 +1,7 @@
 package Editor;
 
+import Engine.Layer;
+import Engine.SpecialText;
 import Engine.ViewWindow;
 
 import javax.swing.*;
@@ -17,9 +19,18 @@ public class EditorFrame extends JFrame {
         Container c = getContentPane();
 
         ViewWindow window = new ViewWindow();
-        addComponentListener(window);
+        c.addComponentListener(window);
         addKeyListener(window);
         c.addMouseMotionListener(window);
+
+        Layer testLayer = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "test", 0, 0);
+        testLayer.editLayer(0,0, 'A');
+        testLayer.editLayer(1,0, 'B');
+        testLayer.editLayer(0,1, 'C');
+        testLayer.editLayer(15,15, 'D');
+
+        window.drawImage(testLayer);
+
         c.add(window, BorderLayout.CENTER);
         c.validate();
 

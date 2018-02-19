@@ -11,6 +11,8 @@ import java.awt.event.*;
  */
 public class ViewWindow extends JComponent implements ComponentListener, MouseMotionListener, KeyListener{
 
+    private Layer drawnImage;
+
     private int HOR_SEPARATION = 9;
     private int VER_SEPARATION = 16;
     private int CHAR_SIZE = 15;
@@ -19,8 +21,8 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseMo
 
     private final int fontSizeAdjustment = 4;
 
-    private final int RESOLUTION_WIDTH = 75;
-    private final int RESOLUTION_HEIGHT = 40;
+    public final int RESOLUTION_WIDTH = 75;
+    public final int RESOLUTION_HEIGHT = 40;
 
     private int mouseXCharPos = 0;
     private int mouseYCharPos = RESOLUTION_HEIGHT;
@@ -31,25 +33,12 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseMo
         recalculate();
     }
 
+    public void drawImage(Layer image){
+        drawnImage = image;
+        repaint();
+    }
+
     private void recalculate() {
-        /*
-        HOR_SEPARATION = getWidth() / RESOLUTION_WIDTH; //Calculates horizontal and vertical separation of the letters
-        VER_SEPARATION = Math.round((float)getHeight() / RESOLUTION_HEIGHT);
-        int adjustedVerSep = (int) ((float) VER_SEPARATION * (9f / 15)); //Adjusts horizontal separation if too big for vertical.
-        //if (HOR_SEPARATION > adjustedVerSep) {
-            HOR_SEPARATION = adjustedVerSep;
-            HOR_MARGIN = (getWidth() - (HOR_SEPARATION * RESOLUTION_WIDTH)) / 2; //Sets a margin to center display in the screen
-        //} else {
-        //    HOR_MARGIN = 0;
-        //}
-        CHAR_SIZE = VER_SEPARATION - 1; //Calculations based upon horizontal and vertical separation
-        CHAR_WIDTH = HOR_SEPARATION;
-        CHAR_HEIGHT = CHAR_SIZE + 1;
-
-        System.out.println(getHeight());
-
-        */
-
         double MAX_VER_HOR_SEPARATION_RATIO = 0.6;
 
         HOR_SEPARATION = (int)Math.floor((double)getWidth() / RESOLUTION_WIDTH);
@@ -70,31 +59,21 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseMo
     public void paintComponent(Graphics g) {
 
         g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getWidth(), getHeight());
-
-        g.setColor(Color.LIGHT_GRAY);
-        if (mouseXCharPos >= 0 && mouseXCharPos < 15 && mouseYCharPos >= 0 && mouseYCharPos < RESOLUTION_HEIGHT)
-        g.fillRect(HOR_MARGIN, mouseYCharPos * VER_SEPARATION + VER_MARGIN, HOR_SEPARATION * 15, VER_SEPARATION);
+        g.fillRect(0, 0, getWidth(), getHeight()); //Create base background
 
         g.setFont(calculatedFont);
 
-        for (int col = 0; col < 15; col++) {
-            for (int row = 1; row <= RESOLUTION_HEIGHT; row++) {
-                /*
-                if (row == 1){
-                    g.setColor(new Color((int)Math.abs(Math.sin(col) * 250), (int)Math.abs(Math.sin(col) * 250), 25));
-                    g.fillRect(col * HOR_SEPARATION + HOR_MARGIN, (row-1) * VER_SEPARATION + VER_MARGIN, HOR_SEPARATION, VER_SEPARATION);
-                } else if (col % 2 == row % 2) {
-                    g.setColor(Color.LIGHT_GRAY);
-                    g.fillRect(col * HOR_SEPARATION + HOR_MARGIN, (row-1) * VER_SEPARATION + VER_MARGIN, HOR_SEPARATION, VER_SEPARATION);
-                }
-                */
-                g.setColor(Color.YELLOW);
-                g.drawString("#", col * HOR_SEPARATION + HOR_MARGIN + 2, VER_SEPARATION * row + VER_MARGIN - 5);
+        for (int col = 0; col < RESOLUTION_WIDTH; col++) {
+            for (int row = 0; row < RESOLUTION_HEIGHT; row++) {
+                SpecialText text = drawnImage.getSpecialText(col, row);
+                g.setColor(text.getBkgColor());
+                g.fillRect(col * HOR_SEPARATION + HOR_MARGIN, row * VER_SEPARATION + VER_MARGIN, HOR_SEPARATION, VER_SEPARATION); //Fill background
+                g.setColor(text.getFgColor());
+                g.drawString(text.getStr(), col * HOR_SEPARATION + HOR_MARGIN + 2, VER_SEPARATION * (row+1) + VER_MARGIN - 5); //Fill foreground
             }
         }
 
-        g.setColor(Color.GRAY);
+        g.setColor(Color.GRAY); //Draw margin borders
         g.drawLine(HOR_MARGIN, 0, HOR_MARGIN, getHeight());
         g.drawLine(getWidth() - HOR_MARGIN, 0, getWidth() - HOR_MARGIN, getHeight());
         g.drawLine(0, VER_MARGIN, getWidth(), VER_MARGIN);
