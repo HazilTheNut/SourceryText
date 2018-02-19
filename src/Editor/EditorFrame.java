@@ -1,6 +1,7 @@
 package Editor;
 
 import Engine.Layer;
+import Engine.LayerManager;
 import Engine.SpecialText;
 import Engine.ViewWindow;
 
@@ -29,7 +30,8 @@ public class EditorFrame extends JFrame {
         testLayer.editLayer(0,1, 'C');
         testLayer.editLayer(15,15, 'D');
 
-        window.drawImage(testLayer);
+        LayerManager manager = new LayerManager(window);
+        manager.addLayer(testLayer);
 
         c.add(window, BorderLayout.CENTER);
         c.validate();

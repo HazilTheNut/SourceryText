@@ -15,14 +15,11 @@ public class SpecialText {
 
     public SpecialText (char text) {
         character = text;
-        fgColor = Color.WHITE;
-        bkgColor = Color.BLACK;
     }
 
     public SpecialText (char text, Color fg){
         character = text;
         fgColor = fg;
-        bkgColor = Color.BLACK;
     }
 
     public SpecialText (char text, Color fg, Color bg){

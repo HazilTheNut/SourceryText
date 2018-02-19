@@ -1,7 +1,5 @@
 package Engine;
 
-import javafx.scene.input.KeyCode;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -21,8 +19,8 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseMo
 
     private final int fontSizeAdjustment = 4;
 
-    public final int RESOLUTION_WIDTH = 75;
-    public final int RESOLUTION_HEIGHT = 40;
+    public final int RESOLUTION_WIDTH = 70;
+    public final int RESOLUTION_HEIGHT = 30;
 
     private int mouseXCharPos = 0;
     private int mouseYCharPos = RESOLUTION_HEIGHT;
@@ -83,7 +81,6 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseMo
     @Override
     public void componentResized(ComponentEvent e) {
         recalculate();
-        repaint();
     }
 
     @Override
@@ -112,7 +109,6 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseMo
         mouseXCharPos = (e.getX() - HOR_MARGIN) / HOR_SEPARATION;
         mouseYCharPos = (e.getY() - VER_MARGIN) / VER_SEPARATION;
         System.out.println(String.format("New Mouse Pos: %1$d,%2$d", mouseXCharPos, mouseYCharPos));
-        repaint();
     }
 
     @Override
@@ -124,11 +120,9 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseMo
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_UP){
             mouseYCharPos--;
-            repaint();
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN){
             mouseYCharPos++;
-            repaint();
         }
         System.out.println(mouseYCharPos);
     }

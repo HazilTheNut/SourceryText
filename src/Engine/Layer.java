@@ -46,9 +46,16 @@ public class Layer {
         }
     }
 
-    public SpecialText getSpecialText (int col, int row){ return textMatrix[col][row]; }
+    public SpecialText getSpecialText (int col, int row){
+        if (col < 0 || col > textMatrix.length || row < 0 || row > textMatrix[0].length)
+            return null;
+        return textMatrix[col][row];
+    }
 
     public void editLayer (int col, int row, char text){ textMatrix[col][row] = new SpecialText(text); }
 
     public void editLayer (int col, int row, SpecialText text) { textMatrix[col][row] = text; }
+
+    public int getCols(){ return textMatrix.length; }
+    public int getRows(){ return textMatrix[0].length; }
 }
