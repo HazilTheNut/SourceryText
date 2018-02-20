@@ -1,13 +1,14 @@
 package Engine;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
 
 /**
  * Created by Jared on 2/18/2018.
  */
-public class ViewWindow extends JComponent implements ComponentListener, MouseMotionListener, KeyListener{
+public class ViewWindow extends JComponent implements ComponentListener, MouseInputListener, KeyListener{
 
     private Layer drawnImage;
 
@@ -19,11 +20,13 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseMo
 
     private final int fontSizeAdjustment = 4;
 
-    public final int RESOLUTION_WIDTH = 70;
-    public final int RESOLUTION_HEIGHT = 30;
+    public final int RESOLUTION_WIDTH = 55;
+    public final int RESOLUTION_HEIGHT = 29;
 
     private int mouseXCharPos = 0;
     private int mouseYCharPos = RESOLUTION_HEIGHT;
+
+    public LayerManager manager;
 
     private Font calculatedFont = new Font("Monospaced", Font.PLAIN, 15);
 
@@ -98,18 +101,29 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseMo
 
     }
 
+    private boolean mouseClicking = false;
+    private int previousXCharPos = 0;
+    private int previousCharYPos = 0;
+
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        //System.out.println(String.format("Mouse Current: [%1$d,%2$d] Prev: [%3$d,%4$d]", getSnappedMouseX(e.getX()), getSnappedMouseY(e.getY()), previousXCharPos, previousCharYPos));
+        manager.moveCameraPos(getSnappedMouseX(e.getX()) - previousXCharPos, getSnappedMouseY(e.getY()) - previousCharYPos);
+        previousXCharPos = getSnappedMouseX(e.getX());
+        previousCharYPos = getSnappedMouseY(e.getY());
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
         //System.out.println(String.format("New Mouse Pos: %1$d,%2$d", e.getX(), e.getY()));
-        mouseXCharPos = (e.getX() - HOR_MARGIN) / HOR_SEPARATION;
-        mouseYCharPos = (e.getY() - VER_MARGIN) / VER_SEPARATION;
-        System.out.println(String.format("New Mouse Pos: %1$d,%2$d", mouseXCharPos, mouseYCharPos));
+        mouseXCharPos = getSnappedMouseX(e.getX());
+        mouseYCharPos = getSnappedMouseY(e.getY());
+        //System.out.println(String.format("New Mouse Pos: %1$d,%2$d", mouseXCharPos, mouseYCharPos));
     }
+
+    private int getSnappedMouseX(int mouseRawX) { return (mouseRawX - HOR_MARGIN) / HOR_SEPARATION; }
+
+    private int getSnappedMouseY(int mouseRawY) { return (mouseRawY - VER_MARGIN) / VER_SEPARATION; }
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -119,16 +133,47 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseMo
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_UP){
-            mouseYCharPos--;
+            manager.moveCameraPos(0,1);
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN){
-            mouseYCharPos++;
+            manager.moveCameraPos(0,-1);
         }
-        System.out.println(mouseYCharPos);
+        if (e.getKeyCode() == KeyEvent.VK_LEFT){
+            manager.moveCameraPos(1,0);
+        }
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+            manager.moveCameraPos(-1,0);
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        previousXCharPos = getSnappedMouseX(e.getX());
+        previousCharYPos = getSnappedMouseY(e.getY());
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 }

@@ -28,6 +28,13 @@ public class SpecialText {
         bkgColor = bg;
     }
 
+    public SpecialText (char text, Color fg, Color bg, boolean opacity){
+        character = text;
+        fgColor = fg;
+        bkgColor = bg;
+        opaque = opacity;
+    }
+
     public char getCharacter() {
         return character;
     }

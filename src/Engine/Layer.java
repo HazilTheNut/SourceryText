@@ -1,5 +1,7 @@
 package Engine;
 
+import java.awt.*;
+
 /**
  * Created by Jared on 2/18/2018.
  */
@@ -29,7 +31,7 @@ public class Layer {
         textMatrix = new SpecialText[layerData.length][layerData[0].length];
         for (int col = 0; col < layerData.length; col ++){
             for (int row = 0; row < layerData[0].length; row++){
-                textMatrix[col][row] = new SpecialText(layerData[col][row].toCharArray()[0]);
+                textMatrix[col][row] = new SpecialText(layerData[col][row].charAt(0));
             }
         }
         name = layerName;
@@ -47,15 +49,44 @@ public class Layer {
     }
 
     public SpecialText getSpecialText (int col, int row){
-        if (col < 0 || col > textMatrix.length || row < 0 || row > textMatrix[0].length)
-            return null;
+        //System.out.println(String.format("Layer getSpecialText: [%1$d,%2$d] of [%3$dx%4$d]", col, row, textMatrix.length, textMatrix[0].length));
+        if (isLayerLocInvalid(col, row))
+            return new SpecialText(' ');
         return textMatrix[col][row];
     }
 
-    public void editLayer (int col, int row, char text){ textMatrix[col][row] = new SpecialText(text); }
+    public void editLayer (int col, int row, char text){
+        if (isLayerLocInvalid(col, row)) return;
+        textMatrix[col][row] = new SpecialText(text);
+    }
 
-    public void editLayer (int col, int row, SpecialText text) { textMatrix[col][row] = text; }
+    public void editLayer (int col, int row, SpecialText text) {
+        if (isLayerLocInvalid(col, row)) return;
+        textMatrix[col][row] = text;
+    }
+
+    private boolean isLayerLocInvalid(int col, int row){
+        return (col < 0 || col >= textMatrix.length || row < 0 || row >= textMatrix[0].length);
+    }
 
     public int getCols(){ return textMatrix.length; }
     public int getRows(){ return textMatrix[0].length; }
+
+    public void printLayer(){
+        String output = "";
+        for (int row = 0; row < textMatrix[0].length; row++){
+            for (int col = 0; col < textMatrix.length; col++){
+                output += textMatrix[col][row].getStr();
+            }
+            output += "|\n";
+        }
+        System.out.println("LAYER: " + name + ":\n" + output + "-~-~-~-~-~-~");
+    }
+
+    public void inscribeString (String str, int col, int row){
+        for (int index = 0; index < str.length(); index++){
+            if (isLayerLocInvalid(col + index, row)) return;
+            editLayer(col + index, row, new SpecialText(str.charAt(index), Color.WHITE, Color.BLACK, true));
+        }
+    }
 }
