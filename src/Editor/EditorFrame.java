@@ -6,6 +6,7 @@ import Engine.SpecialText;
 import Engine.ViewWindow;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 /**
@@ -16,6 +17,13 @@ public class EditorFrame extends JFrame {
     public EditorFrame(){
 
         setLayout(new BorderLayout());
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | UnsupportedLookAndFeelException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
 
         Container c = getContentPane();
 
@@ -70,6 +78,9 @@ public class EditorFrame extends JFrame {
         manager.addLayer(messageLayer);
 
         c.add(window, BorderLayout.CENTER);
+
+        c.add(new EditorTextPanel(), BorderLayout.LINE_START);
+
         c.validate();
 
         setSize(new Dimension(600, 400));

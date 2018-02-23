@@ -18,8 +18,6 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
     private int HOR_MARGIN = 0;
     private int VER_MARGIN = 0;
 
-    private final int fontSizeAdjustment = 4;
-
     public final int RESOLUTION_WIDTH = 55;
     public final int RESOLUTION_HEIGHT = 29;
 
@@ -53,6 +51,7 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
         HOR_MARGIN = (getWidth() - displayLength) / 2;
         VER_MARGIN = (getHeight() - displayHeight) / 2;
 
+        int fontSizeAdjustment = 4;
         calculatedFont = (new Font(Font.MONOSPACED, Font.PLAIN, CHAR_SIZE + fontSizeAdjustment));
     }
 
@@ -69,8 +68,14 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
                 SpecialText text = drawnImage.getSpecialText(col, row);
                 g.setColor(text.getBkgColor());
                 g.fillRect(col * HOR_SEPARATION + HOR_MARGIN, row * VER_SEPARATION + VER_MARGIN, HOR_SEPARATION, VER_SEPARATION); //Fill background
+            }
+        }
+
+        for (int col = 0; col < RESOLUTION_WIDTH; col++) {
+            for (int row = 0; row < RESOLUTION_HEIGHT; row++) {
+                SpecialText text = drawnImage.getSpecialText(col, row);
                 g.setColor(text.getFgColor());
-                g.drawString(text.getStr(), col * HOR_SEPARATION + HOR_MARGIN + 2, VER_SEPARATION * (row+1) + VER_MARGIN - 5); //Fill foreground
+                g.drawString(text.getStr(), col * HOR_SEPARATION + HOR_MARGIN + 2, VER_SEPARATION * (row+1) + VER_MARGIN - 5); //Fill foreground (the text)
             }
         }
 
