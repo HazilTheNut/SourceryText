@@ -51,7 +51,9 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         selectionLabel.setMaximumSize(new Dimension(20, 20));
         selectionLabel.setAlignmentX(CENTER_ALIGNMENT);
 
+        bottomPanel.add(Box.createRigidArea(new Dimension(1, 5)));
         bottomPanel.add(selectionLabel);
+        bottomPanel.add(Box.createRigidArea(new Dimension(1, 5)));
 
         JButton editButton = new JButton("Edit");
         editButton.setAlignmentX(CENTER_ALIGNMENT);
@@ -94,6 +96,8 @@ public class EditorTextPanel extends JPanel implements ActionListener{
             textBtnPanel.validate();
             validate();
             arbitraryNumber++;
+            EditorSpecialTextMaker textMaker = new EditorSpecialTextMaker();
+            textMaker.setVisible(true);
             if (arbitraryNumber > 9) arbitraryNumber = 0;
         } else if (e.getActionCommand().equals("Remove Btn")){
             if (selectedTextButton != null){

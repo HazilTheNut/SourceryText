@@ -24,7 +24,6 @@ public class EditorFrame extends JFrame {
             e.printStackTrace();
         }
 
-
         Container c = getContentPane();
 
         ViewWindow window = new ViewWindow();
