@@ -18,7 +18,7 @@ public class ArtBrush extends ArtTool {
     public void onActivate(JPanel panel) {
         brushSizeBox = new JTextField(2);
         brushSizeBox.setMaximumSize(new Dimension(20, 20));
-        panel.setBorder(BorderFactory.createTitledBorder("Brush"));
+        panel.setBorder(BorderFactory.createTitledBorder(name));
         JLabel boxLabel = new JLabel("Size:");
         panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
         panel.add(boxLabel);
