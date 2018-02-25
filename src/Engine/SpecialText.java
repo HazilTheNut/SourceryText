@@ -11,8 +11,6 @@ public class SpecialText {
     private Color fgColor =  new Color(255, 255, 255, 255);
     private Color bkgColor = new Color(0,   0,   0,   0);
 
-    public boolean opaque;
-
     public SpecialText (char text) {
         character = text;
     }
@@ -26,13 +24,6 @@ public class SpecialText {
         character = text;
         fgColor = fg;
         bkgColor = bg;
-    }
-
-    public SpecialText (char text, Color fg, Color bg, boolean opacity){
-        character = text;
-        fgColor = fg;
-        bkgColor = bg;
-        opaque = opacity;
     }
 
     public char getCharacter() {

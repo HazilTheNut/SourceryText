@@ -14,6 +14,11 @@ import java.awt.*;
  */
 public class EditorFrame extends JFrame {
 
+    Layer levelBackdrop;
+    Layer mouseHighlight;
+    private int mouseSnappedXPos;
+    private int MouseSnappedYPos;
+
     public EditorFrame(){
 
         setLayout(new BorderLayout());
@@ -28,57 +33,29 @@ public class EditorFrame extends JFrame {
 
         ViewWindow window = new ViewWindow();
         c.addComponentListener(window);
-        addKeyListener(window);
-        c.addMouseMotionListener(window);
-        c.addMouseListener(window);
+        c.addKeyListener(window);
 
-        Layer testLayer = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "test", 0, 0);
-        for (int col = 0; col < window.RESOLUTION_WIDTH; col++){
-            for (int row = 0; row < window.RESOLUTION_HEIGHT; row++){
-                if (col % 2 == 0) testLayer.editLayer(col, row, '|');
-            }
+        levelBackdrop = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "test", 0, 0);
+        for (int col = 0; col < levelBackdrop.getCols(); col++){
+            levelBackdrop.editLayer(col, 0, new SpecialText('#', Color.RED));
+            levelBackdrop.editLayer(col, levelBackdrop.getRows()-1, new SpecialText('#', Color.RED));
+        }
+        for (int row = 0; row < levelBackdrop.getRows(); row++){
+            levelBackdrop.editLayer(0, row, new SpecialText('#', Color.RED));
+            levelBackdrop.editLayer(levelBackdrop.getCols()-1, row, new SpecialText('#', Color.RED));
         }
 
-        Layer testLayer2 = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "test2", 0, 0);
-        for (int col = 0; col < window.RESOLUTION_WIDTH; col++){
-            for (int row = 0; row < window.RESOLUTION_HEIGHT; row++){
-                if ((col + row) % 2 == 0) testLayer2.editLayer(col, row, 'X');
-            }
-        }
-
-        Layer opacityTest1 = new Layer(new SpecialText[15][1], "test3", 0, 0);
-        for (int col = 1; col < 9; col += 2){
-            opacityTest1.editLayer(col, 0, new SpecialText(' ', Color.WHITE, new Color(255, 0, 0, 80)));
-        }
-
-        Layer opacityTest2 = new Layer(new SpecialText[15][1], "test4", 0, 0);
-        for (int col = 3; col < 9; col += 2){
-            opacityTest2.editLayer(col, 0, new SpecialText(' ', Color.WHITE, new Color(0, 255, 0, 80)));
-        }
-
-        Layer opacityTest3 = new Layer(new SpecialText[15][1], "test5", 0, 0);
-        for (int col = 5; col < 9; col += 2){
-            opacityTest3.editLayer(col, 0, new SpecialText(' ', Color.WHITE, new Color(0, 0, 255, 80)));
-        }
-
-        Layer opacityTest4 = new Layer(new SpecialText[1][1], "test6", 7, 0);
-        opacityTest4.editLayer(0,0,new SpecialText(' ', Color.WHITE, new Color(255, 255, 0, 30)));
-
-        Layer messageLayer = new Layer(new SpecialText[30][1], "message", 3, 3);
-        messageLayer.inscribeString("Secret Messages!", 0, 0);
+        mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "mouse", 0, 0);
+        mouseHighlight.fixedScreenPos = true;
 
         LayerManager manager = new LayerManager(window);
-        manager.addLayer(testLayer2);
-        manager.addLayer(testLayer);
-        manager.addLayer(opacityTest1);
-        manager.addLayer(opacityTest2);
-        manager.addLayer(opacityTest3);
-        manager.addLayer(opacityTest4);
-        manager.addLayer(messageLayer);
+        manager.addLayer(levelBackdrop);
+        manager.addLayer(mouseHighlight);
 
         c.add(window, BorderLayout.CENTER);
 
-        c.add(new EditorTextPanel(), BorderLayout.LINE_START);
+        EditorTextPanel textPanel = new EditorTextPanel();
+        c.add(textPanel, BorderLayout.LINE_START);
 
         c.validate();
 
@@ -87,6 +64,10 @@ public class EditorFrame extends JFrame {
         setVisible(true);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, textPanel, levelBackdrop);
+        window.addMouseListener(mi);
+        window.addMouseMotionListener(mi);
     }
 
 }

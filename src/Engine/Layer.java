@@ -24,7 +24,6 @@ public class Layer {
         name = layerName;
         xpos = x;
         ypos = y;
-        sanitateLayer();
     }
 
     public Layer (String[][] layerData, String layerName, int x, int y){
@@ -37,10 +36,12 @@ public class Layer {
         name = layerName;
         xpos = x;
         ypos = y;
-        sanitateLayer();
     }
 
-    private void sanitateLayer(){
+    /**
+     * Fills layer with blank opaque characters
+     */
+    void blankOpacifyLayer(){
         for (int col = 0; col < textMatrix.length; col++){
             for (int row = 0; row < textMatrix[0].length; row++){
                 if (textMatrix[col][row] == null) textMatrix[col][row] = new SpecialText(' ');
@@ -51,7 +52,7 @@ public class Layer {
     public SpecialText getSpecialText (int col, int row){
         //System.out.println(String.format("Layer getSpecialText: [%1$d,%2$d] of [%3$dx%4$d]", col, row, textMatrix.length, textMatrix[0].length));
         if (isLayerLocInvalid(col, row))
-            return new SpecialText(' ');
+            return null;
         return textMatrix[col][row];
     }
 
@@ -76,7 +77,10 @@ public class Layer {
         String output = "";
         for (int row = 0; row < textMatrix[0].length; row++){
             for (int col = 0; col < textMatrix.length; col++){
-                output += textMatrix[col][row].getStr();
+                if (textMatrix[col][row] == null)
+                    output += "Ɵ";
+                else
+                    output += textMatrix[col][row].getStr();
             }
             output += "|\n";
         }
@@ -86,7 +90,7 @@ public class Layer {
     public void inscribeString (String str, int col, int row){
         for (int index = 0; index < str.length(); index++){
             if (isLayerLocInvalid(col + index, row)) return;
-            editLayer(col + index, row, new SpecialText(str.charAt(index), Color.WHITE, Color.BLACK, true));
+            editLayer(col + index, row, new SpecialText(str.charAt(index), Color.WHITE, Color.BLACK));
         }
     }
 }

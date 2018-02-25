@@ -67,7 +67,7 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
             for (int row = 0; row < RESOLUTION_HEIGHT; row++) {
                 SpecialText text = drawnImage.getSpecialText(col, row);
                 g.setColor(text.getBkgColor());
-                g.fillRect(col * HOR_SEPARATION + HOR_MARGIN, row * VER_SEPARATION + VER_MARGIN, HOR_SEPARATION, VER_SEPARATION); //Fill background
+                g.fillRect(col * HOR_SEPARATION + HOR_MARGIN, row * VER_SEPARATION + VER_MARGIN + 1, HOR_SEPARATION, VER_SEPARATION); //Fill background
             }
         }
 
@@ -126,9 +126,9 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
         //System.out.println(String.format("New Mouse Pos: %1$d,%2$d", mouseXCharPos, mouseYCharPos));
     }
 
-    private int getSnappedMouseX(int mouseRawX) { return (mouseRawX - HOR_MARGIN) / HOR_SEPARATION; }
+    public int getSnappedMouseX(int mouseRawX) { return (mouseRawX - HOR_MARGIN) / HOR_SEPARATION; }
 
-    private int getSnappedMouseY(int mouseRawY) { return (mouseRawY - VER_MARGIN) / VER_SEPARATION; }
+    public int getSnappedMouseY(int mouseRawY) { return (mouseRawY - VER_MARGIN) / VER_SEPARATION; }
 
     @Override
     public void keyTyped(KeyEvent e) {

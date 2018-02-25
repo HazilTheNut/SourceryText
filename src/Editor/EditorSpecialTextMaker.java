@@ -1,13 +1,10 @@
 package Editor;
 
+import Engine.SpecialText;
+
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,13 +14,15 @@ import java.util.TimerTask;
 public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
     private JButton openedButton; //The button this SpecialTextMaker is editing
+    private Container buttonContainer;
+
     private JTextField charField;
 
     private JButton fgButton;
     private JButton bgButton;
     private boolean settingForeground = true;
 
-    private ColorPicker colorPicker;
+    ColorPicker colorPicker;
     private JSlider bgOpacitySlider;
     private float fgHue = 0;
     private float bgHue = 0;
@@ -31,7 +30,9 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     private JButton finishButton;
     private JButton cancelButton;
 
-    public EditorSpecialTextMaker(){
+    public EditorSpecialTextMaker(Container c, JButton button, SpecialText startingText){
+        openedButton = button;
+        buttonContainer = c;
 
         setMinimumSize(new Dimension(410, 310));
 
@@ -42,6 +43,15 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         charField.setHorizontalAlignment(SwingConstants.CENTER);
         charField.setAlignmentX(Component.CENTER_ALIGNMENT);
         charField.addActionListener(this);
+        charField.setForeground(startingText.getFgColor());
+        charField.setBackground(startingText.getBkgColor());
+        charField.setText(startingText.getStr());
+
+        Color fg = startingText.getFgColor();
+        float[] fgHSV = Color.RGBtoHSB(fg.getRed(), fg.getGreen(), fg.getBlue(), new float[3]);
+        fgHue = fgHSV[0];
+        Color bg = startingText.getBkgColor();
+        bgHue = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), new float[3])[0];
 
         fgButton = new JButton("Fg");
         fgButton.setMaximumSize(new Dimension(70, 30));
@@ -60,9 +70,11 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         finishButton = new JButton("Finish");
         finishButton.setMaximumSize(new Dimension(80, 30));
         finishButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        finishButton.addActionListener(e -> finish());
         cancelButton = new JButton("Cancel");
         cancelButton.setMaximumSize(new Dimension(80, 30));
         cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        cancelButton.addActionListener(e -> cancel());
 
         JPanel selectorPanel = new JPanel();
         selectorPanel.setPreferredSize(new Dimension(150, 200));
@@ -96,10 +108,15 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         colorPickerPanel.addMouseMotionListener(colorPicker);
         colorPickerPanel.add(colorPicker, BorderLayout.CENTER);
 
+        colorPicker.hue = fgHSV[0];
+        colorPicker.sat = fgHSV[1];
+        colorPicker.bri = fgHSV[2];
+
         JPanel opacityPanel = new JPanel(); //Sub-panel for selecting opacity
 
         JTextField sliderValue = new JTextField("255", 3);
         sliderValue.setBorder(BorderFactory.createEmptyBorder());
+        sliderValue.setEditable(false);
 
         bgOpacitySlider = new JSlider(SwingConstants.HORIZONTAL, 0, 255, 255);
         bgOpacitySlider.setMinorTickSpacing(5);
@@ -116,6 +133,25 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         add(colorPickerPanel, BorderLayout.CENTER);
 
         validate();
+
+        addWindowListener(new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {}
+            @Override
+            public void windowClosing(WindowEvent e) {
+                cancel();
+            }
+            @Override
+            public void windowClosed(WindowEvent e) {}
+            @Override
+            public void windowIconified(WindowEvent e) {}
+            @Override
+            public void windowDeiconified(WindowEvent e) {}
+            @Override
+            public void windowActivated(WindowEvent e) {}
+            @Override
+            public void windowDeactivated(WindowEvent e) {}
+        });
 
         java.util.Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -143,6 +179,8 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         }
     }
 
+
+
     private void updateElements() {
         String charText = charField.getText();
         if (charText.length() > 1) {
@@ -151,6 +189,26 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             charField.setCaretPosition(1);
         }
         colorPicker.repaint();
+    }
+
+    private void finish(){
+        EditorTextPanel.SingleTextRenderer icon = (EditorTextPanel.SingleTextRenderer)openedButton.getIcon();
+        if (charField.getText().length() > 0)
+            icon.specText = new SpecialText(charField.getText().charAt(0), charField.getForeground(), charField.getBackground());
+        else
+            icon.specText = new SpecialText(' ', charField.getForeground(), charField.getBackground());
+        Color fg = icon.specText.getFgColor();
+        Color bg = icon.specText.getBkgColor();
+        openedButton.setActionCommand(String.format("Selection: %1$c [%2$d,%3$d,%4$d,%5$d] [%6$d,%7$d,%8$d,%9$d]", icon.specText.getCharacter(), fg.getRed(), fg.getGreen(), fg.getBlue(), fg.getAlpha(), bg.getRed(), bg.getGreen(), bg.getBlue(), bg.getAlpha()));
+        buttonContainer.repaint();
+        dispose();
+    }
+
+    private void cancel(){
+        buttonContainer.remove(openedButton);
+        buttonContainer.validate();
+        buttonContainer.repaint();
+        dispose();
     }
 
     class ColorPicker extends JComponent implements MouseMotionListener {
