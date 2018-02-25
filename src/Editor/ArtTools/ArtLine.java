@@ -1,6 +1,7 @@
 package Editor.ArtTools;
 
 import Engine.Layer;
+import Engine.LayerManager;
 import Engine.SpecialText;
 
 import java.awt.*;
@@ -17,19 +18,23 @@ public class ArtLine extends ArtTool {
     private int previousY;
 
     private SpecialText startHighlight = new SpecialText(' ', Color.WHITE, new Color(75, 75, 255, 120));
+    private LayerManager lm;
+
+    public ArtLine(LayerManager manager) {lm = manager; }
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         startX = col;
         startY = row;
-        highlight.editLayer(col, row, startHighlight);
     }
 
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         //highlight.editLayer(startX, startY, startHighlight);
-        drawLine(highlight, startX, startY, previousX, previousY, null);
-        drawLine(highlight, startX, startY, col, row, startHighlight);
+        int camX = (int)lm.getCameraPos().getX();
+        int camY = (int)lm.getCameraPos().getY();
+        drawLine(highlight, startX + camX, startY + camY, previousX + camX, previousY + camY, null);
+        drawLine(highlight, startX + camX, startY + camY, col + camX, row + camY, startHighlight);
         previousX = col;
         previousY = row;
         //System.out.println("[ArtLine] onDraw");
@@ -37,8 +42,9 @@ public class ArtLine extends ArtTool {
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        highlight.editLayer(startX, startY, null);
-        drawLine(highlight, startX, startY, col, row, null);
+        int camX = (int)lm.getCameraPos().getX();
+        int camY = (int)lm.getCameraPos().getY();
+        drawLine(highlight, startX + camX, startY + camY, col + camX, row + camY, null);
         drawLine(layer, startX, startY, col, row, text);
     }
 

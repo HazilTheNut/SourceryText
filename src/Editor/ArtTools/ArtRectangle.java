@@ -1,8 +1,10 @@
 package Editor.ArtTools;
 
 import Engine.Layer;
+import Engine.LayerManager;
 import Engine.SpecialText;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -17,19 +19,34 @@ public class ArtRectangle extends ArtTool {
     private int previousY;
 
     private SpecialText startHighlight = new SpecialText(' ', Color.WHITE, new Color(75, 75, 255, 120));
+    private LayerManager lm;
+
+    private JCheckBox fillBox;
+
+    public ArtRectangle(LayerManager manager) {lm = manager; }
+
+    @Override
+    public void onActivate(JPanel panel) {
+        fillBox = new JCheckBox("Filled", false);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        panel.add(fillBox);
+        panel.setBorder(BorderFactory.createTitledBorder("Rectangle"));
+        panel.setVisible(true);
+        panel.validate();
+    }
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         startX = col;
         startY = row;
-        highlight.editLayer(col, row, startHighlight);
     }
 
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        //highlight.editLayer(startX, startY, startHighlight);
-        drawRect(highlight, startX, startY, previousX, previousY, null);
-        drawRect(highlight, startX, startY, col, row, startHighlight);
+        int camX = (int)lm.getCameraPos().getX();
+        int camY = (int)lm.getCameraPos().getY();
+        drawRect(highlight, startX + camX, startY + camY, previousX + camX, previousY + camY, null);
+        drawRect(highlight, startX + camX, startY + camY, col + camX, row + camY, startHighlight);
         previousX = col;
         previousY = row;
         //System.out.println("[ArtLine] onDraw");
@@ -37,19 +54,28 @@ public class ArtRectangle extends ArtTool {
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        highlight.editLayer(startX, startY, null);
-        drawRect(highlight, startX, startY, col, row, null);
+        int camX = (int)lm.getCameraPos().getX();
+        int camY = (int)lm.getCameraPos().getY();
+        drawRect(highlight, startX + camX, startY + camY, col + camX, row + camY, null);
         drawRect(layer, startX, startY, col, row, text);
     }
 
     private void drawRect(Layer layer, int x1, int y1, int x2, int y2, SpecialText text){
-        for (int col = x1; col <= x2; col++){
-            layer.editLayer(col, y1, text);
-            layer.editLayer(col, y2, text);
-        }
-        for (int row = y1; row <= y2; row++){
-            layer.editLayer(x1, row, text);
-            layer.editLayer(x2, row, text);
+        if (fillBox.isSelected()){
+            for (int col = x1; col <= x2; col++){
+                for (int row = y1; row <= y2; row++){
+                    layer.editLayer(col, row, text);
+                }
+            }
+        } else {
+            for (int col = x1; col <= x2; col++) {
+                layer.editLayer(col, y1, text);
+                layer.editLayer(col, y2, text);
+            }
+            for (int row = y1; row <= y2; row++) {
+                layer.editLayer(x1, row, text);
+                layer.editLayer(x2, row, text);
+            }
         }
     }
 }

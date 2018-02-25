@@ -61,12 +61,12 @@ public class EditorFrame extends JFrame {
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);
 
-        EditorToolPanel toolPanel = new EditorToolPanel(mi);
+        EditorToolPanel toolPanel = new EditorToolPanel(mi, manager);
         c.add(toolPanel, BorderLayout.LINE_END);
 
         c.validate();
 
-        setSize(new Dimension(600, 400));
+        setSize(new Dimension(700, 600));
 
         setVisible(true);
 

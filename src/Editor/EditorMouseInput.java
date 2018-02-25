@@ -1,6 +1,6 @@
 package Editor;
 
-import Editor.ArtTools.ArtPencil;
+import Editor.ArtTools.ArtBrush;
 import Editor.ArtTools.ArtTool;
 import Engine.Layer;
 import Engine.LayerManager;
@@ -34,7 +34,7 @@ public class EditorMouseInput implements MouseInputListener{
         highlightLayer = highlight;
         textPanel = panel;
         backdropLayer = backdrop;
-        artTool = new ArtPencil();
+        artTool = new ArtBrush();
     }
 
     @Override
@@ -98,5 +98,7 @@ public class EditorMouseInput implements MouseInputListener{
         previousCharYPos = window.getSnappedMouseY(rawY);
     }
 
-    public void setArtTool(ArtTool artTool) { this.artTool = artTool; }
+    void setArtTool(ArtTool artTool) { this.artTool = artTool; }
+
+    ArtTool getArtTool() { return artTool; }
 }
