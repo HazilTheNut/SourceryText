@@ -39,4 +39,13 @@ public class SpecialText {
     public Color getBkgColor() {
         return bkgColor;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof SpecialText){
+            SpecialText text = (SpecialText)obj;
+            return text.getCharacter() == character && text.getFgColor().equals(fgColor) && text.getBkgColor().equals(bkgColor);
+        }
+        return false;
+    }
 }

@@ -16,8 +16,8 @@ public class EditorFrame extends JFrame {
 
     Layer levelBackdrop;
     Layer mouseHighlight;
-    private int mouseSnappedXPos;
-    private int MouseSnappedYPos;
+
+    EditorMouseInput mi;
 
     public EditorFrame(){
 
@@ -57,6 +57,13 @@ public class EditorFrame extends JFrame {
         EditorTextPanel textPanel = new EditorTextPanel();
         c.add(textPanel, BorderLayout.LINE_START);
 
+        mi = new EditorMouseInput(window, manager, mouseHighlight, textPanel, levelBackdrop);
+        window.addMouseListener(mi);
+        window.addMouseMotionListener(mi);
+
+        EditorToolPanel toolPanel = new EditorToolPanel(mi);
+        c.add(toolPanel, BorderLayout.LINE_END);
+
         c.validate();
 
         setSize(new Dimension(600, 400));
@@ -64,10 +71,6 @@ public class EditorFrame extends JFrame {
         setVisible(true);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, textPanel, levelBackdrop);
-        window.addMouseListener(mi);
-        window.addMouseMotionListener(mi);
     }
 
 }

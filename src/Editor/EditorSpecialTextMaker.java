@@ -192,7 +192,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     }
 
     private void finish(){
-        EditorTextPanel.SingleTextRenderer icon = (EditorTextPanel.SingleTextRenderer)openedButton.getIcon();
+        SingleTextRenderer icon = (SingleTextRenderer)openedButton.getIcon();
         if (charField.getText().length() > 0)
             icon.specText = new SpecialText(charField.getText().charAt(0), charField.getForeground(), charField.getBackground());
         else
