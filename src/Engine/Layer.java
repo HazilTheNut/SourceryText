@@ -3,11 +3,12 @@ package Engine;
 import com.sun.istack.internal.Nullable;
 
 import java.awt.*;
+import java.io.Serializable;
 
 /**
  * Created by Jared on 2/18/2018.
  */
-public class Layer {
+public class Layer implements Serializable{
 
     private SpecialText[][] textMatrix; //In form textMatrix[col][row]
     private int xpos = 0;
@@ -15,6 +16,7 @@ public class Layer {
     private String name;
 
     public boolean fixedScreenPos = false;
+    boolean visible = true;
 
     public int getX() { return xpos; }
 
@@ -74,6 +76,10 @@ public class Layer {
 
     public int getCols(){ return textMatrix.length; }
     public int getRows(){ return textMatrix[0].length; }
+
+    public void setVisible(boolean visible) { this.visible = visible; }
+
+    public boolean getVisible(){ return visible; }
 
     public void printLayer(){
         String output = "";

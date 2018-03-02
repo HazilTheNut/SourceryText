@@ -1,11 +1,12 @@
 package Engine;
 
 import java.awt.*;
+import java.io.Serializable;
 
 /**
  * Created by Jared on 2/18/2018.
  */
-public class SpecialText {
+public class SpecialText implements Serializable{
 
     private char character = ' ';
     private Color fgColor =  new Color(255, 255, 255, 255);

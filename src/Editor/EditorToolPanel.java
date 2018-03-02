@@ -1,6 +1,7 @@
 package Editor;
 
 import Editor.ArtTools.*;
+import Engine.Layer;
 import Engine.LayerManager;
 
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class EditorToolPanel extends JPanel {
 
     private JPanel toolOptionsPanel;
 
-    public EditorToolPanel(EditorMouseInput mi, LayerManager manager){
+    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, Layer tileDataLayer){
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
@@ -26,7 +27,7 @@ public class EditorToolPanel extends JPanel {
         artToolsPanel.setLayout(new GridLayout(numberCells,1,2,2));
         artToolsPanel.setMaximumSize(new Dimension(100, numberCells*30));
 
-        artToolsPanel.add(createArtToolButton("Brush",    new ArtBrush()));
+        artToolsPanel.add(createArtToolButton("Brush",     new ArtBrush()));
         artToolsPanel.add(createArtToolButton("Eraser",    new ArtEraser()));
         artToolsPanel.add(createArtToolButton("Line",      new ArtLine(manager)));
         artToolsPanel.add(createArtToolButton("Rectangle", new ArtRectangle(manager)));
@@ -37,6 +38,13 @@ public class EditorToolPanel extends JPanel {
         toolOptionsPanel = new JPanel();
         toolOptionsPanel.setAlignmentX(CENTER_ALIGNMENT);
         add(toolOptionsPanel);
+
+        JButton showTileDataButton = new JButton("Show Data");
+        showTileDataButton.addActionListener(event -> tileDataLayer.setVisible(!tileDataLayer.getVisible()));
+        showTileDataButton.setAlignmentX(CENTER_ALIGNMENT);
+        add(showTileDataButton);
+
+        validate();
 
         this.mi = mi;
         lm = manager;

@@ -200,6 +200,9 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         Color fg = icon.specText.getFgColor();
         Color bg = icon.specText.getBkgColor();
         openedButton.setActionCommand(String.format("Selection: %1$c [%2$d,%3$d,%4$d,%5$d] [%6$d,%7$d,%8$d,%9$d]", icon.specText.getCharacter(), fg.getRed(), fg.getGreen(), fg.getBlue(), fg.getAlpha(), bg.getRed(), bg.getGreen(), bg.getBlue(), bg.getAlpha()));
+        for (ActionListener al : openedButton.getActionListeners()){
+            al.actionPerformed(new ActionEvent(openedButton, ActionEvent.ACTION_PERFORMED, openedButton.getActionCommand()));
+        }
         buttonContainer.repaint();
         dispose();
     }

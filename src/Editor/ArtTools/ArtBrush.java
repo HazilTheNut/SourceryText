@@ -18,6 +18,7 @@ public class ArtBrush extends ArtTool {
     public void onActivate(JPanel panel) {
         brushSizeBox = new JTextField(2);
         brushSizeBox.setMaximumSize(new Dimension(20, 20));
+        brushSizeBox.setText("1");
         panel.setBorder(BorderFactory.createTitledBorder(name));
         JLabel boxLabel = new JLabel("Size:");
         panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
@@ -42,6 +43,7 @@ public class ArtBrush extends ArtTool {
         try {
             brushSize = Integer.valueOf(brushSizeBox.getText());
         } catch (NumberFormatException ignored) {}
+        if (brushSize <= 0 ) brushSize = 1;
         for (int x = 0; x < brushSize; x++){
             int height = brushSize - x - 1;
             for (int row = centerRow + height; row >= centerRow - height; row--){

@@ -93,7 +93,7 @@ public class EditorMouseInput implements MouseInputListener{
 
     private void updateMouseCursorPos(int rawX, int rawY){
         highlightLayer.editLayer(previousXCharPos, previousCharYPos, null);
-        highlightLayer.editLayer(window.getSnappedMouseX(rawX), window.getSnappedMouseY(rawY), new SpecialText(' ', Color.WHITE, new Color(230, 230, 230, 150)));
+        highlightLayer.editLayer(window.getSnappedMouseX(rawX), window.getSnappedMouseY(rawY), new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 120)));
         previousXCharPos = window.getSnappedMouseX(rawX);
         previousCharYPos = window.getSnappedMouseY(rawY);
     }

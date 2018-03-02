@@ -14,11 +14,6 @@ import java.awt.*;
  */
 public class EditorFrame extends JFrame {
 
-    Layer levelBackdrop;
-    Layer mouseHighlight;
-
-    EditorMouseInput mi;
-
     public EditorFrame(){
 
         setLayout(new BorderLayout());
@@ -35,7 +30,7 @@ public class EditorFrame extends JFrame {
         c.addComponentListener(window);
         c.addKeyListener(window);
 
-        levelBackdrop = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "test", 0, 0);
+        Layer levelBackdrop = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "test", 0, 0);
         for (int col = 0; col < levelBackdrop.getCols(); col++){
             levelBackdrop.editLayer(col, 0, new SpecialText('#', Color.RED));
             levelBackdrop.editLayer(col, levelBackdrop.getRows()-1, new SpecialText('#', Color.RED));
@@ -45,11 +40,17 @@ public class EditorFrame extends JFrame {
             levelBackdrop.editLayer(levelBackdrop.getCols()-1, row, new SpecialText('#', Color.RED));
         }
 
-        mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "mouse", 0, 0);
+        LevelData ldata = new LevelData(levelBackdrop);
+
+        Layer mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "mouse", 0, 0);
         mouseHighlight.fixedScreenPos = true;
 
+        Layer tileDataLayer = ldata.provideTileDataLayer();
+        tileDataLayer.setVisible(true);
+
         LayerManager manager = new LayerManager(window);
-        manager.addLayer(levelBackdrop);
+        manager.addLayer(tileDataLayer);
+        manager.addLayer(ldata.getBackdrop());
         manager.addLayer(mouseHighlight);
 
         c.add(window, BorderLayout.CENTER);
@@ -57,11 +58,11 @@ public class EditorFrame extends JFrame {
         EditorTextPanel textPanel = new EditorTextPanel();
         c.add(textPanel, BorderLayout.LINE_START);
 
-        mi = new EditorMouseInput(window, manager, mouseHighlight, textPanel, levelBackdrop);
+        EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, textPanel, ldata.getBackdrop());
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);
 
-        EditorToolPanel toolPanel = new EditorToolPanel(mi, manager);
+        EditorToolPanel toolPanel = new EditorToolPanel(mi, manager, ldata.provideTileDataLayer());
         c.add(toolPanel, BorderLayout.LINE_END);
 
         c.validate();
