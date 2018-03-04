@@ -118,6 +118,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
         System.out.println(zoomScalar);
         zoomScalar += e.getPreciseWheelRotation() / 4;
         updateZoom();
+        updateMouseCursorPos(e.getX(), e.getY());
         if (cm != null) cm.updateLabel();
     }
 
