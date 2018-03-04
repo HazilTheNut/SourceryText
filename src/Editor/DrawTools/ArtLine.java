@@ -49,14 +49,12 @@ public class ArtLine extends DrawTool {
     }
 
     private void drawLine(Layer layer, int x1, int y1, int x2, int y2, SpecialText text){
-        System.out.println("[ArtLine] Line Start:\n");
         double angle = Math.atan2(y2 - y1, x2 - x1);
         int distance = (int)Math.round(Math.sqrt(Math.pow((x2 - x1),2) + Math.pow((y2 - y1),2)));
         for (int ii = 0; ii <= distance; ii++){
             int col = (int)Math.round(ii * Math.cos(angle)) + x1;
             int row = (int)Math.round(ii * Math.sin(angle)) + y1;
             layer.editLayer(col, row, text);
-            System.out.println("[ArtLine] LINE: x" + col + " y" + row);
         }
     }
 }

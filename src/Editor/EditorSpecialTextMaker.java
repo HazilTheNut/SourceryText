@@ -22,13 +22,10 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     private JButton bgButton;
     private boolean settingForeground = true;
 
-    ColorPicker colorPicker;
+    private ColorPicker colorPicker;
     private JSlider bgOpacitySlider;
-    private float fgHue = 0;
-    private float bgHue = 0;
-
-    private JButton finishButton;
-    private JButton cancelButton;
+    private float[] fgHSB = new float[3];
+    private float[] bgHSB = new float[3];
 
     public EditorSpecialTextMaker(Container c, JButton button, SpecialText startingText){
         openedButton = button;
@@ -48,10 +45,9 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         charField.setText(startingText.getStr());
 
         Color fg = startingText.getFgColor();
-        float[] fgHSV = Color.RGBtoHSB(fg.getRed(), fg.getGreen(), fg.getBlue(), new float[3]);
-        fgHue = fgHSV[0];
+        fgHSB = Color.RGBtoHSB(fg.getRed(), fg.getGreen(), fg.getBlue(), new float[3]);
         Color bg = startingText.getBkgColor();
-        bgHue = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), new float[3])[0];
+        bgHSB = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), new float[3]);
 
         fgButton = new JButton("Fg");
         fgButton.setMaximumSize(new Dimension(70, 30));
@@ -67,11 +63,11 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         bgButton.addActionListener(this);
         bgButton.setActionCommand("bg");
 
-        finishButton = new JButton("Finish");
+        JButton finishButton = new JButton("Finish");
         finishButton.setMaximumSize(new Dimension(80, 30));
         finishButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         finishButton.addActionListener(e -> finish());
-        cancelButton = new JButton("Cancel");
+        JButton cancelButton = new JButton("Cancel");
         cancelButton.setMaximumSize(new Dimension(80, 30));
         cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         cancelButton.addActionListener(e -> cancel());
@@ -108,10 +104,6 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         colorPickerPanel.addMouseMotionListener(colorPicker);
         colorPickerPanel.add(colorPicker, BorderLayout.CENTER);
 
-        colorPicker.hue = fgHSV[0];
-        colorPicker.sat = fgHSV[1];
-        colorPicker.bri = fgHSV[2];
-
         JPanel opacityPanel = new JPanel(); //Sub-panel for selecting opacity
 
         JTextField sliderValue = new JTextField("255", 3);
@@ -133,6 +125,11 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         add(colorPickerPanel, BorderLayout.CENTER);
 
         validate();
+
+        colorPicker.setSize(new Dimension(215, 200));
+        System.out.println("Initial HSB Value: \n" + fgHSB[0] + "\n" + fgHSB[1] + "\n" + fgHSB[2]);
+        System.out.println("Color Picker sizing: " + colorPicker.getWidth() + " x " + colorPicker.getHeight());
+        colorPicker.setColorData(fgHSB);
 
         addWindowListener(new WindowListener() {
             @Override
@@ -165,14 +162,14 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("fg")){
-            bgHue = colorPicker.getHue();
-            colorPicker.setHue(fgHue);
+            bgHSB = colorPicker.getColorData();
+            colorPicker.setColorData(fgHSB);
             fgButton.setEnabled(false);
             bgButton.setEnabled(true);
             settingForeground = true;
         } else if (e.getActionCommand().equals("bg")){
-            fgHue = colorPicker.getHue();
-            colorPicker.setHue(bgHue);
+            fgHSB = colorPicker.getColorData();
+            colorPicker.setColorData(bgHSB);
             fgButton.setEnabled(true);
             bgButton.setEnabled(false);
             settingForeground = false;
@@ -197,14 +194,18 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             icon.specText = new SpecialText(charField.getText().charAt(0), charField.getForeground(), charField.getBackground());
         else
             icon.specText = new SpecialText(' ', charField.getForeground(), charField.getBackground());
-        Color fg = icon.specText.getFgColor();
-        Color bg = icon.specText.getBkgColor();
-        openedButton.setActionCommand(String.format("Selection: %1$c [%2$d,%3$d,%4$d,%5$d] [%6$d,%7$d,%8$d,%9$d]", icon.specText.getCharacter(), fg.getRed(), fg.getGreen(), fg.getBlue(), fg.getAlpha(), bg.getRed(), bg.getGreen(), bg.getBlue(), bg.getAlpha()));
+        setBtnActionCommand(openedButton, icon.specText);
         for (ActionListener al : openedButton.getActionListeners()){
             al.actionPerformed(new ActionEvent(openedButton, ActionEvent.ACTION_PERFORMED, openedButton.getActionCommand()));
         }
         buttonContainer.repaint();
         dispose();
+    }
+
+    public void setBtnActionCommand(JButton btn, SpecialText text){
+        Color fg = text.getFgColor();
+        Color bg = text.getBkgColor();
+        btn.setActionCommand(String.format("Selection: %1$c [%2$d,%3$d,%4$d,%5$d] [%6$d,%7$d,%8$d,%9$d]", text.getCharacter(), fg.getRed(), fg.getGreen(), fg.getBlue(), fg.getAlpha(), bg.getRed(), bg.getGreen(), bg.getBlue(), bg.getAlpha()));
     }
 
     private void cancel(){
@@ -216,15 +217,20 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
     class ColorPicker extends JComponent implements MouseMotionListener {
 
-        float hue = 0f;
-        float sat = 0f;
-        float bri = 0f;
         int mousePointX = 0;
         int mousePointY = 0;
 
-        public float getHue() { return hue; }
+        float[] colorData = new float[3];
 
-        public void setHue(float hue) { this.hue = hue; }
+        void setColorData(float[] data) {
+            colorData = data;
+            mousePointX = (int)(colorData[1] * (getWidth()-15)) + 1;
+            mousePointY = (int)(colorData[2] * (getHeight()-1)) + 1;
+        }
+
+        float[] getColorData() { return colorData; }
+
+        ColorPicker() { colorData = new float[]{0, 0, 0}; }
 
         @Override
         public void paintComponent(Graphics g) {
@@ -234,11 +240,11 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             for (int y = 1; y < getHeight()-1; y++){
                 for (int x = 1; x < boxWidth; x++){
                     //Color col = clipColor(new Color(x * (255 / getWidth()), y * (255 / getHeight()), 50));
-                    Color col = Color.getHSBColor(hue, (float)(x-1)/(boxWidth), (float)(y-1)/(getHeight()-1));
+                    Color col = Color.getHSBColor(colorData[0], (float)(x-1)/(boxWidth), (float)(y-1)/(getHeight()-1));
                     g.setColor(col);
                     g.fillRect(x, y, 1, 1);
                 }
-                if (Math.abs( ((float)y)/getHeight() - hue) < 0.01)
+                if (Math.abs( ((float)y)/getHeight() - colorData[0]) < 0.005)
                     g.setColor(Color.WHITE);
                 else
                     g.setColor(Color.getHSBColor(((float)y)/getHeight(), 0.9f, 0.9f));
@@ -250,11 +256,14 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             g.drawRect(boxWidth + 2,0,getWidth()-boxWidth-3,getHeight()-1);
 
             g.setColor(Color.WHITE);
-            g.drawRect(mousePointX, mousePointY, 1, 1);
+            g.drawLine(mousePointX-1, mousePointY, mousePointX-2, mousePointY);
+            g.drawLine(mousePointX+1, mousePointY, mousePointX+2, mousePointY);
+            g.drawLine(mousePointX, mousePointY+1, mousePointX, mousePointY+2);
+            g.drawLine(mousePointX, mousePointY-1, mousePointX, mousePointY-2);
         }
 
         private void generateColor(){
-            Color col = Color.getHSBColor(hue, sat, bri);
+            Color col = Color.getHSBColor(colorData[0], colorData[1], colorData[2]);
             if (settingForeground) {
                 charField.setForeground(col);
             }
@@ -268,10 +277,10 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             mousePointX = e.getX() - getX();
             mousePointY = e.getY() - getY();
             if (mousePointX >= getWidth() - 13){ //Selecting hue
-                hue = (float)mousePointY / getHeight();
+                colorData[0] = (float)mousePointY / getHeight();
             } else {
-                sat = (float)(mousePointX-1)/(getWidth()-15);
-                bri = (float)(mousePointY-1)/(getHeight()-1);
+                colorData[1] = (float)(mousePointX-1)/(getWidth()-15);
+                colorData[2] = (float)(mousePointY-1)/(getHeight()-1);
             }
             generateColor();
         }

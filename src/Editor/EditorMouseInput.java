@@ -101,4 +101,6 @@ public class EditorMouseInput implements MouseInputListener{
     void setDrawTool(DrawTool drawTool) { this.drawTool = drawTool; }
 
     DrawTool getDrawTool() { return drawTool; }
+
+    public EditorTextPanel getTextPanel() { return textPanel; }
 }

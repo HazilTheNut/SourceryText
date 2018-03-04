@@ -28,9 +28,6 @@ public class EditorToolPanel extends JPanel {
         //Art tools panel
         JPanel artToolsPanel = new JPanel();
         artToolsPanel.setBorder(BorderFactory.createTitledBorder("Art Tools"));
-        int numberCells = 5;
-        artToolsPanel.setLayout(new GridLayout(numberCells,1,2,2));
-        artToolsPanel.setMaximumSize(new Dimension(100, numberCells*30));
 
         //Art tool buttons
         artToolsPanel.add(createArtToolButton("Brush",     new ArtBrush()));
@@ -38,6 +35,12 @@ public class EditorToolPanel extends JPanel {
         artToolsPanel.add(createArtToolButton("Line",      new ArtLine(manager)));
         artToolsPanel.add(createArtToolButton("Rectangle", new ArtRectangle(manager)));
         artToolsPanel.add(createArtToolButton("Fill",      new ArtFill()));
+        artToolsPanel.add(createArtToolButton("Pick",      new ArtPick(mi.getTextPanel())));
+
+
+        int numberCells = artToolsPanel.getComponentCount();
+        artToolsPanel.setLayout(new GridLayout(numberCells,1,2,2));
+        artToolsPanel.setMaximumSize(new Dimension(100, numberCells*30));
 
         add(artToolsPanel);
 
@@ -50,7 +53,6 @@ public class EditorToolPanel extends JPanel {
         //Tile data panel
         JPanel tileDataPanel = new JPanel();
         tileDataPanel.setBorder(BorderFactory.createTitledBorder("Tile Data"));
-        tileDataPanel.setLayout(new BoxLayout(tileDataPanel, BoxLayout.PAGE_AXIS));
 
         //Show tile data button
         JButton showTileDataButton = new JButton("Show Data");
@@ -58,7 +60,6 @@ public class EditorToolPanel extends JPanel {
         showTileDataButton.setAlignmentX(CENTER_ALIGNMENT);
 
         tileDataPanel.add(showTileDataButton);
-        tileDataPanel.add(Box.createRigidArea(new Dimension(1,8)));
 
         //Tile select combo box
         JComboBox<Game.Registries.TileStruct> tileSelectBox = new JComboBox<>();
@@ -76,12 +77,12 @@ public class EditorToolPanel extends JPanel {
         tileSelectBox.addActionListener(e -> tilePencil.setTileData((TileStruct)tileSelectBox.getSelectedItem()));
 
         tileDataPanel.add(tileSelectBox);
-        tileDataPanel.add(Box.createRigidArea(new Dimension(1, 5)));
         tileDataPanel.add(createArtToolButton("Tile Pencil", tilePencil));
-        tileDataPanel.add(createArtToolButton("Inspect", new TileInspector(ldata)));
 
-        add(tileDataPanel);
+        tileDataPanel.setLayout(new GridLayout(tileDataPanel.getComponentCount(), 1, 2, 2));
+        tileDataPanel.setMaximumSize(new Dimension(100, tileDataPanel.getComponentCount()*30));
         tileDataPanel.validate();
+        add(tileDataPanel);
 
         validate();
 

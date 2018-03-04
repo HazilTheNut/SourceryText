@@ -106,6 +106,21 @@ public class EditorTextPanel extends JPanel implements ActionListener{
             textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, ((SingleTextRenderer)selectedTextButton.getIcon()).specText);
         textMaker.setVisible(true);
     }
+
+    public void generateNewButton(SpecialText text){
+        JButton btn = new JButton(new SingleTextRenderer(new SpecialText(' ')));
+        btn.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        btn.setHorizontalTextPosition(SwingConstants.LEFT);
+        btn.setMargin(new Insets(2, 2, 2, 2));
+        btn.setOpaque(true);
+        btn.addActionListener(this);
+        btn.setIcon(new SingleTextRenderer(text));
+        EditorSpecialTextMaker maker = new EditorSpecialTextMaker(textBtnPanel, btn, text);
+        maker.setBtnActionCommand(btn, text);
+        textBtnPanel.add(btn, 0);
+        textBtnPanel.validate();
+        validate();
+    }
     
     private void buildSpecTxtFromButtonClick(String command){
         System.out.println(command);
