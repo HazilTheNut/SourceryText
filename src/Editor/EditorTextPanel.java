@@ -20,6 +20,8 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     private JLabel selectionLabel;
     private JButton selectedTextButton;
 
+    private EditorToolPanel toolPanel;
+
     public EditorTextPanel (){
 
         BorderLayout layout = new BorderLayout();
@@ -74,6 +76,8 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         validate();
     }
 
+    public void setToolPanel(EditorToolPanel toolPanel) { this.toolPanel = toolPanel; }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Add New Btn")) { //Adds new button
@@ -124,9 +128,9 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     
     private void buildSpecTxtFromButtonClick(String command){
         System.out.println(command);
-        System.out.println(command.substring(11,12));
+        System.out.println(command.substring(0,1));
         int[] textData = new int[9];
-        int startIndex = 14;
+        int startIndex = 3;
         int endingIndex;
         for (int ii= 0; ii < 4; ii++){
             endingIndex = Math.min(command.indexOf(",", startIndex),command.indexOf("]", startIndex));
@@ -148,9 +152,10 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         System.out.println("----\n");
         Color fg = new Color(textData[0], textData[1], textData[2], textData[3]);
         Color bg = new Color(textData[4], textData[5], textData[6], textData[7]);
-        selectedSpecialText = new SpecialText(command.substring(11,12).charAt(0), fg, bg);
+        selectedSpecialText = new SpecialText(command.substring(0,1).charAt(0), fg, bg);
         selectionRender.specText = selectedSpecialText;
         selectionLabel.repaint();
+        if (toolPanel != null) toolPanel.updateSearchForIcon(selectedSpecialText);
     }
 
 }

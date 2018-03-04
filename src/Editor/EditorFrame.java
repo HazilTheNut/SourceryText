@@ -65,6 +65,8 @@ public class EditorFrame extends JFrame {
         EditorToolPanel toolPanel = new EditorToolPanel(mi, manager, tileDataLayer, ldata);
         c.add(toolPanel, BorderLayout.LINE_END);
 
+        textPanel.setToolPanel(toolPanel);
+
         c.validate();
 
         setSize(new Dimension(700, 600));

@@ -43,10 +43,22 @@ public class SpecialText implements Serializable{
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == null) return false;
         if (obj instanceof SpecialText){
             SpecialText text = (SpecialText)obj;
             return text.getCharacter() == character && text.getFgColor().equals(fgColor) && text.getBkgColor().equals(bkgColor);
         }
         return false;
+    }
+
+    // A lot like equals(), except the comparison ignores alpha
+    public boolean similar(SpecialText text) {
+        return text != null && text.getCharacter() == character && text.getFgColor().getRed() == fgColor.getRed()   && text.getFgColor().getGreen() == fgColor.getGreen()   && text.getFgColor().getBlue() == fgColor.getBlue()
+                                                                && text.getBkgColor().getRed() == bkgColor.getRed() && text.getBkgColor().getGreen() == bkgColor.getGreen() && text.getBkgColor().getBlue() == bkgColor.getBlue();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%1$c [%2$d,%3$d,%4$d,%5$d] [%6$d,%7$d,%8$d,%9$d]", getCharacter(), fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue(), fgColor.getAlpha(), bkgColor.getRed(), bkgColor.getGreen(), bkgColor.getBlue(), bkgColor.getAlpha());
     }
 }

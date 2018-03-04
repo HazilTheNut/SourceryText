@@ -3,6 +3,7 @@ package Editor;
 import Editor.DrawTools.*;
 import Engine.Layer;
 import Engine.LayerManager;
+import Engine.SpecialText;
 import Game.Registries.TileRegistry;
 import Game.Registries.TileStruct;
 
@@ -19,7 +20,10 @@ public class EditorToolPanel extends JPanel {
 
     private JPanel toolOptionsPanel;
 
-    private JFrame pickTileFrame;
+    private JLabel searchForIcon;
+    private JLabel placeTileIcon;
+
+    private TileStruct selectedTileStruct;
 
     public EditorToolPanel(EditorMouseInput mi, LayerManager manager, Layer tileDataLayer, LevelData ldata){
 
@@ -74,10 +78,30 @@ public class EditorToolPanel extends JPanel {
 
         TilePencil tilePencil = new TilePencil(tileDataLayer, ldata);
         tilePencil.setTileData((TileStruct)tileSelectBox.getSelectedItem());
-        tileSelectBox.addActionListener(e -> tilePencil.setTileData((TileStruct)tileSelectBox.getSelectedItem()));
+        tileSelectBox.addActionListener(e -> {
+            tilePencil.setTileData((TileStruct)tileSelectBox.getSelectedItem());
+            ((SingleTextRenderer)placeTileIcon.getIcon()).specText = ((TileStruct)tileSelectBox.getSelectedItem()).getDisplayChar();
+            selectedTileStruct = (TileStruct)tileSelectBox.getSelectedItem();
+        });
+
+        JPanel tileScanPanel = new JPanel();
+
+        searchForIcon = new JLabel(new SingleTextRenderer(new SpecialText(' ')));
+        placeTileIcon = new JLabel(new SingleTextRenderer(((TileStruct)tileSelectBox.getSelectedItem()).getDisplayChar()));
+
+        JButton scanButton = new JButton(">Scan>");
+        scanButton.setMargin(new Insets(0, 2, 0, 3));
+        scanButton.addActionListener(e -> scanForTileData(ldata, tileDataLayer));
+
+        tileScanPanel.setLayout(new BorderLayout(1, 1));
+        tileScanPanel.add(searchForIcon, BorderLayout.LINE_START);
+        tileScanPanel.add(scanButton, BorderLayout.CENTER);
+        tileScanPanel.add(placeTileIcon, BorderLayout.LINE_END);
 
         tileDataPanel.add(tileSelectBox);
         tileDataPanel.add(createArtToolButton("Tile Pencil", tilePencil));
+        tileDataPanel.add(tileScanPanel);
+        //tileDataPanel.add(Box.createRigidArea(new Dimension(1, 1)));
 
         tileDataPanel.setLayout(new GridLayout(tileDataPanel.getComponentCount(), 1, 2, 2));
         tileDataPanel.setMaximumSize(new Dimension(100, tileDataPanel.getComponentCount()*30));
@@ -88,6 +112,25 @@ public class EditorToolPanel extends JPanel {
 
         this.mi = mi;
         lm = manager;
+    }
+
+    void updateSearchForIcon(SpecialText text) {
+        ((SingleTextRenderer)searchForIcon.getIcon()).specText = text;
+        searchForIcon.repaint();
+    }
+
+    private void scanForTileData(LevelData ldata, Layer tileDataLayer){
+        SpecialText searchFor = ((SingleTextRenderer)searchForIcon.getIcon()).specText;
+        if (searchFor == null || selectedTileStruct == null) return;
+        for (int col = 0; col < ldata.getBackdrop().getCols(); col++){
+            for (int row = 0; row < ldata.getBackdrop().getRows(); row++){
+                SpecialText get = ldata.getBackdrop().getSpecialText(col, row);
+                if (searchFor.similar(get)){
+                    ldata.setTileData(col, row, selectedTileStruct.getTileId());
+                    tileDataLayer.editLayer(col, row, selectedTileStruct.getDisplayChar());
+                }
+            }
+        }
     }
 
     private JButton selectedToolButton;

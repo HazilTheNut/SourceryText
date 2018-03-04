@@ -28,7 +28,6 @@ public class LevelData implements Serializable {
                 tileData[col][row] = 0;
             }
         }
-        tileData[3][3] = 1;
         tileRegistry = new TileRegistry();
     }
 
