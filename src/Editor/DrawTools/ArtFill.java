@@ -3,10 +3,17 @@ package Editor.DrawTools;
 import Engine.Layer;
 import Engine.SpecialText;
 
+import javax.swing.*;
+
 /**
  * Created by Jared on 2/25/2018.
  */
 public class ArtFill extends DrawTool {
+
+    @Override
+    public void onActivate(JPanel panel) {
+        TOOL_TYPE = TYPE_ART;
+    }
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {

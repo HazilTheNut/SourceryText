@@ -4,6 +4,7 @@ import Editor.EditorTextPanel;
 import Engine.Layer;
 import Engine.SpecialText;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -14,6 +15,11 @@ public class ArtPick extends DrawTool {
     EditorTextPanel textPanel;
 
     public ArtPick(EditorTextPanel panel) { textPanel = panel; }
+
+    @Override
+    public void onActivate(JPanel panel) {
+        TOOL_TYPE = TYPE_ART;
+    }
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {

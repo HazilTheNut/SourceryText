@@ -22,6 +22,11 @@ public class TilePencil extends DrawTool {
         ldata = levelData;
     }
 
+    @Override
+    public void onActivate(JPanel panel) {
+        TOOL_TYPE = TYPE_TILE;
+    }
+
     public void setTileData(TileStruct struct) {tileData = struct; }
 
     @Override

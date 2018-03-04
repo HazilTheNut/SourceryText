@@ -33,6 +33,8 @@ public class ArtRectangle extends DrawTool {
         panel.setBorder(BorderFactory.createTitledBorder("Rectangle Tool"));
         panel.setVisible(true);
         panel.validate();
+
+        TOOL_TYPE = TYPE_ART;
     }
 
     @Override

@@ -18,8 +18,8 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
     private int HOR_MARGIN = 0;
     private int VER_MARGIN = 0;
 
-    public final int RESOLUTION_WIDTH = 55;
-    public final int RESOLUTION_HEIGHT = 29;
+    public int RESOLUTION_WIDTH = 55;
+    public int RESOLUTION_HEIGHT = 29;
 
     private int mouseXCharPos = 0;
     private int mouseYCharPos = RESOLUTION_HEIGHT;
@@ -37,7 +37,7 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
         repaint();
     }
 
-    private void recalculate() {
+    public void recalculate() {
         double MAX_VER_HOR_SEPARATION_RATIO = 0.6;
 
         HOR_SEPARATION = (int)Math.floor((double)getWidth() / RESOLUTION_WIDTH);

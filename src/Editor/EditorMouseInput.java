@@ -9,11 +9,13 @@ import Engine.ViewWindow;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 /**
  * Created by Jared on 2/24/2018.
  */
-public class EditorMouseInput implements MouseInputListener{
+public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     private ViewWindow window;
     private LayerManager manager;
@@ -33,6 +35,8 @@ public class EditorMouseInput implements MouseInputListener{
         highlightLayer = highlight;
         textPanel = panel;
         backdropLayer = backdrop;
+        originalResolutionWidth = window.RESOLUTION_WIDTH;
+        originalResolutionHeight = window.RESOLUTION_HEIGHT;
     }
 
     @Override
@@ -103,4 +107,25 @@ public class EditorMouseInput implements MouseInputListener{
     DrawTool getDrawTool() { return drawTool; }
 
     public EditorTextPanel getTextPanel() { return textPanel; }
+
+    private int originalResolutionWidth = 0;
+    private int originalResolutionHeight = 0;
+    float zoomScalar = 1;
+    CameraManager cm;
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        System.out.println(zoomScalar);
+        zoomScalar += e.getPreciseWheelRotation() / 4;
+        updateZoom();
+        if (cm != null) cm.updateLabel();
+    }
+
+    public void updateZoom(){
+        if (zoomScalar < 0.25f) zoomScalar = 0.25f;
+        if (zoomScalar > 4) zoomScalar = 4;
+        window.RESOLUTION_WIDTH = (int)(originalResolutionWidth * zoomScalar);
+        window.RESOLUTION_HEIGHT = (int)(originalResolutionHeight * zoomScalar);
+        window.recalculate();
+    }
 }

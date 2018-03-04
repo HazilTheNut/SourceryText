@@ -61,6 +61,7 @@ public class EditorFrame extends JFrame {
         EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, textPanel, ldata.getBackdrop());
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);
+        window.addMouseWheelListener(mi);
 
         EditorToolPanel toolPanel = new EditorToolPanel(mi, manager, tileDataLayer, ldata);
         c.add(toolPanel, BorderLayout.LINE_END);

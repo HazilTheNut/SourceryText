@@ -9,6 +9,8 @@ import Game.Registries.TileStruct;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Created by Jared on 2/25/2018.
@@ -25,10 +27,55 @@ public class EditorToolPanel extends JPanel {
 
     private TileStruct selectedTileStruct;
 
+    private CameraManager cm;
+
     public EditorToolPanel(EditorMouseInput mi, LayerManager manager, Layer tileDataLayer, LevelData ldata){
 
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        this.mi = mi;
+        lm = manager;
+        cm = new CameraManager(mi);
 
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        setPreferredSize(new Dimension(100, 400));
+
+        createCameraPanel(tileDataLayer, ldata);
+
+        createArtToolsPanel();
+
+        createTileDataPanel(tileDataLayer, ldata);
+
+        validate();
+    }
+
+    private void createCameraPanel(Layer tileDataLayer, LevelData ldata){
+        JPanel cameraPanel = new JPanel();
+        cameraPanel.setBorder(BorderFactory.createTitledBorder("Camera"));
+        cameraPanel.setLayout(new GridLayout(2, 3, 0, 5));
+        cameraPanel.setMaximumSize(new Dimension(100, 65));
+
+        cm.artLayer = ldata.getBackdrop();
+        cm.tileLayer = tileDataLayer;
+
+        String[] buttonNames = {"A","T","E","+","-"};
+        for (String str : buttonNames){
+            JButton btn = new JButton(str);
+            btn.setActionCommand(str);
+            btn.addActionListener(cm);
+            btn.setMargin(new Insets(1, 1, 1, 1));
+            cameraPanel.add(btn);
+            if (str.equals("A")) { cm.artButton = btn; btn.doClick(); }
+            if (str.equals("T")) cm.tileButton = btn;
+        }
+
+        JLabel zoomLabel = new JLabel("");
+        cameraPanel.add(zoomLabel);
+        cm.zoomAmountLabel = zoomLabel;
+        cm.updateLabel();
+
+        add(cameraPanel);
+    }
+
+    private void createArtToolsPanel(){
         //Art tools panel
         JPanel artToolsPanel = new JPanel();
         artToolsPanel.setBorder(BorderFactory.createTitledBorder("Art Tools"));
@@ -36,11 +83,10 @@ public class EditorToolPanel extends JPanel {
         //Art tool buttons
         artToolsPanel.add(createArtToolButton("Brush",     new ArtBrush()));
         artToolsPanel.add(createArtToolButton("Eraser",    new ArtEraser()));
-        artToolsPanel.add(createArtToolButton("Line",      new ArtLine(manager)));
-        artToolsPanel.add(createArtToolButton("Rectangle", new ArtRectangle(manager)));
+        artToolsPanel.add(createArtToolButton("Line",      new ArtLine(lm)));
+        artToolsPanel.add(createArtToolButton("Rectangle", new ArtRectangle(lm)));
         artToolsPanel.add(createArtToolButton("Fill",      new ArtFill()));
         artToolsPanel.add(createArtToolButton("Pick",      new ArtPick(mi.getTextPanel())));
-
 
         int numberCells = artToolsPanel.getComponentCount();
         artToolsPanel.setLayout(new GridLayout(numberCells,1,2,2));
@@ -53,17 +99,13 @@ public class EditorToolPanel extends JPanel {
         toolOptionsPanel.setAlignmentX(CENTER_ALIGNMENT);
         toolOptionsPanel.setMaximumSize(new Dimension(100, 50));
         add(toolOptionsPanel);
+    }
 
+    private void createTileDataPanel(Layer tileDataLayer, LevelData ldata){
         //Tile data panel
         JPanel tileDataPanel = new JPanel();
         tileDataPanel.setBorder(BorderFactory.createTitledBorder("Tile Data"));
-
-        //Show tile data button
-        JButton showTileDataButton = new JButton("Show Data");
-        showTileDataButton.addActionListener(event -> tileDataLayer.setVisible(!tileDataLayer.getVisible()));
-        showTileDataButton.setAlignmentX(CENTER_ALIGNMENT);
-
-        tileDataPanel.add(showTileDataButton);
+        tileDataPanel.setMaximumSize(new Dimension(100, 150));
 
         //Tile select combo box
         JComboBox<Game.Registries.TileStruct> tileSelectBox = new JComboBox<>();
@@ -107,11 +149,6 @@ public class EditorToolPanel extends JPanel {
         tileDataPanel.setMaximumSize(new Dimension(100, tileDataPanel.getComponentCount()*30));
         tileDataPanel.validate();
         add(tileDataPanel);
-
-        validate();
-
-        this.mi = mi;
-        lm = manager;
     }
 
     void updateSearchForIcon(SpecialText text) {
@@ -153,6 +190,14 @@ public class EditorToolPanel extends JPanel {
         toolOptionsPanel.setVisible(false);
         mi.setDrawTool(tool);
         tool.onActivate(toolOptionsPanel);
+        switch (tool.TOOL_TYPE){
+            case DrawTool.TYPE_ART:
+                cm.artViewMode();
+                break;
+            case DrawTool.TYPE_TILE:
+                cm.tileViewMode();
+                break;
+        }
         if (selectedToolButton != null) {
             selectedToolButton.setEnabled(true);
         }

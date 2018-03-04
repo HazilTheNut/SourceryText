@@ -16,7 +16,7 @@ public class LevelData implements Serializable {
 
     private int[][] tileData;
 
-    private int[][] enemyData;
+    private int[][] entityData;
 
     private TileRegistry tileRegistry;
 

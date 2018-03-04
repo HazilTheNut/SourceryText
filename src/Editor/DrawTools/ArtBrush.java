@@ -26,6 +26,8 @@ public class ArtBrush extends DrawTool {
         panel.add(brushSizeBox);
         panel.validate();
         panel.setVisible(true);
+
+        TOOL_TYPE = DrawTool.TYPE_ART;
     }
 
     @Override

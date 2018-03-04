@@ -10,6 +10,9 @@ import javax.swing.*;
  */
 public abstract class DrawTool {
 
+    public int TOOL_TYPE = 0;
+    public static final int TYPE_ART = 1;
+    public static final int TYPE_TILE = 2;
 
 
     //Ran upon pressing left click down

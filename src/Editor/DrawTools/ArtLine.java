@@ -4,6 +4,7 @@ import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -21,6 +22,11 @@ public class ArtLine extends DrawTool {
     private LayerManager lm;
 
     public ArtLine(LayerManager manager) {lm = manager; }
+
+    @Override
+    public void onActivate(JPanel panel) {
+        TOOL_TYPE = TYPE_ART;
+    }
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
