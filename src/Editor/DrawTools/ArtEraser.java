@@ -1,4 +1,4 @@
-package Editor.ArtTools;
+package Editor.DrawTools;
 
 import Engine.Layer;
 import Engine.SpecialText;
@@ -8,7 +8,7 @@ import Engine.SpecialText;
  */
 public class ArtEraser extends ArtBrush {
 
-    public ArtEraser() {name = "Eraser"; }
+    public ArtEraser() {name = "Eraser Tool"; }
 
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {

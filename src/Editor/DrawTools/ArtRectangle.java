@@ -1,4 +1,4 @@
-package Editor.ArtTools;
+package Editor.DrawTools;
 
 import Engine.Layer;
 import Engine.LayerManager;
@@ -10,7 +10,7 @@ import java.awt.*;
 /**
  * Created by Jared on 2/25/2018.
  */
-public class ArtRectangle extends ArtTool {
+public class ArtRectangle extends DrawTool {
 
     private int startX;
     private int startY;
@@ -30,7 +30,7 @@ public class ArtRectangle extends ArtTool {
         fillBox = new JCheckBox("Filled", false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.add(fillBox);
-        panel.setBorder(BorderFactory.createTitledBorder("Rectangle"));
+        panel.setBorder(BorderFactory.createTitledBorder("Rectangle Tool"));
         panel.setVisible(true);
         panel.validate();
     }

@@ -46,11 +46,11 @@ public class EditorFrame extends JFrame {
         mouseHighlight.fixedScreenPos = true;
 
         Layer tileDataLayer = ldata.provideTileDataLayer();
-        tileDataLayer.setVisible(true);
+        tileDataLayer.setVisible(false);
 
         LayerManager manager = new LayerManager(window);
-        manager.addLayer(tileDataLayer);
         manager.addLayer(ldata.getBackdrop());
+        manager.addLayer(tileDataLayer);
         manager.addLayer(mouseHighlight);
 
         c.add(window, BorderLayout.CENTER);
@@ -62,7 +62,7 @@ public class EditorFrame extends JFrame {
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);
 
-        EditorToolPanel toolPanel = new EditorToolPanel(mi, manager, ldata.provideTileDataLayer());
+        EditorToolPanel toolPanel = new EditorToolPanel(mi, manager, tileDataLayer, ldata);
         c.add(toolPanel, BorderLayout.LINE_END);
 
         c.validate();

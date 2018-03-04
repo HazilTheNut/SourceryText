@@ -1,4 +1,4 @@
-package Editor.ArtTools;
+package Editor.DrawTools;
 
 import Engine.Layer;
 import Engine.SpecialText;
@@ -9,10 +9,10 @@ import java.awt.*;
 /**
  * Created by Jared on 2/25/2018.
  */
-public class ArtBrush extends ArtTool {
+public class ArtBrush extends DrawTool {
 
     private JTextField brushSizeBox;
-    String name = "Brush";
+    String name = "Brush Tool";
 
     @Override
     public void onActivate(JPanel panel) {

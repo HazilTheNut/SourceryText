@@ -1,4 +1,4 @@
-package Editor.ArtTools;
+package Editor.DrawTools;
 
 import Engine.Layer;
 import Engine.LayerManager;
@@ -9,7 +9,7 @@ import java.awt.*;
 /**
  * Created by Jared on 2/25/2018.
  */
-public class ArtLine extends ArtTool {
+public class ArtLine extends DrawTool {
 
     private int startX;
     private int startY;

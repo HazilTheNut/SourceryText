@@ -1,6 +1,5 @@
-package Editor.ArtTools;
+package Editor.DrawTools;
 
-import Editor.EditorTextPanel;
 import Engine.Layer;
 import Engine.SpecialText;
 
@@ -9,7 +8,7 @@ import javax.swing.*;
 /**
  * Created by Jared on 2/25/2018.
  */
-public abstract class ArtTool {
+public abstract class DrawTool {
 
 
 
