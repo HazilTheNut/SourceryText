@@ -4,6 +4,8 @@ import Editor.DrawTools.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.Registries.EntityRegistry;
+import Game.Registries.EntityStruct;
 import Game.Registries.TileRegistry;
 import Game.Registries.TileStruct;
 
@@ -46,9 +48,7 @@ public class EditorToolPanel extends JPanel {
 
         createTileDataPanel(ldata);
 
-        JButton elTestButton = createDrawToolButton("Entity Layer Test", new EntityPlace(ldata));
-        elTestButton.setMaximumSize(new Dimension(90, 20));
-        add(elTestButton);
+        createEntityDataPanel(ldata);
 
         validate();
     }
@@ -113,7 +113,6 @@ public class EditorToolPanel extends JPanel {
         //Tile data panel
         JPanel tileDataPanel = new JPanel();
         tileDataPanel.setBorder(BorderFactory.createTitledBorder("Tile Data"));
-        tileDataPanel.setMaximumSize(new Dimension(100, 150));
 
         //Tile select combo box
         JComboBox<Game.Registries.TileStruct> tileSelectBox = new JComboBox<>();
@@ -157,6 +156,31 @@ public class EditorToolPanel extends JPanel {
         tileDataPanel.setMaximumSize(new Dimension(100, tileDataPanel.getComponentCount()*30));
         tileDataPanel.validate();
         add(tileDataPanel);
+    }
+
+    private void createEntityDataPanel(LevelData ldata){
+
+        JPanel entityDataPanel = new JPanel();
+        entityDataPanel.setBorder(BorderFactory.createTitledBorder("Entity Data"));
+
+        JComboBox<EntityStruct> entitySelectBox = new JComboBox<>();
+        EntityRegistry entityRegistry = new EntityRegistry();
+
+        int[] mapKeys = entityRegistry.getMapKeys();
+        for (int i : mapKeys){
+            entitySelectBox.addItem(entityRegistry.getEntityStruct(i));
+        }
+
+        entityDataPanel.add(entitySelectBox);
+
+        JButton placeEntityButton = createDrawToolButton("Place Entity", new EntityPlace(ldata));
+        placeEntityButton.setMaximumSize(new Dimension(90, 20));
+        entityDataPanel.add(placeEntityButton);
+
+        entityDataPanel.setLayout(new GridLayout(entityDataPanel.getComponentCount(), 1, 2, 2));
+        entityDataPanel.setMaximumSize(new Dimension(100, entityDataPanel.getComponentCount() * 30));
+        entityDataPanel.validate();
+        add(entityDataPanel);
     }
 
     void updateSearchForIcon(SpecialText text) {

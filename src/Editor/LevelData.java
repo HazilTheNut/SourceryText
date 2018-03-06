@@ -2,6 +2,7 @@ package Editor;
 
 import Engine.Layer;
 import Engine.SpecialText;
+import Game.Registries.EntityRegistry;
 import Game.Registries.EntityStruct;
 import Game.Registries.TileRegistry;
 
@@ -30,6 +31,7 @@ public class LevelData implements Serializable {
                 tileData[col][row] = 0;
             }
         }
+        entityData = new EntityStruct[backdrop.getCols()][backdrop.getRows()];
         tileDataLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "tiledata", 0, 0);
         entityLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "entitydata", 0, 0);
         refreshTileDataLayer();
@@ -46,6 +48,12 @@ public class LevelData implements Serializable {
     public void setTileData(int col, int row, int id) {
         if (col > 0 && col < tileData.length && row > 0 && row < tileData[0].length)
             tileData[col][row] = id;
+    }
+    
+    public void setEntityData(int col, int row, int id) {
+        EntityRegistry entityRegistry = new EntityRegistry();
+        if (col > 0 && col < entityData.length && row > 0 && row < entityData[0].length)
+            entityData[col][row] = entityRegistry.getEntityStruct(id);
     }
 
     public int getTileId(int col, int row) { return tileData[col][row]; }
