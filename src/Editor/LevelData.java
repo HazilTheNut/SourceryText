@@ -2,8 +2,10 @@ package Editor;
 
 import Engine.Layer;
 import Engine.SpecialText;
+import Game.Registries.EntityStruct;
 import Game.Registries.TileRegistry;
 
+import javax.swing.text.html.parser.Entity;
 import java.awt.*;
 import java.io.Serializable;
 
@@ -14,12 +16,11 @@ public class LevelData implements Serializable {
 
     private Layer backdrop;
     private Layer tileDataLayer;
+    private Layer entityLayer;
 
     private int[][] tileData;
 
-    private int[][] entityData;
-
-    private TileRegistry tileRegistry;
+    private EntityStruct[][] entityData;
 
     public LevelData (Layer layer){
         backdrop = layer;
@@ -30,14 +31,17 @@ public class LevelData implements Serializable {
             }
         }
         tileDataLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "tiledata", 0, 0);
+        entityLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "entitydata", 0, 0);
         refreshTileDataLayer();
     }
 
-    Layer provideTileDataLayer(){
+    Layer getTileDataLayer(){
         return tileDataLayer;
     }
 
     Layer getBackdrop() { return backdrop; }
+
+    public Layer getEntityLayer() { return entityLayer; }
 
     public void setTileData(int col, int row, int id) {
         if (col > 0 && col < tileData.length && row > 0 && row < tileData[0].length)
@@ -54,6 +58,8 @@ public class LevelData implements Serializable {
             backdrop.setPos(backdrop.getX() + c, backdrop.getY() + r);
             tileDataLayer.resizeLayer(tileDataLayer.getCols() - c, tileDataLayer.getRows() - r, -1 * c, -1 * r);
             tileDataLayer.setPos(tileDataLayer.getX() + c, tileDataLayer.getY() + r);
+            entityLayer.resizeLayer(entityLayer.getCols() - c, entityLayer.getRows() - r, -1 * c, -1 * r);
+            entityLayer.setPos(entityLayer.getX() + c, entityLayer.getY() + r);
             tileData = resizeTileData(tileData.length - c, tileData[0].length - r, -1 * c, -1 * r);
             refreshTileDataLayer();
         }
@@ -62,6 +68,7 @@ public class LevelData implements Serializable {
             int h = Math.max(row, tileData[0].length);
             backdrop.resizeLayer(w, h, 0, 0);
             tileDataLayer.resizeLayer(w, h, 0, 0);
+            entityLayer.resizeLayer(w, h, 0, 0);
             tileData = resizeTileData(w, h, 0, 0);
             refreshTileDataLayer();
         }
@@ -82,7 +89,7 @@ public class LevelData implements Serializable {
     }
 
     private void refreshTileDataLayer(){
-        tileRegistry = new TileRegistry();
+        TileRegistry tileRegistry = new TileRegistry();
         for (int col = 0; col < tileData.length; col++){
             for (int row = 0; row < tileData[0].length; row++){
                 tileDataLayer.editLayer(col, row, tileRegistry.getTileStruct(tileData[col][row]).getDisplayChar());

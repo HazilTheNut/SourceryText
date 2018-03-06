@@ -2,17 +2,19 @@ package Game.Registries;
 
 import Engine.SpecialText;
 
+import java.io.Serializable;
+
 /**
  * Created by Jared on 3/3/2018.
  */
-public class TileStruct {
+public class TileStruct implements Serializable{
 
-    int tileId;
-    int[] tagIDs;
-    SpecialText displayChar;
-    String tileName;
+    private int tileId;
+    private int[] tagIDs;
+    private SpecialText displayChar;
+    private String tileName;
 
-    public TileStruct(int id, String name, SpecialText text, int... tags){
+    TileStruct(int id, String name, SpecialText text, int... tags){
         tileId = id;
         displayChar = text;
         tagIDs = tags;

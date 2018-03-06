@@ -27,7 +27,7 @@ public class EditorToolPanel extends JPanel {
 
     private CameraManager cm;
 
-    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, Layer tileDataLayer, LevelData ldata){
+    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata){
 
         this.mi = mi;
         lm = manager;
@@ -36,7 +36,7 @@ public class EditorToolPanel extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setPreferredSize(new Dimension(100, 400));
 
-        createCameraPanel(tileDataLayer, ldata);
+        createCameraPanel(ldata);
 
         JButton expandButton = createDrawToolButton("Expand Room", new ExpandRoom(ldata));
         expandButton.setMaximumSize(new Dimension(90, 20));
@@ -44,19 +44,24 @@ public class EditorToolPanel extends JPanel {
 
         createArtToolsPanel();
 
-        createTileDataPanel(tileDataLayer, ldata);
+        createTileDataPanel(ldata);
+
+        JButton elTestButton = createDrawToolButton("Entity Layer Test", new EntityPlace(ldata));
+        elTestButton.setMaximumSize(new Dimension(90, 20));
+        add(elTestButton);
 
         validate();
     }
 
-    private void createCameraPanel(Layer tileDataLayer, LevelData ldata){
+    private void createCameraPanel(LevelData ldata){
         JPanel cameraPanel = new JPanel();
         cameraPanel.setBorder(BorderFactory.createTitledBorder("Camera"));
         cameraPanel.setLayout(new GridLayout(2, 3, 0, 5));
         cameraPanel.setMaximumSize(new Dimension(100, 65));
 
         cm.artLayer = ldata.getBackdrop();
-        cm.tileLayer = tileDataLayer;
+        cm.tileLayer = ldata.getTileDataLayer();
+        cm.entityLayer = ldata.getEntityLayer();
 
         String[] buttonNames = {"A","T","E","+","-"};
         for (String str : buttonNames){
@@ -67,6 +72,7 @@ public class EditorToolPanel extends JPanel {
             cameraPanel.add(btn);
             if (str.equals("A")) { cm.artButton = btn; btn.doClick(); }
             if (str.equals("T")) cm.tileButton = btn;
+            if (str.equals("E")) cm.entityButton = btn;
         }
 
         JLabel zoomLabel = new JLabel("");
@@ -103,7 +109,7 @@ public class EditorToolPanel extends JPanel {
         add(toolOptionsPanel);
     }
 
-    private void createTileDataPanel(Layer tileDataLayer, LevelData ldata){
+    private void createTileDataPanel(LevelData ldata){
         //Tile data panel
         JPanel tileDataPanel = new JPanel();
         tileDataPanel.setBorder(BorderFactory.createTitledBorder("Tile Data"));
@@ -120,7 +126,7 @@ public class EditorToolPanel extends JPanel {
 
         tileSelectBox.setMaximumSize(new Dimension(100, 25));
 
-        TilePencil tilePencil = new TilePencil(tileDataLayer, ldata);
+        TilePencil tilePencil = new TilePencil(ldata.getTileDataLayer(), ldata);
         tilePencil.setTileData((TileStruct)tileSelectBox.getSelectedItem());
         tileSelectBox.addActionListener(e -> {
             tilePencil.setTileData((TileStruct)tileSelectBox.getSelectedItem());
@@ -135,7 +141,7 @@ public class EditorToolPanel extends JPanel {
 
         JButton scanButton = new JButton(">Scan>");
         scanButton.setMargin(new Insets(0, 2, 0, 3));
-        scanButton.addActionListener(e -> scanForTileData(ldata, tileDataLayer));
+        scanButton.addActionListener(e -> scanForTileData(ldata, ldata.getTileDataLayer()));
 
         tileScanPanel.setLayout(new BorderLayout(1, 1));
         tileScanPanel.add(searchForIcon, BorderLayout.LINE_START);
@@ -198,6 +204,9 @@ public class EditorToolPanel extends JPanel {
                 break;
             case DrawTool.TYPE_TILE:
                 cm.tileViewMode();
+                break;
+            case DrawTool.TYPE_ENTITY:
+                cm.entityViewMode();
                 break;
         }
         if (selectedToolButton != null) {

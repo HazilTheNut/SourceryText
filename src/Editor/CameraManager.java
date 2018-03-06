@@ -15,6 +15,8 @@ public class CameraManager implements ActionListener {
     JButton artButton;
     Layer tileLayer;
     JButton tileButton;
+    Layer entityLayer;
+    JButton entityButton;
 
     JLabel zoomAmountLabel;
 
@@ -38,6 +40,9 @@ public class CameraManager implements ActionListener {
             case "T":
                 tileViewMode();
                 break;
+            case "E":
+                entityViewMode();
+                break;
             case "+":
                 mi.zoomScalar += 0.25f;
                 mi.updateZoom();
@@ -59,15 +64,23 @@ public class CameraManager implements ActionListener {
         prevViewModeBtn = newBtn;
     }
 
-    public void artViewMode() {
+    void artViewMode() {
         artLayer.setVisible(true);
         tileLayer.setVisible(false);
+        entityLayer.setVisible(false);
         updateButtons(artButton);
     }
 
-    public void tileViewMode() {
+    void tileViewMode() {
         artLayer.setVisible(false);
         tileLayer.setVisible(true);
+        entityLayer.setVisible(false);
         updateButtons(tileButton);
+    }
+    void entityViewMode() {
+        artLayer.setVisible(false);
+        tileLayer.setVisible(false);
+        entityLayer.setVisible(true);
+        updateButtons(entityButton);
     }
 }

@@ -6,7 +6,6 @@ import Engine.SpecialText;
 import Engine.ViewWindow;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 
 /**
@@ -45,12 +44,13 @@ public class EditorFrame extends JFrame {
         Layer mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH*4][window.RESOLUTION_HEIGHT*4], "mouse", 0, 0);
         mouseHighlight.fixedScreenPos = true;
 
-        Layer tileDataLayer = ldata.provideTileDataLayer();
+        Layer tileDataLayer = ldata.getTileDataLayer();
         tileDataLayer.setVisible(false);
 
         LayerManager manager = new LayerManager(window);
         manager.addLayer(ldata.getBackdrop());
-        manager.addLayer(tileDataLayer);
+        manager.addLayer(ldata.getTileDataLayer());
+        manager.addLayer(ldata.getEntityLayer());
         manager.addLayer(mouseHighlight);
 
         c.add(window, BorderLayout.CENTER);
@@ -63,14 +63,14 @@ public class EditorFrame extends JFrame {
         window.addMouseMotionListener(mi);
         window.addMouseWheelListener(mi);
 
-        EditorToolPanel toolPanel = new EditorToolPanel(mi, manager, tileDataLayer, ldata);
+        EditorToolPanel toolPanel = new EditorToolPanel(mi, manager, ldata);
         c.add(toolPanel, BorderLayout.LINE_END);
 
         textPanel.setToolPanel(toolPanel);
 
         c.validate();
 
-        setSize(new Dimension(700, 600));
+        setSize(new Dimension(850, 700));
 
         setVisible(true);
 

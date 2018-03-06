@@ -13,7 +13,7 @@ public abstract class DrawTool {
     public int TOOL_TYPE = 0;
     public static final int TYPE_ART = 1;
     public static final int TYPE_TILE = 2;
-
+    public static final int TYPE_ENTITY = 3;
 
     //Ran upon pressing left click down
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {}
