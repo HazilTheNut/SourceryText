@@ -45,10 +45,10 @@ public class ArtRectangle extends DrawTool {
 
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        int camX = (int)lm.getCameraPos().getX();
-        int camY = (int)lm.getCameraPos().getY();
-        drawRect(highlight, startX + camX, startY + camY, previousX + camX, previousY + camY, null);
-        drawRect(highlight, startX + camX, startY + camY, col + camX, row + camY, startHighlight);
+        int xOffset = (int)lm.getCameraPos().getX() + layer.getX();
+        int yOffset = (int)lm.getCameraPos().getY() + layer.getY();
+        drawRect(highlight, startX + xOffset, startY + yOffset, previousX + xOffset, previousY + yOffset, null);
+        drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, startHighlight);
         previousX = col;
         previousY = row;
         //System.out.println("[ArtLine] onDraw");
@@ -56,9 +56,9 @@ public class ArtRectangle extends DrawTool {
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        int camX = (int)lm.getCameraPos().getX();
-        int camY = (int)lm.getCameraPos().getY();
-        drawRect(highlight, startX + camX, startY + camY, col + camX, row + camY, null);
+        int xOffset = (int)lm.getCameraPos().getX() + layer.getX();
+        int yOffset = (int)lm.getCameraPos().getY() + layer.getY();
+        drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, null);
         drawRect(layer, startX, startY, col, row, text);
     }
 

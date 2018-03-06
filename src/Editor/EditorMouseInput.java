@@ -50,7 +50,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
             movingCamera = true;
             highlightLayer.editLayer(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()), null);
         } else if (e.getButton() == MouseEvent.BUTTON1 && !movingCamera && drawTool != null){
-            drawTool.onDrawStart(backdropLayer, highlightLayer, window.getSnappedMouseX(e.getX()) - (int)manager.getCameraPos().getX(), window.getSnappedMouseY(e.getY()) - (int)manager.getCameraPos().getY(), textPanel.selectedSpecialText);
+            drawTool.onDrawStart(backdropLayer, highlightLayer, window.getSnappedMouseX(e.getX()) - (int)manager.getCameraPos().getX() - backdropLayer.getX(), window.getSnappedMouseY(e.getY()) - (int)manager.getCameraPos().getY() - backdropLayer.getY(), textPanel.selectedSpecialText);
             drawing = true;
         }
     }
@@ -58,7 +58,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     @Override
     public void mouseReleased(MouseEvent e) {
         if (drawing && e.getButton() == MouseEvent.BUTTON1 && drawTool != null)
-            drawTool.onDrawEnd(backdropLayer, highlightLayer, window.getSnappedMouseX(e.getX()) - (int)manager.getCameraPos().getX(), window.getSnappedMouseY(e.getY()) - (int)manager.getCameraPos().getY(), textPanel.selectedSpecialText);
+            drawTool.onDrawEnd(backdropLayer, highlightLayer, window.getSnappedMouseX(e.getX()) - (int)manager.getCameraPos().getX() - backdropLayer.getX(), window.getSnappedMouseY(e.getY()) - (int)manager.getCameraPos().getY() - backdropLayer.getY(), textPanel.selectedSpecialText);
         movingCamera = false;
         drawing = false;
     }
@@ -84,7 +84,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
             previousCharYPos = window.getSnappedMouseY(e.getY());
         } else if (drawing){
             updateMouseCursorPos(e.getX(), e.getY());
-            drawTool.onDraw(backdropLayer, highlightLayer, window.getSnappedMouseX(e.getX()) - (int)manager.getCameraPos().getX(), window.getSnappedMouseY(e.getY()) - (int)manager.getCameraPos().getY(), textPanel.selectedSpecialText);
+            drawTool.onDraw(backdropLayer, highlightLayer, window.getSnappedMouseX(e.getX()) - (int)manager.getCameraPos().getX() - backdropLayer.getX(), window.getSnappedMouseY(e.getY()) - (int)manager.getCameraPos().getY() - backdropLayer.getY(), textPanel.selectedSpecialText);
         } else {
             updateMouseCursorPos(e.getX(), e.getY());
         }
@@ -97,7 +97,10 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     private void updateMouseCursorPos(int rawX, int rawY){
         highlightLayer.editLayer(previousXCharPos, previousCharYPos, null);
-        highlightLayer.editLayer(window.getSnappedMouseX(rawX), window.getSnappedMouseY(rawY), new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 120)));
+        if (!backdropLayer.isLayerLocInvalid(window.getSnappedMouseX(rawX) - (int)manager.getCameraPos().getX() - backdropLayer.getX(), window.getSnappedMouseY(rawY) - (int)manager.getCameraPos().getY() - backdropLayer.getY()))
+            highlightLayer.editLayer(window.getSnappedMouseX(rawX), window.getSnappedMouseY(rawY), new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 120)));
+        else
+            highlightLayer.editLayer(window.getSnappedMouseX(rawX), window.getSnappedMouseY(rawY), new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 40)));
         previousXCharPos = window.getSnappedMouseX(rawX);
         previousCharYPos = window.getSnappedMouseY(rawY);
     }

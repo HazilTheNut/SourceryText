@@ -37,10 +37,10 @@ public class ArtLine extends DrawTool {
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         //highlight.editLayer(startX, startY, startHighlight);
-        int camX = (int)lm.getCameraPos().getX();
-        int camY = (int)lm.getCameraPos().getY();
-        drawLine(highlight, startX + camX, startY + camY, previousX + camX, previousY + camY, null);
-        drawLine(highlight, startX + camX, startY + camY, col + camX, row + camY, startHighlight);
+        int xOffset = (int)lm.getCameraPos().getX() + layer.getX();
+        int yOffset = (int)lm.getCameraPos().getY() + layer.getY();
+        drawLine(highlight, startX + xOffset, startY + yOffset, previousX + xOffset, previousY + yOffset, null);
+        drawLine(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, startHighlight);
         previousX = col;
         previousY = row;
         //System.out.println("[ArtLine] onDraw");
@@ -48,9 +48,9 @@ public class ArtLine extends DrawTool {
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        int camX = (int)lm.getCameraPos().getX();
-        int camY = (int)lm.getCameraPos().getY();
-        drawLine(highlight, startX + camX, startY + camY, col + camX, row + camY, null);
+        int xOffset = (int)lm.getCameraPos().getX() + layer.getX();
+        int yOffset = (int)lm.getCameraPos().getY() + layer.getY();
+        drawLine(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, null);
         drawLine(layer, startX, startY, col, row, text);
     }
 

@@ -36,6 +36,15 @@ public class LayerManager {
         layerStack.add(toAdd);
     }
 
+    public void removeLayer (String toRemove){
+        for (Layer layer : layerStack){
+            if (layer.getName().equals(toRemove)) {
+                layerStack.remove(layer);
+                return;
+            }
+        }
+    }
+
     public void setCameraPos(int x, int y){
         camX = x;
         camY = y;

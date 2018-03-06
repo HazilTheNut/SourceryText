@@ -30,7 +30,7 @@ public class EditorFrame extends JFrame {
         c.addComponentListener(window);
         c.addKeyListener(window);
 
-        Layer levelBackdrop = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "test", 0, 0);
+        Layer levelBackdrop = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "level_backdrop", 0, 0);
         for (int col = 0; col < levelBackdrop.getCols(); col++){
             levelBackdrop.editLayer(col, 0, new SpecialText('#', Color.RED));
             levelBackdrop.editLayer(col, levelBackdrop.getRows()-1, new SpecialText('#', Color.RED));
@@ -42,7 +42,7 @@ public class EditorFrame extends JFrame {
 
         LevelData ldata = new LevelData(levelBackdrop);
 
-        Layer mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH][window.RESOLUTION_HEIGHT], "mouse", 0, 0);
+        Layer mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH*4][window.RESOLUTION_HEIGHT*4], "mouse", 0, 0);
         mouseHighlight.fixedScreenPos = true;
 
         Layer tileDataLayer = ldata.provideTileDataLayer();

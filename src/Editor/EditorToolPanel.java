@@ -38,6 +38,10 @@ public class EditorToolPanel extends JPanel {
 
         createCameraPanel(tileDataLayer, ldata);
 
+        JButton expandButton = createDrawToolButton("Expand Room", new ExpandRoom(ldata));
+        expandButton.setMaximumSize(new Dimension(90, 20));
+        add(expandButton);
+
         createArtToolsPanel();
 
         createTileDataPanel(tileDataLayer, ldata);
@@ -79,12 +83,12 @@ public class EditorToolPanel extends JPanel {
         artToolsPanel.setBorder(BorderFactory.createTitledBorder("Art Tools"));
 
         //Art tool buttons
-        artToolsPanel.add(createArtToolButton("Brush",     new ArtBrush()));
-        artToolsPanel.add(createArtToolButton("Eraser",    new ArtEraser()));
-        artToolsPanel.add(createArtToolButton("Line",      new ArtLine(lm)));
-        artToolsPanel.add(createArtToolButton("Rectangle", new ArtRectangle(lm)));
-        artToolsPanel.add(createArtToolButton("Fill",      new ArtFill()));
-        artToolsPanel.add(createArtToolButton("Pick",      new ArtPick(mi.getTextPanel())));
+        artToolsPanel.add(createDrawToolButton("Brush",     new ArtBrush()));
+        artToolsPanel.add(createDrawToolButton("Eraser",    new ArtEraser()));
+        artToolsPanel.add(createDrawToolButton("Line",      new ArtLine(lm)));
+        artToolsPanel.add(createDrawToolButton("Rectangle", new ArtRectangle(lm)));
+        artToolsPanel.add(createDrawToolButton("Fill",      new ArtFill()));
+        artToolsPanel.add(createDrawToolButton("Pick",      new ArtPick(mi.getTextPanel())));
 
         int numberCells = artToolsPanel.getComponentCount();
         artToolsPanel.setLayout(new GridLayout(numberCells,1,2,2));
@@ -139,7 +143,7 @@ public class EditorToolPanel extends JPanel {
         tileScanPanel.add(placeTileIcon, BorderLayout.LINE_END);
 
         tileDataPanel.add(tileSelectBox);
-        tileDataPanel.add(createArtToolButton("Tile Pencil", tilePencil));
+        tileDataPanel.add(createDrawToolButton("Tile Pencil", tilePencil));
         tileDataPanel.add(tileScanPanel);
         //tileDataPanel.add(Box.createRigidArea(new Dimension(1, 1)));
 
@@ -170,7 +174,7 @@ public class EditorToolPanel extends JPanel {
 
     private JButton selectedToolButton;
 
-    private JButton createArtToolButton(String name, DrawTool tool){
+    private JButton createDrawToolButton(String name, DrawTool tool){
         JButton btn = new JButton(name);
         btn.addActionListener(e -> setNewArtTool(btn, tool));
         btn.setHorizontalAlignment(SwingConstants.CENTER);

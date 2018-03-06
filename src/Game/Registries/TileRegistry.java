@@ -15,7 +15,7 @@ public class TileRegistry {
 
     public TileRegistry(){
 
-        registerTile(0, "Floor", new SpecialText(' ', Color.WHITE, new Color(15, 15, 15)));
+        registerTile(0, "Floor", new SpecialText(' ', Color.WHITE, new Color(30, 30, 30)));
         registerTile(1, "Wall", new SpecialText('x', Color.WHITE, new Color(150, 150, 150)));
         registerTile(2, "Grass", new SpecialText(' ', Color.WHITE, new Color(63, 104, 42)));
         registerTile(3, "Tree", new SpecialText('T', new Color(181, 255, 172), new Color(39, 68, 39)));

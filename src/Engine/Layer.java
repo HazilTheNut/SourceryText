@@ -18,9 +18,6 @@ public class Layer implements Serializable{
     public boolean fixedScreenPos = false;
     boolean visible = true;
 
-    public int getX() { return xpos; }
-
-    public int getY() { return ypos; }
 
 
     public Layer (SpecialText[][] layerData, String layerName, int x, int y){
@@ -53,6 +50,20 @@ public class Layer implements Serializable{
         }
     }
 
+    public void resizeLayer(int width, int height, int startX, int startY){
+        SpecialText[][] newMatrix = new SpecialText[width][height];
+        for (int col = 0; col < textMatrix.length; col++){
+            for (int row = 0; row < textMatrix[0].length; row++){
+                int x = col + startX;
+                int y = row + startY;
+                if (x > 0 && x < newMatrix.length && y > 0 && y < newMatrix[0].length){
+                    newMatrix[x][y] = textMatrix[col][row];
+                }
+            }
+        }
+        textMatrix = newMatrix;
+    }
+
     public SpecialText getSpecialText (int col, int row){
         //System.out.println(String.format("Layer getSpecialText: [%1$d,%2$d] of [%3$dx%4$d]", col, row, textMatrix.length, textMatrix[0].length));
         if (isLayerLocInvalid(col, row))
@@ -70,12 +81,16 @@ public class Layer implements Serializable{
         textMatrix[col][row] = text;
     }
 
-    private boolean isLayerLocInvalid(int col, int row){
+    public boolean isLayerLocInvalid(int col, int row){
         return (col < 0 || col >= textMatrix.length || row < 0 || row >= textMatrix[0].length);
     }
 
     public int getCols(){ return textMatrix.length; }
     public int getRows(){ return textMatrix[0].length; }
+
+    public int getX() { return xpos; }
+    public int getY() { return ypos; }
+    public void setPos(int x, int y) { xpos = x; ypos = y;}
 
     public void setVisible(boolean visible) { this.visible = visible; }
 
@@ -101,4 +116,6 @@ public class Layer implements Serializable{
             editLayer(col + index, row, new SpecialText(str.charAt(index), Color.WHITE, Color.BLACK));
         }
     }
+
+    public String getName() { return name; }
 }

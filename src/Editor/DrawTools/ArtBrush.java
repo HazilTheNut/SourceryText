@@ -37,6 +37,7 @@ public class ArtBrush extends DrawTool {
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
+        System.out.println("Draw pos: " + col + "," + row);
         drawBrush(layer, col, row, text);
     }
 
