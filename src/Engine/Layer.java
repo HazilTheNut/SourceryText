@@ -56,7 +56,7 @@ public class Layer implements Serializable{
             for (int row = 0; row < textMatrix[0].length; row++){
                 int x = col + startX;
                 int y = row + startY;
-                if (x > 0 && x < newMatrix.length && y > 0 && y < newMatrix[0].length){
+                if (x >= 0 && x < newMatrix.length && y >= 0 && y < newMatrix[0].length){
                     newMatrix[x][y] = textMatrix[col][row];
                 }
             }

@@ -24,7 +24,8 @@ public class ExpandRoom extends DrawTool {
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        ldata.resize(col, row);
         System.out.println("Draw pos: " + col + "," + row);
+        System.out.println("Layer dim: " + layer.getCols() + "x"  + layer.getRows());
+        ldata.resize(col, row);
     }
 }

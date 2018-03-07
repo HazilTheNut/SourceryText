@@ -166,16 +166,32 @@ public class EditorToolPanel extends JPanel {
         JComboBox<EntityStruct> entitySelectBox = new JComboBox<>();
         EntityRegistry entityRegistry = new EntityRegistry();
 
+        EntityPlace entityPlaceTool = new EntityPlace(ldata);
+
         int[] mapKeys = entityRegistry.getMapKeys();
         for (int i : mapKeys){
             entitySelectBox.addItem(entityRegistry.getEntityStruct(i));
         }
 
+        entityPlaceTool.setEntityStruct(mapKeys[0]);
+        entitySelectBox.addActionListener(e ->
+            {
+                int id = ((EntityStruct)entitySelectBox.getSelectedItem()).getEntityId();
+                System.out.println(id);
+                entityPlaceTool.setEntityStruct(id);
+            });
+
         entityDataPanel.add(entitySelectBox);
 
-        JButton placeEntityButton = createDrawToolButton("Place Entity", new EntityPlace(ldata));
+        JButton placeEntityButton = createDrawToolButton("Place Entity", entityPlaceTool);
         placeEntityButton.setMaximumSize(new Dimension(90, 20));
+        placeEntityButton.setMargin(new Insets(2, 2, 2, 2));
         entityDataPanel.add(placeEntityButton);
+        
+        JButton removeEntityButton = createDrawToolButton("Remove Entity", new EntityRemove(ldata));
+        removeEntityButton.setMaximumSize(new Dimension(90, 20));
+        removeEntityButton.setMargin(new Insets(2, 2, 2, 2));
+        entityDataPanel.add(removeEntityButton);
 
         entityDataPanel.setLayout(new GridLayout(entityDataPanel.getComponentCount(), 1, 2, 2));
         entityDataPanel.setMaximumSize(new Dimension(100, entityDataPanel.getComponentCount() * 30));

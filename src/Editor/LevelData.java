@@ -56,24 +56,31 @@ public class LevelData implements Serializable {
             entityData[col][row] = entityRegistry.getEntityStruct(id);
     }
 
+    public void removeEntity(int col, int row){
+        if (col > 0 && col < entityData.length && row > 0 && row < entityData[0].length)
+            entityData[col][row] = null;
+    }
+
     public int getTileId(int col, int row) { return tileData[col][row]; }
 
-    public void resize(int col, int row){        
+    public void resize(int col, int row){
+        System.out.println("Data dim: " + tileData.length + "x"  + tileData[0].length);
         if (col < 0 || row < 0) {
             int c = Math.min(0, col);
             int r = Math.min(0, row);
-            backdrop.resizeLayer(backdrop.getCols() - c, backdrop.getRows() - r, -1 * c, -1 * r);
-            backdrop.setPos(backdrop.getX() + c, backdrop.getY() + r);
-            tileDataLayer.resizeLayer(tileDataLayer.getCols() - c, tileDataLayer.getRows() - r, -1 * c, -1 * r);
+            backdrop.setPos(backdrop.getX()           + c, backdrop.getY() + r);
             tileDataLayer.setPos(tileDataLayer.getX() + c, tileDataLayer.getY() + r);
-            entityLayer.resizeLayer(entityLayer.getCols() - c, entityLayer.getRows() - r, -1 * c, -1 * r);
-            entityLayer.setPos(entityLayer.getX() + c, entityLayer.getY() + r);
-            tileData = resizeTileData(tileData.length - c, tileData[0].length - r, -1 * c, -1 * r);
+            entityLayer.setPos(entityLayer.getX()     + c, entityLayer.getY() + r);
+            backdrop.resizeLayer(backdrop.getCols()           - c, backdrop.getRows() - r,      -1 * c, -1 * r);
+            tileDataLayer.resizeLayer(tileDataLayer.getCols() - c, tileDataLayer.getRows() - r, -1 * c, -1 * r);
+            entityLayer.resizeLayer(entityLayer.getCols()     - c, entityLayer.getRows() - r,   -1 * c, -1 * r);
+            tileData = resizeTileData(tileData.length         - c, tileData[0].length - r,      -1 * c, -1 * r);
+            entityData = resizeEntityData(entityData.length   - c, entityData[0].length - r,    -1 * c, -1 * r);
             refreshTileDataLayer();
         }
-        if (col > tileData.length || row > tileData[0].length){
-            int w = Math.max(col, tileData.length);
-            int h = Math.max(row, tileData[0].length);
+        if (col >= tileData.length || row >= tileData[0].length){
+            int w = Math.max(col+1, tileData.length);
+            int h = Math.max(row+1, tileData[0].length);
             backdrop.resizeLayer(w, h, 0, 0);
             tileDataLayer.resizeLayer(w, h, 0, 0);
             entityLayer.resizeLayer(w, h, 0, 0);
@@ -88,8 +95,22 @@ public class LevelData implements Serializable {
             for (int row = 0; row < tileData[0].length; row++){
                 int x = col + startX;
                 int y = row + startY;
-                if (x > 0 && x < newMatrix.length && y > 0 && y < newMatrix[0].length){
+                if (x >= 0 && x < newMatrix.length && y >= 0 && y < newMatrix[0].length){
                     newMatrix[x][y] = tileData[col][row];
+                }
+            }
+        }
+        return newMatrix;
+    }
+
+    private EntityStruct[][] resizeEntityData(int width, int height, int startX, int startY){
+        EntityStruct[][] newMatrix = new EntityStruct[width][height];
+        for (int col = 0; col < entityData.length; col++){
+            for (int row = 0; row < entityData[0].length; row++){
+                int x = col + startX;
+                int y = row + startY;
+                if (x >= 0 && x < newMatrix.length && y >= 0 && y < newMatrix[0].length){
+                    newMatrix[x][y] = entityData[col][row];
                 }
             }
         }
