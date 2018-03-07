@@ -85,6 +85,7 @@ public class LevelData implements Serializable {
             tileDataLayer.resizeLayer(w, h, 0, 0);
             entityLayer.resizeLayer(w, h, 0, 0);
             tileData = resizeTileData(w, h, 0, 0);
+            entityData = resizeEntityData(w, h, 0, 0);
             refreshTileDataLayer();
         }
     }
