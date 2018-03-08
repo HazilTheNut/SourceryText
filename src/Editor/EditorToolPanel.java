@@ -185,13 +185,15 @@ public class EditorToolPanel extends JPanel {
 
         JButton placeEntityButton = createDrawToolButton("Place Entity", entityPlaceTool);
         placeEntityButton.setMaximumSize(new Dimension(90, 20));
-        placeEntityButton.setMargin(new Insets(2, 2, 2, 2));
         entityDataPanel.add(placeEntityButton);
         
         JButton removeEntityButton = createDrawToolButton("Remove Entity", new EntityRemove(ldata));
         removeEntityButton.setMaximumSize(new Dimension(90, 20));
-        removeEntityButton.setMargin(new Insets(2, 2, 2, 2));
         entityDataPanel.add(removeEntityButton);
+
+        JButton editEntityButton = createDrawToolButton("Edit Entity", new EntityEdit(ldata));
+        editEntityButton.setMaximumSize(new Dimension(90, 20));
+        entityDataPanel.add(editEntityButton);
 
         entityDataPanel.setLayout(new GridLayout(entityDataPanel.getComponentCount(), 1, 2, 2));
         entityDataPanel.setMaximumSize(new Dimension(100, entityDataPanel.getComponentCount() * 30));

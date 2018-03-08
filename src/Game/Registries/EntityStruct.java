@@ -14,7 +14,7 @@ public class EntityStruct implements Serializable{
     private int[] tagIDs;
     private SpecialText displayChar;
     private String entityName;
-    private ArrayList<Integer> items  = new ArrayList<>();
+    private ArrayList<ItemStruct> items  = new ArrayList<>();
 
     EntityStruct(int id, String name, SpecialText text, int... tags){
         entityId = id;
@@ -23,11 +23,13 @@ public class EntityStruct implements Serializable{
         entityName = name;
     }
 
-    public void addItem(int itemId) { items.add(itemId); }
+    public void addItem(ItemStruct item) { items.add(item); }
 
-    public void removeItem(int itemId) { items.remove(new Integer(itemId)); }
+    public void removeItem(ItemStruct item) { items.remove(item); }
 
     public int[] getTagIDs() { return tagIDs; }
+
+    public ArrayList<ItemStruct> getItems() {return items; }
 
     public SpecialText getDisplayChar() { return displayChar; }
 

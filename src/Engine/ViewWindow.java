@@ -21,9 +21,6 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
     public int RESOLUTION_WIDTH = 55;
     public int RESOLUTION_HEIGHT = 29;
 
-    private int mouseXCharPos = 0;
-    private int mouseYCharPos = RESOLUTION_HEIGHT;
-
     public LayerManager manager;
 
     private Font calculatedFont = new Font("Monospaced", Font.PLAIN, 15);
@@ -121,9 +118,6 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
     @Override
     public void mouseMoved(MouseEvent e) {
         //System.out.println(String.format("New Mouse Pos: %1$d,%2$d", e.getX(), e.getY()));
-        mouseXCharPos = getSnappedMouseX(e.getX());
-        mouseYCharPos = getSnappedMouseY(e.getY());
-        //System.out.println(String.format("New Mouse Pos: %1$d,%2$d", mouseXCharPos, mouseYCharPos));
     }
 
     public int getSnappedMouseX(int mouseRawX) { return (mouseRawX - HOR_MARGIN) / HOR_SEPARATION; }

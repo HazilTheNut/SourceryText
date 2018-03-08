@@ -63,6 +63,8 @@ public class LevelData implements Serializable {
 
     public int getTileId(int col, int row) { return tileData[col][row]; }
 
+    public EntityStruct getEntityAt(int col, int row) { return entityData[col][row]; }
+
     public void resize(int col, int row){
         System.out.println("Data dim: " + tileData.length + "x"  + tileData[0].length);
         if (col < 0 || row < 0) {

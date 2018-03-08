@@ -36,9 +36,15 @@ public class ItemStruct implements Serializable {
         return name;
     }
 
+    public void setQty(int qty) {
+        this.qty = qty;
+    }
+
+    public ItemStruct copy() { return new ItemStruct(itemId, qty, name, tags); }
+
     @Override
     public String toString() {
-        return getName();
+        return String.format("%1$-6s %2$-19s x%3$d", Integer.toString(itemId), name, qty);
     }
 }
 
