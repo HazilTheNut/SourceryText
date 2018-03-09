@@ -30,7 +30,7 @@ public class EntityPlace extends DrawTool {
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        ldata.getEntityLayer().editLayer(col, row, entityRegistry.getEntityStruct(id).getDisplayChar());
+        //ldata.getEntityLayer().editLayer(col, row, entityRegistry.getEntityStruct(id).getDisplayChar());
         ldata.setEntityData(col, row, id);
     }
 }

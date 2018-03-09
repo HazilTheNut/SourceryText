@@ -37,6 +37,12 @@ public class EntityStruct implements Serializable{
 
     public int getEntityId() { return entityId; }
 
+    public EntityStruct copy() {
+        EntityStruct struct = new EntityStruct(entityId, entityName, displayChar, tagIDs);
+        for (ItemStruct item : items) struct.addItem(item);
+        return struct;
+    }
+
     @Override
     public String toString() { return entityName; }
 }

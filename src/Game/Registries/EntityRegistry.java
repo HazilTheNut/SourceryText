@@ -34,7 +34,7 @@ public class EntityRegistry {
         return output;
     }
 
-    public EntityStruct getEntityStruct (int id) { return entityMap.get(id); }
+    public EntityStruct getEntityStruct (int id) { return entityMap.get(id).copy(); }
 
     private void registerEntity(int id, String name, SpecialText text, int... tags){
         entityMap.put(id, new EntityStruct(id, name, text, tags));

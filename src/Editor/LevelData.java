@@ -52,8 +52,14 @@ public class LevelData implements Serializable {
     
     public void setEntityData(int col, int row, int id) {
         EntityRegistry entityRegistry = new EntityRegistry();
-        if (col > 0 && col < entityData.length && row > 0 && row < entityData[0].length)
-            entityData[col][row] = entityRegistry.getEntityStruct(id);
+        setEntityData(col, row, entityRegistry.getEntityStruct(id));
+    }
+
+    public void setEntityData(int col, int row, EntityStruct entity){
+        if (col > 0 && col < entityData.length && row > 0 && row < entityData[0].length) {
+            entityData[col][row] = entity;
+            entityLayer.editLayer(col, row, entity.getDisplayChar());
+        }
     }
 
     public void removeEntity(int col, int row){

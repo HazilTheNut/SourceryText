@@ -195,6 +195,10 @@ public class EditorToolPanel extends JPanel {
         editEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(editEntityButton);
 
+        JButton copyEntityButton = createDrawToolButton("Copy Entity", new EntityCopy(ldata));
+        copyEntityButton.setMaximumSize(new Dimension(90, 20));
+        entityDataPanel.add(copyEntityButton);
+
         entityDataPanel.setLayout(new GridLayout(entityDataPanel.getComponentCount(), 1, 2, 2));
         entityDataPanel.setMaximumSize(new Dimension(100, entityDataPanel.getComponentCount() * 30));
         entityDataPanel.validate();
