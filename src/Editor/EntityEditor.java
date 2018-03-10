@@ -123,7 +123,7 @@ public class EntityEditor extends JFrame {
         if (sc.hasNextInt()){
             int qty = Integer.parseInt(textData);
             if (qty < 0)  qty = 0;
-            if (qty > 99) qty = 99;
+            if (qty > 999) qty = 999;
             item.setQty(qty);
         }
     }

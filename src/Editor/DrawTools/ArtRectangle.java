@@ -63,18 +63,21 @@ public class ArtRectangle extends DrawTool {
     }
 
     private void drawRect(Layer layer, int x1, int y1, int x2, int y2, SpecialText text){
+        int colSign = (x2 > x1) ? 1 : -1;
+        int rowSign = (y2 > y1) ? 1 : -1;
+        System.out.println(String.format("[RECTANGLE TOOL] colSign: %1$d rowSign: %2$d", colSign, rowSign));
         if (fillBox.isSelected()){
-            for (int col = x1; col <= x2; col++){
-                for (int row = y1; row <= y2; row++){
+            for (int col = x1; col*colSign <= x2*colSign; col+=colSign){
+                for (int row = y1; row*rowSign <= y2*rowSign; row+=rowSign){
                     layer.editLayer(col, row, text);
                 }
             }
         } else {
-            for (int col = x1; col <= x2; col++) {
+            for (int col = x1; col*colSign <= x2; col+=colSign) {
                 layer.editLayer(col, y1, text);
                 layer.editLayer(col, y2, text);
             }
-            for (int row = y1; row <= y2; row++) {
+            for (int row = y1; row*rowSign <= y2*rowSign; row+=rowSign) {
                 layer.editLayer(x1, row, text);
                 layer.editLayer(x2, row, text);
             }

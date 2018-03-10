@@ -202,7 +202,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         dispose();
     }
 
-    public void setBtnActionCommand(JButton btn, SpecialText text){
+    void setBtnActionCommand(JButton btn, SpecialText text){
         btn.setActionCommand(text.toString());
     }
 

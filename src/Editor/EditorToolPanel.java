@@ -138,7 +138,7 @@ public class EditorToolPanel extends JPanel {
         searchForIcon = new JLabel(new SingleTextRenderer(new SpecialText(' ')));
         placeTileIcon = new JLabel(new SingleTextRenderer(((TileStruct)tileSelectBox.getSelectedItem()).getDisplayChar()));
 
-        JButton scanButton = new JButton(">Scan>");
+        JButton scanButton = new JButton("Scan");
         scanButton.setMargin(new Insets(0, 2, 0, 3));
         scanButton.addActionListener(e -> scanForTileData(ldata, ldata.getTileDataLayer()));
 

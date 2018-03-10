@@ -29,7 +29,7 @@ public class CameraManager implements ActionListener {
         mi.cm = this;
     }
 
-    void updateLabel() { zoomAmountLabel.setText((int)(100 * mi.zoomScalar) + "%"); }
+    void updateLabel() { zoomAmountLabel.setText(mi.zoomAmount + "%"); }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -44,12 +44,12 @@ public class CameraManager implements ActionListener {
                 entityViewMode();
                 break;
             case "+":
-                mi.zoomScalar += 0.25f;
+                mi.zoomAmount += 10;
                 mi.updateZoom();
                 updateLabel();
                 break;
             case "-":
-                mi.zoomScalar -= 0.25f;
+                mi.zoomAmount -= 10f;
                 mi.updateZoom();
                 updateLabel();
                 break;

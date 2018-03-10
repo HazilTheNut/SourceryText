@@ -113,23 +113,23 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     private int originalResolutionWidth = 0;
     private int originalResolutionHeight = 0;
-    float zoomScalar = 1;
+    int zoomAmount = 100;
     CameraManager cm;
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        System.out.println(zoomScalar);
-        zoomScalar += e.getPreciseWheelRotation() / 4;
+        //System.out.println(zoomAmount);
+        zoomAmount += e.getPreciseWheelRotation() * -10;
         updateZoom();
         updateMouseCursorPos(e.getX(), e.getY());
         if (cm != null) cm.updateLabel();
     }
 
     public void updateZoom(){
-        if (zoomScalar < 0.25f) zoomScalar = 0.25f;
-        if (zoomScalar > 4) zoomScalar = 4;
-        window.RESOLUTION_WIDTH = (int)(originalResolutionWidth * zoomScalar);
-        window.RESOLUTION_HEIGHT = (int)(originalResolutionHeight * zoomScalar);
+        if (zoomAmount < 20) zoomAmount = 20;
+        if (zoomAmount > 200) zoomAmount = 200;
+        window.RESOLUTION_WIDTH = (int)(originalResolutionWidth / ((float)zoomAmount / 100));
+        window.RESOLUTION_HEIGHT = (int)(originalResolutionHeight / ((float)zoomAmount / 100));
         window.recalculate();
     }
 }

@@ -25,7 +25,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     public EditorTextPanel (){
 
         BorderLayout layout = new BorderLayout();
-        setPreferredSize(new Dimension(50, 500));
+        setPreferredSize(new Dimension(60, 500));
         setLayout(layout);
 
         JButton addNewTextButton = new JButton("+");
@@ -46,25 +46,25 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         //add(new JButton("Test"), BorderLayout.PAGE_END);
 
         JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.PAGE_AXIS));
+        bottomPanel.setLayout(new GridLayout(3, 1, 1, 3));
 
         selectionRender = new SingleTextRenderer(new SpecialText(' ', Color.WHITE, Color.WHITE));
         selectionLabel = new JLabel(selectionRender);
         selectionLabel.setMaximumSize(new Dimension(20, 20));
         selectionLabel.setAlignmentX(CENTER_ALIGNMENT);
 
-        bottomPanel.add(Box.createRigidArea(new Dimension(1, 5)));
+        //bottomPanel.add(Box.createRigidArea(new Dimension(1, 5)));
         bottomPanel.add(selectionLabel);
-        bottomPanel.add(Box.createRigidArea(new Dimension(1, 5)));
+        //bottomPanel.add(Box.createRigidArea(new Dimension(1, 5)));
 
         JButton editButton = new JButton("Edit");
         editButton.setAlignmentX(CENTER_ALIGNMENT);
-        editButton.setMargin(new Insets(4, 11, 4, 13));
+        editButton.setMargin(new Insets(4, 1, 4, 1));
         editButton.addActionListener(e -> createNewButton(selectedTextButton));
 
         JButton removeButton = new JButton("Remove");
         removeButton.setAlignmentX(CENTER_ALIGNMENT);
-        removeButton.setMargin(new Insets(4, 2, 4, 2));
+        removeButton.setMargin(new Insets(4, 1, 4, 1));
         removeButton.setActionCommand("Remove Btn");
         removeButton.addActionListener(this);
 
@@ -74,6 +74,8 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         add(bottomPanel, BorderLayout.PAGE_END);
 
         validate();
+
+        generateNewButton(null);
     }
 
     public void setToolPanel(EditorToolPanel toolPanel) { this.toolPanel = toolPanel; }
@@ -88,6 +90,8 @@ public class EditorTextPanel extends JPanel implements ActionListener{
                 textBtnPanel.validate();
                 textBtnPanel.repaint();
             }
+        } else if (e.getActionCommand().equals("nulltext")){
+            selectedSpecialText = null;
         } else {
             buildSpecTxtFromButtonClick(e.getActionCommand());
             selectedTextButton = (JButton)e.getSource();
@@ -97,6 +101,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     private void createNewButton(JButton btn){
         btn.setFont(new Font("Monospaced", Font.PLAIN, 12));
         btn.setHorizontalTextPosition(SwingConstants.LEFT);
+        btn.setAlignmentX(0.25f);
         btn.setMargin(new Insets(2, 2, 2, 2));
         btn.setOpaque(true);
         btn.addActionListener(this);
@@ -115,12 +120,15 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         JButton btn = new JButton(new SingleTextRenderer(new SpecialText(' ')));
         btn.setFont(new Font("Monospaced", Font.PLAIN, 12));
         btn.setHorizontalTextPosition(SwingConstants.LEFT);
+        btn.setAlignmentX(0.25f);
         btn.setMargin(new Insets(2, 2, 2, 2));
         btn.setOpaque(true);
         btn.addActionListener(this);
         btn.setIcon(new SingleTextRenderer(text));
-        EditorSpecialTextMaker maker = new EditorSpecialTextMaker(textBtnPanel, btn, text);
-        maker.setBtnActionCommand(btn, text);
+        if (text != null)
+            btn.setActionCommand(text.toString());
+        else
+            btn.setActionCommand("nulltext");
         textBtnPanel.add(btn, 0);
         textBtnPanel.validate();
         validate();
