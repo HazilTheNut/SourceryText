@@ -83,7 +83,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Add New Btn")) { //Adds new button
-            createNewButton(new JButton(new SingleTextRenderer(new SpecialText(' '))));
+            createNewButton(createBaseButton());
         } else if (e.getActionCommand().equals("Remove Btn")){
             if (selectedTextButton != null){
                 textBtnPanel.remove(selectedTextButton);
@@ -92,13 +92,14 @@ public class EditorTextPanel extends JPanel implements ActionListener{
             }
         } else if (e.getActionCommand().equals("nulltext")){
             selectedSpecialText = null;
-        } else {
+        } else if (!e.getActionCommand().equals("")){
             buildSpecTxtFromButtonClick(e.getActionCommand());
             selectedTextButton = (JButton)e.getSource();
         }
     }
-    
-    private void createNewButton(JButton btn){
+
+    private JButton createBaseButton(){
+        JButton btn = new JButton(new SingleTextRenderer(new SpecialText(' ')));
         btn.setFont(new Font("Monospaced", Font.PLAIN, 12));
         btn.setHorizontalTextPosition(SwingConstants.LEFT);
         btn.setAlignmentX(0.25f);
@@ -108,6 +109,10 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         textBtnPanel.add(btn, 0);
         textBtnPanel.validate();
         validate();
+        return btn;
+    }
+
+    private void createNewButton(JButton btn){
         EditorSpecialTextMaker textMaker;
         if (selectedTextButton == null || selectedTextButton.getIcon() == null)
             textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, new SpecialText(' ', Color.WHITE, Color.BLACK));
@@ -117,21 +122,12 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     }
 
     public void generateNewButton(SpecialText text){
-        JButton btn = new JButton(new SingleTextRenderer(new SpecialText(' ')));
-        btn.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        btn.setHorizontalTextPosition(SwingConstants.LEFT);
-        btn.setAlignmentX(0.25f);
-        btn.setMargin(new Insets(2, 2, 2, 2));
-        btn.setOpaque(true);
-        btn.addActionListener(this);
+        JButton btn = createBaseButton();
         btn.setIcon(new SingleTextRenderer(text));
         if (text != null)
             btn.setActionCommand(text.toString());
         else
             btn.setActionCommand("nulltext");
-        textBtnPanel.add(btn, 0);
-        textBtnPanel.validate();
-        validate();
     }
     
     private void buildSpecTxtFromButtonClick(String command){

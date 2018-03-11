@@ -9,6 +9,7 @@ import Game.Registries.TileRegistry;
 import javax.swing.text.html.parser.Entity;
 import java.awt.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 2/26/2018.
@@ -17,11 +18,12 @@ public class LevelData implements Serializable {
 
     private Layer backdrop;
     private Layer tileDataLayer;
+    private Layer warpZoneLayer;
     private Layer entityLayer;
 
     private int[][] tileData;
-
     private EntityStruct[][] entityData;
+    private ArrayList<WarpZone> warpZones;
 
     public LevelData (Layer layer){
         backdrop = layer;
@@ -34,6 +36,8 @@ public class LevelData implements Serializable {
         entityData = new EntityStruct[backdrop.getCols()][backdrop.getRows()];
         tileDataLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "tiledata", 0, 0);
         entityLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "entitydata", 0, 0);
+        warpZoneLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "warpzonedata", 0, 0);
+        warpZones = new ArrayList<>();
         refreshTileDataLayer();
     }
 
@@ -44,6 +48,12 @@ public class LevelData implements Serializable {
     Layer getBackdrop() { return backdrop; }
 
     public Layer getEntityLayer() { return entityLayer; }
+
+    Layer getWarpZoneLayer() { return warpZoneLayer; }
+
+    public void addWarpZone(WarpZone wz){
+        warpZones.add(wz);
+    }
 
     public void setTileData(int col, int row, int id) {
         if (col > 0 && col < tileData.length && row > 0 && row < tileData[0].length)
@@ -76,14 +86,17 @@ public class LevelData implements Serializable {
         if (col < 0 || row < 0) {
             int c = Math.min(0, col);
             int r = Math.min(0, row);
-            backdrop.setPos(backdrop.getX()           + c, backdrop.getY() + r);
+            backdrop.setPos(backdrop.getX()           + c, backdrop.getY()      + r);
             tileDataLayer.setPos(tileDataLayer.getX() + c, tileDataLayer.getY() + r);
-            entityLayer.setPos(entityLayer.getX()     + c, entityLayer.getY() + r);
+            entityLayer.setPos(entityLayer.getX()     + c, entityLayer.getY()   + r);
+            warpZoneLayer.setPos(warpZoneLayer.getX() + c, warpZoneLayer.getY() + r);
             backdrop.resizeLayer(backdrop.getCols()           - c, backdrop.getRows() - r,      -1 * c, -1 * r);
             tileDataLayer.resizeLayer(tileDataLayer.getCols() - c, tileDataLayer.getRows() - r, -1 * c, -1 * r);
             entityLayer.resizeLayer(entityLayer.getCols()     - c, entityLayer.getRows() - r,   -1 * c, -1 * r);
+            warpZoneLayer.resizeLayer(warpZoneLayer.getCols() - c, warpZoneLayer.getRows() - r, -1 * c, -1 * r);
             tileData = resizeTileData(tileData.length         - c, tileData[0].length - r,      -1 * c, -1 * r);
             entityData = resizeEntityData(entityData.length   - c, entityData[0].length - r,    -1 * c, -1 * r);
+            translateWarpZones(-1 * c, -1 * r);
             refreshTileDataLayer();
         }
         if (col >= tileData.length || row >= tileData[0].length){
@@ -92,6 +105,7 @@ public class LevelData implements Serializable {
             backdrop.resizeLayer(w, h, 0, 0);
             tileDataLayer.resizeLayer(w, h, 0, 0);
             entityLayer.resizeLayer(w, h, 0, 0);
+            warpZoneLayer.resizeLayer(w, h, 0, 0);
             tileData = resizeTileData(w, h, 0, 0);
             entityData = resizeEntityData(w, h, 0, 0);
             refreshTileDataLayer();
@@ -126,12 +140,30 @@ public class LevelData implements Serializable {
         return newMatrix;
     }
 
+    private void translateWarpZones(int xoffset, int yoffset){
+        for (WarpZone wz : warpZones){
+            wz.setPos(wz.getXpos() + xoffset, wz.getYpos() + yoffset);
+        }
+    }
+
     private void refreshTileDataLayer(){
         TileRegistry tileRegistry = new TileRegistry();
         for (int col = 0; col < tileData.length; col++){
             for (int row = 0; row < tileData[0].length; row++){
                 tileDataLayer.editLayer(col, row, tileRegistry.getTileStruct(tileData[col][row]).getDisplayChar());
             }
+        }
+    }
+
+    public void redrawWarpZoneLayer(){
+        warpZoneLayer.clearLayer();
+        for (WarpZone warpZone : warpZones){
+            for (int col = 0; col < warpZone.getWidth(); col++){
+                for (int row = 0; row < warpZone.getHeight(); row++){
+                    warpZoneLayer.editLayer(col + warpZone.getXpos(), row + warpZone.getYpos(), new SpecialText(' ', Color.WHITE, new Color(95, 0, 115, 75)));
+                }
+            }
+            System.out.println("Updated warp zone");
         }
     }
 }

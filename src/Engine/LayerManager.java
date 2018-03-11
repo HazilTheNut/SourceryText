@@ -66,7 +66,7 @@ public class LayerManager {
                 finalResult.editLayer(col, row, new SpecialText(text.getCharacter(), colors[1], colors[0]));
             }
         }
-        finalResult.blankOpacifyLayer();
+        finalResult.convertNullToOpaque();
         return finalResult;
     }
 
@@ -85,39 +85,37 @@ public class LayerManager {
     //Slightly more complicated, but has to account for translucent layers
     private Color[] projectColorsToScreen(int screenX, int screenY){
         Color[] fgBkgColors = new Color[2];
-        int alphaSum = 0;
+        double alphaSum = 0;
         int redSum =   0;
         int blueSum =  0;
         int greenSum = 0;
         double remainingAlpha = 1;
-        for (int ii = layerStack.size()-1; ii >= 0; ii--){
+        for (int ii = layerStack.size()-1; ii >= 0; ii--) {
             Layer layer = layerStack.get(ii);
             if (layer.getVisible()) {
                 SpecialText get = getSpecialTextAtScreenCoord(screenX, screenY, layer);
                 if (get != null) {
                     if (get.getCharacter() != ' ' && fgBkgColors[1] == null) { //Finds non-empty text, and therefore what to return as foreground color
-                        int fgRed =   Math.min(redSum + (int)( remainingAlpha * get.getFgColor().getRed()), 255);
-                        int fgGreen = Math.min(greenSum + (int)( remainingAlpha * get.getFgColor().getGreen()), 255);
-                        int fgBlue =  Math.min(blueSum + (int)( remainingAlpha * get.getFgColor().getBlue()), 255);
+                        int fgRed = Math.min(redSum + (int) (remainingAlpha * get.getFgColor().getRed()), 255);
+                        int fgGreen = Math.min(greenSum + (int) (remainingAlpha * get.getFgColor().getGreen()), 255);
+                        int fgBlue = Math.min(blueSum + (int) (remainingAlpha * get.getFgColor().getBlue()), 255);
                         fgBkgColors[1] = new Color(fgRed, fgGreen, fgBlue);
                     }
                     /**/
                     if (get.getBkgColor().getAlpha() > 0) {
-                        double percentAlpha = (double)get.getBkgColor().getAlpha() / 255; //Alpha being reduced from range 0-255 to 0-1
+                        double percentAlpha = (double) get.getBkgColor().getAlpha() / 255; //Alpha being reduced from range 0-255 to 0-1
                         alphaSum += percentAlpha * remainingAlpha;
-                        redSum +=   (double)get.getBkgColor().getRed()     * percentAlpha * remainingAlpha;
-                        greenSum += (double)get.getBkgColor().getGreen()   * percentAlpha * remainingAlpha;
-                        blueSum +=  (double)get.getBkgColor().getBlue()    * percentAlpha * remainingAlpha;
-                        remainingAlpha = 1 - (percentAlpha * remainingAlpha);
+                        redSum += (double) get.getBkgColor().getRed() * percentAlpha * remainingAlpha;
+                        greenSum += (double) get.getBkgColor().getGreen() * percentAlpha * remainingAlpha;
+                        blueSum += (double) get.getBkgColor().getBlue() * percentAlpha * remainingAlpha;
+                        remainingAlpha *= (1 - percentAlpha);
                     }
                 }
                 if (alphaSum >= 1)
                     break;
             }
         }
-        if (alphaSum == 0)
-            fgBkgColors[0] = Color.BLACK;
-        fgBkgColors[0] = new Color (redSum, greenSum, blueSum);
+        fgBkgColors[0] = new Color(redSum, greenSum, blueSum);
         return fgBkgColors;
     }
 

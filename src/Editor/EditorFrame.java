@@ -51,6 +51,7 @@ public class EditorFrame extends JFrame {
         manager.addLayer(ldata.getBackdrop());
         manager.addLayer(ldata.getTileDataLayer());
         manager.addLayer(ldata.getEntityLayer());
+        manager.addLayer(ldata.getWarpZoneLayer());
         manager.addLayer(mouseHighlight);
 
         c.add(window, BorderLayout.CENTER);
@@ -70,7 +71,7 @@ public class EditorFrame extends JFrame {
 
         c.validate();
 
-        setSize(new Dimension(850, 700));
+        setSize(new Dimension(850, 750));
 
         setVisible(true);
 

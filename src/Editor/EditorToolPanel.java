@@ -50,6 +50,8 @@ public class EditorToolPanel extends JPanel {
 
         createEntityDataPanel(ldata);
 
+        add(createDrawToolButton("Warp Zone", new WarpZoneCreate(lm, ldata)));
+
         validate();
     }
 
@@ -62,6 +64,7 @@ public class EditorToolPanel extends JPanel {
         cm.artLayer = ldata.getBackdrop();
         cm.tileLayer = ldata.getTileDataLayer();
         cm.entityLayer = ldata.getEntityLayer();
+        cm.warpZoneLayer = ldata.getWarpZoneLayer();
 
         String[] buttonNames = {"A","T","E","+","-"};
         for (String str : buttonNames){

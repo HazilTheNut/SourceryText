@@ -40,12 +40,23 @@ public class Layer implements Serializable{
     }
 
     /**
-     * Fills layer with blank opaque characters
+     * Fills layer with blank opaque characters in replacement of null SpecialTexts
      */
-    void blankOpacifyLayer(){
+    void convertNullToOpaque(){
         for (int col = 0; col < textMatrix.length; col++){
             for (int row = 0; row < textMatrix[0].length; row++){
                 if (textMatrix[col][row] == null) textMatrix[col][row] = new SpecialText(' ');
+            }
+        }
+    }
+
+    /**
+     * Fills layer with null SpecialTexts
+     */
+    public void clearLayer(){
+        for (int col = 0; col < textMatrix.length; col++){
+            for (int row = 0; row < textMatrix[0].length; row++){
+                textMatrix[col][row] = null;
             }
         }
     }

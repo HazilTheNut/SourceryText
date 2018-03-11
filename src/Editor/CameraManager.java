@@ -18,6 +18,8 @@ public class CameraManager implements ActionListener {
     Layer entityLayer;
     JButton entityButton;
 
+    Layer warpZoneLayer;
+
     JLabel zoomAmountLabel;
 
     private EditorMouseInput mi;
@@ -68,6 +70,7 @@ public class CameraManager implements ActionListener {
         artLayer.setVisible(true);
         tileLayer.setVisible(false);
         entityLayer.setVisible(false);
+        warpZoneLayer.setVisible(false);
         updateButtons(artButton);
     }
 
@@ -75,12 +78,14 @@ public class CameraManager implements ActionListener {
         artLayer.setVisible(false);
         tileLayer.setVisible(true);
         entityLayer.setVisible(false);
+        warpZoneLayer.setVisible(true);
         updateButtons(tileButton);
     }
     void entityViewMode() {
         artLayer.setVisible(false);
         tileLayer.setVisible(false);
         entityLayer.setVisible(true);
+        warpZoneLayer.setVisible(false);
         updateButtons(entityButton);
     }
 }
