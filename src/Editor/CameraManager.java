@@ -81,8 +81,9 @@ public class CameraManager implements ActionListener {
         warpZoneLayer.setVisible(true);
         updateButtons(tileButton);
     }
+
     void entityViewMode() {
-        artLayer.setVisible(false);
+        artLayer.setVisible(true);
         tileLayer.setVisible(false);
         entityLayer.setVisible(true);
         warpZoneLayer.setVisible(false);

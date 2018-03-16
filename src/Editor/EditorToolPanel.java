@@ -10,7 +10,9 @@ import Game.Registries.TileRegistry;
 import Game.Registries.TileStruct;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.io.*;
 
 /**
  * Created by Jared on 2/25/2018.
@@ -29,7 +31,7 @@ public class EditorToolPanel extends JPanel {
 
     private CameraManager cm;
 
-    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata){
+    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher){
 
         this.mi = mi;
         lm = manager;
@@ -37,6 +39,8 @@ public class EditorToolPanel extends JPanel {
 
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setPreferredSize(new Dimension(100, 400));
+
+        createTopMenu(ldata, watcher);
 
         createCameraPanel(ldata);
 
@@ -53,6 +57,38 @@ public class EditorToolPanel extends JPanel {
         add(createDrawToolButton("Warp Zone", new WarpZoneCreate(lm, ldata)));
 
         validate();
+    }
+
+    private void createTopMenu(LevelData ldata, WindowWatcher watcher){
+        JPanel menuPanel = new JPanel();
+        menuPanel.setLayout(new BorderLayout(0, 2));
+
+        JPopupMenu levelMenu = new JPopupMenu("Menu");
+
+        JMenuItem saveLevelItem = new JMenuItem("Save Level");
+        saveLevelItem.addActionListener(e -> saveLevel(ldata));
+        levelMenu.add(saveLevelItem);
+
+        JMenuItem openLevelItem = new JMenuItem("Open Level");
+        openLevelItem.addActionListener(e -> openLevel(watcher));
+        levelMenu.add(openLevelItem);
+
+        JMenuItem newLevelItem = new JMenuItem("New Level");
+        newLevelItem.addActionListener(e -> {
+            LevelData newLData = new LevelData();
+            newLData.reset();
+            new EditorFrame(newLData, watcher);
+        });
+        levelMenu.add(newLevelItem);
+
+        levelMenu.addSeparator();
+        levelMenu.add(new JMenuItem("Export to .PNG"));
+
+        menuPanel.add(new LonelyMenu(levelMenu, menuPanel));
+        menuPanel.setBorder(BorderFactory.createEtchedBorder());
+        menuPanel.setMaximumSize(new Dimension(100, 20));
+
+        add(menuPanel);
     }
 
     private void createCameraPanel(LevelData ldata){
@@ -263,6 +299,50 @@ public class EditorToolPanel extends JPanel {
         }
         btn.setEnabled(false);
         selectedToolButton = btn;
+    }
+
+    private void saveLevel(LevelData ldata){
+        String path;
+        JFileChooser fileChooser = new JFileChooser();
+        int fileChooseOption = fileChooser.showSaveDialog(new Component(){});
+        if (fileChooseOption == JFileChooser.APPROVE_OPTION){
+            path = fileChooser.getSelectedFile().getPath();
+            if (!path.endsWith(".lda")) { // Add .sav to file if user didn't.
+                path += ".lda";
+            }
+            System.out.println("You chose to save the file to: " + path);
+            try {
+                FileOutputStream out = new FileOutputStream(path);
+                ObjectOutputStream objOut = new ObjectOutputStream(out);
+                objOut.writeObject(ldata);
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void openLevel(WindowWatcher watcher){
+        File savedLevel;
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "Sourcery Text Level Data", "lda");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(new Component() {
+        });
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            System.out.println("You chose to open this file: " +
+                    chooser.getSelectedFile().getName());
+            savedLevel = chooser.getSelectedFile();
+        } else return;
+
+        try {
+            FileInputStream fileIn = new FileInputStream(savedLevel);
+            ObjectInputStream objIn = new ObjectInputStream(fileIn);
+            LevelData levelData = (LevelData)objIn.readObject();
+            EditorFrame newFrame = new EditorFrame(levelData, watcher);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 }

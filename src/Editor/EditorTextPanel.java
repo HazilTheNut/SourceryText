@@ -28,6 +28,9 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         setPreferredSize(new Dimension(60, 500));
         setLayout(layout);
 
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BorderLayout(0, 0));
+
         JButton addNewTextButton = new JButton("+");
         addNewTextButton.setFont(new Font("Monospaced", Font.BOLD, 20));
         addNewTextButton.setSelected(false);
@@ -35,7 +38,9 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         addNewTextButton.setActionCommand("Add New Btn");
         addNewTextButton.addActionListener(this);
 
-        add(addNewTextButton, BorderLayout.PAGE_START);
+        topPanel.add(addNewTextButton, BorderLayout.CENTER);
+
+        add(topPanel, BorderLayout.PAGE_START);
 
         textBtnPanel = new JPanel();
         textBtnPanel.setLayout(new BoxLayout(textBtnPanel, BoxLayout.PAGE_AXIS));
@@ -161,5 +166,4 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         selectionLabel.repaint();
         if (toolPanel != null) toolPanel.updateSearchForIcon(selectedSpecialText);
     }
-
 }
