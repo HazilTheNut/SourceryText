@@ -58,6 +58,6 @@ public class WarpZoneCreate extends ArtRectangle {
         WarpZone warpZone = new WarpZone(startX, startY, col - startX + 1, row - startY + 1);
         System.out.println(String.format("x %1$d y %2$d w %3$d h %4$d", startX, startY, col - startX, row - startY));
         ldata.addWarpZone(warpZone);
-        ldata.redrawWarpZoneLayer();
+        ldata.updateWarpZoneLayer(col, row);
     }
 }

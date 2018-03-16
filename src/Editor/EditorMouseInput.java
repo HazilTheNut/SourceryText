@@ -26,10 +26,12 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     private DrawTool drawTool;
 
+    private LevelData ldata;
+
     private boolean movingCamera = false;
     private boolean drawing = false;
 
-    EditorMouseInput(ViewWindow viewWindow, LayerManager layerManager, Layer highlight, EditorTextPanel panel, Layer backdrop){
+    EditorMouseInput(ViewWindow viewWindow, LayerManager layerManager, Layer highlight, EditorTextPanel panel, Layer backdrop, LevelData levelData){
         window = viewWindow;
         manager = layerManager;
         highlightLayer = highlight;
@@ -37,6 +39,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
         backdropLayer = backdrop;
         originalResolutionWidth = window.RESOLUTION_WIDTH;
         originalResolutionHeight = window.RESOLUTION_HEIGHT;
+        ldata = levelData;
     }
 
     @Override
@@ -45,7 +48,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     @Override
     public void mousePressed(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON3 && !drawing) {
-            previousXCharPos = window.getSnappedMouseX(e.getX());
+            previousCharXPos = window.getSnappedMouseX(e.getX());
             previousCharYPos = window.getSnappedMouseY(e.getY());
             movingCamera = true;
             highlightLayer.editLayer(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()), null);
@@ -73,14 +76,14 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     }
 
-    private int previousXCharPos = 0;
+    private int previousCharXPos = 0;
     private int previousCharYPos = 0;
 
     @Override
     public void mouseDragged(MouseEvent e) {
         if (movingCamera) {
-            manager.moveCameraPos(window.getSnappedMouseX(e.getX()) - previousXCharPos, window.getSnappedMouseY(e.getY()) - previousCharYPos);
-            previousXCharPos = window.getSnappedMouseX(e.getX());
+            manager.moveCameraPos(window.getSnappedMouseX(e.getX()) - previousCharXPos, window.getSnappedMouseY(e.getY()) - previousCharYPos);
+            previousCharXPos = window.getSnappedMouseX(e.getX());
             previousCharYPos = window.getSnappedMouseY(e.getY());
         } else if (drawing){
             updateMouseCursorPos(e.getX(), e.getY());
@@ -92,16 +95,18 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        if (window.getSnappedMouseX(e.getX()) != previousCharXPos || window.getSnappedMouseY(e.getY()) != previousCharYPos)
+            ldata.updateWarpZoneLayer(window.getSnappedMouseX(e.getX()) - (int)manager.getCameraPos().getX(), window.getSnappedMouseY(e.getY()) - (int)manager.getCameraPos().getY());
         updateMouseCursorPos(e.getX(), e.getY());
     }
 
     private void updateMouseCursorPos(int rawX, int rawY){
-        highlightLayer.editLayer(previousXCharPos, previousCharYPos, null);
+        highlightLayer.editLayer(previousCharXPos, previousCharYPos, null);
         if (!backdropLayer.isLayerLocInvalid(window.getSnappedMouseX(rawX) - (int)manager.getCameraPos().getX() - backdropLayer.getX(), window.getSnappedMouseY(rawY) - (int)manager.getCameraPos().getY() - backdropLayer.getY()))
             highlightLayer.editLayer(window.getSnappedMouseX(rawX), window.getSnappedMouseY(rawY), new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 120)));
         else
             highlightLayer.editLayer(window.getSnappedMouseX(rawX), window.getSnappedMouseY(rawY), new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 40)));
-        previousXCharPos = window.getSnappedMouseX(rawX);
+        previousCharXPos = window.getSnappedMouseX(rawX);
         previousCharYPos = window.getSnappedMouseY(rawY);
     }
 

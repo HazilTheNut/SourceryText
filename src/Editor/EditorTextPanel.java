@@ -166,4 +166,12 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         selectionLabel.repaint();
         if (toolPanel != null) toolPanel.updateSearchForIcon(selectedSpecialText);
     }
+
+    public JScrollPane getTextBtnScrollPane() {
+        return textBtnScrollPane;
+    }
+
+    public void setTextBtnScrollPane(JScrollPane textBtnScrollPane) {
+        this.textBtnScrollPane = textBtnScrollPane;
+    }
 }

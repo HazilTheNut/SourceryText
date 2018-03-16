@@ -15,7 +15,7 @@ import java.awt.event.WindowListener;
  */
 public class EditorFrame extends JFrame {
 
-    EditorTextPanel editorTextPanel;
+    private EditorTextPanel editorTextPanel;
 
     public EditorFrame(LevelData ldata, WindowWatcher watcher){
 
@@ -45,7 +45,7 @@ public class EditorFrame extends JFrame {
         editorTextPanel = new EditorTextPanel();
         c.add(editorTextPanel, BorderLayout.LINE_START);
 
-        EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, editorTextPanel, ldata.getBackdrop());
+        EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, editorTextPanel, ldata.getBackdrop(), ldata);
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);
         window.addMouseWheelListener(mi);

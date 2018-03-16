@@ -15,6 +15,8 @@ public class WarpZone implements Serializable{
     private int newRoomStartX;
     private int newRoomStartY;
 
+    private boolean isSelected; //Use only in editor
+
     public WarpZone(int x, int y, int w, int h){
         setPos(x, y);
         setSize(w, h);
@@ -65,5 +67,13 @@ public class WarpZone implements Serializable{
 
     public void setRoomFilePath(String roomFilePath) {
         this.roomFilePath = roomFilePath;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

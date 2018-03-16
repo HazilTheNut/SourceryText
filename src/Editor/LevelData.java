@@ -26,7 +26,7 @@ public class LevelData implements Serializable {
     private ArrayList<WarpZone> warpZones;
 
     public void reset(){
-        backdrop = new Layer(new SpecialText[100][100], "backdrop", 0, 0);
+        backdrop = new Layer(new SpecialText[100][50], "backdrop", 0, 0);
         tileData = new int[backdrop.getCols()][backdrop.getRows()];
         for (int col = 0; col < tileData.length; col++){
             for (int row = 0; row < tileData[0].length; row++){
@@ -54,6 +54,8 @@ public class LevelData implements Serializable {
     public void addWarpZone(WarpZone wz){
         warpZones.add(wz);
     }
+
+    public void removeWarpZone(WarpZone wz) { warpZones.remove(wz); }
 
     public void setTileData(int col, int row, int id) {
         if (col > 0 && col < tileData.length && row > 0 && row < tileData[0].length)
@@ -155,15 +157,29 @@ public class LevelData implements Serializable {
         }
     }
 
-    public void redrawWarpZoneLayer(){
+    public void updateWarpZoneLayer(int mouseX, int mouseY){
         warpZoneLayer.clearLayer();
         for (WarpZone warpZone : warpZones){
             for (int col = 0; col < warpZone.getWidth(); col++){
                 for (int row = 0; row < warpZone.getHeight(); row++){
-                    warpZoneLayer.editLayer(col + warpZone.getXpos(), row + warpZone.getYpos(), new SpecialText(' ', Color.WHITE, new Color(95, 0, 115, 75)));
+                    if (mouseX - warpZone.getXpos() < warpZone.getWidth() && mouseX >= warpZone.getXpos() && mouseY - warpZone.getYpos() < warpZone.getHeight() && mouseY >= warpZone.getYpos()) {
+                        warpZoneLayer.editLayer(col + warpZone.getXpos(), row + warpZone.getYpos(), new SpecialText(' ', Color.WHITE, new Color(125, 65, 0, 75)));
+                        warpZone.setSelected(true);
+                    } else {
+                        warpZoneLayer.editLayer(col + warpZone.getXpos(), row + warpZone.getYpos(), new SpecialText(' ', Color.WHITE, new Color(95, 0, 115, 75)));
+                        warpZone.setSelected(false);
+                    }
                 }
             }
-            System.out.println("Updated warp zone");
         }
+        getSelectedWarpZone();
+    }
+
+    public WarpZone getSelectedWarpZone(){
+        for (WarpZone zone : warpZones){
+            if (zone.isSelected())
+                return zone;
+        }
+        return null;
     }
 }

@@ -13,6 +13,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
 
 /**
  * Created by Jared on 2/25/2018.
@@ -54,7 +56,7 @@ public class EditorToolPanel extends JPanel {
 
         createEntityDataPanel(ldata);
 
-        add(createDrawToolButton("Warp Zone", new WarpZoneCreate(lm, ldata)));
+        createWarpZonePanel(ldata);
 
         validate();
     }
@@ -137,7 +139,7 @@ public class EditorToolPanel extends JPanel {
 
         int numberCells = artToolsPanel.getComponentCount();
         artToolsPanel.setLayout(new GridLayout(numberCells,1,2,2));
-        artToolsPanel.setMaximumSize(new Dimension(100, numberCells*30));
+        artToolsPanel.setMaximumSize(new Dimension(100, 10 + numberCells*30));
 
         add(artToolsPanel);
 
@@ -192,7 +194,7 @@ public class EditorToolPanel extends JPanel {
         //tileDataPanel.add(Box.createRigidArea(new Dimension(1, 1)));
 
         tileDataPanel.setLayout(new GridLayout(tileDataPanel.getComponentCount(), 1, 2, 2));
-        tileDataPanel.setMaximumSize(new Dimension(100, tileDataPanel.getComponentCount()*30));
+        tileDataPanel.setMaximumSize(new Dimension(100, 10 + tileDataPanel.getComponentCount()*30));
         tileDataPanel.validate();
         add(tileDataPanel);
     }
@@ -239,9 +241,24 @@ public class EditorToolPanel extends JPanel {
         entityDataPanel.add(copyEntityButton);
 
         entityDataPanel.setLayout(new GridLayout(entityDataPanel.getComponentCount(), 1, 2, 2));
-        entityDataPanel.setMaximumSize(new Dimension(100, entityDataPanel.getComponentCount() * 30));
+        entityDataPanel.setMaximumSize(new Dimension(100, 10 + entityDataPanel.getComponentCount() * 30));
         entityDataPanel.validate();
         add(entityDataPanel);
+    }
+
+    private void createWarpZonePanel(LevelData ldata){
+
+        JPanel warpZonePanel = new JPanel();
+        warpZonePanel.setBorder(BorderFactory.createTitledBorder("Warp Zones"));
+
+        warpZonePanel.add(createDrawToolButton("Create Zone", new WarpZoneCreate(lm, ldata)));
+        warpZonePanel.add(createDrawToolButton("Destroy Zone",new WarpZoneDestroy(ldata)));
+
+        warpZonePanel.setLayout(new GridLayout(warpZonePanel.getComponentCount(), 1, 2, 2));
+        warpZonePanel.setMaximumSize(new Dimension(100, 10 + warpZonePanel.getComponentCount() * 30));
+        warpZonePanel.validate();
+
+        add(warpZonePanel);
     }
 
     void updateSearchForIcon(SpecialText text) {
@@ -323,7 +340,16 @@ public class EditorToolPanel extends JPanel {
 
     private void openLevel(WindowWatcher watcher){
         File savedLevel;
-        JFileChooser chooser = new JFileChooser();
+        String path;
+        String decodedPath = "";
+        try {
+            path = EditorToolPanel.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            decodedPath = URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+        JFileChooser chooser = new JFileChooser(decodedPath);
+        System.out.println(decodedPath);
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "Sourcery Text Level Data", "lda");
         chooser.setFileFilter(filter);
@@ -339,7 +365,7 @@ public class EditorToolPanel extends JPanel {
             FileInputStream fileIn = new FileInputStream(savedLevel);
             ObjectInputStream objIn = new ObjectInputStream(fileIn);
             LevelData levelData = (LevelData)objIn.readObject();
-            EditorFrame newFrame = new EditorFrame(levelData, watcher);
+            new EditorFrame(levelData, watcher);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
