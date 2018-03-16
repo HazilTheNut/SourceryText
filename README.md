@@ -1,4 +1,4 @@
-# WonderText
+# SourceryText
 A video game with text-based graphics!
 
 DESCRIPTION
