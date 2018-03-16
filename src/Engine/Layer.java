@@ -61,6 +61,17 @@ public class Layer implements Serializable{
         }
     }
 
+    /**
+     * Fills layer with an input SpecialText
+     */
+    public void fillLayer(SpecialText text){
+        for (int col = 0; col < textMatrix.length; col++){
+            for (int row = 0; row < textMatrix[0].length; row++){
+                textMatrix[col][row] = text;
+            }
+        }
+    }
+
     public void resizeLayer(int width, int height, int startX, int startY){
         SpecialText[][] newMatrix = new SpecialText[width][height];
         for (int col = 0; col < textMatrix.length; col++){
@@ -101,7 +112,8 @@ public class Layer implements Serializable{
 
     public int getX() { return xpos; }
     public int getY() { return ypos; }
-    public void setPos(int x, int y) { xpos = x; ypos = y;}
+    public void setPos(int x, int y) { xpos = x; ypos = y; }
+    public void movePos(int x, int y) { xpos += x; ypos += y; }
 
     public void setVisible(boolean visible) { this.visible = visible; }
 

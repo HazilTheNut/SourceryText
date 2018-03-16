@@ -252,6 +252,7 @@ public class EditorToolPanel extends JPanel {
         warpZonePanel.setBorder(BorderFactory.createTitledBorder("Warp Zones"));
 
         warpZonePanel.add(createDrawToolButton("Create Zone", new WarpZoneCreate(lm, ldata)));
+        warpZonePanel.add(createDrawToolButton("Define Zone", new WarpZoneDefine(ldata)));
         warpZonePanel.add(createDrawToolButton("Destroy Zone",new WarpZoneDestroy(ldata)));
 
         warpZonePanel.setLayout(new GridLayout(warpZonePanel.getComponentCount(), 1, 2, 2));
