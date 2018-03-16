@@ -7,6 +7,7 @@ import Engine.ViewWindow;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
@@ -15,7 +16,7 @@ import java.util.Timer;
 /**
  * Created by Jared on 3/16/2018.
  */
-public class WarpZoneEditor extends JFrame implements KeyListener{
+public class WarpZoneEditor extends JFrame{
 
     ViewWindow window;
     LayerManager lm;
@@ -30,17 +31,17 @@ public class WarpZoneEditor extends JFrame implements KeyListener{
 
         lm = new LayerManager(window);
 
-        window.RESOLUTION_WIDTH = 4 + wz.getWidth();
-        window.RESOLUTION_HEIGHT = 4 + wz.getHeight();
+        window.RESOLUTION_WIDTH = 8 + wz.getWidth();
+        window.RESOLUTION_HEIGHT = 8 + wz.getHeight();
 
         lm.addLayer(ldata.getBackdrop());
 
-        warpZoneLayer = new Layer(new SpecialText[wz.getWidth()][wz.getHeight()], "previewBackdrop", wz.getNewRoomStartX(), wz.getNewRoomStartY());
+        warpZoneLayer = new Layer(new SpecialText[wz.getWidth()][wz.getHeight()], "previewZone", wz.getNewRoomStartX(), wz.getNewRoomStartY());
         warpZoneLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(50, 175, 0, 75)));
 
         lm.addLayer(warpZoneLayer);
 
-        lm.setCameraPos(warpZoneLayer.getX() - 2, warpZoneLayer.getY() - 2);
+        lm.setCameraPos(warpZoneLayer.getX() - 4, warpZoneLayer.getY() - 4);
 
         setLayout(new BorderLayout());
         add(window, BorderLayout.CENTER);
@@ -56,10 +57,15 @@ public class WarpZoneEditor extends JFrame implements KeyListener{
 
         add(bottomPanel, BorderLayout.PAGE_END);
 
-        addKeyListener(this);
+        KeyInput input = new KeyInput();
+        addKeyListener(input);
 
-        setMinimumSize(new Dimension(wz.getWidth() * 20, (wz.getHeight() * 20) + 50));
+        setMinimumSize(new Dimension(wz.getWidth() * 40, (wz.getHeight() * 50) + 50));
         setVisible(true);
+
+        requestFocusInWindow();
+
+        lm.printLayerStack();
     }
 
     private void confirm(){
@@ -67,30 +73,37 @@ public class WarpZoneEditor extends JFrame implements KeyListener{
         dispose();
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_LEFT){
+    private void inputUpdate() {
+        if (currentKeyCode == KeyEvent.VK_LEFT){
             warpZoneLayer.movePos(-1, 0);
         }
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+        if (currentKeyCode == KeyEvent.VK_RIGHT){
             warpZoneLayer.movePos(1, 0);
         }
-        if (e.getKeyCode() == KeyEvent.VK_UP){
+        if (currentKeyCode == KeyEvent.VK_UP){
             warpZoneLayer.movePos(0, -1);
         }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN){
+        if (currentKeyCode == KeyEvent.VK_DOWN){
             warpZoneLayer.movePos(0, 1);
         }
-        System.out.println("KEY EVENT");
+        lm.setCameraPos(warpZoneLayer.getX() - 2, warpZoneLayer.getY() - 2);
+        System.out.println(lm.getCameraPos());
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
+    private int currentKeyCode = -1;
 
-    }
+    private class KeyInput extends KeyAdapter{
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT){
+                currentKeyCode = e.getKeyCode();
+                inputUpdate();
+            }
+        }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-
+        @Override
+        public void keyReleased(KeyEvent e) {
+            currentKeyCode = -1;
+        }
     }
 }

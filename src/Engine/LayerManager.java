@@ -122,10 +122,17 @@ public class LayerManager {
     private SpecialText getSpecialTextAtScreenCoord(int screenX, int screenY, Layer layer){
         if (layer.fixedScreenPos)
             return layer.getSpecialText(screenX - layer.getX(), screenY - layer.getY());
-        return layer.getSpecialText(screenX - layer.getX() - camX, screenY - layer.getY() - camY);
+        return layer.getSpecialText(screenX - layer.getX() + camX, screenY - layer.getY() + camY);
     }
 
     private boolean isSpecialTextOpaque(SpecialText text) {return text != null && !(text.getCharacter() == ' ' && text.getBkgColor().getAlpha() != 255); }
+
+    public void printLayerStack(){
+        System.out.println("LAYERS: \n");
+        for (Layer layer : layerStack){
+            System.out.println(layer.getName());
+        }
+    }
 
     /*
     Background layer processing example

@@ -45,8 +45,8 @@ public class ArtRectangle extends DrawTool {
 
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        int xOffset = (int)lm.getCameraPos().getX() + layer.getX();
-        int yOffset = (int)lm.getCameraPos().getY() + layer.getY();
+        int xOffset = -(int)lm.getCameraPos().getX() + layer.getX();
+        int yOffset = -(int)lm.getCameraPos().getY() + layer.getY();
         drawRect(highlight, startX + xOffset, startY + yOffset, previousX + xOffset, previousY + yOffset, null, fillBox.isSelected());
         drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, startHighlight, fillBox.isSelected());
         previousX = col;
@@ -56,8 +56,8 @@ public class ArtRectangle extends DrawTool {
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        int xOffset = (int)lm.getCameraPos().getX() + layer.getX();
-        int yOffset = (int)lm.getCameraPos().getY() + layer.getY();
+        int xOffset = -(int)lm.getCameraPos().getX() + layer.getX();
+        int yOffset = -(int)lm.getCameraPos().getY() + layer.getY();
         drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, null, fillBox.isSelected());
         drawRect(layer, startX, startY, col, row, text, fillBox.isSelected());
     }

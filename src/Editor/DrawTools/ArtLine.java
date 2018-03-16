@@ -37,8 +37,8 @@ public class ArtLine extends DrawTool {
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         //highlight.editLayer(startX, startY, startHighlight);
-        int xOffset = (int)lm.getCameraPos().getX() + layer.getX();
-        int yOffset = (int)lm.getCameraPos().getY() + layer.getY();
+        int xOffset = -(int)lm.getCameraPos().getX() + layer.getX();
+        int yOffset = -(int)lm.getCameraPos().getY() + layer.getY();
         drawLine(highlight, startX + xOffset, startY + yOffset, previousX + xOffset, previousY + yOffset, null);
         drawLine(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, startHighlight);
         previousX = col;
@@ -48,8 +48,8 @@ public class ArtLine extends DrawTool {
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        int xOffset = (int)lm.getCameraPos().getX() + layer.getX();
-        int yOffset = (int)lm.getCameraPos().getY() + layer.getY();
+        int xOffset = -(int)lm.getCameraPos().getX() + layer.getX();
+        int yOffset = -(int)lm.getCameraPos().getY() + layer.getY();
         drawLine(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, null);
         drawLine(layer, startX, startY, col, row, text);
     }
