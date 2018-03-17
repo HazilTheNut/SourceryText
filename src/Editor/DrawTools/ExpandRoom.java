@@ -2,6 +2,7 @@ package Editor.DrawTools;
 
 import Editor.LevelData;
 import Engine.Layer;
+import Engine.LayerManager;
 import Engine.SpecialText;
 
 import javax.swing.*;
@@ -11,10 +12,12 @@ import javax.swing.*;
  */
 public class ExpandRoom extends DrawTool {
 
-    LevelData ldata;
+    private LevelData ldata;
+    private LayerManager lm;
 
-    public ExpandRoom(LevelData levelData){
+    public ExpandRoom(LevelData levelData, LayerManager manager){
         ldata = levelData;
+        lm = manager;
     }
 
     @Override
@@ -27,5 +30,9 @@ public class ExpandRoom extends DrawTool {
         System.out.println("Draw pos: " + col + "," + row);
         System.out.println("Layer dim: " + layer.getCols() + "x"  + layer.getRows());
         ldata.resize(col, row);
+        if (col < 0)
+            lm.moveCameraPos(-col, 0);
+        if (row < 0)
+            lm.moveCameraPos(0, -row);
     }
 }

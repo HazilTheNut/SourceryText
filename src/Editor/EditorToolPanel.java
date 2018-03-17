@@ -1,6 +1,7 @@
 package Editor;
 
 import Editor.DrawTools.*;
+import Engine.FileIO;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
@@ -10,11 +11,7 @@ import Game.Registries.TileRegistry;
 import Game.Registries.TileStruct;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
 
 /**
  * Created by Jared on 2/25/2018.
@@ -46,7 +43,7 @@ public class EditorToolPanel extends JPanel {
 
         createCameraPanel(ldata);
 
-        JButton expandButton = createDrawToolButton("Expand Room", new ExpandRoom(ldata));
+        JButton expandButton = createDrawToolButton("Expand Room", new ExpandRoom(ldata, lm));
         expandButton.setMaximumSize(new Dimension(90, 20));
         add(expandButton);
 
@@ -84,7 +81,10 @@ public class EditorToolPanel extends JPanel {
         levelMenu.add(newLevelItem);
 
         levelMenu.addSeparator();
-        levelMenu.add(new JMenuItem("Export to .PNG"));
+
+        JMenuItem syncTileDataItem = new JMenuItem("Sync Display Data");
+        syncTileDataItem.addActionListener(e -> ldata.syncDisplayWithData());
+        levelMenu.add(syncTileDataItem);
 
         menuPanel.add(new LonelyMenu(levelMenu, menuPanel));
         menuPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -320,56 +320,15 @@ public class EditorToolPanel extends JPanel {
     }
 
     private void saveLevel(LevelData ldata){
-        String path;
-        JFileChooser fileChooser = new JFileChooser();
-        int fileChooseOption = fileChooser.showSaveDialog(new Component(){});
-        if (fileChooseOption == JFileChooser.APPROVE_OPTION){
-            path = fileChooser.getSelectedFile().getPath();
-            if (!path.endsWith(".lda")) { // Add .sav to file if user didn't.
-                path += ".lda";
-            }
-            System.out.println("You chose to save the file to: " + path);
-            try {
-                FileOutputStream out = new FileOutputStream(path);
-                ObjectOutputStream objOut = new ObjectOutputStream(out);
-                objOut.writeObject(ldata);
-            } catch (java.io.IOException e) {
-                e.printStackTrace();
-            }
-        }
+        FileIO io = new FileIO();
+        io.serializeLevelData(ldata);
     }
 
     private void openLevel(WindowWatcher watcher){
-        File savedLevel;
-        String path;
-        String decodedPath = "";
-        try {
-            path = EditorToolPanel.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-            decodedPath = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException | URISyntaxException e) {
-            e.printStackTrace();
-        }
-        JFileChooser chooser = new JFileChooser(decodedPath);
-        System.out.println(decodedPath);
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "Sourcery Text Level Data", "lda");
-        chooser.setFileFilter(filter);
-        int returnVal = chooser.showOpenDialog(new Component() {
-        });
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            System.out.println("You chose to open this file: " +
-                    chooser.getSelectedFile().getName());
-            savedLevel = chooser.getSelectedFile();
-        } else return;
+        FileIO io = new FileIO();
+        LevelData levelData = io.openLevel(io.chooseLevel());
+        new EditorFrame(levelData, watcher);
 
-        try {
-            FileInputStream fileIn = new FileInputStream(savedLevel);
-            ObjectInputStream objIn = new ObjectInputStream(fileIn);
-            LevelData levelData = (LevelData)objIn.readObject();
-            new EditorFrame(levelData, watcher);
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
 }

@@ -39,5 +39,6 @@ public class TilePencil extends DrawTool {
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         tilesLayer.editLayer(col, row, tileData.getDisplayChar());
         ldata.setTileData(col, row, tileData.getTileId());
+        System.out.printf("[TilePencil] drawStart: col = %1$d row = %2$d\n", col, row);
     }
 }

@@ -1,6 +1,7 @@
 package Editor.DrawTools;
 
 import Editor.*;
+import Engine.FileIO;
 import Engine.Layer;
 import Engine.SpecialText;
 
@@ -38,49 +39,14 @@ public class WarpZoneDefine extends DrawTool {
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         WarpZone selectedWarpZone = ldata.getSelectedWarpZone();
-        File levelFile = chooseLevel();
-        LevelData nextLevel = openLevel(levelFile);
+        FileIO io = new FileIO();
+        File levelFile = io.chooseLevel();
+        LevelData nextLevel = io.openLevel(levelFile);
         if (nextLevel != null && selectedWarpZone != null) {
             selectedWarpZone.setRoomFilePath(levelFile.getPath());
             new WarpZoneEditor(nextLevel, selectedWarpZone);
+        } else {
+            JOptionPane.showMessageDialog(new JFrame(), "ERROR: Warp Zone not selected or \nfile being accessed is out of date / improper!", "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-
-    //Copied from EditorToolPanel
-    //TODO Make a file input / output object
-
-    private File chooseLevel(){
-        String path;
-        String decodedPath = "";
-        try {
-            path = EditorToolPanel.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-            decodedPath = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException | URISyntaxException e) {
-            e.printStackTrace();
-        }
-        JFileChooser chooser = new JFileChooser(decodedPath);
-        System.out.println(decodedPath);
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "Sourcery Text Level Data", "lda");
-        chooser.setFileFilter(filter);
-        int returnVal = chooser.showOpenDialog(new Component() {
-        });
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            System.out.println("You chose to open this file: " +
-                    chooser.getSelectedFile().getName());
-            return chooser.getSelectedFile();
-        } else return null;
-    }
-
-    private LevelData openLevel( File savedLevel ){
-        try {
-            FileInputStream fileIn = new FileInputStream(savedLevel);
-            ObjectInputStream objIn = new ObjectInputStream(fileIn);
-            return (LevelData)objIn.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

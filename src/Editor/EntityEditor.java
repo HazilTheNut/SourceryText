@@ -24,6 +24,10 @@ public class EntityEditor extends JFrame {
         setTitle(entity.getEntityName());
         setSize(350, 400);
 
+        JTabbedPane tabbedPane = new JTabbedPane();
+
+        JPanel itemsMasterPanel = new JPanel(new BorderLayout());
+
         JPanel selectionPanel = new JPanel();
         selectionPanel.setLayout(new BorderLayout());
 
@@ -51,7 +55,7 @@ public class EntityEditor extends JFrame {
 
         selectionPanel.setBorder(BorderFactory.createEtchedBorder());
 
-        add(selectionPanel);
+        itemsMasterPanel.add(selectionPanel);
 
         JPanel editPanel = new JPanel();
 
@@ -107,7 +111,11 @@ public class EntityEditor extends JFrame {
         finishButton.addActionListener(e -> dispose());
         encapsulatingPanel.add(finishButton);
 
-        add(encapsulatingPanel, BorderLayout.LINE_END);
+        itemsMasterPanel.add(encapsulatingPanel, BorderLayout.LINE_END);
+
+        tabbedPane.addTab("Items", itemsMasterPanel);
+
+        add(tabbedPane);
 
         setVisible(true);
     }

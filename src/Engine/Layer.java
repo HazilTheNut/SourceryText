@@ -42,7 +42,7 @@ public class Layer implements Serializable{
     /**
      * Fills layer with blank opaque characters in replacement of null SpecialTexts
      */
-    void convertNullToOpaque(){
+    public void convertNullToOpaque(){
         for (int col = 0; col < textMatrix.length; col++){
             for (int row = 0; row < textMatrix[0].length; row++){
                 if (textMatrix[col][row] == null) textMatrix[col][row] = new SpecialText(' ');

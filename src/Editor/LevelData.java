@@ -58,7 +58,7 @@ public class LevelData implements Serializable {
     public void removeWarpZone(WarpZone wz) { warpZones.remove(wz); }
 
     public void setTileData(int col, int row, int id) {
-        if (col > 0 && col < tileData.length && row > 0 && row < tileData[0].length)
+        if (col >= 0 && col < tileData.length && row >= 0 && row < tileData[0].length)
             tileData[col][row] = id;
     }
     
@@ -88,10 +88,7 @@ public class LevelData implements Serializable {
         if (col < 0 || row < 0) {
             int c = Math.min(0, col);
             int r = Math.min(0, row);
-            backdrop.setPos(backdrop.getX()           + c, backdrop.getY()      + r);
-            tileDataLayer.setPos(tileDataLayer.getX() + c, tileDataLayer.getY() + r);
-            entityLayer.setPos(entityLayer.getX()     + c, entityLayer.getY()   + r);
-            warpZoneLayer.setPos(warpZoneLayer.getX() + c, warpZoneLayer.getY() + r);
+            System.out.printf("c = %1$d, r = %2$d", c, r);
             backdrop.resizeLayer(backdrop.getCols()           - c, backdrop.getRows() - r,      -1 * c, -1 * r);
             tileDataLayer.resizeLayer(tileDataLayer.getCols() - c, tileDataLayer.getRows() - r, -1 * c, -1 * r);
             entityLayer.resizeLayer(entityLayer.getCols()     - c, entityLayer.getRows() - r,   -1 * c, -1 * r);
@@ -181,5 +178,30 @@ public class LevelData implements Serializable {
                 return zone;
         }
         return null;
+    }
+
+    /**
+     * Debug function in the case that tile layer may not resemble data
+     */
+    public void syncDisplayWithData(){
+        tileDataLayer.fillLayer(new SpecialText(' '));
+        TileRegistry registry = new TileRegistry();
+        for (int col = 0; col < tileData.length; col++){
+            for (int row = 0; row < tileData[0].length; row++){
+                SpecialText text = registry.getTileStruct(tileData[col][row]).getDisplayChar();
+                System.out.printf("[LevelData] tile sync: col = %1$d row = %2$d char = \'%3$s\' id = %4$d\n", col, row, text.getStr(), tileData[col][row]);
+                tileDataLayer.editLayer(col, row, text);
+            }
+        }
+        entityLayer.fillLayer(new SpecialText(' '));
+        for (int col = 0; col < entityData.length; col++){
+            for (int row = 0; row < entityData[0].length; row++) {
+                if (entityData[col][row] != null) {
+                    SpecialText text = entityData[col][row].getDisplayChar();
+                    System.out.printf("[LevelData] ent sync: col = %1$d row = %2$d char = \'%3$s\' id = %4$d\n", col, row, text.getStr(), entityData[col][row].getEntityId());
+                    entityLayer.editLayer(col, row, text);
+                }
+            }
+        }
     }
 }
