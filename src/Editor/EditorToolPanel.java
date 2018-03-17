@@ -44,9 +44,11 @@ public class EditorToolPanel extends JPanel {
 
         createCameraPanel(ldata);
 
+        add(Box.createRigidArea(new Dimension(1, 2)));
         JButton expandButton = createDrawToolButton("Expand Room", new ExpandRoom(ldata, lm));
         expandButton.setMaximumSize(new Dimension(90, 20));
         add(expandButton);
+        add(Box.createRigidArea(new Dimension(1, 2)));
 
         createArtToolsPanel();
 
@@ -237,7 +239,7 @@ public class EditorToolPanel extends JPanel {
         editEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(editEntityButton);
 
-        JButton copyEntityButton = createDrawToolButton("Copy Entity", new EntityCopy(ldata));
+        JButton copyEntityButton = createDrawToolButton("Copy Entity", new EntityCopy(lm, ldata));
         copyEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(copyEntityButton);
 
@@ -254,6 +256,7 @@ public class EditorToolPanel extends JPanel {
 
         warpZonePanel.add(createDrawToolButton("Create Zone", new WarpZoneCreate(lm, ldata)));
         warpZonePanel.add(createDrawToolButton("Define Zone", new WarpZoneDefine(ldata)));
+        warpZonePanel.add(createDrawToolButton("Move Zone",   new WarpZoneMove(lm, ldata)));
         warpZonePanel.add(createDrawToolButton("Destroy Zone",new WarpZoneDestroy(ldata)));
 
         warpZonePanel.setLayout(new GridLayout(warpZonePanel.getComponentCount(), 1, 2, 2));

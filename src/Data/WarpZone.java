@@ -11,7 +11,7 @@ public class WarpZone implements Serializable{
     private int ypos;
     private int width;
     private int height;
-    private String roomFilePath;
+    private String roomFilePath = "";
     private int newRoomStartX;
     private int newRoomStartY;
 

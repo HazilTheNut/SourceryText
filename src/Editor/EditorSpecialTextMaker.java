@@ -156,7 +156,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             public void run() {
                 updateElements();
             }
-        }, 10, 100);
+        }, 10, 75);
     }
 
     @Override
@@ -211,23 +211,28 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         int mousePointX = 0;
         int mousePointY = 0;
+        
+        int satBriPointX = 0;
+        int satBriPointY = 0;
 
         float[] colorData = new float[3];
 
         void setColorData(float[] data) {
             colorData = data;
-            mousePointX = (int)(colorData[1] * (getWidth()-15)) + 1;
+            mousePointX = (int)(colorData[1] * (getBoxWidth())) + 1;
             mousePointY = (int)(colorData[2] * (getHeight()-1)) + 1;
         }
 
         float[] getColorData() { return colorData; }
+
+        private int getBoxWidth() { return getWidth() - 15; }
 
         ColorPicker() { colorData = new float[]{0, 0, 0}; }
 
         @Override
         public void paintComponent(Graphics g) {
 
-            int boxWidth = getWidth() - 15;
+            int boxWidth = getBoxWidth();
 
             for (int y = 1; y < getHeight()-1; y++){
                 for (int x = 1; x < boxWidth; x++){
@@ -246,6 +251,11 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             g.setColor(Color.black);
             g.drawRect(0,0,boxWidth,getHeight()-1);
             g.drawRect(boxWidth + 2,0,getWidth()-boxWidth-3,getHeight()-1);
+
+            if (mousePointX < boxWidth + 2) {
+                satBriPointX = mousePointX;
+                satBriPointY = mousePointY;
+            }
 
             g.setColor(Color.WHITE);
             g.drawLine(mousePointX-1, mousePointY, mousePointX-2, mousePointY);

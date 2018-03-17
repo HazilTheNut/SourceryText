@@ -2,6 +2,7 @@ package Editor.DrawTools;
 
 import Data.LevelData;
 import Engine.Layer;
+import Engine.LayerManager;
 import Engine.SpecialText;
 import Data.EntityStruct;
 
@@ -18,14 +19,16 @@ public class EntityCopy extends DrawTool {
     private int copyFromPosX = 0;
     private int copyFromPosY = 0;
 
+    private LayerManager lm;
 
     @Override
     public void onActivate(JPanel panel) {
         TOOL_TYPE = TYPE_ENTITY;
     }
 
-    public EntityCopy(LevelData levelData){
+    public EntityCopy(LayerManager manager, LevelData levelData){
         ldata = levelData;
+        lm = manager;
     }
 
     @Override
@@ -33,17 +36,17 @@ public class EntityCopy extends DrawTool {
         toCopy = ldata.getEntityAt(col, row);
         copyFromPosX = col;
         copyFromPosY = row;
-        highlight.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
+        highlight.editLayer(col - (int)lm.getCameraPos().getX(), row - (int)lm.getCameraPos().getX(), new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
     }
 
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        highlight.editLayer(copyFromPosX, copyFromPosY, new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
+        highlight.editLayer(copyFromPosX - (int)lm.getCameraPos().getX(), copyFromPosY - (int)lm.getCameraPos().getX(), new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
     }
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        ldata.setEntityData(col, row, toCopy.copy());
-        highlight.editLayer(copyFromPosX, copyFromPosY, null);
+        ldata.setEntityData(col - (int)lm.getCameraPos().getX(), row - (int)lm.getCameraPos().getX(), toCopy.copy());
+        highlight.editLayer(copyFromPosX - (int)lm.getCameraPos().getX(), copyFromPosY - (int)lm.getCameraPos().getX(), null);
     }
 }

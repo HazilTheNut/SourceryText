@@ -38,14 +38,22 @@ public class WarpZoneDefine extends DrawTool {
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         WarpZone selectedWarpZone = ldata.getSelectedWarpZone();
-        FileIO io = new FileIO();
-        File levelFile = io.chooseLevel();
-        LevelData nextLevel = io.openLevel(levelFile);
-        if (nextLevel != null && selectedWarpZone != null) {
-            selectedWarpZone.setRoomFilePath(levelFile.getPath());
-            new WarpZoneEditor(nextLevel, selectedWarpZone);
-        } else {
-            JOptionPane.showMessageDialog(new JFrame(), "ERROR: Warp Zone not selected or \nfile being accessed is out of date / improper!", "Error", JOptionPane.ERROR_MESSAGE);
+        if (selectedWarpZone != null) {
+            FileIO io = new FileIO();
+            File levelFile;
+            if (selectedWarpZone.getRoomFilePath().equals(""))
+                levelFile = io.chooseLevel();
+            else
+                levelFile = io.chooseLevel(selectedWarpZone.getRoomFilePath());
+            if (levelFile != null) {
+                LevelData nextLevel = io.openLevel(levelFile);
+                if (nextLevel != null) {
+                    selectedWarpZone.setRoomFilePath(levelFile.getPath());
+                    new WarpZoneEditor(nextLevel, selectedWarpZone);
+                } else {
+                    JOptionPane.showMessageDialog(new JFrame(), "ERROR: Warp Zone not selected or \nfile being accessed is out of date / improper!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         }
     }
 }

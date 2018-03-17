@@ -23,8 +23,12 @@ public class FileIO {
         } catch (UnsupportedEncodingException | URISyntaxException e) {
             e.printStackTrace();
         }
-        JFileChooser chooser = new JFileChooser(decodedPath);
-        System.out.println(decodedPath);
+        return chooseLevel(decodedPath);
+    }
+
+    public File chooseLevel(String startingPath){
+        JFileChooser chooser = new JFileChooser(startingPath);
+        System.out.println(startingPath);
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "Sourcery Text Level Data", "lda");
         chooser.setFileFilter(filter);
