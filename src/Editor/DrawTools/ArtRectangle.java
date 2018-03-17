@@ -62,6 +62,11 @@ public class ArtRectangle extends DrawTool {
         drawRect(layer, startX, startY, col, row, text, fillBox.isSelected());
     }
 
+    @Override
+    public void onCancel(Layer highlight, int col, int row) {
+        drawRect(highlight, startX, startY, col, row, null, fillBox.isSelected());
+    }
+
     void drawRect(Layer layer, int x1, int y1, int x2, int y2, SpecialText text, boolean isFilled){
         int colSign = (x2 > x1) ? 1 : -1;
         int rowSign = (y2 > y1) ? 1 : -1;

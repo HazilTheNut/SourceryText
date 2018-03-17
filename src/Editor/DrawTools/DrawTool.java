@@ -29,4 +29,7 @@ public abstract class DrawTool {
 
     //Ran when selected as the tool
     public void onActivate(JPanel panel) {}
+
+    //Ran when right-click during drawing
+    public void onCancel(Layer highlight, int col, int row){}
 }

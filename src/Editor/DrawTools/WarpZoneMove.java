@@ -74,4 +74,9 @@ public class WarpZoneMove extends ArtRectangle {
     private void highlightDraggedRect(Layer highlight, int col, int row, SpecialText text){
         drawRect(highlight, col + displayXOffset, row + displayYOffset, col + displayXOffset + toMove.getWidth() - 1, row + displayYOffset + toMove.getHeight() - 1, text, true);
     }
+
+    @Override
+    public void onCancel(Layer highlight, int col, int row) {
+        highlightDraggedRect(highlight, col, row, null);
+    }
 }

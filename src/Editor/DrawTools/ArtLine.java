@@ -54,6 +54,13 @@ public class ArtLine extends DrawTool {
         drawLine(layer, startX, startY, col, row, text);
     }
 
+    @Override
+    public void onCancel(Layer highlight, int col, int row) {
+        int xOffset = -(int)lm.getCameraPos().getX();
+        int yOffset = -(int)lm.getCameraPos().getY();
+        drawLine(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, null);
+    }
+
     private void drawLine(Layer layer, int x1, int y1, int x2, int y2, SpecialText text){
         double angle = Math.atan2(y2 - y1, x2 - x1);
         int distance = (int)Math.round(Math.sqrt(Math.pow((x2 - x1),2) + Math.pow((y2 - y1),2)));

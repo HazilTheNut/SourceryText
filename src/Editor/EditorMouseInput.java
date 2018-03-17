@@ -43,18 +43,31 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
         ldata = levelData;
     }
 
+    private int getLayerMousePosX(int mouseX){
+        return window.getSnappedMouseX(mouseX) + (int)manager.getCameraPos().getX() - backdropLayer.getX();
+    }
+
+    private int getLayerMousePosY(int mouseY){
+        return window.getSnappedMouseY(mouseY) + (int)manager.getCameraPos().getY() - backdropLayer.getY();
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {}
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3 && !drawing) {
-            previousCharXPos = window.getSnappedMouseX(e.getX());
-            previousCharYPos = window.getSnappedMouseY(e.getY());
-            movingCamera = true;
-            highlightLayer.editLayer(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()), null);
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            if (drawing){
+                drawTool.onCancel(highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()));
+                drawing = false;
+            } else {
+                previousCharXPos = window.getSnappedMouseX(e.getX());
+                previousCharYPos = window.getSnappedMouseY(e.getY());
+                movingCamera = true;
+                highlightLayer.editLayer(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()), null);
+            }
         } else if (e.getButton() == MouseEvent.BUTTON1 && !movingCamera && drawTool != null){
-            drawTool.onDrawStart(backdropLayer, highlightLayer, window.getSnappedMouseX(e.getX()) + (int)manager.getCameraPos().getX() - backdropLayer.getX(), window.getSnappedMouseY(e.getY()) + (int)manager.getCameraPos().getY() - backdropLayer.getY(), textPanel.selectedSpecialText);
+            drawTool.onDrawStart(backdropLayer, highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()), textPanel.selectedSpecialText);
             drawing = true;
         }
     }
@@ -62,7 +75,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     @Override
     public void mouseReleased(MouseEvent e) {
         if (drawing && e.getButton() == MouseEvent.BUTTON1 && drawTool != null)
-            drawTool.onDrawEnd(backdropLayer, highlightLayer, window.getSnappedMouseX(e.getX()) + (int)manager.getCameraPos().getX() - backdropLayer.getX(), window.getSnappedMouseY(e.getY()) + (int)manager.getCameraPos().getY() - backdropLayer.getY(), textPanel.selectedSpecialText);
+            drawTool.onDrawEnd(backdropLayer, highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()), textPanel.selectedSpecialText);
         movingCamera = false;
         drawing = false;
     }
@@ -88,7 +101,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
             previousCharYPos = window.getSnappedMouseY(e.getY());
         } else if (drawing){
             updateMouseCursorPos(e.getX(), e.getY());
-            drawTool.onDraw(backdropLayer, highlightLayer, window.getSnappedMouseX(e.getX()) + (int)manager.getCameraPos().getX() - backdropLayer.getX(), window.getSnappedMouseY(e.getY()) + (int)manager.getCameraPos().getY() - backdropLayer.getY(), textPanel.selectedSpecialText);
+            drawTool.onDraw(backdropLayer, highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()), textPanel.selectedSpecialText);
         } else {
             updateMouseCursorPos(e.getX(), e.getY());
         }

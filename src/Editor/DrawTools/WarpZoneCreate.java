@@ -64,4 +64,11 @@ public class WarpZoneCreate extends ArtRectangle {
         ldata.addWarpZone(warpZone);
         ldata.updateWarpZoneLayer(col, row);
     }
+
+    @Override
+    public void onCancel(Layer highlight, int col, int row) {
+        int xOffset = -(int)lm.getCameraPos().getX();
+        int yOffset = -(int)lm.getCameraPos().getY();
+        drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, null, true);
+    }
 }
