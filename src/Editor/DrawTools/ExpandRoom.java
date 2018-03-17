@@ -1,6 +1,6 @@
 package Editor.DrawTools;
 
-import Editor.LevelData;
+import Data.LevelData;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;

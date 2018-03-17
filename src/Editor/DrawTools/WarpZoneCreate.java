@@ -1,7 +1,7 @@
 package Editor.DrawTools;
 
-import Editor.LevelData;
-import Editor.WarpZone;
+import Data.LevelData;
+import Data.WarpZone;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;

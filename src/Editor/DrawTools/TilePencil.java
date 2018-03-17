@@ -1,12 +1,11 @@
 package Editor.DrawTools;
 
-import Editor.LevelData;
+import Data.LevelData;
 import Engine.Layer;
 import Engine.SpecialText;
-import Game.Registries.TileStruct;
+import Data.TileStruct;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Created by Jared on 2/25/2018.

@@ -1,5 +1,7 @@
 package Game.Registries;
 
+import Data.ItemStruct;
+
 import java.util.Set;
 import java.util.TreeMap;
 

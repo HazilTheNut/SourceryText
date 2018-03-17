@@ -1,4 +1,4 @@
-package Game.Registries;
+package Data;
 
 import Engine.SpecialText;
 
@@ -15,8 +15,9 @@ public class EntityStruct implements Serializable{
     private SpecialText displayChar;
     private String entityName;
     private ArrayList<ItemStruct> items  = new ArrayList<>();
+    private ArrayList<EntityArg> args = new ArrayList<>();
 
-    EntityStruct(int id, String name, SpecialText text, int... tags){
+    public EntityStruct(int id, String name, SpecialText text, int... tags){
         entityId = id;
         displayChar = text;
         tagIDs = tags;
@@ -26,6 +27,14 @@ public class EntityStruct implements Serializable{
     public void addItem(ItemStruct item) { items.add(item); }
 
     public void removeItem(ItemStruct item) { items.remove(item); }
+
+    public ArrayList<EntityArg> getArgs() {
+        return args;
+    }
+
+    public void setArgs(ArrayList<EntityArg> args) {
+        this.args = args;
+    }
 
     public int[] getTagIDs() { return tagIDs; }
 

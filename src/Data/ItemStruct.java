@@ -1,7 +1,6 @@
-package Game.Registries;
+package Data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Created by Jared on 3/5/2018.

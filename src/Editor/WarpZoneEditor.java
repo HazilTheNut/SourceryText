@@ -1,5 +1,7 @@
 package Editor;
 
+import Data.LevelData;
+import Data.WarpZone;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
@@ -9,9 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.*;
-import java.util.Timer;
 
 /**
  * Created by Jared on 3/16/2018.

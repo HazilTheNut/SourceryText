@@ -1,4 +1,4 @@
-package Game.Registries;
+package Data;
 
 import Engine.SpecialText;
 
@@ -14,7 +14,7 @@ public class TileStruct implements Serializable{
     private SpecialText displayChar;
     private String tileName;
 
-    TileStruct(int id, String name, SpecialText text, int... tags){
+    public TileStruct(int id, String name, SpecialText text, int... tags){
         tileId = id;
         displayChar = text;
         tagIDs = tags;

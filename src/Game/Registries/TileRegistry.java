@@ -1,5 +1,6 @@
 package Game.Registries;
 
+import Data.TileStruct;
 import Engine.SpecialText;
 
 import java.awt.*;

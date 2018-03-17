@@ -1,7 +1,6 @@
-package Engine;
+package Data;
 
 import Editor.EditorToolPanel;
-import Editor.LevelData;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

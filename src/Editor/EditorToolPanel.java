@@ -1,14 +1,15 @@
 package Editor;
 
+import Data.LevelData;
 import Editor.DrawTools.*;
-import Engine.FileIO;
+import Data.FileIO;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Registries.EntityRegistry;
-import Game.Registries.EntityStruct;
+import Data.EntityStruct;
 import Game.Registries.TileRegistry;
-import Game.Registries.TileStruct;
+import Data.TileStruct;
 
 import javax.swing.*;
 import java.awt.*;
@@ -156,7 +157,7 @@ public class EditorToolPanel extends JPanel {
         tileDataPanel.setBorder(BorderFactory.createTitledBorder("Tile Data"));
 
         //Tile select combo box
-        JComboBox<Game.Registries.TileStruct> tileSelectBox = new JComboBox<>();
+        JComboBox<TileStruct> tileSelectBox = new JComboBox<>();
         TileRegistry tileRegistry = new TileRegistry();
 
         int[] mapKeys = tileRegistry.getMapKeys();

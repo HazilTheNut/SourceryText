@@ -1,12 +1,10 @@
-package Editor;
+package Data;
 
 import Engine.Layer;
 import Engine.SpecialText;
 import Game.Registries.EntityRegistry;
-import Game.Registries.EntityStruct;
 import Game.Registries.TileRegistry;
 
-import javax.swing.text.html.parser.Entity;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,15 +39,15 @@ public class LevelData implements Serializable {
         refreshTileDataLayer();
     }
 
-    Layer getTileDataLayer(){
+    public Layer getTileDataLayer(){
         return tileDataLayer;
     }
 
-    Layer getBackdrop() { return backdrop; }
+    public Layer getBackdrop() { return backdrop; }
 
     public Layer getEntityLayer() { return entityLayer; }
 
-    Layer getWarpZoneLayer() { return warpZoneLayer; }
+    public Layer getWarpZoneLayer() { return warpZoneLayer; }
 
     public void addWarpZone(WarpZone wz){
         warpZones.add(wz);

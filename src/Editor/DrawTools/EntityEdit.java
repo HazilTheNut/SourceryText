@@ -1,10 +1,10 @@
 package Editor.DrawTools;
 
 import Editor.EntityEditor;
-import Editor.LevelData;
+import Data.LevelData;
 import Engine.Layer;
 import Engine.SpecialText;
-import Game.Registries.EntityStruct;
+import Data.EntityStruct;
 
 import javax.swing.*;
 

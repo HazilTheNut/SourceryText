@@ -1,8 +1,8 @@
 package Game.Registries;
 
+import Data.EntityStruct;
 import Engine.SpecialText;
 
-import java.awt.*;
 import java.util.Set;
 import java.util.TreeMap;
 

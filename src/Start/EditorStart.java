@@ -1,10 +1,8 @@
 package Start;
 
 import Editor.EditorFrame;
-import Editor.LevelData;
+import Data.LevelData;
 import Editor.WindowWatcher;
-import Engine.Layer;
-import Engine.SpecialText;
 
 import javax.swing.*;
 

@@ -1,5 +1,6 @@
 package Editor;
 
+import Data.LevelData;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
@@ -57,7 +58,9 @@ public class EditorFrame extends JFrame {
 
         c.validate();
 
-        setSize(new Dimension(850, 750));
+        setSize(new Dimension(850, 780));
+
+        setTitle("Sourcery Text Level Editor");
 
         setVisible(true);
 

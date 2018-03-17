@@ -1,9 +1,8 @@
 package Editor.DrawTools;
 
-import Editor.LevelData;
+import Data.LevelData;
 import Engine.Layer;
 import Engine.SpecialText;
-import Game.Registries.EntityRegistry;
 
 import javax.swing.*;
 

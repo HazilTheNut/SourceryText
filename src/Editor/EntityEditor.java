@@ -1,10 +1,12 @@
 package Editor;
 
-import Game.Registries.EntityStruct;
+import Data.EntityStruct;
 import Game.Registries.ItemRegistry;
-import Game.Registries.ItemStruct;
+import Data.ItemStruct;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -26,6 +28,14 @@ public class EntityEditor extends JFrame {
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
+        tabbedPane.addTab("Items", createItemsPanel());
+
+        add(tabbedPane);
+
+        setVisible(true);
+    }
+
+    private JPanel createItemsPanel(){
         JPanel itemsMasterPanel = new JPanel(new BorderLayout());
 
         JPanel selectionPanel = new JPanel();
@@ -61,10 +71,21 @@ public class EntityEditor extends JFrame {
 
         JTextField itemQtySetter = new JTextField(2);
         itemQtySetter.setFont(textFont);
-        itemQtySetter.addActionListener(e -> {
-            changeItemQty(itemQtySetter.getText(), invSelectionList.getSelectedValue());
-            invSelectionList.repaint();
+        itemQtySetter.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                changeItemQty(itemQtySetter.getText(), invSelectionList.getSelectedValue());
+                invSelectionList.repaint();
+            }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                changeItemQty(itemQtySetter.getText(), invSelectionList.getSelectedValue());
+                invSelectionList.repaint();
+            }
+            @Override
+            public void changedUpdate(DocumentEvent e) {}
         });
+
         invSelectionList.addListSelectionListener(e -> {
             ItemStruct item = invSelectionList.getSelectedValue();
             if (item != null)
@@ -113,11 +134,7 @@ public class EntityEditor extends JFrame {
 
         itemsMasterPanel.add(encapsulatingPanel, BorderLayout.LINE_END);
 
-        tabbedPane.addTab("Items", itemsMasterPanel);
-
-        add(tabbedPane);
-
-        setVisible(true);
+        return itemsMasterPanel;
     }
 
     private void updateEntityInventory(){

@@ -1,16 +1,15 @@
 package Editor.DrawTools;
 
+import Data.LevelData;
+import Data.WarpZone;
 import Editor.*;
-import Engine.FileIO;
+import Data.FileIO;
 import Engine.Layer;
 import Engine.SpecialText;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URLDecoder;
 
 /**
  * Created by Jared on 2/25/2018.
