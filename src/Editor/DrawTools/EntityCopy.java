@@ -36,17 +36,17 @@ public class EntityCopy extends DrawTool {
         toCopy = ldata.getEntityAt(col, row);
         copyFromPosX = col;
         copyFromPosY = row;
-        highlight.editLayer(col - (int)lm.getCameraPos().getX(), row - (int)lm.getCameraPos().getX(), new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
+        highlight.editLayer(col + (int)lm.getCameraPos().getX(), row + (int)lm.getCameraPos().getX(), new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
     }
 
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        highlight.editLayer(copyFromPosX - (int)lm.getCameraPos().getX(), copyFromPosY - (int)lm.getCameraPos().getX(), new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
+        highlight.editLayer(copyFromPosX + (int)lm.getCameraPos().getX(), copyFromPosY + (int)lm.getCameraPos().getX(), new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
     }
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        ldata.setEntityData(col - (int)lm.getCameraPos().getX(), row - (int)lm.getCameraPos().getX(), toCopy.copy());
-        highlight.editLayer(copyFromPosX - (int)lm.getCameraPos().getX(), copyFromPosY - (int)lm.getCameraPos().getX(), null);
+        ldata.setEntityData(col + (int)lm.getCameraPos().getX(), row + (int)lm.getCameraPos().getX(), toCopy.copy());
+        highlight.editLayer(copyFromPosX + (int)lm.getCameraPos().getX(), copyFromPosY + (int)lm.getCameraPos().getX(), null);
     }
 }
