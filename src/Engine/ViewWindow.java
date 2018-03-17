@@ -59,6 +59,7 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
         g.fillRect(0, 0, getWidth(), getHeight()); //Create base background
 
         g.setFont(calculatedFont);
+        FontMetrics metrics = g.getFontMetrics();
 
         for (int col = 0; col < RESOLUTION_WIDTH; col++) {
             for (int row = 0; row < RESOLUTION_HEIGHT; row++) {
@@ -72,7 +73,7 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
             for (int row = 0; row < RESOLUTION_HEIGHT; row++) {
                 SpecialText text = drawnImage.getSpecialText(col, row);
                 g.setColor(text.getFgColor());
-                g.drawString(text.getStr(), col * HOR_SEPARATION + HOR_MARGIN + 2, VER_SEPARATION * (row+1) + VER_MARGIN - 5); //Fill foreground (the text)
+                g.drawString(text.getStr(), col * HOR_SEPARATION + HOR_MARGIN + (HOR_SEPARATION - metrics.stringWidth(text.getStr())) / 2, VER_SEPARATION * row + VER_MARGIN + (int)(VER_SEPARATION*0.75)); //Fill foreground (the text)
             }
         }
 
