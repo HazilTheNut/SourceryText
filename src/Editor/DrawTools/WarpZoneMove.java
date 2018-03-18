@@ -8,6 +8,8 @@ import Engine.SpecialText;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /**
  * Created by Jared on 3/5/2018.
@@ -67,6 +69,14 @@ public class WarpZoneMove extends ArtRectangle {
             toMove.setPos(toMove.getXpos() + (col - moveFromPosX), toMove.getYpos() + (row - moveFromPosY));
             highlightDraggedRect(highlight, col, row, null);
             ldata.updateWarpZoneLayer(col, row);
+            System.out.println(toMove.getRoomFilePath());
+            try {
+                String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8");
+                System.out.println(path);
+                JOptionPane.showMessageDialog(new JFrame(), path);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
         movingZone = false;
     }
