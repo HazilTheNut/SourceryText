@@ -14,16 +14,49 @@ import java.net.URLDecoder;
  */
 public class FileIO {
 
-    public File chooseLevel(){
+    public String getRootFilePath(){
+        String path = decodeFilePath(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+        System.out.println("[FileIO.getRootFilePath] base path: " + path);
+        String reducedPath = path.substring(0, path.lastIndexOf('/'));
+        reducedPath += "/";
+        System.out.println("[FileIO.getRootFilePath] root path: " + reducedPath);
+        return reducedPath;
+    }
+
+    public String getRelativeFilePath(String fullPath){
+        String rootPath = getRootFilePath();
+        if (fullPath.contains(rootPath)){
+            return fullPath.substring(rootPath.length());
+        }
+        return "PATHS DO NOT MATCH";
+    }
+
+    public String decodeFilePath(String rawPath){
         String path;
-        String decodedPath = "";
         try {
-            path = EditorToolPanel.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-            decodedPath = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException | URISyntaxException e) {
+            path = URLDecoder.decode(rawPath, "UTF-8");
+            return reformatFilePath(path);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return rawPath;
+        }
+    }
+
+    private String reformatFilePath(String path){
+        String output = path.replace('\\','/');
+        if (output.startsWith("/")) output = output.substring(1);
+        return output;
+    }
+
+    public File chooseLevel(){
+        String path = "";
+        try {
+            path = decodeFilePath(EditorToolPanel.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            return chooseLevel(path);
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        return chooseLevel(decodedPath);
+        return chooseLevel(path);
     }
 
     public File chooseLevel(String startingPath){
@@ -35,9 +68,10 @@ public class FileIO {
         int returnVal = chooser.showOpenDialog(new Component() {
         });
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            System.out.println("You chose to open this file: " +
-                    chooser.getSelectedFile().getName());
-            return chooser.getSelectedFile();
+            File chosenFile = chooser.getSelectedFile();
+            System.out.println("[FileIO.chooseLevel] Opening file: " +
+                    chosenFile.getName() + " at " + chosenFile.getPath());
+            return chosenFile;
         } else return null;
     }
 

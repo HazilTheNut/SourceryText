@@ -52,9 +52,7 @@ public class WarpZoneCreate extends ArtRectangle {
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        int xOffset = -(int)lm.getCameraPos().getX() + layer.getX();
-        int yOffset = -(int)lm.getCameraPos().getY() + layer.getY();
-        drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, null, true);
+        highlight.clearLayer();
         int cornerX = Math.min(startX, col);
         int cornerY = Math.min(startY, row);
         int width   = Math.max(col - startX + 1, startX - col + 1);
@@ -67,8 +65,6 @@ public class WarpZoneCreate extends ArtRectangle {
 
     @Override
     public void onCancel(Layer highlight, int col, int row) {
-        int xOffset = -(int)lm.getCameraPos().getX();
-        int yOffset = -(int)lm.getCameraPos().getY();
-        drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, null, true);
+        highlight.clearLayer();
     }
 }

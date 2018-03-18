@@ -47,11 +47,11 @@ public class EntityCopy extends DrawTool {
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         ldata.setEntityData(col + (int)lm.getCameraPos().getX(), row + (int)lm.getCameraPos().getX(), toCopy.copy());
-        highlight.editLayer(copyFromPosX - (int)lm.getCameraPos().getX(), copyFromPosY - (int)lm.getCameraPos().getY(), null);
+        highlight.clearLayer();
     }
 
     @Override
     public void onCancel(Layer highlight, int col, int row) {
-        highlight.editLayer(copyFromPosX - (int)lm.getCameraPos().getX(), copyFromPosY - (int)lm.getCameraPos().getY(), null);
+        highlight.clearLayer();
     }
 }

@@ -67,16 +67,9 @@ public class WarpZoneMove extends ArtRectangle {
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         if (movingZone) {
             toMove.setPos(toMove.getXpos() + (col - moveFromPosX), toMove.getYpos() + (row - moveFromPosY));
-            highlightDraggedRect(highlight, col, row, null);
+            highlight.clearLayer();
             ldata.updateWarpZoneLayer(col, row);
             System.out.println(toMove.getRoomFilePath());
-            try {
-                String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8");
-                System.out.println(path);
-                JOptionPane.showMessageDialog(new JFrame(), path);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
         }
         movingZone = false;
     }
@@ -87,6 +80,6 @@ public class WarpZoneMove extends ArtRectangle {
 
     @Override
     public void onCancel(Layer highlight, int col, int row) {
-        highlightDraggedRect(highlight, col, row, null);
+        highlight.clearLayer();
     }
 }

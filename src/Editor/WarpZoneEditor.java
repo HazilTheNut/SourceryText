@@ -30,8 +30,8 @@ public class WarpZoneEditor extends JFrame{
 
         lm = new LayerManager(window);
 
-        window.RESOLUTION_WIDTH = 8 + wz.getWidth();
-        window.RESOLUTION_HEIGHT = 8 + wz.getHeight();
+        window.RESOLUTION_WIDTH = Math.max(8 + wz.getWidth(), 30);
+        window.RESOLUTION_HEIGHT = Math.max(8 + wz.getHeight(), 20);
 
         lm.addLayer(ldata.getBackdrop());
 
@@ -40,7 +40,7 @@ public class WarpZoneEditor extends JFrame{
 
         lm.addLayer(warpZoneLayer);
 
-        lm.setCameraPos(warpZoneLayer.getX() - 4, warpZoneLayer.getY() - 4);
+        updateCameraPos();
 
         setLayout(new BorderLayout());
         add(window, BorderLayout.CENTER);
@@ -67,6 +67,11 @@ public class WarpZoneEditor extends JFrame{
         lm.printLayerStack();
     }
 
+    private void updateCameraPos(){
+        //System.out.printf("[WarpZoneEditor] cam x offset %1$d y offset %2$d\n", (window.RESOLUTION_WIDTH - wz.getWidth())/2, (window.RESOLUTION_HEIGHT - wz.getHeight())/2);
+        lm.setCameraPos(warpZoneLayer.getX() - (window.RESOLUTION_WIDTH - wz.getWidth())/2, warpZoneLayer.getY() - (window.RESOLUTION_HEIGHT - wz.getHeight())/2);
+    }
+
     private void confirm(){
         wz.setTranslation(warpZoneLayer.getX(), warpZoneLayer.getY());
         dispose();
@@ -85,8 +90,7 @@ public class WarpZoneEditor extends JFrame{
         if (currentKeyCode == KeyEvent.VK_DOWN){
             warpZoneLayer.movePos(0, 1);
         }
-        lm.setCameraPos(warpZoneLayer.getX() - 2, warpZoneLayer.getY() - 2);
-        System.out.println(lm.getCameraPos());
+        updateCameraPos();
     }
 
     private int currentKeyCode = -1;

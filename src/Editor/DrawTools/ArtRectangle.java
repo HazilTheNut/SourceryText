@@ -56,15 +56,13 @@ public class ArtRectangle extends DrawTool {
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        int xOffset = -(int)lm.getCameraPos().getX() + layer.getX();
-        int yOffset = -(int)lm.getCameraPos().getY() + layer.getY();
-        drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, null, fillBox.isSelected());
+        highlight.clearLayer();
         drawRect(layer, startX, startY, col, row, text, fillBox.isSelected());
     }
 
     @Override
     public void onCancel(Layer highlight, int col, int row) {
-        drawRect(highlight, startX, startY, col, row, null, fillBox.isSelected());
+        highlight.clearLayer();
     }
 
     void drawRect(Layer layer, int x1, int y1, int x2, int y2, SpecialText text, boolean isFilled){

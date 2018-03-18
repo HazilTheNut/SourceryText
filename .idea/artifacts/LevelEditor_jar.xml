@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact name="LevelEditor.jar">
+    <output-path>$PROJECT_DIR$/CompiledGame</output-path>
+    <root id="root">
+      <element id="archive" name="LevelEditor.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/../SourceryText Jar Output/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="WonderText" />
+      </element>
+    </root>
+  </artifact>
+</component>
