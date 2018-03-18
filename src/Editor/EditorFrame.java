@@ -16,7 +16,7 @@ import java.awt.event.WindowListener;
  */
 public class EditorFrame extends JFrame {
 
-    private EditorTextPanel editorTextPanel;
+    EditorToolPanel toolPanel;
 
     public EditorFrame(LevelData ldata, WindowWatcher watcher){
 
@@ -43,7 +43,7 @@ public class EditorFrame extends JFrame {
 
         c.add(window, BorderLayout.CENTER);
 
-        editorTextPanel = new EditorTextPanel();
+        EditorTextPanel editorTextPanel = new EditorTextPanel();
         c.add(editorTextPanel, BorderLayout.LINE_START);
 
         EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, editorTextPanel, ldata.getBackdrop(), ldata);
@@ -51,7 +51,7 @@ public class EditorFrame extends JFrame {
         window.addMouseMotionListener(mi);
         window.addMouseWheelListener(mi);
 
-        EditorToolPanel toolPanel = new EditorToolPanel(mi, manager, ldata, watcher);
+        toolPanel = new EditorToolPanel(mi, manager, ldata, watcher);
         c.add(toolPanel, BorderLayout.LINE_END);
 
         editorTextPanel.setToolPanel(toolPanel);
@@ -85,4 +85,5 @@ public class EditorFrame extends JFrame {
         });
     }
 
+    public void setToolPanelFilePath(String path) { toolPanel.setPreviousFilePath(path); }
 }

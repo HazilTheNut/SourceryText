@@ -51,7 +51,7 @@ public class WarpZoneDefine extends DrawTool {
                     String levelPath = io.decodeFilePath(levelFile.getPath());
                     System.out.println("[WarpZoneDefine] full file path: " + levelPath);
                     System.out.println("[WarpZoneDefine] relative file path: " + io.getRelativeFilePath(levelPath));
-                    selectedWarpZone.setRoomFilePath(levelFile.getPath());
+                    selectedWarpZone.setRoomFilePath(io.getRelativeFilePath(levelPath));
                     new WarpZoneEditor(nextLevel, selectedWarpZone);
                 } else {
                     JOptionPane.showMessageDialog(new JFrame(), "ERROR: Warp Zone not selected or \nfile being accessed is out of date / improper!", "Error", JOptionPane.ERROR_MESSAGE);

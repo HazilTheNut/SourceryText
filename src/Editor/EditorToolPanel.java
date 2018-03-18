@@ -13,6 +13,7 @@ import Data.TileStruct;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 /**
  * Created by Jared on 2/25/2018.
@@ -70,6 +71,10 @@ public class EditorToolPanel extends JPanel {
         JMenuItem saveLevelItem = new JMenuItem("Save Level");
         saveLevelItem.addActionListener(e -> saveLevel(ldata));
         levelMenu.add(saveLevelItem);
+
+        JMenuItem saveLevelAsItem = new JMenuItem("Save Level as...");
+        saveLevelAsItem.addActionListener(e -> saveLevelAs(ldata));
+        levelMenu.add(saveLevelAsItem);
 
         JMenuItem openLevelItem = new JMenuItem("Open Level");
         openLevelItem.addActionListener(e -> openLevel(watcher));
@@ -323,16 +328,36 @@ public class EditorToolPanel extends JPanel {
         selectedToolButton = btn;
     }
 
+    private String previousFilePath = "";
+
+    public void setPreviousFilePath(String previousFilePath) {
+        this.previousFilePath = previousFilePath;
+    }
+
     private void saveLevel(LevelData ldata){
+        if (previousFilePath.equals("")) {
+            saveLevelAs(ldata);
+        } else {
+            FileIO io = new FileIO();
+            io.quickSerializeLevelData(ldata, previousFilePath);
+        }
+    }
+
+    private void saveLevelAs (LevelData ldata){
         FileIO io = new FileIO();
-        io.serializeLevelData(ldata);
+        previousFilePath = io.serializeLevelData(ldata);
     }
 
     private void openLevel(WindowWatcher watcher){
         FileIO io = new FileIO();
-        LevelData levelData = io.openLevel(io.chooseLevel());
-        new EditorFrame(levelData, watcher);
-
+        File levelFile;
+        if (previousFilePath.equals(""))
+            levelFile = io.chooseLevel();
+        else
+            levelFile = io.chooseLevel(previousFilePath);
+        previousFilePath = levelFile.getPath();
+        LevelData levelData = io.openLevel(levelFile);
+        EditorFrame nf = new EditorFrame(levelData, watcher);
+        nf.setToolPanelFilePath(previousFilePath);
     }
-
 }

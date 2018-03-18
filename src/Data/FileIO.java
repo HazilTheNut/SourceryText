@@ -86,23 +86,43 @@ public class FileIO {
         return null;
     }
 
-    public void serializeLevelData(LevelData ldata){
+    /**
+     * Serializes a LevelData (saving it) as a .lda file
+     * @param ldata LevelData being saved
+     * @param startingPath file path to start prompt from
+     * @return chosen file path
+     */
+    private String serializeLevelData(LevelData ldata, String startingPath){
         String path;
-        JFileChooser fileChooser = new JFileChooser();
+        JFileChooser fileChooser = new JFileChooser(startingPath);
         int fileChooseOption = fileChooser.showSaveDialog(new Component(){});
         if (fileChooseOption == JFileChooser.APPROVE_OPTION){
             path = fileChooser.getSelectedFile().getPath();
             if (!path.endsWith(".lda")) { // Add .sav to file if user didn't.
                 path += ".lda";
             }
-            System.out.println("You chose to save the file to: " + path);
+            System.out.println("[FileIO.serializeLevelData] Saving level to: " + path);
             try {
                 FileOutputStream out = new FileOutputStream(path);
                 ObjectOutputStream objOut = new ObjectOutputStream(out);
                 objOut.writeObject(ldata);
+                return path;
             } catch (java.io.IOException e) {
                 e.printStackTrace();
             }
         }
+        return "";
     }
+
+    public void quickSerializeLevelData(LevelData ldata, String path){
+        try {
+            FileOutputStream out = new FileOutputStream(path);
+            ObjectOutputStream objOut = new ObjectOutputStream(out);
+            objOut.writeObject(ldata);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String serializeLevelData(LevelData ldata) {return serializeLevelData(ldata, getRootFilePath()); }
 }

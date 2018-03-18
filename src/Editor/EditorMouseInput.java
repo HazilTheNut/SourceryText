@@ -147,8 +147,11 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     public void updateZoom(){
         if (zoomAmount < 20) zoomAmount = 20;
         if (zoomAmount > 200) zoomAmount = 200;
+        int prevWidth = window.RESOLUTION_WIDTH;
+        int prevHeight = window.RESOLUTION_HEIGHT;
         window.RESOLUTION_WIDTH = (int)(originalResolutionWidth / ((float)zoomAmount / 100));
         window.RESOLUTION_HEIGHT = (int)(originalResolutionHeight / ((float)zoomAmount / 100));
+        manager.moveCameraPos((prevWidth - window.RESOLUTION_WIDTH)/2, (prevHeight - window.RESOLUTION_HEIGHT)/2);
         window.recalculate();
     }
 }

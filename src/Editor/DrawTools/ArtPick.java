@@ -26,7 +26,8 @@ public class ArtPick extends DrawTool {
         SpecialText pickedText = layer.getSpecialText(col, row);
         if (pickedText != null) {
             if (pickedText.getBkgColor().getAlpha() != 255) pickedText = new SpecialText(pickedText.getCharacter(), pickedText.getFgColor(), new Color(pickedText.getBkgColor().getRGB()));
-            textPanel.generateNewButton(pickedText);
+            JButton btn = textPanel.generateNewButton(pickedText);
+            btn.doClick();
         }
     }
 }

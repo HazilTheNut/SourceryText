@@ -126,13 +126,14 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         textMaker.setVisible(true);
     }
 
-    public void generateNewButton(SpecialText text){
+    public JButton generateNewButton(SpecialText text){
         JButton btn = createBaseButton();
         btn.setIcon(new SingleTextRenderer(text));
         if (text != null)
             btn.setActionCommand(text.toString());
         else
             btn.setActionCommand("nulltext");
+        return btn;
     }
     
     private void buildSpecTxtFromButtonClick(String command){

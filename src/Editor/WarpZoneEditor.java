@@ -59,7 +59,7 @@ public class WarpZoneEditor extends JFrame{
         KeyInput input = new KeyInput();
         addKeyListener(input);
 
-        setMinimumSize(new Dimension(wz.getWidth() * 40, (wz.getHeight() * 50) + 50));
+        setMinimumSize(new Dimension(Math.max(wz.getWidth() * 40, 300), Math.max((wz.getHeight() * 50) + 50, 350)));
         setVisible(true);
 
         requestFocusInWindow();
