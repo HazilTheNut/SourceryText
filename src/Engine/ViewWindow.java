@@ -1,9 +1,12 @@
 package Engine;
 
+import Engine.SpecialGraphics.SpecialGraphics;
+
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 2/18/2018.
@@ -21,12 +24,15 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
     public int RESOLUTION_WIDTH = 55;
     public int RESOLUTION_HEIGHT = 29;
 
+    private ArrayList<SpecialGraphics> specialGraphicsList;
+
     public LayerManager manager;
 
     private Font calculatedFont = new Font("Monospaced", Font.PLAIN, 15);
 
     public ViewWindow() {
         recalculate();
+        specialGraphicsList = new ArrayList<>();
     }
 
     public void drawImage(Layer image){
@@ -82,7 +88,13 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
         g.drawLine(getWidth() - HOR_MARGIN, 0, getWidth() - HOR_MARGIN, getHeight());
         g.drawLine(0, VER_MARGIN, getWidth(), VER_MARGIN);
         g.drawLine(0, getHeight() - VER_MARGIN, getWidth(), getHeight() - VER_MARGIN);
+
+        for (SpecialGraphics specialGraphics : specialGraphicsList) specialGraphics.paint(g);
     }
+
+    public void addSpecialGraphics(SpecialGraphics graphics) { specialGraphicsList.add(graphics); }
+
+    public void removeSpecialGraphics(SpecialGraphics graphics) { specialGraphicsList.remove(graphics); }
 
     @Override
     public void componentResized(ComponentEvent e) {
