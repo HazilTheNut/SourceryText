@@ -3,6 +3,7 @@ package Editor;
 import Engine.SpecialText;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Timer;
@@ -101,6 +102,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         JPanel colorPickerPanel = new JPanel();
         colorPicker = new ColorPicker();
         colorPicker.setPreferredSize(new Dimension(215, 200));
+        colorPickerPanel.addMouseListener(colorPicker);
         colorPickerPanel.addMouseMotionListener(colorPicker);
         colorPickerPanel.add(colorPicker, BorderLayout.CENTER);
 
@@ -207,7 +209,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         dispose();
     }
 
-    class ColorPicker extends JComponent implements MouseMotionListener {
+    class ColorPicker extends JComponent implements MouseInputListener {
 
         int mousePointX = 0;
         int mousePointY = 0;
@@ -274,8 +276,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             }
         }
 
-        @Override
-        public void mouseDragged(MouseEvent e) {
+        private void onMouseInput(MouseEvent e){
             mousePointX = e.getX() - getX();
             mousePointY = e.getY() - getY();
             if (mousePointX >= getWidth() - 13){ //Selecting hue
@@ -288,6 +289,36 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         }
 
         @Override
+        public void mouseDragged(MouseEvent e) {
+            onMouseInput(e);
+        }
+
+        @Override
         public void mouseMoved(MouseEvent e) {}
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            onMouseInput(e);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
     }
 }

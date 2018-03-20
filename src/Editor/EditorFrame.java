@@ -16,11 +16,11 @@ import java.awt.event.WindowListener;
  */
 public class EditorFrame extends JFrame {
 
-    EditorToolPanel toolPanel;
+    private EditorToolPanel toolPanel;
 
-    LayerManager manager;
-    Layer tileDataLayer;
-    ViewWindow window;
+    private LayerManager manager;
+    private Layer tileDataLayer;
+    private ViewWindow window;
 
     public EditorFrame(LevelData ldata, WindowWatcher watcher){
 
@@ -29,8 +29,7 @@ public class EditorFrame extends JFrame {
             public void paint(Graphics g)
             {
                 super.paint(g);
-                Color color = g.getColor();
-                g.setColor(new Color(225,225,225));
+                g.setColor(new Color(179, 172, 152));
                 int x = -manager.getCameraPos().x*window.HOR_SEPARATION+window.HOR_MARGIN+window.getX();
                 int y = -manager.getCameraPos().y*window.VER_SEPARATION+window.VER_MARGIN+window.getY();
                 int w = tileDataLayer.getCols()*window.HOR_SEPARATION;
@@ -38,7 +37,6 @@ public class EditorFrame extends JFrame {
                 g.drawRect(x, y, w, h);
                 g.drawRect(x-1, y-1, w+2, h+2);
                 g.drawRect(x-2, y-2, w+4, h+4);
-                g.setColor(color);
             }
         };
 
