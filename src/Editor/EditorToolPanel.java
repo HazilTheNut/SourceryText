@@ -27,6 +27,7 @@ public class EditorToolPanel extends JPanel {
 
     private JLabel searchForIcon;
     private JLabel placeTileIcon;
+    private JPanel toolsPanel;
 
     private TileStruct selectedTileStruct;
 
@@ -38,18 +39,23 @@ public class EditorToolPanel extends JPanel {
         lm = manager;
         cm = new CameraManager(mi);
 
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        setPreferredSize(new Dimension(100, 400));
+        setLayout(new BorderLayout());
+        setPreferredSize(new Dimension(110, 400));
+
+        toolsPanel = new JPanel();
+        toolsPanel.setLayout(new BoxLayout(toolsPanel, BoxLayout.PAGE_AXIS));
+
+        JScrollPane scrollPane = new JScrollPane(toolsPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         createTopMenu(ldata, watcher);
 
         createCameraPanel(ldata);
 
-        add(Box.createRigidArea(new Dimension(1, 2)));
+        toolsPanel.add(Box.createRigidArea(new Dimension(1, 2)));
         JButton expandButton = createDrawToolButton("Expand Room", new ExpandRoom(ldata, lm));
         expandButton.setMaximumSize(new Dimension(90, 20));
-        add(expandButton);
-        add(Box.createRigidArea(new Dimension(1, 2)));
+        toolsPanel.add(expandButton);
+        toolsPanel.add(Box.createRigidArea(new Dimension(1, 2)));
 
         createArtToolsPanel();
 
@@ -58,6 +64,8 @@ public class EditorToolPanel extends JPanel {
         createEntityDataPanel(ldata);
 
         createWarpZonePanel(ldata);
+
+        add(scrollPane, BorderLayout.CENTER);
 
         validate();
     }
@@ -98,7 +106,7 @@ public class EditorToolPanel extends JPanel {
         menuPanel.setBorder(BorderFactory.createEtchedBorder());
         menuPanel.setMaximumSize(new Dimension(100, 20));
 
-        add(menuPanel);
+        add(menuPanel, BorderLayout.PAGE_START);
     }
 
     private void createCameraPanel(LevelData ldata){
@@ -129,7 +137,7 @@ public class EditorToolPanel extends JPanel {
         cm.zoomAmountLabel = zoomLabel;
         cm.updateLabel();
 
-        add(cameraPanel);
+        toolsPanel.add(cameraPanel);
     }
 
     private void createArtToolsPanel(){
@@ -149,13 +157,13 @@ public class EditorToolPanel extends JPanel {
         artToolsPanel.setLayout(new GridLayout(numberCells,1,2,2));
         artToolsPanel.setMaximumSize(new Dimension(100, 10 + numberCells*30));
 
-        add(artToolsPanel);
+        toolsPanel.add(artToolsPanel);
 
         //Art tool options panel
         toolOptionsPanel = new JPanel();
         toolOptionsPanel.setAlignmentX(CENTER_ALIGNMENT);
         toolOptionsPanel.setMaximumSize(new Dimension(100, 50));
-        add(toolOptionsPanel);
+        toolsPanel.add(toolOptionsPanel);
     }
 
     private void createTileDataPanel(LevelData ldata){
@@ -204,7 +212,7 @@ public class EditorToolPanel extends JPanel {
         tileDataPanel.setLayout(new GridLayout(tileDataPanel.getComponentCount(), 1, 2, 2));
         tileDataPanel.setMaximumSize(new Dimension(100, 10 + tileDataPanel.getComponentCount()*30));
         tileDataPanel.validate();
-        add(tileDataPanel);
+        toolsPanel.add(tileDataPanel);
     }
 
     private void createEntityDataPanel(LevelData ldata){
@@ -251,7 +259,7 @@ public class EditorToolPanel extends JPanel {
         entityDataPanel.setLayout(new GridLayout(entityDataPanel.getComponentCount(), 1, 2, 2));
         entityDataPanel.setMaximumSize(new Dimension(100, 10 + entityDataPanel.getComponentCount() * 30));
         entityDataPanel.validate();
-        add(entityDataPanel);
+        toolsPanel.add(entityDataPanel);
     }
 
     private void createWarpZonePanel(LevelData ldata){
@@ -268,7 +276,7 @@ public class EditorToolPanel extends JPanel {
         warpZonePanel.setMaximumSize(new Dimension(100, 10 + warpZonePanel.getComponentCount() * 30));
         warpZonePanel.validate();
 
-        add(warpZonePanel);
+        toolsPanel.add(warpZonePanel);
     }
 
     void updateSearchForIcon(SpecialText text) {
