@@ -35,8 +35,8 @@ public class EditorLevelBoundGraphics implements SpecialGraphics {
         int right  = left + ldata.getTileDataLayer().getCols()*window.HOR_SEPARATION; //left, top, right, and bottom define bounds of drawn rectangle
         int bottom = top  + ldata.getTileDataLayer().getRows()*window.VER_SEPARATION;
         //Draw!
-        drawBoundedRectangle(g, left-1, top-1, right, bottom, leftMargin, topMargin, rightMargin, bottomMargin);
-        drawBoundedRectangle(g, left-3, top-3, right+2, bottom+2, leftMargin, topMargin, rightMargin, bottomMargin);
+        drawBoundedRectangle(g, left-1, top, right, bottom+1, leftMargin, topMargin, rightMargin, bottomMargin);
+        drawBoundedRectangle(g, left-3, top-2, right+2, bottom+3, leftMargin, topMargin, rightMargin, bottomMargin);
     }
 
     private void drawBoundedRectangle(Graphics g, int left, int top, int right, int bottom, int leftMargin, int topMargin, int rightMargin, int bottomMargin){
