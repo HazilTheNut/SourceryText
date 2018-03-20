@@ -12,11 +12,11 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
 
     private Layer drawnImage;
 
-    private int HOR_SEPARATION = 9;
-    private int VER_SEPARATION = 16;
+    public int HOR_SEPARATION = 9;
+    public int VER_SEPARATION = 16;
     private int CHAR_SIZE = 15;
-    private int HOR_MARGIN = 0;
-    private int VER_MARGIN = 0;
+    public int HOR_MARGIN = 0;
+    public int VER_MARGIN = 0;
 
     public int RESOLUTION_WIDTH = 55;
     public int RESOLUTION_HEIGHT = 29;
