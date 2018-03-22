@@ -105,6 +105,10 @@ public class EditorToolPanel extends JPanel {
         undoMenuItem.addActionListener(e -> undoManager.doUndo());
         levelMenu.add(undoMenuItem);
 
+        JMenuItem redoMenuItem = new JMenuItem("Redo");
+        redoMenuItem.addActionListener(e -> undoManager.doRedo());
+        levelMenu.add(redoMenuItem);
+
         levelMenu.addSeparator();
 
         JMenuItem syncTileDataItem = new JMenuItem("Sync Display Data");

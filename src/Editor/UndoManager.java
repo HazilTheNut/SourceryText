@@ -22,36 +22,38 @@ class UndoManager {
     UndoManager(LevelData ldata, LayerManager layerManager){
         currentLevelData = ldata;
         lm = layerManager;
+        System.out.printf("[UndoManager] Level history size: %1$d\n", pastLevelData.size());
         recordLevelData();
     }
 
     void recordLevelData(){
         /**/
-        //for (int ii = historyPointer + 1; ii < pastLevelData.size(); ii++){
+        //for (int ii = pastLevelData.size()-1; ii >= historyPointer; ii--){
         //    pastLevelData.remove(ii);
         //}
-        //pastLevelData.add(currentLevelData.copy());
-        //if (pastLevelData.size() > MAX_UNDO_LENGTH)
-        //    pastLevelData.remove(0);
-        //historyPointer = pastLevelData.size()-1;
+        pastLevelData.add(currentLevelData.copy());
+        if (pastLevelData.size() > MAX_UNDO_LENGTH)
+            pastLevelData.remove(0);
+        historyPointer = pastLevelData.size()-1;
         System.out.printf("[UndoManager.recordLevelData] Level history size: %1$d\n", pastLevelData.size());
         System.out.printf("[UndoManager.recordLevelData] Level history pointer: %1$d\n", historyPointer);
         /**/
-        previousLevelData = currentLevelData.copy();
+        //previousLevelData = currentLevelData.copy();
     }
 
     void doUndo(){
-        /**/
         historyPointer--;
         if (historyPointer < 0) historyPointer = 0;
         System.out.printf("[UndoManager.doUndo] Level history pointer: %1$d\n", historyPointer);
-        LevelData pastData = previousLevelData;
-        //currentLevelData.setAllData(pastData.getBackdrop(), pastData.getTileDataLayer(), pastData.getEntityLayer(), pastData.getWarpZoneLayer(), pastData.getTileData(), pastData.getEntityData(), pastData.getWarpZones());;
-        new EditorFrame(pastData, new WindowWatcher());
-
-        /**/
-        //currentLevelData.reset();
+        LevelData pastData = pastLevelData.get(historyPointer);
+        currentLevelData.setAllData(pastData.getBackdrop(), pastData.getTileDataLayer(), pastData.getEntityLayer(), pastData.getWarpZoneLayer(), pastData.getTileData(), pastData.getEntityData(), pastData.getWarpZones());
     }
 
-
+    void doRedo(){
+        historyPointer++;
+        if (historyPointer > pastLevelData.size()-1) historyPointer = pastLevelData.size()-1;
+        System.out.printf("[UndoManager.doRedo] Level history pointer: %1$d\n", historyPointer);
+        LevelData pastData = pastLevelData.get(historyPointer);
+        currentLevelData.setAllData(pastData.getBackdrop(), pastData.getTileDataLayer(), pastData.getEntityLayer(), pastData.getWarpZoneLayer(), pastData.getTileData(), pastData.getEntityData(), pastData.getWarpZones());
+    }
 }

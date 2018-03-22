@@ -70,8 +70,8 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
                 highlightLayer.editLayer(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()), null);
             }
         } else if (e.getButton() == MouseEvent.BUTTON1 && !movingCamera && drawTool != null){
-            //undoManager.recordLevelData();
             drawTool.onDrawStart(backdropLayer, highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()), textPanel.selectedSpecialText);
+            undoManager.recordLevelData();
             drawing = true;
         }
     }

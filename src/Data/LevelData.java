@@ -42,10 +42,10 @@ public class LevelData implements Serializable {
     }
 
     public void setAllData(Layer backdrop, Layer tileDataLayer, Layer entityLayer, Layer warpZoneLayer, int[][] tileData, EntityStruct[][] entityData, ArrayList<WarpZone> warpZones){
-        this.backdrop = backdrop.copy();
-        this.tileDataLayer = tileDataLayer.copy();
-        this.entityLayer = entityLayer.copy();
-        this.warpZoneLayer = warpZoneLayer.copy();
+        this.backdrop.transpose(backdrop);
+        this.tileDataLayer.transpose(tileDataLayer);
+        this.entityLayer.transpose(entityLayer);
+        this.warpZoneLayer.transpose(warpZoneLayer);
         this.tileData = new int[tileData.length][tileData[0].length];
         for (int col = 0; col < tileData.length; col++){
             System.arraycopy(tileData[col], 0, this.tileData[col], 0, tileData[0].length);
@@ -54,7 +54,10 @@ public class LevelData implements Serializable {
         for (int col = 0; col < entityData.length; col++){
             System.arraycopy(entityData[col], 0, this.entityData[col], 0, entityData[0].length);
         }
-        this.warpZones = (ArrayList<WarpZone>)warpZones.clone();
+        this.warpZones.clear();
+        for (WarpZone wz : warpZones){
+            this.warpZones.add(wz);
+        }
     }
 
     public LevelData copy(){
@@ -74,11 +77,11 @@ public class LevelData implements Serializable {
 
     public Layer getWarpZoneLayer() { return warpZoneLayer; }
 
-    private int[][] getTileData() { return tileData; }
+    public int[][] getTileData() { return tileData; }
 
-    private EntityStruct[][] getEntityData() { return entityData; }
+    public EntityStruct[][] getEntityData() { return entityData; }
 
-    private ArrayList<WarpZone> getWarpZones() { return warpZones; }
+    public ArrayList<WarpZone> getWarpZones() { return warpZones; }
 
     public void addWarpZone(WarpZone wz){
         warpZones.add(wz);

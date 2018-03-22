@@ -38,7 +38,7 @@ public class Layer implements Serializable{
     }
 
     public Layer copy(){
-        Layer copy = new Layer(new SpecialText[getCols()][getRows()], name + "+", xpos, ypos);
+        Layer copy = new Layer(new SpecialText[getCols()][getRows()], name, xpos, ypos);
         for (int col = 0; col < textMatrix.length; col++){
             for (int row = 0; row < textMatrix[0].length; row++){
                 copy.editLayer(col, row, textMatrix[col][row]);
@@ -47,6 +47,15 @@ public class Layer implements Serializable{
         copy.setVisible(true);
         copy.fixedScreenPos = fixedScreenPos;
         return copy;
+    }
+
+    public void transpose(Layer layer){
+        textMatrix = new SpecialText[layer.getCols()][layer.getRows()];
+        for (int col = 0; col < textMatrix.length; col++){
+            for (int row = 0; row < textMatrix[0].length; row++){
+                textMatrix[col][row] = layer.getSpecialText(col, row);
+            }
+        }
     }
 
     /**
