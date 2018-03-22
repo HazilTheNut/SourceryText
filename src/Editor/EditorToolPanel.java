@@ -13,6 +13,7 @@ import Data.TileStruct;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 /**
@@ -35,7 +36,7 @@ public class EditorToolPanel extends JPanel {
 
     private CameraManager cm;
 
-    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher, UndoManager undoManager){
+    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher, UndoManager undoManager, EditorKeyInput input){
 
         this.mi = mi;
         lm = manager;
@@ -50,7 +51,7 @@ public class EditorToolPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(toolsPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        createTopMenu(ldata, watcher);
+        createTopMenu(ldata, watcher, input);
 
         createCameraPanel(ldata);
 
@@ -73,7 +74,7 @@ public class EditorToolPanel extends JPanel {
         validate();
     }
 
-    private void createTopMenu(LevelData ldata, WindowWatcher watcher){
+    private void createTopMenu(LevelData ldata, WindowWatcher watcher, EditorKeyInput input){
         JPanel menuPanel = new JPanel();
         menuPanel.setLayout(new BorderLayout(0, 2));
 
@@ -87,16 +88,28 @@ public class EditorToolPanel extends JPanel {
         saveLevelAsItem.addActionListener(e -> saveLevelAs(ldata));
         levelMenu.add(saveLevelAsItem);
 
+        input.addKeyBinding(KeyEvent.VK_S, modifiers -> {
+            if (modifiers.contains(KeyEvent.VK_CONTROL)) {
+                if (modifiers.contains(KeyEvent.VK_SHIFT))
+                    saveLevelAs(ldata);
+                else
+                    saveLevel(ldata);
+            }
+        });
+
         JMenuItem openLevelItem = new JMenuItem("Open Level");
         openLevelItem.addActionListener(e -> openLevel(watcher));
+        input.addKeyBinding(KeyEvent.VK_O, modifiers -> {
+            if (modifiers.contains(KeyEvent.VK_CONTROL)) openLevel(watcher);
+        });
         levelMenu.add(openLevelItem);
 
         JMenuItem newLevelItem = new JMenuItem("New Level");
-        newLevelItem.addActionListener(e -> {
-            LevelData newLData = new LevelData();
-            newLData.reset();
-            new EditorFrame(newLData, watcher);
+        newLevelItem.addActionListener(e -> newLevel(watcher));
+        input.addKeyBinding(KeyEvent.VK_N, modifiers -> {
+            if (modifiers.contains(KeyEvent.VK_CONTROL)) newLevel(watcher);
         });
+
         levelMenu.add(newLevelItem);
 
         levelMenu.addSeparator();
@@ -376,9 +389,17 @@ public class EditorToolPanel extends JPanel {
             levelFile = io.chooseLevel();
         else
             levelFile = io.chooseLevel(previousFilePath);
-        previousFilePath = levelFile.getPath();
-        LevelData levelData = io.openLevel(levelFile);
-        EditorFrame nf = new EditorFrame(levelData, watcher);
-        nf.setToolPanelFilePath(previousFilePath);
+        if (levelFile != null) {
+            previousFilePath = levelFile.getPath();
+            LevelData levelData = io.openLevel(levelFile);
+            EditorFrame nf = new EditorFrame(levelData, watcher);
+            nf.setToolPanelFilePath(previousFilePath);
+        }
+    }
+
+    private void newLevel(WindowWatcher watcher) {
+        LevelData newLData = new LevelData();
+        newLData.reset();
+        new EditorFrame(newLData, watcher);
     }
 }

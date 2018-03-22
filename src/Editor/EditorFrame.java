@@ -9,6 +9,8 @@ import Engine.ViewWindow;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -59,7 +61,9 @@ public class EditorFrame extends JFrame {
         window.addMouseMotionListener(mi);
         window.addMouseWheelListener(mi);
 
-        toolPanel = new EditorToolPanel(mi, manager, ldata, watcher, undoManager);
+        EditorKeyInput input = new EditorKeyInput();
+
+        toolPanel = new EditorToolPanel(mi, manager, ldata, watcher, undoManager, input);
         c.add(toolPanel, BorderLayout.LINE_END);
 
         editorTextPanel.setToolPanel(toolPanel);
@@ -91,6 +95,9 @@ public class EditorFrame extends JFrame {
             @Override
             public void windowDeactivated(WindowEvent e) {}
         });
+
+        getRootPane().addKeyListener(input);
+        getRootPane().requestFocusInWindow();
     }
 
     void setToolPanelFilePath(String path) { toolPanel.setPreviousFilePath(path); }
