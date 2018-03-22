@@ -22,6 +22,8 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     private LayerManager manager;
     private Layer highlightLayer;
 
+    private UndoManager undoManager;
+
     private EditorTextPanel textPanel;
     private Layer backdropLayer;
 
@@ -32,7 +34,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     private boolean movingCamera = false;
     private boolean drawing = false;
 
-    EditorMouseInput(ViewWindow viewWindow, LayerManager layerManager, Layer highlight, EditorTextPanel panel, Layer backdrop, LevelData levelData){
+    EditorMouseInput(ViewWindow viewWindow, LayerManager layerManager, Layer highlight, EditorTextPanel panel, Layer backdrop, LevelData levelData, UndoManager undoManager){
         window = viewWindow;
         manager = layerManager;
         highlightLayer = highlight;
@@ -41,6 +43,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
         originalResolutionWidth = window.RESOLUTION_WIDTH;
         originalResolutionHeight = window.RESOLUTION_HEIGHT;
         ldata = levelData;
+        this.undoManager = undoManager;
     }
 
     private int getLayerMousePosX(int mouseX){
@@ -67,6 +70,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
                 highlightLayer.editLayer(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()), null);
             }
         } else if (e.getButton() == MouseEvent.BUTTON1 && !movingCamera && drawTool != null){
+            //undoManager.recordLevelData();
             drawTool.onDrawStart(backdropLayer, highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()), textPanel.selectedSpecialText);
             drawing = true;
         }
@@ -74,8 +78,9 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (drawing && e.getButton() == MouseEvent.BUTTON1 && drawTool != null)
+        if (drawing && e.getButton() == MouseEvent.BUTTON1 && drawTool != null) {
             drawTool.onDrawEnd(backdropLayer, highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()), textPanel.selectedSpecialText);
+        }
         movingCamera = false;
         drawing = false;
     }

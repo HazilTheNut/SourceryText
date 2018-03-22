@@ -18,8 +18,6 @@ public class Layer implements Serializable{
     public boolean fixedScreenPos = false;
     boolean visible = true;
 
-
-
     public Layer (SpecialText[][] layerData, String layerName, int x, int y){
         textMatrix = layerData;
         name = layerName;
@@ -37,6 +35,18 @@ public class Layer implements Serializable{
         name = layerName;
         xpos = x;
         ypos = y;
+    }
+
+    public Layer copy(){
+        Layer copy = new Layer(new SpecialText[getCols()][getRows()], name + "+", xpos, ypos);
+        for (int col = 0; col < textMatrix.length; col++){
+            for (int row = 0; row < textMatrix[0].length; row++){
+                copy.editLayer(col, row, textMatrix[col][row]);
+            }
+        }
+        copy.setVisible(true);
+        copy.fixedScreenPos = fixedScreenPos;
+        return copy;
     }
 
     /**

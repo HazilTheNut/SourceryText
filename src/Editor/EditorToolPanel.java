@@ -20,6 +20,8 @@ import java.io.File;
  */
 public class EditorToolPanel extends JPanel {
 
+    private UndoManager undoManager;
+
     private EditorMouseInput mi;
     private LayerManager lm;
 
@@ -33,10 +35,11 @@ public class EditorToolPanel extends JPanel {
 
     private CameraManager cm;
 
-    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher){
+    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher, UndoManager undoManager){
 
         this.mi = mi;
         lm = manager;
+        this.undoManager = undoManager;
         cm = new CameraManager(mi);
 
         setLayout(new BorderLayout());
@@ -95,6 +98,12 @@ public class EditorToolPanel extends JPanel {
             new EditorFrame(newLData, watcher);
         });
         levelMenu.add(newLevelItem);
+
+        levelMenu.addSeparator();
+
+        JMenuItem undoMenuItem = new JMenuItem("Undo");
+        undoMenuItem.addActionListener(e -> undoManager.doUndo());
+        levelMenu.add(undoMenuItem);
 
         levelMenu.addSeparator();
 

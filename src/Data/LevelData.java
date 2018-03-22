@@ -41,6 +41,29 @@ public class LevelData implements Serializable {
         refreshTileDataLayer();
     }
 
+    public void setAllData(Layer backdrop, Layer tileDataLayer, Layer entityLayer, Layer warpZoneLayer, int[][] tileData, EntityStruct[][] entityData, ArrayList<WarpZone> warpZones){
+        this.backdrop = backdrop.copy();
+        this.tileDataLayer = tileDataLayer.copy();
+        this.entityLayer = entityLayer.copy();
+        this.warpZoneLayer = warpZoneLayer.copy();
+        this.tileData = new int[tileData.length][tileData[0].length];
+        for (int col = 0; col < tileData.length; col++){
+            System.arraycopy(tileData[col], 0, this.tileData[col], 0, tileData[0].length);
+        }
+        this.entityData = new EntityStruct[entityData.length][entityData[0].length];
+        for (int col = 0; col < entityData.length; col++){
+            System.arraycopy(entityData[col], 0, this.entityData[col], 0, entityData[0].length);
+        }
+        this.warpZones = (ArrayList<WarpZone>)warpZones.clone();
+    }
+
+    public LevelData copy(){
+        LevelData ldata = new LevelData();
+        ldata.reset();
+        ldata.setAllData(getBackdrop(), getTileDataLayer(), getEntityLayer(), getWarpZoneLayer(), getTileData(), getEntityData(), getWarpZones());
+        return ldata;
+    }
+
     public Layer getTileDataLayer(){
         return tileDataLayer;
     }
@@ -50,6 +73,12 @@ public class LevelData implements Serializable {
     public Layer getEntityLayer() { return entityLayer; }
 
     public Layer getWarpZoneLayer() { return warpZoneLayer; }
+
+    private int[][] getTileData() { return tileData; }
+
+    private EntityStruct[][] getEntityData() { return entityData; }
+
+    private ArrayList<WarpZone> getWarpZones() { return warpZones; }
 
     public void addWarpZone(WarpZone wz){
         warpZones.add(wz);
@@ -68,7 +97,7 @@ public class LevelData implements Serializable {
     }
 
     public void setEntityData(int col, int row, EntityStruct entity){
-        if (col > 0 && col < entityData.length && row > 0 && row < entityData[0].length) {
+        if (col >= 0 && col < entityData.length && row >= 0 && row < entityData[0].length) {
             entityData[col][row] = entity;
             entityLayer.editLayer(col, row, entity.getDisplayChar());
         }

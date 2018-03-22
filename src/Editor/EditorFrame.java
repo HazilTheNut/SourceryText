@@ -18,6 +18,7 @@ import java.awt.event.WindowListener;
 public class EditorFrame extends JFrame {
 
     private EditorToolPanel toolPanel;
+    private UndoManager undoManager;
 
     public EditorFrame(LevelData ldata, WindowWatcher watcher){
 
@@ -42,6 +43,8 @@ public class EditorFrame extends JFrame {
         manager.addLayer(ldata.getWarpZoneLayer());
         manager.addLayer(mouseHighlight);
 
+        manager.printLayerStack();
+
         window.addSpecialGraphics(new EditorLevelBoundGraphics(window, manager, ldata));
 
         c.add(window, BorderLayout.CENTER);
@@ -49,12 +52,14 @@ public class EditorFrame extends JFrame {
         EditorTextPanel editorTextPanel = new EditorTextPanel();
         c.add(editorTextPanel, BorderLayout.LINE_START);
 
-        EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, editorTextPanel, ldata.getBackdrop(), ldata);
+        undoManager = new UndoManager(ldata, manager);
+
+        EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, editorTextPanel, ldata.getBackdrop(), ldata, undoManager);
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);
         window.addMouseWheelListener(mi);
 
-        toolPanel = new EditorToolPanel(mi, manager, ldata, watcher);
+        toolPanel = new EditorToolPanel(mi, manager, ldata, watcher, undoManager);
         c.add(toolPanel, BorderLayout.LINE_END);
 
         editorTextPanel.setToolPanel(toolPanel);
@@ -88,5 +93,5 @@ public class EditorFrame extends JFrame {
         });
     }
 
-    public void setToolPanelFilePath(String path) { toolPanel.setPreviousFilePath(path); }
+    void setToolPanelFilePath(String path) { toolPanel.setPreviousFilePath(path); }
 }

@@ -40,9 +40,14 @@ public class LayerManager {
         for (Layer layer : layerStack){
             if (layer.getName().equals(toRemove)) {
                 layerStack.remove(layer);
+                System.out.printf("[LayerManager] Successful removal of layer \"%1$s\"\n", toRemove);
                 return;
             }
         }
+    }
+
+    public void removeLayer (Layer toRemove){
+        removeLayer(toRemove.getName());
     }
 
     public void setCameraPos(int x, int y){
