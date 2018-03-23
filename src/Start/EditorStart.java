@@ -5,6 +5,8 @@ import Data.LevelData;
 import Editor.WindowWatcher;
 
 import javax.swing.*;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Jared on 2/18/2018.
@@ -18,6 +20,8 @@ public class EditorStart {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
+
+        UIManager.getDefaults().put("Button.showMnemonics", true);
 
         LevelData ldata = new LevelData();
         ldata.reset();

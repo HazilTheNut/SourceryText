@@ -13,8 +13,50 @@ import Data.TileStruct;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.security.Key;
+
+/**
+ * Keybinds:
+ *
+ * Ctrl + S             Save
+ * Ctrl + Shift + S     Save As
+ * Ctrl + O             Open
+ * Ctrl + N             New
+ * Ctrl + Z             Undo
+ * Ctrl + Shift + Z     Redo
+ *
+ * 1            Art View
+ * 2            Terrain View
+ * 3            Entity View
+ *
+ * X            Expand Room
+ *
+ * B            Brush
+ * E            Eraser
+ * L            Line
+ * G            Rectangle
+ * F            Fill
+ * K            Pick
+ *
+ * T            Tile Pencil
+ *
+ * P            Place Entity
+ * R            Remove Entity
+ * D            Edit Entity
+ * C            Copy Entity
+ *
+ * Z            Create Zone
+ * I            Define Zone
+ * M            Move Zone
+ * Y            Destroy Zone
+ *
+ */
+
 
 /**
  * Created by Jared on 2/25/2018.
@@ -36,7 +78,7 @@ public class EditorToolPanel extends JPanel {
 
     private CameraManager cm;
 
-    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher, UndoManager undoManager, EditorKeyInput input){
+    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher, UndoManager undoManager, JRootPane rootPane){
 
         this.mi = mi;
         lm = manager;
@@ -51,12 +93,12 @@ public class EditorToolPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(toolsPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        createTopMenu(ldata, watcher, input);
+        createTopMenu(ldata, watcher, rootPane);
 
         createCameraPanel(ldata);
 
         toolsPanel.add(Box.createRigidArea(new Dimension(1, 2)));
-        JButton expandButton = createDrawToolButton("Expand Room", new ExpandRoom(ldata, lm));
+        JButton expandButton = createDrawToolButton("Expand Room", new ExpandRoom(ldata, lm), KeyEvent.VK_X);
         expandButton.setMaximumSize(new Dimension(90, 20));
         toolsPanel.add(expandButton);
         toolsPanel.add(Box.createRigidArea(new Dimension(1, 2)));
@@ -74,52 +116,62 @@ public class EditorToolPanel extends JPanel {
         validate();
     }
 
-    private void createTopMenu(LevelData ldata, WindowWatcher watcher, EditorKeyInput input){
+    private void createTopMenu(LevelData ldata, WindowWatcher watcher, JRootPane rootPane){
         JPanel menuPanel = new JPanel();
         menuPanel.setLayout(new BorderLayout(0, 2));
 
         JPopupMenu levelMenu = new JPopupMenu("Menu");
 
-        JMenuItem saveLevelItem = new JMenuItem("Save Level");
-        saveLevelItem.addActionListener(e -> saveLevel(ldata));
+        KeyStroke keyStroke;
+
+        JMenuItem saveLevelItem = new JMenuItem("Save Level"); //Create menu item
+        saveLevelItem.addActionListener(e -> saveLevel(ldata)); //Define action upon click
+        keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK); //Define key stroke
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "save"); //Define action upon using key input
+        rootPane.getActionMap().put("save", new MenuAction(() -> saveLevel(ldata))); //Register key input action
+        saveLevelItem.setAccelerator(keyStroke); //For display reasons
         levelMenu.add(saveLevelItem);
 
         JMenuItem saveLevelAsItem = new JMenuItem("Save Level as...");
         saveLevelAsItem.addActionListener(e -> saveLevelAs(ldata));
+        keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "save as");
+        rootPane.getActionMap().put("save as", new MenuAction(() -> saveLevelAs(ldata)));
+        saveLevelAsItem.setAccelerator(keyStroke);
         levelMenu.add(saveLevelAsItem);
-
-        input.addKeyBinding(KeyEvent.VK_S, modifiers -> {
-            if (modifiers.contains(KeyEvent.VK_CONTROL)) {
-                if (modifiers.contains(KeyEvent.VK_SHIFT))
-                    saveLevelAs(ldata);
-                else
-                    saveLevel(ldata);
-            }
-        });
 
         JMenuItem openLevelItem = new JMenuItem("Open Level");
         openLevelItem.addActionListener(e -> openLevel(watcher));
-        input.addKeyBinding(KeyEvent.VK_O, modifiers -> {
-            if (modifiers.contains(KeyEvent.VK_CONTROL)) openLevel(watcher);
-        });
+        keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK);
+        openLevelItem.setAccelerator(keyStroke);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "open");
+        rootPane.getActionMap().put("open", new MenuAction(() -> openLevel(watcher)));
         levelMenu.add(openLevelItem);
 
         JMenuItem newLevelItem = new JMenuItem("New Level");
         newLevelItem.addActionListener(e -> newLevel(watcher));
-        input.addKeyBinding(KeyEvent.VK_N, modifiers -> {
-            if (modifiers.contains(KeyEvent.VK_CONTROL)) newLevel(watcher);
-        });
-
+        keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "new");
+        rootPane.getActionMap().put("new", new MenuAction(() -> newLevel(watcher)));
+        newLevelItem.setAccelerator(keyStroke);
         levelMenu.add(newLevelItem);
 
         levelMenu.addSeparator();
 
         JMenuItem undoMenuItem = new JMenuItem("Undo");
         undoMenuItem.addActionListener(e -> undoManager.doUndo());
+        keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "undo");
+        rootPane.getActionMap().put("undo", new MenuAction(() -> undoManager.doUndo()));
+        undoMenuItem.setAccelerator(keyStroke);
         levelMenu.add(undoMenuItem);
 
         JMenuItem redoMenuItem = new JMenuItem("Redo");
         redoMenuItem.addActionListener(e -> undoManager.doRedo());
+        keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "redo");
+        rootPane.getActionMap().put("redo", new MenuAction(() -> undoManager.doRedo()));
+        redoMenuItem.setAccelerator(keyStroke);
         levelMenu.add(redoMenuItem);
 
         levelMenu.addSeparator();
@@ -153,9 +205,28 @@ public class EditorToolPanel extends JPanel {
             btn.addActionListener(cm);
             btn.setMargin(new Insets(1, 1, 1, 1));
             cameraPanel.add(btn);
-            if (str.equals("A")) { cm.artButton = btn; btn.doClick(); }
-            if (str.equals("T")) cm.tileButton = btn;
-            if (str.equals("E")) cm.entityButton = btn;
+            switch (str){
+                case "A":
+                    cm.artButton = btn;
+                    btn.doClick();
+                    setButtonMnemonic(btn, KeyEvent.VK_1);
+                    break;
+                case "T":
+                    cm.tileButton = btn;
+                    setButtonMnemonic(btn, KeyEvent.VK_2);
+                    break;
+                case "E":
+                    cm.entityButton = btn;
+                    setButtonMnemonic(btn, KeyEvent.VK_3);
+                    break;
+                case "+":
+                    setButtonMnemonic(btn, KeyEvent.VK_EQUALS);
+                    break;
+                case "-":
+                    setButtonMnemonic(btn, KeyEvent.VK_MINUS);
+                    break;
+
+            }
         }
 
         JLabel zoomLabel = new JLabel("");
@@ -172,12 +243,12 @@ public class EditorToolPanel extends JPanel {
         artToolsPanel.setBorder(BorderFactory.createTitledBorder("Art Tools"));
 
         //Art tool buttons
-        artToolsPanel.add(createDrawToolButton("Brush",     new ArtBrush()));
-        artToolsPanel.add(createDrawToolButton("Eraser",    new ArtEraser()));
-        artToolsPanel.add(createDrawToolButton("Line",      new ArtLine(lm)));
-        artToolsPanel.add(createDrawToolButton("Rectangle", new ArtRectangle(lm)));
-        artToolsPanel.add(createDrawToolButton("Fill",      new ArtFill()));
-        artToolsPanel.add(createDrawToolButton("Pick",      new ArtPick(mi.getTextPanel())));
+        artToolsPanel.add(createDrawToolButton("Brush",     new ArtBrush(),                    KeyEvent.VK_B));
+        artToolsPanel.add(createDrawToolButton("Eraser",    new ArtEraser(),                   KeyEvent.VK_E));
+        artToolsPanel.add(createDrawToolButton("Line",      new ArtLine(lm),                   KeyEvent.VK_L));
+        artToolsPanel.add(createDrawToolButton("Rectangle", new ArtRectangle(lm),              KeyEvent.VK_G));
+        artToolsPanel.add(createDrawToolButton("Fill",      new ArtFill(),                     KeyEvent.VK_F));
+        artToolsPanel.add(createDrawToolButton("Pick",      new ArtPick(mi.getTextPanel()),    KeyEvent.VK_K));
 
         int numberCells = artToolsPanel.getComponentCount();
         artToolsPanel.setLayout(new GridLayout(numberCells,1,2,2));
@@ -231,7 +302,7 @@ public class EditorToolPanel extends JPanel {
         tileScanPanel.add(placeTileIcon, BorderLayout.LINE_END);
 
         tileDataPanel.add(tileSelectBox);
-        tileDataPanel.add(createDrawToolButton("Tile Pencil", tilePencil));
+        tileDataPanel.add(createDrawToolButton("Tile Pencil", tilePencil, KeyEvent.VK_T));
         tileDataPanel.add(tileScanPanel);
         //tileDataPanel.add(Box.createRigidArea(new Dimension(1, 1)));
 
@@ -266,19 +337,19 @@ public class EditorToolPanel extends JPanel {
 
         entityDataPanel.add(entitySelectBox);
 
-        JButton placeEntityButton = createDrawToolButton("Place Entity", entityPlaceTool);
+        JButton placeEntityButton = createDrawToolButton("Place Entity", entityPlaceTool, KeyEvent.VK_P);
         placeEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(placeEntityButton);
         
-        JButton removeEntityButton = createDrawToolButton("Remove Entity", new EntityRemove(ldata));
+        JButton removeEntityButton = createDrawToolButton("Remove Entity", new EntityRemove(ldata), KeyEvent.VK_R);
         removeEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(removeEntityButton);
 
-        JButton editEntityButton = createDrawToolButton("Edit Entity", new EntityEdit(ldata));
+        JButton editEntityButton = createDrawToolButton("Edit Entity", new EntityEdit(ldata), KeyEvent.VK_D);
         editEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(editEntityButton);
 
-        JButton copyEntityButton = createDrawToolButton("Copy Entity", new EntityCopy(lm, ldata));
+        JButton copyEntityButton = createDrawToolButton("Copy Entity", new EntityCopy(lm, ldata), KeyEvent.VK_C);
         copyEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(copyEntityButton);
 
@@ -293,10 +364,10 @@ public class EditorToolPanel extends JPanel {
         JPanel warpZonePanel = new JPanel();
         warpZonePanel.setBorder(BorderFactory.createTitledBorder("Warp Zones"));
 
-        warpZonePanel.add(createDrawToolButton("Create Zone", new WarpZoneCreate(lm, ldata)));
-        warpZonePanel.add(createDrawToolButton("Define Zone", new WarpZoneDefine(ldata)));
-        warpZonePanel.add(createDrawToolButton("Move Zone",   new WarpZoneMove(lm, ldata)));
-        warpZonePanel.add(createDrawToolButton("Destroy Zone",new WarpZoneDestroy(ldata)));
+        warpZonePanel.add(createDrawToolButton("Create Zone", new WarpZoneCreate(lm, ldata), KeyEvent.VK_Z));
+        warpZonePanel.add(createDrawToolButton("Define Zone", new WarpZoneDefine(ldata),     KeyEvent.VK_I));
+        warpZonePanel.add(createDrawToolButton("Move Zone",   new WarpZoneMove(lm, ldata),   KeyEvent.VK_M));
+        warpZonePanel.add(createDrawToolButton("Destroy Zone",new WarpZoneDestroy(ldata),    KeyEvent.VK_Y));
 
         warpZonePanel.setLayout(new GridLayout(warpZonePanel.getComponentCount(), 1, 2, 2));
         warpZonePanel.setMaximumSize(new Dimension(100, 10 + warpZonePanel.getComponentCount() * 30));
@@ -326,13 +397,27 @@ public class EditorToolPanel extends JPanel {
 
     private JButton selectedToolButton;
 
-    private JButton createDrawToolButton(String name, DrawTool tool){
+    private JButton createDrawToolButton(String name, DrawTool tool, int mnemonic){
         JButton btn = new JButton(name);
         btn.addActionListener(e -> setNewArtTool(btn, tool));
         btn.setHorizontalAlignment(SwingConstants.CENTER);
         btn.setAlignmentX(CENTER_ALIGNMENT);
         btn.setMargin(new Insets(2, 2, 2, 2));
+        btn.setMnemonic(mnemonic);
+        setButtonMnemonic(btn, mnemonic);
         return btn;
+    }
+
+    private void setButtonMnemonic(JButton btn, int mnemonic){
+        String mnemonicText = KeyEvent.getKeyText(mnemonic);
+        System.out.println("[EditorToolPanel] mnemonic pressed: " + mnemonicText);
+        btn.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(mnemonic, 0), mnemonicText);
+        btn.getActionMap().put(mnemonicText, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btn.doClick();
+            }
+        });
     }
 
     private void setNewArtTool (JButton btn, DrawTool tool){
@@ -401,5 +486,35 @@ public class EditorToolPanel extends JPanel {
         LevelData newLData = new LevelData();
         newLData.reset();
         new EditorFrame(newLData, watcher);
+    }
+
+    private class MenuAction implements Action{
+
+        KeyAction action;
+
+        private MenuAction(KeyAction keyAction) { action = keyAction; }
+
+        @Override
+        public Object getValue(String key) { return null; }
+
+        @Override
+        public void putValue(String key, Object value) {}
+
+        @Override
+        public void setEnabled(boolean b) {}
+
+        @Override
+        public boolean isEnabled() { return true; }
+
+        @Override
+        public void addPropertyChangeListener(PropertyChangeListener listener) {}
+
+        @Override
+        public void removePropertyChangeListener(PropertyChangeListener listener) {}
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            action.doAction();
+        }
     }
 }

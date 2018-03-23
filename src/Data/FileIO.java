@@ -97,24 +97,18 @@ public class FileIO {
         JFileChooser fileChooser = new JFileChooser(startingPath);
         int fileChooseOption = fileChooser.showSaveDialog(new Component(){});
         if (fileChooseOption == JFileChooser.APPROVE_OPTION){
-            path = fileChooser.getSelectedFile().getPath();
+            path = decodeFilePath(fileChooser.getSelectedFile().getPath());
             if (!path.endsWith(".lda")) { // Add .sav to file if user didn't.
                 path += ".lda";
             }
-            System.out.println("[FileIO.serializeLevelData] Saving level to: " + path);
-            try {
-                FileOutputStream out = new FileOutputStream(path);
-                ObjectOutputStream objOut = new ObjectOutputStream(out);
-                objOut.writeObject(ldata);
-                return path;
-            } catch (java.io.IOException e) {
-                e.printStackTrace();
-            }
+            quickSerializeLevelData(ldata, path);
+            return path;
         }
         return "";
     }
 
     public void quickSerializeLevelData(LevelData ldata, String path){
+        System.out.println("[FileIO.serializeLevelData] Saving level to: " + path);
         try {
             FileOutputStream out = new FileOutputStream(path);
             ObjectOutputStream objOut = new ObjectOutputStream(out);

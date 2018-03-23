@@ -9,10 +9,8 @@ import Engine.ViewWindow;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
+import java.beans.PropertyChangeListener;
 
 /**
  * Created by Jared on 2/18/2018.
@@ -61,9 +59,7 @@ public class EditorFrame extends JFrame {
         window.addMouseMotionListener(mi);
         window.addMouseWheelListener(mi);
 
-        EditorKeyInput input = new EditorKeyInput();
-
-        toolPanel = new EditorToolPanel(mi, manager, ldata, watcher, undoManager, input);
+        toolPanel = new EditorToolPanel(mi, manager, ldata, watcher, undoManager, getRootPane());
         c.add(toolPanel, BorderLayout.LINE_END);
 
         editorTextPanel.setToolPanel(toolPanel);
@@ -96,8 +92,43 @@ public class EditorFrame extends JFrame {
             public void windowDeactivated(WindowEvent e) {}
         });
 
-        getRootPane().addKeyListener(input);
-        getRootPane().requestFocusInWindow();
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('c'), "out");
+        getRootPane().getActionMap().put("out", new Action() {
+            @Override
+            public Object getValue(String key) {
+                return null;
+            }
+
+            @Override
+            public void putValue(String key, Object value) {
+
+            }
+
+            @Override
+            public void setEnabled(boolean b) {
+
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return true;
+            }
+
+            @Override
+            public void addPropertyChangeListener(PropertyChangeListener listener) {
+
+            }
+
+            @Override
+            public void removePropertyChangeListener(PropertyChangeListener listener) {
+
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("[EditorFrame] Input test");
+            }
+        });
     }
 
     void setToolPanelFilePath(String path) { toolPanel.setPreviousFilePath(path); }

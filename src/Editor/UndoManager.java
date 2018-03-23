@@ -28,9 +28,9 @@ class UndoManager {
 
     void recordLevelData(){
         /**/
-        //for (int ii = pastLevelData.size()-1; ii >= historyPointer; ii--){
-        //    pastLevelData.remove(ii);
-        //}
+        for (int ii = pastLevelData.size()-1; ii > historyPointer; ii--){
+            pastLevelData.remove(ii);
+        }
         pastLevelData.add(currentLevelData.copy());
         if (pastLevelData.size() > MAX_UNDO_LENGTH)
             pastLevelData.remove(0);

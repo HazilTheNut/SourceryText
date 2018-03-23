@@ -71,7 +71,6 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
             }
         } else if (e.getButton() == MouseEvent.BUTTON1 && !movingCamera && drawTool != null){
             drawTool.onDrawStart(backdropLayer, highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()), textPanel.selectedSpecialText);
-            undoManager.recordLevelData();
             drawing = true;
         }
     }
@@ -80,6 +79,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     public void mouseReleased(MouseEvent e) {
         if (drawing && e.getButton() == MouseEvent.BUTTON1 && drawTool != null) {
             drawTool.onDrawEnd(backdropLayer, highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()), textPanel.selectedSpecialText);
+            undoManager.recordLevelData();
         }
         movingCamera = false;
         drawing = false;
