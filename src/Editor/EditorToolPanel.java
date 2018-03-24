@@ -258,6 +258,7 @@ public class EditorToolPanel extends JPanel {
         toolOptionsPanel = new JPanel();
         toolOptionsPanel.setAlignmentX(CENTER_ALIGNMENT);
         toolOptionsPanel.setMaximumSize(new Dimension(100, 50));
+        toolOptionsPanel.setVisible(false);
 
         toolsPanel.add(toolOptionsPanel);
     }

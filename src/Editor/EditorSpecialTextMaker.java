@@ -24,15 +24,16 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     private boolean settingForeground = true;
 
     private ColorPicker colorPicker;
-    private JSlider bgOpacitySlider;
     private float[] fgHSB = new float[3];
     private float[] bgHSB = new float[3];
 
-    public EditorSpecialTextMaker(Container c, JButton button, SpecialText startingText){
+    EditorSpecialTextMaker(Container c, JButton button, SpecialText startingText){
         openedButton = button;
         buttonContainer = c;
 
-        setMinimumSize(new Dimension(410, 310));
+        setTitle("SpecialText Creator");
+
+        setMinimumSize(new Dimension(410, 285));
 
         //Buttons and text box on left
         charField = new JTextField(3);
@@ -105,24 +106,6 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         colorPickerPanel.addMouseListener(colorPicker);
         colorPickerPanel.addMouseMotionListener(colorPicker);
         colorPickerPanel.add(colorPicker, BorderLayout.CENTER);
-
-        JPanel opacityPanel = new JPanel(); //Sub-panel for selecting opacity
-
-        JTextField sliderValue = new JTextField("255", 3);
-        sliderValue.setBorder(BorderFactory.createEmptyBorder());
-        sliderValue.setEditable(false);
-
-        bgOpacitySlider = new JSlider(SwingConstants.HORIZONTAL, 0, 255, 255);
-        bgOpacitySlider.setMinorTickSpacing(5);
-        bgOpacitySlider.setMajorTickSpacing(50);
-        bgOpacitySlider.addChangeListener(e -> sliderValue.setText(String.valueOf(bgOpacitySlider.getValue())));
-
-        opacityPanel.setBorder(BorderFactory.createTitledBorder("Background Opacity"));
-
-        opacityPanel.add(bgOpacitySlider, BorderLayout.CENTER);
-        opacityPanel.add(sliderValue, BorderLayout.LINE_END);
-
-        colorPickerPanel.add(opacityPanel, BorderLayout.PAGE_END);
 
         add(colorPickerPanel, BorderLayout.CENTER);
 

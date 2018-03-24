@@ -1,7 +1,6 @@
 package Editor;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -43,7 +42,7 @@ public class CollapsiblePanel extends JPanel{
         g.drawRect(getBoxX(), getBoxY(), getBoxWidth(), getBoxHeight());
         g.setColor(Color.BLACK);
         FontMetrics metrics = getFontMetrics(getFont());
-        String str = (isActive) ? "+" : "-";
+        String str = (isActive) ? "-" : "+";
         g.drawString(str, getBoxX() + getBoxWidth()/2 - metrics.stringWidth(str)*2/5, getBoxY() + getBoxHeight()/2 + metrics.getHeight()*2/5 - 1);
     }
 
@@ -76,7 +75,6 @@ public class CollapsiblePanel extends JPanel{
         for (Component c : getComponents()){
             contentHeight += c.getHeight();
         }
-        System.out.printf("[CollapsiblePanel] contentHeight = %1$d", contentHeight);
         return contentHeight;
     }
 
@@ -108,7 +106,6 @@ public class CollapsiblePanel extends JPanel{
                 }
                 repaint();
             }
-            System.out.println("[CollapsiblePanel] Mouse click");
         }
 
         @Override

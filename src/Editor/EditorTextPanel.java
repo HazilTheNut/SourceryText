@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 /**
  * Created by Jared on 2/20/2018.
@@ -23,7 +24,6 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     private EditorToolPanel toolPanel;
 
     public EditorTextPanel (){
-
         BorderLayout layout = new BorderLayout();
         setPreferredSize(new Dimension(60, 500));
         setLayout(layout);
@@ -36,6 +36,13 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         addNewTextButton.setSelected(false);
         addNewTextButton.setMargin(new Insets(2, 2, 2, 2));
         addNewTextButton.setActionCommand("Add New Btn");
+        addNewTextButton.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0), "add");
+        addNewTextButton.getActionMap().put("add", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addNewTextButton.doClick();
+            }
+        });
         addNewTextButton.addActionListener(this);
 
         topPanel.add(addNewTextButton, BorderLayout.CENTER);
