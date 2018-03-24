@@ -1,15 +1,15 @@
 package Editor;
 
-import Data.LevelData;
-import Editor.DrawTools.*;
+import Data.EntityStruct;
 import Data.FileIO;
+import Data.LevelData;
+import Data.TileStruct;
+import Editor.DrawTools.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Registries.EntityRegistry;
-import Data.EntityStruct;
 import Game.Registries.TileRegistry;
-import Data.TileStruct;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.security.Key;
 
 /**
  * Keybinds:
@@ -56,7 +55,6 @@ import java.security.Key;
  * Y            Destroy Zone
  *
  */
-
 
 /**
  * Created by Jared on 2/25/2018.
@@ -239,7 +237,7 @@ public class EditorToolPanel extends JPanel {
 
     private void createArtToolsPanel(){
         //Art tools panel
-        JPanel artToolsPanel = new JPanel();
+        CollapsiblePanel artToolsPanel = new CollapsiblePanel();
         artToolsPanel.setBorder(BorderFactory.createTitledBorder("Art Tools"));
 
         //Art tool buttons
@@ -252,7 +250,7 @@ public class EditorToolPanel extends JPanel {
 
         int numberCells = artToolsPanel.getComponentCount();
         artToolsPanel.setLayout(new GridLayout(numberCells,1,2,2));
-        artToolsPanel.setMaximumSize(new Dimension(100, 10 + numberCells*30));
+        artToolsPanel.setNormalSize(new Dimension(100, 10 + numberCells*30));
 
         toolsPanel.add(artToolsPanel);
 
@@ -260,12 +258,13 @@ public class EditorToolPanel extends JPanel {
         toolOptionsPanel = new JPanel();
         toolOptionsPanel.setAlignmentX(CENTER_ALIGNMENT);
         toolOptionsPanel.setMaximumSize(new Dimension(100, 50));
+
         toolsPanel.add(toolOptionsPanel);
     }
 
     private void createTileDataPanel(LevelData ldata){
         //Tile data panel
-        JPanel tileDataPanel = new JPanel();
+        CollapsiblePanel tileDataPanel = new CollapsiblePanel();
         tileDataPanel.setBorder(BorderFactory.createTitledBorder("Tile Data"));
 
         //Tile select combo box
@@ -307,14 +306,14 @@ public class EditorToolPanel extends JPanel {
         //tileDataPanel.add(Box.createRigidArea(new Dimension(1, 1)));
 
         tileDataPanel.setLayout(new GridLayout(tileDataPanel.getComponentCount(), 1, 2, 2));
-        tileDataPanel.setMaximumSize(new Dimension(100, 10 + tileDataPanel.getComponentCount()*30));
+        tileDataPanel.setNormalSize(new Dimension(100, 10 + tileDataPanel.getComponentCount()*30));
         tileDataPanel.validate();
         toolsPanel.add(tileDataPanel);
     }
 
     private void createEntityDataPanel(LevelData ldata){
 
-        JPanel entityDataPanel = new JPanel();
+        CollapsiblePanel entityDataPanel = new CollapsiblePanel();
         entityDataPanel.setBorder(BorderFactory.createTitledBorder("Entity Data"));
 
         JComboBox<EntityStruct> entitySelectBox = new JComboBox<>();
@@ -354,14 +353,14 @@ public class EditorToolPanel extends JPanel {
         entityDataPanel.add(copyEntityButton);
 
         entityDataPanel.setLayout(new GridLayout(entityDataPanel.getComponentCount(), 1, 2, 2));
-        entityDataPanel.setMaximumSize(new Dimension(100, 10 + entityDataPanel.getComponentCount() * 30));
+        entityDataPanel.setNormalSize(new Dimension(100, 10 + entityDataPanel.getComponentCount() * 30));
         entityDataPanel.validate();
         toolsPanel.add(entityDataPanel);
     }
 
     private void createWarpZonePanel(LevelData ldata){
 
-        JPanel warpZonePanel = new JPanel();
+        CollapsiblePanel warpZonePanel = new CollapsiblePanel();
         warpZonePanel.setBorder(BorderFactory.createTitledBorder("Warp Zones"));
 
         warpZonePanel.add(createDrawToolButton("Create Zone", new WarpZoneCreate(lm, ldata), KeyEvent.VK_Z));
@@ -370,7 +369,7 @@ public class EditorToolPanel extends JPanel {
         warpZonePanel.add(createDrawToolButton("Destroy Zone",new WarpZoneDestroy(ldata),    KeyEvent.VK_Y));
 
         warpZonePanel.setLayout(new GridLayout(warpZonePanel.getComponentCount(), 1, 2, 2));
-        warpZonePanel.setMaximumSize(new Dimension(100, 10 + warpZonePanel.getComponentCount() * 30));
+        warpZonePanel.setNormalSize(new Dimension(100, 10 + warpZonePanel.getComponentCount() * 30));
         warpZonePanel.validate();
 
         toolsPanel.add(warpZonePanel);
@@ -410,7 +409,6 @@ public class EditorToolPanel extends JPanel {
 
     private void setButtonMnemonic(JButton btn, int mnemonic){
         String mnemonicText = KeyEvent.getKeyText(mnemonic);
-        System.out.println("[EditorToolPanel] mnemonic pressed: " + mnemonicText);
         btn.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(mnemonic, 0), mnemonicText);
         btn.getActionMap().put(mnemonicText, new AbstractAction() {
             @Override
