@@ -250,7 +250,7 @@ public class EditorToolPanel extends JPanel {
 
         int numberCells = artToolsPanel.getComponentCount();
         artToolsPanel.setLayout(new GridLayout(numberCells,1,2,2));
-        artToolsPanel.setNormalSize(new Dimension(100, 10 + numberCells*30));
+        sizeToolsPanel(artToolsPanel);
 
         toolsPanel.add(artToolsPanel);
 
@@ -307,7 +307,7 @@ public class EditorToolPanel extends JPanel {
         //tileDataPanel.add(Box.createRigidArea(new Dimension(1, 1)));
 
         tileDataPanel.setLayout(new GridLayout(tileDataPanel.getComponentCount(), 1, 2, 2));
-        tileDataPanel.setNormalSize(new Dimension(100, 10 + tileDataPanel.getComponentCount()*30));
+        sizeToolsPanel(tileDataPanel);
         tileDataPanel.validate();
         toolsPanel.add(tileDataPanel);
     }
@@ -354,7 +354,7 @@ public class EditorToolPanel extends JPanel {
         entityDataPanel.add(copyEntityButton);
 
         entityDataPanel.setLayout(new GridLayout(entityDataPanel.getComponentCount(), 1, 2, 2));
-        entityDataPanel.setNormalSize(new Dimension(100, 10 + entityDataPanel.getComponentCount() * 30));
+        sizeToolsPanel(entityDataPanel);
         entityDataPanel.validate();
         toolsPanel.add(entityDataPanel);
     }
@@ -370,10 +370,14 @@ public class EditorToolPanel extends JPanel {
         warpZonePanel.add(createDrawToolButton("Destroy Zone",new WarpZoneDestroy(ldata),    KeyEvent.VK_Y));
 
         warpZonePanel.setLayout(new GridLayout(warpZonePanel.getComponentCount(), 1, 2, 2));
-        warpZonePanel.setNormalSize(new Dimension(100, 10 + warpZonePanel.getComponentCount() * 30));
+        sizeToolsPanel(warpZonePanel);
         warpZonePanel.validate();
 
         toolsPanel.add(warpZonePanel);
+    }
+
+    private void sizeToolsPanel(CollapsiblePanel panel){
+        panel.setNormalSize(new Dimension(100, panel.getInsets().bottom + panel.getInsets().top + panel.getComponentCount() * 30));
     }
 
     void updateSearchForIcon(SpecialText text) {

@@ -12,11 +12,10 @@ class UndoManager {
 
     private ArrayList<LevelData> pastLevelData = new ArrayList<>();
     private LevelData currentLevelData;
-    private LevelData previousLevelData;
 
     private LayerManager lm;
 
-    private final int MAX_UNDO_LENGTH = 10;
+    private final int MAX_UNDO_LENGTH = 200;
     private int historyPointer;
 
     UndoManager(LevelData ldata, LayerManager layerManager){

@@ -34,7 +34,10 @@ public class LonelyMenu extends JComponent implements MouseInputListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         //menu.show(this, -129, -2);
-        menu.show(this, -1 * (int)menu.getPreferredSize().getWidth() - 2, -2);
+        if (menu.isShowing())
+            menu.setVisible(false);
+        else
+            menu.show(this, -1 * (int)menu.getPreferredSize().getWidth() - 2, -2);
     }
 
     @Override

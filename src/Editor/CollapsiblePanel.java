@@ -97,7 +97,7 @@ public class CollapsiblePanel extends JPanel{
     private class MouseInput extends MouseAdapter{
 
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void mousePressed(MouseEvent e) {
             if (isMouseInCollapseButton(e)){
                 if (isActive){
                     deactivate();
