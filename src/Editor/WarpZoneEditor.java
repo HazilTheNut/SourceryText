@@ -52,6 +52,12 @@ public class WarpZoneEditor extends JFrame{
         finishButton.setMaximumSize(new Dimension(100, 30));
         finishButton.addActionListener(e -> confirm());
 
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.setMaximumSize(new Dimension(100, 30));
+        cancelButton.addActionListener(e -> dispose());
+
+        bottomPanel.add(Box.createHorizontalGlue());
+        bottomPanel.add(cancelButton);
         bottomPanel.add(finishButton);
 
         add(bottomPanel, BorderLayout.PAGE_END);

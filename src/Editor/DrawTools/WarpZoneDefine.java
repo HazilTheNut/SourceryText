@@ -44,7 +44,7 @@ public class WarpZoneDefine extends DrawTool {
             if (selectedWarpZone.getRoomFilePath().equals(""))
                 levelFile = io.chooseLevel();
             else
-                levelFile = io.chooseLevel(selectedWarpZone.getRoomFilePath());
+                levelFile = io.chooseLevel(io.getRootFilePath() + selectedWarpZone.getRoomFilePath());
             if (levelFile != null) {
                 LevelData nextLevel = io.openLevel(levelFile);
                 if (nextLevel != null) {

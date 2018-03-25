@@ -60,6 +60,7 @@ public class FileIO {
     }
 
     public File chooseLevel(String startingPath){
+        System.out.printf("[FileIO.chooseLevel] Starting path: %1$s\n", startingPath);
         JFileChooser chooser = new JFileChooser(startingPath);
         System.out.println(startingPath);
         FileNameExtensionFilter filter = new FileNameExtensionFilter(

@@ -46,7 +46,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
         originalResolutionHeight = window.RESOLUTION_HEIGHT;
         ldata = levelData;
         this.undoManager = undoManager;
-        warpZoneFilePathView = new EditorWarpZoneFilePathView(levelData);
+        warpZoneFilePathView = new EditorWarpZoneFilePathView(levelData, window);
         window.addSpecialGraphics(warpZoneFilePathView);
     }
 
