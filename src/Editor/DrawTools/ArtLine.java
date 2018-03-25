@@ -10,7 +10,7 @@ import java.awt.*;
 /**
  * Created by Jared on 2/25/2018.
  */
-public class ArtLine extends DrawTool {
+public class ArtLine extends ArtBrush {
 
     private int startX;
     private int startY;
@@ -21,11 +21,10 @@ public class ArtLine extends DrawTool {
     private SpecialText startHighlight = new SpecialText(' ', Color.WHITE, new Color(75, 75, 255, 120));
     private LayerManager lm;
 
-    public ArtLine(LayerManager manager) {lm = manager; }
-
-    @Override
-    public void onActivate(JPanel panel) {
-        TOOL_TYPE = TYPE_ART;
+    public ArtLine(LayerManager manager) {
+        lm = manager;
+        name = "Line Tool";
+        label = "Thickness: ";
     }
 
     @Override
@@ -63,7 +62,7 @@ public class ArtLine extends DrawTool {
         for (int ii = 0; ii <= distance; ii++){
             int col = (int)Math.round(ii * Math.cos(angle)) + x1;
             int row = (int)Math.round(ii * Math.sin(angle)) + y1;
-            layer.editLayer(col, row, text);
+            drawBrush(layer, col, row, text);
         }
     }
 }

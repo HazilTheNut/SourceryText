@@ -66,7 +66,7 @@ public class EditorToolPanel extends JPanel {
     private EditorMouseInput mi;
     private LayerManager lm;
 
-    private JPanel toolOptionsPanel;
+    private CollapsiblePanel toolOptionsPanel;
 
     private JLabel searchForIcon;
     private JLabel placeTileIcon;
@@ -255,9 +255,10 @@ public class EditorToolPanel extends JPanel {
         toolsPanel.add(artToolsPanel);
 
         //Art tool options panel
-        toolOptionsPanel = new JPanel();
+        toolOptionsPanel = new CollapsiblePanel();
         toolOptionsPanel.setAlignmentX(CENTER_ALIGNMENT);
-        toolOptionsPanel.setMaximumSize(new Dimension(100, 50));
+        toolOptionsPanel.setNormalSize(new Dimension(100, 50));
+        toolOptionsPanel.setMinimumSize(new Dimension(100, 30));
         toolOptionsPanel.setVisible(false);
 
         toolsPanel.add(toolOptionsPanel);
@@ -378,6 +379,7 @@ public class EditorToolPanel extends JPanel {
 
     private void sizeToolsPanel(CollapsiblePanel panel){
         panel.setNormalSize(new Dimension(100, panel.getInsets().bottom + panel.getInsets().top + panel.getComponentCount() * 30));
+        panel.setMinimumSize(new Dimension(100, 30));
     }
 
     void updateSearchForIcon(SpecialText text) {

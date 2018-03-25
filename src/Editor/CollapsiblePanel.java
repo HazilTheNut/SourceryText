@@ -65,17 +65,9 @@ public class CollapsiblePanel extends JPanel{
 
     private boolean isMouseInCollapseButton(MouseEvent e){ return (e.getX() >= getBoxX() && e.getX() <= getBoxX() + getBoxWidth() && e.getY() >= getBoxY() && e.getY() <= getBoxY() + getBoxHeight());}
 
-    void setNormalSize(Dimension size) {
+    public void setNormalSize(Dimension size) {
         normalSize = size;
         setMaximumSize(size);
-    }
-
-    private int countContentHeight(){
-        int contentHeight = 0;
-        for (Component c : getComponents()){
-            contentHeight += c.getHeight();
-        }
-        return contentHeight;
     }
 
     private void activate(){
@@ -86,11 +78,11 @@ public class CollapsiblePanel extends JPanel{
         isActive = true;
     }
 
-    public void deactivate(){
+    private void deactivate(){
         for (Component component : getComponents()){
             component.setVisible(false);
         }
-        setMaximumSize(new Dimension(getWidth(), getHeight() - countContentHeight()));
+        setMaximumSize(getMinimumSize());
         isActive = false;
     }
 

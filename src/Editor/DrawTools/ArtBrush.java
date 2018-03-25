@@ -11,16 +11,16 @@ import java.awt.*;
  */
 public class ArtBrush extends DrawTool {
 
-    private JTextField brushSizeBox;
+    private JSpinner brushSizeBox;
     String name = "Brush Tool";
+    String label = "Size: ";
 
     @Override
     public void onActivate(JPanel panel) {
-        brushSizeBox = new JTextField(2);
-        brushSizeBox.setMaximumSize(new Dimension(20, 20));
-        brushSizeBox.setText("1");
+        brushSizeBox = new JSpinner(new SpinnerNumberModel(1, 1, 20, 1));
+        brushSizeBox.setMaximumSize(new Dimension(50, 20));
         panel.setBorder(BorderFactory.createTitledBorder(name));
-        JLabel boxLabel = new JLabel("Size:");
+        JLabel boxLabel = new JLabel(label);
         panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
         panel.add(boxLabel);
         panel.add(brushSizeBox);
@@ -44,7 +44,7 @@ public class ArtBrush extends DrawTool {
     void drawBrush(Layer layer, int centerCol, int centerRow, SpecialText text){
         int brushSize = 1;
         try {
-            brushSize = Integer.valueOf(brushSizeBox.getText());
+            brushSize = ((SpinnerNumberModel)brushSizeBox.getModel()).getNumber().intValue();
         } catch (NumberFormatException ignored) {}
         if (brushSize <= 0 ) brushSize = 1;
         for (int x = 0; x < brushSize; x++){
