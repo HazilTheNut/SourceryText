@@ -26,7 +26,7 @@ public class LevelData implements Serializable {
     private ArrayList<WarpZone> warpZones;
 
     public void reset(){
-        backdrop = new Layer(new SpecialText[100][50], "backdrop", 0, 0);
+        backdrop = new Layer(new SpecialText[10][10], "backdrop", 0, 0);
         tileData = new int[backdrop.getCols()][backdrop.getRows()];
         for (int col = 0; col < tileData.length; col++){
             for (int row = 0; row < tileData[0].length; row++){
@@ -56,7 +56,7 @@ public class LevelData implements Serializable {
         }
         this.warpZones.clear();
         for (WarpZone wz : warpZones){
-            this.warpZones.add(wz);
+            this.warpZones.add(wz.copy());
         }
     }
 

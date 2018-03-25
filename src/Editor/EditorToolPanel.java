@@ -399,6 +399,7 @@ public class EditorToolPanel extends JPanel {
                 }
             }
         }
+        undoManager.recordLevelData();
     }
 
     private JButton selectedToolButton;

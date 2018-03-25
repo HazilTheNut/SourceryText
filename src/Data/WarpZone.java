@@ -76,4 +76,11 @@ public class WarpZone implements Serializable{
     public void setSelected(boolean selected) {
         isSelected = selected;
     }
+
+    public WarpZone copy(){
+        WarpZone wz = new WarpZone(xpos, ypos, width, height);
+        wz.setTranslation(newRoomStartX, newRoomStartY);
+        wz.setRoomFilePath(roomFilePath);
+        return wz;
+    }
 }
