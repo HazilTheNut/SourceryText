@@ -4,6 +4,7 @@ import Data.LevelData;
 import Editor.DrawTools.DrawTool;
 import Engine.Layer;
 import Engine.LayerManager;
+import Engine.SpecialGraphics.EditorWarpZoneFilePathView;
 import Engine.SpecialText;
 import Engine.ViewWindow;
 
@@ -21,6 +22,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     private ViewWindow window;
     private LayerManager manager;
     private Layer highlightLayer;
+    private EditorWarpZoneFilePathView warpZoneFilePathView;
 
     private UndoManager undoManager;
 
@@ -44,6 +46,8 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
         originalResolutionHeight = window.RESOLUTION_HEIGHT;
         ldata = levelData;
         this.undoManager = undoManager;
+        warpZoneFilePathView = new EditorWarpZoneFilePathView(levelData);
+        window.addSpecialGraphics(warpZoneFilePathView);
     }
 
     private int getLayerMousePosX(int mouseX){
@@ -117,6 +121,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
         if (window.getSnappedMouseX(e.getX()) != previousCharXPos || window.getSnappedMouseY(e.getY()) != previousCharYPos)
             ldata.updateWarpZoneLayer(window.getSnappedMouseX(e.getX()) + (int)manager.getCameraPos().getX(), window.getSnappedMouseY(e.getY()) + (int)manager.getCameraPos().getY());
         updateMouseCursorPos(e.getX(), e.getY());
+        warpZoneFilePathView.updateMousePosition(e.getX(), e.getY());
     }
 
     private void updateMouseCursorPos(int rawX, int rawY){

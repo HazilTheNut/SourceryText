@@ -235,5 +235,6 @@ public class LevelData implements Serializable {
                 }
             }
         }
+        updateWarpZoneLayer(-50, -50);
     }
 }
