@@ -178,7 +178,7 @@ public class EditorToolPanel extends JPanel {
         syncTileDataItem.addActionListener(e -> ldata.syncDisplayWithData());
         levelMenu.add(syncTileDataItem);
 
-        JMenuItem findAndReplaceItem = new JMenuItem("Find and Replace");
+        JMenuItem findAndReplaceItem = new JMenuItem("Find and Replace....");
         findAndReplaceItem.addActionListener(e -> new EditorFindAndReplace(mi.getTextPanel(), ldata, undoManager));
         levelMenu.add(findAndReplaceItem);
 
