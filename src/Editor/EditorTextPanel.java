@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 2/20/2018.
@@ -20,6 +21,8 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     private SingleTextRenderer selectionRender;
     private JLabel selectionLabel;
     private JButton selectedTextButton;
+
+    private ArrayList<JButton> buttonManifest = new ArrayList<>();
 
     private EditorToolPanel toolPanel;
 
@@ -99,6 +102,8 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         } else if (e.getActionCommand().equals("Remove Btn")){
             if (selectedTextButton != null){
                 textBtnPanel.remove(selectedTextButton);
+                buttonManifest.remove(selectedTextButton);
+                System.out.printf("[EditorTextPanel] Btn manifest size: %1$d\n", buttonManifest.size());
                 textBtnPanel.validate();
                 textBtnPanel.repaint();
             }
@@ -110,7 +115,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
             buildSpecTxtFromButtonClick(e.getActionCommand());
             selectedTextButton = (JButton)e.getSource();
         }
-        System.out.printf("[EditorTextPanel] Button cmd: %1$s", e.getActionCommand());
+        System.out.printf("[EditorTextPanel] Button cmd: %1$s\n", e.getActionCommand());
     }
 
     private JButton createBaseButton(){
@@ -122,6 +127,8 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         btn.setOpaque(true);
         btn.addActionListener(this);
         textBtnPanel.add(btn, 0);
+        buttonManifest.add(btn);
+        System.out.printf("[EditorTextPanel] Btn manifest size: %1$d\n", buttonManifest.size());
         textBtnPanel.validate();
         validate();
         return btn;
@@ -178,9 +185,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         if (toolPanel != null) toolPanel.updateSearchForIcon(selectedSpecialText);
     }
 
-    public JScrollPane getTextBtnScrollPane() {
-        return textBtnScrollPane;
-    }
+    ArrayList<JButton> getButtonManifest() { return buttonManifest; }
 
     public void setTextBtnScrollPane(JScrollPane textBtnScrollPane) {
         this.textBtnScrollPane = textBtnScrollPane;

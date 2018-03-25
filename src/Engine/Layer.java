@@ -91,6 +91,24 @@ public class Layer implements Serializable{
         }
     }
 
+    /**
+     * Replaces every SpecialText in the layer that matches an input SpecialText with a different one
+     * @param find What to replace
+     * @param replace What to replace with
+     */
+    public void findAndReplace(SpecialText find, SpecialText replace){
+        for (int col = 0; col < textMatrix.length; col++){
+            for (int row = 0; row < textMatrix[0].length; row++){
+                SpecialText get = getSpecialText(col, row);
+                if (get != null && get.equals(find))
+                    editLayer(col, row, replace);
+                else if (get == null && find == null){
+                    editLayer(col, row, replace);
+                }
+            }
+        }
+    }
+
     public void resizeLayer(int width, int height, int startX, int startY){
         SpecialText[][] newMatrix = new SpecialText[width][height];
         for (int col = 0; col < textMatrix.length; col++){
