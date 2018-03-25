@@ -16,10 +16,10 @@ public class ArtFill extends DrawTool {
     
     @Override
     public void onActivate(JPanel panel) {
-        fillSizeBox = new JSpinner(new SpinnerNumberModel(100, 1, 1000, 1));
-        fillSizeBox.setMaximumSize(new Dimension(50, 20));
+        fillSizeBox = new JSpinner(new SpinnerNumberModel(100, 1, 999, 1));
+        fillSizeBox.setMaximumSize(new Dimension(45, 20));
         panel.setBorder(BorderFactory.createTitledBorder("Fill"));
-        JLabel boxLabel = new JLabel("Size:");
+        JLabel boxLabel = new JLabel("Max: ");
         panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
         panel.add(boxLabel);
         panel.add(fillSizeBox);

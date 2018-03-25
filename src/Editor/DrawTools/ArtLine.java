@@ -24,7 +24,7 @@ public class ArtLine extends ArtBrush {
     public ArtLine(LayerManager manager) {
         lm = manager;
         name = "Line Tool";
-        label = "Thickness: ";
+        label = "Width: ";
     }
 
     @Override

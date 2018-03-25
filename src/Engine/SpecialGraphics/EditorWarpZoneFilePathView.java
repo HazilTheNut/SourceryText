@@ -23,19 +23,19 @@ public class EditorWarpZoneFilePathView implements SpecialGraphics {
     @Override
     public void paint(Graphics g) {
         if (ldata.getSelectedWarpZone() != null){
-            Font font = new Font(Font.SANS_SERIF, Font.ITALIC, 12);
-            g.setFont(font);
+            g.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));
             String filePath = ldata.getSelectedWarpZone().getRoomFilePath();
             if (filePath.length() > 0) {
                 int startX = mouseX + 5;
                 int startY = mouseY + 15;
                 g.setColor(new Color(50, 50, 50));
-                FontMetrics metrics = g.getFontMetrics();
-                g.drawRect(startX, startY, metrics.stringWidth(filePath) + 2, metrics.getHeight() + 2);
+                int stringWidth = g.getFontMetrics().stringWidth(filePath);
+                int stringHeight = g.getFontMetrics().getHeight();
+                g.drawRect(startX, startY, stringWidth + 2, stringHeight + 2);
                 g.setColor(new Color(40, 40, 40));
-                g.fillRect(startX+1, startY+1, metrics.stringWidth(filePath), metrics.getHeight());
+                g.fillRect(startX+1, startY+1, stringWidth, stringHeight);
                 g.setColor(Color.WHITE);
-                g.drawString(filePath, startX + 1, startY + metrics.getHeight() - 1);
+                g.drawString(filePath, startX + 1, startY + stringHeight - 1);
             }
         }
     }

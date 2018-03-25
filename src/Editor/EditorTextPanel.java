@@ -104,10 +104,13 @@ public class EditorTextPanel extends JPanel implements ActionListener{
             }
         } else if (e.getActionCommand().equals("nulltext")){
             selectedSpecialText = null;
+            selectionRender.specText = null;
+            selectionLabel.repaint();
         } else if (!e.getActionCommand().equals("")){
             buildSpecTxtFromButtonClick(e.getActionCommand());
             selectedTextButton = (JButton)e.getSource();
         }
+        System.out.printf("[EditorTextPanel] Button cmd: %1$s", e.getActionCommand());
     }
 
     private JButton createBaseButton(){

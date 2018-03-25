@@ -49,12 +49,12 @@ public class CollapsiblePanel extends JPanel{
     private final int EDGE_MARGINS = 8;
 
     private int getBoxWidth() {
-        return getWidth() - getBoxX() - EDGE_MARGINS;
+        return getWidth() - getBoxX() - EDGE_MARGINS - 1;
     }
 
     private int getBoxHeight() {
         FontMetrics metrics = getFontMetrics(getFont());
-        return metrics.getHeight() - 1;
+        return metrics.getHeight() - 2;
     }
 
     private int getBoxX(){
