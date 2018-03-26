@@ -14,7 +14,6 @@ import java.util.ArrayList;
  */
 public class EditorTextPanel extends JPanel implements ActionListener{
 
-    private JScrollPane textBtnScrollPane;
     private JPanel textBtnPanel;
 
     SpecialText selectedSpecialText = new SpecialText(' ');
@@ -54,7 +53,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
 
         textBtnPanel = new JPanel();
         textBtnPanel.setLayout(new BoxLayout(textBtnPanel, BoxLayout.PAGE_AXIS));
-        textBtnScrollPane = new JScrollPane(textBtnPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane textBtnScrollPane = new JScrollPane(textBtnPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         textBtnScrollPane.getVerticalScrollBar().setUnitIncrement(13);
         add(textBtnScrollPane, BorderLayout.CENTER);
 
@@ -63,7 +62,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayout(3, 1, 1, 3));
 
-        selectionRender = new SingleTextRenderer(new SpecialText(' ', Color.WHITE, Color.WHITE));
+        selectionRender = new SingleTextRenderer(null);
         selectionLabel = new JLabel(selectionRender);
         selectionLabel.setMaximumSize(new Dimension(20, 20));
         selectionLabel.setAlignmentX(CENTER_ALIGNMENT);
@@ -93,17 +92,18 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         generateNewButton(null);
     }
 
-    public void setToolPanel(EditorToolPanel toolPanel) { this.toolPanel = toolPanel; }
+    void setToolPanel(EditorToolPanel toolPanel) { this.toolPanel = toolPanel; }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        System.out.printf("[EditorTextPanel.actionPerformed] Button cmd: %1$s\n", e.getActionCommand());
         if (e.getActionCommand().equals("Add New Btn")) { //Adds new button
             createNewButton(createBaseButton());
         } else if (e.getActionCommand().equals("Remove Btn")){
             if (selectedTextButton != null){
                 textBtnPanel.remove(selectedTextButton);
                 buttonManifest.remove(selectedTextButton);
-                System.out.printf("[EditorTextPanel] Btn manifest size: %1$d\n", buttonManifest.size());
+                System.out.printf("[EditorTextPanel.actionPerformed] Btn manifest size: %1$d\n", buttonManifest.size());
                 textBtnPanel.validate();
                 textBtnPanel.repaint();
             }
@@ -111,11 +111,19 @@ public class EditorTextPanel extends JPanel implements ActionListener{
             selectedSpecialText = null;
             selectionRender.specText = null;
             selectionLabel.repaint();
-        } else if (!e.getActionCommand().equals("")){
-            buildSpecTxtFromButtonClick(e.getActionCommand());
-            selectedTextButton = (JButton)e.getSource();
+        } else if (e.getActionCommand().equals("settext")){
+            if (e.getSource() instanceof JButton) {
+                JButton btn = (JButton) e.getSource();
+                selectedSpecialText = ((SingleTextRenderer)btn.getIcon()).specText;
+                System.out.printf("[EditorTextPanel.actionPerformed] Btn spec text: %1$s\n", ((SingleTextRenderer)btn.getIcon()).specText.toString());
+                selectionRender.specText = selectedSpecialText;
+                selectionLabel.repaint();
+                if (toolPanel != null) toolPanel.updateSearchForIcon(selectedSpecialText);
+                selectedTextButton = (JButton) e.getSource();
+            } else {
+                System.out.printf("[EditorTextPanel.actionPerformed] Not a button! %1$s\n", e.getActionCommand());
+            }
         }
-        System.out.printf("[EditorTextPanel] Button cmd: %1$s\n", e.getActionCommand());
     }
 
     private JButton createBaseButton(){
@@ -126,6 +134,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         btn.setMargin(new Insets(2, 2, 2, 2));
         btn.setOpaque(true);
         btn.addActionListener(this);
+        btn.setActionCommand("settext");
         textBtnPanel.add(btn, 0);
         buttonManifest.add(btn);
         System.out.printf("[EditorTextPanel] Btn manifest size: %1$d\n", buttonManifest.size());
@@ -147,7 +156,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         JButton btn = createBaseButton();
         btn.setIcon(new SingleTextRenderer(text));
         if (text != null)
-            btn.setActionCommand(text.toString());
+            btn.setActionCommand("settext");
         else
             btn.setActionCommand("nulltext");
         return btn;
@@ -192,6 +201,8 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         buttonManifest.clear();
         for (int ii = btns.size()-1; ii >= 0; ii--) {
             JButton btn = btns.get(ii);
+            for (ActionListener listener : btn.getActionListeners()) btn.removeActionListener(listener);
+            btn.addActionListener(this);
             textBtnPanel.add(btn);
             buttonManifest.add(btn);
         }

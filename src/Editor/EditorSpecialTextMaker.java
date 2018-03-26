@@ -182,7 +182,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             icon.specText = new SpecialText(charField.getText().charAt(0), charField.getForeground(), charField.getBackground());
         else
             icon.specText = new SpecialText(' ', charField.getForeground(), charField.getBackground());
-        openedButton.setActionCommand(icon.specText.toString());
+        //openedButton.setActionCommand(icon.specText.toString());
         openedButton.doClick();
         buttonContainer.repaint();
         dispose();
