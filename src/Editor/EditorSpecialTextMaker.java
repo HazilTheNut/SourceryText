@@ -247,10 +247,10 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             }
 
             g.setColor(Color.WHITE);
-            g.drawLine(mousePointX-1, mousePointY, mousePointX-2, mousePointY);
-            g.drawLine(mousePointX+1, mousePointY, mousePointX+2, mousePointY);
-            g.drawLine(mousePointX, mousePointY+1, mousePointX, mousePointY+2);
-            g.drawLine(mousePointX, mousePointY-1, mousePointX, mousePointY-2);
+            g.drawLine(satBriPointX-1, satBriPointY, satBriPointX-2, satBriPointY);
+            g.drawLine(satBriPointX+1, satBriPointY, satBriPointX+2, satBriPointY);
+            g.drawLine(satBriPointX, satBriPointY+1, satBriPointX, satBriPointY+2);
+            g.drawLine(satBriPointX, satBriPointY-1, satBriPointX, satBriPointY-2);
         }
 
         private void generateColor(){
