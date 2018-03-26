@@ -75,6 +75,7 @@ public class CollapsiblePanel extends JPanel{
             component.setVisible(true);
         }
         setMaximumSize(normalSize);
+        setPreferredSize(normalSize);
         isActive = true;
     }
 
@@ -83,6 +84,7 @@ public class CollapsiblePanel extends JPanel{
             component.setVisible(false);
         }
         setMaximumSize(getMinimumSize());
+        setPreferredSize(getMinimumSize());
         isActive = false;
     }
 

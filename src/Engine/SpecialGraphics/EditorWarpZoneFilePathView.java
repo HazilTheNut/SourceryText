@@ -30,7 +30,7 @@ public class EditorWarpZoneFilePathView implements SpecialGraphics {
         if (ldata.getSelectedWarpZone() != null){
             g.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));
             String filePath = ldata.getSelectedWarpZone().getRoomFilePath();
-            if (filePath.length() > 0) {
+            if (filePath.length() > 0 && ldata.getTileDataLayer().getVisible()) {
                 g.setColor(new Color(50, 50, 50));
                 int stringWidth = g.getFontMetrics().stringWidth(filePath);
                 int stringHeight = g.getFontMetrics().getHeight();
