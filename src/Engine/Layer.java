@@ -4,6 +4,7 @@ import Data.SerializationVersion;
 
 import java.awt.*;
 import java.io.Serializable;
+import java.util.Random;
 
 /**
  * Created by Jared on 2/18/2018.
@@ -106,6 +107,28 @@ public class Layer implements Serializable{
                     editLayer(col, row, replace);
                 else if (get == null && find == null){
                     editLayer(col, row, replace);
+                }
+            }
+        }
+    }
+
+    public void findAndReplace(SpecialText find, SpecialText replace, int chance){
+        System.out.printf("[Layer.findAndReplace] Chance: %1$d\n", chance);
+        if (chance <= 0) return;
+        if (chance >= 100) {
+            findAndReplace(find, replace);
+            return;
+        }
+        Random random = new Random();
+        for (int col = 0; col < textMatrix.length; col++){
+            for (int row = 0; row < textMatrix[0].length; row++){
+                SpecialText get = getSpecialText(col, row);
+                if ((int)(random.nextDouble() * 100) < chance) {
+                    if (get != null && get.equals(find))
+                        editLayer(col, row, replace);
+                    else if (get == null && find == null) {
+                        editLayer(col, row, replace);
+                    }
                 }
             }
         }

@@ -17,12 +17,15 @@ public class EditorFindAndReplace extends JFrame {
     private JLabel findTextLabel;
     private JLabel replaceTextLabel;
 
+    private JSpinner replaceChanceSpinner;
+
     private JButton previousFindButton;
     private JButton previousReplaceButton;
     
     public EditorFindAndReplace(EditorTextPanel editorTextPanel, LevelData ldata, UndoManager undoManager){
 
         setMinimumSize(new Dimension(400, 300));
+        setTitle("Find and Replace (Level Backdrop)");
 
         JPanel findButtonPanel = new JPanel();
         findButtonPanel.setLayout(new ModifiedFlowLayout(FlowLayout.LEFT));
@@ -100,9 +103,19 @@ public class EditorFindAndReplace extends JFrame {
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.add(replacePreviewPanel);
 
+        JPanel randomPanel = new JPanel();
+        randomPanel.setBorder(BorderFactory.createEtchedBorder());
+        randomPanel.setLayout(new BoxLayout(randomPanel, BoxLayout.LINE_AXIS));
+
+        replaceChanceSpinner = new JSpinner(new SpinnerNumberModel(100, 0, 100, 1));
+        randomPanel.add(new JLabel("Chance (%): "));
+        randomPanel.add(replaceChanceSpinner);
+
+        bottomPanel.add(randomPanel);
+
         JButton replaceButton = new JButton("Replace");
         replaceButton.addActionListener(e -> {
-            ldata.getBackdrop().findAndReplace(findText, replaceText);
+            ldata.getBackdrop().findAndReplace(findText, replaceText, ((SpinnerNumberModel)replaceChanceSpinner.getModel()).getNumber().intValue());
             undoManager.recordLevelData();
             dispose();
         });
