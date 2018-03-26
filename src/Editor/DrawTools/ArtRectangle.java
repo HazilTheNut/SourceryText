@@ -30,7 +30,7 @@ public class ArtRectangle extends DrawTool {
         fillBox = new JCheckBox("Filled", false);
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.add(fillBox);
-        panel.setBorder(BorderFactory.createTitledBorder("Rectangle Tool"));
+        panel.setBorder(BorderFactory.createTitledBorder("Rectangle"));
         panel.setVisible(true);
         panel.validate();
 
