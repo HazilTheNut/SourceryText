@@ -82,6 +82,7 @@ public class FileIO {
             ObjectInputStream objIn = new ObjectInputStream(fileIn);
             return (LevelData)objIn.readObject();
         } catch (IOException | ClassNotFoundException e) {
+            JOptionPane.showMessageDialog(new JFrame(), "ERROR: File being accessed is out of date / improper!", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
         return null;

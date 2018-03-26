@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 2/18/2018.
@@ -18,6 +19,7 @@ import java.beans.PropertyChangeListener;
 public class EditorFrame extends JFrame {
 
     private EditorToolPanel toolPanel;
+    private EditorTextPanel textPanel;
     private UndoManager undoManager;
 
     public EditorFrame(LevelData ldata, WindowWatcher watcher){
@@ -49,12 +51,12 @@ public class EditorFrame extends JFrame {
 
         c.add(window, BorderLayout.CENTER);
 
-        EditorTextPanel editorTextPanel = new EditorTextPanel();
-        c.add(editorTextPanel, BorderLayout.LINE_START);
+        textPanel = new EditorTextPanel();
+        c.add(textPanel, BorderLayout.LINE_START);
 
         undoManager = new UndoManager(ldata, manager);
 
-        EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, editorTextPanel, ldata.getBackdrop(), ldata, undoManager);
+        EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, textPanel, ldata.getBackdrop(), ldata, undoManager);
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);
         window.addMouseWheelListener(mi);
@@ -62,7 +64,7 @@ public class EditorFrame extends JFrame {
         toolPanel = new EditorToolPanel(mi, manager, ldata, watcher, undoManager, getRootPane());
         c.add(toolPanel, BorderLayout.LINE_END);
 
-        editorTextPanel.setToolPanel(toolPanel);
+        textPanel.setToolPanel(toolPanel);
 
         c.validate();
 
@@ -132,4 +134,8 @@ public class EditorFrame extends JFrame {
     }
 
     void setToolPanelFilePath(String path) { toolPanel.setPreviousFilePath(path); }
+
+    void setTextPanelContents(ArrayList<JButton> btns){
+        textPanel.setButtonPanelContents(btns);
+    }
 }

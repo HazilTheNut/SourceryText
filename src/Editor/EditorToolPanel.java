@@ -489,13 +489,15 @@ public class EditorToolPanel extends JPanel {
             LevelData levelData = io.openLevel(levelFile);
             EditorFrame nf = new EditorFrame(levelData, watcher);
             nf.setToolPanelFilePath(previousFilePath);
+            nf.setTextPanelContents(mi.getTextPanel().getButtonManifest());
         }
     }
 
     private void newLevel(WindowWatcher watcher) {
         LevelData newLData = new LevelData();
         newLData.reset();
-        new EditorFrame(newLData, watcher);
+        EditorFrame ef = new EditorFrame(newLData, watcher);
+        ef.setTextPanelContents(mi.getTextPanel().getButtonManifest());
     }
 
     private class MenuAction implements Action{

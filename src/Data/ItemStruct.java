@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 public class ItemStruct implements Serializable {
 
+    private static final long serialVersionUID = SerializationVersion.LEVELDATA_SERIALIZATION_VERSION;
+
     private int itemId;
     private int qty;
     private String name;

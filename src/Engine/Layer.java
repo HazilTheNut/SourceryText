@@ -1,6 +1,6 @@
 package Engine;
 
-import com.sun.istack.internal.Nullable;
+import Data.SerializationVersion;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -9,6 +9,8 @@ import java.io.Serializable;
  * Created by Jared on 2/18/2018.
  */
 public class Layer implements Serializable{
+
+    private static final long serialVersionUID = SerializationVersion.LEVELDATA_SERIALIZATION_VERSION;
 
     private SpecialText[][] textMatrix; //In form textMatrix[col][row]
     private int xpos = 0;

@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class LevelData implements Serializable {
 
-    private static final long serialVersionUID = 100001;
+    private static final long serialVersionUID = SerializationVersion.LEVELDATA_SERIALIZATION_VERSION;
 
     private Layer backdrop;
     private Layer tileDataLayer;
@@ -113,7 +113,12 @@ public class LevelData implements Serializable {
 
     public int getTileId(int col, int row) { return tileData[col][row]; }
 
-    public EntityStruct getEntityAt(int col, int row) { return entityData[col][row]; }
+    public EntityStruct getEntityAt(int col, int row) {
+        if (col >= 0 && col < entityData.length && row >= 0 && row < entityData[0].length)
+            return entityData[col][row];
+        else
+            return null;
+    }
 
     public void resize(int col, int row){
         System.out.println("Data dim: " + tileData.length + "x"  + tileData[0].length);

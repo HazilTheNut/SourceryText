@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,6 +16,7 @@ import java.util.TimerTask;
 public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
     private JButton openedButton; //The button this SpecialTextMaker is editing
+    private ArrayList<JButton> btnManifest;
     private Container buttonContainer;
 
     private JTextField charField;
@@ -27,9 +29,10 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     private float[] fgHSB = new float[3];
     private float[] bgHSB = new float[3];
 
-    EditorSpecialTextMaker(Container c, JButton button, SpecialText startingText){
+    EditorSpecialTextMaker(Container c, JButton button, SpecialText startingText, ArrayList<JButton> manifest){
         openedButton = button;
         buttonContainer = c;
+        btnManifest = manifest;
 
         setTitle("SpecialText Creator");
 
@@ -187,6 +190,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
     private void cancel(){
         buttonContainer.remove(openedButton);
+        btnManifest.remove(openedButton);
         buttonContainer.validate();
         buttonContainer.repaint();
         dispose();

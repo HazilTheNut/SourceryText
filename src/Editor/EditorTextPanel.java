@@ -137,9 +137,9 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     private void createNewButton(JButton btn){
         EditorSpecialTextMaker textMaker;
         if (selectedTextButton == null || selectedTextButton.getIcon() == null)
-            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, new SpecialText(' ', Color.WHITE, Color.BLACK));
+            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, new SpecialText(' ', Color.WHITE, Color.BLACK), buttonManifest);
         else
-            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, ((SingleTextRenderer)selectedTextButton.getIcon()).specText);
+            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, ((SingleTextRenderer)selectedTextButton.getIcon()).specText, buttonManifest);
         textMaker.setVisible(true);
     }
 
@@ -187,7 +187,14 @@ public class EditorTextPanel extends JPanel implements ActionListener{
 
     ArrayList<JButton> getButtonManifest() { return buttonManifest; }
 
-    public void setTextBtnScrollPane(JScrollPane textBtnScrollPane) {
-        this.textBtnScrollPane = textBtnScrollPane;
+    void setButtonPanelContents(ArrayList<JButton> btns){
+        for (Component c : textBtnPanel.getComponents()) textBtnPanel.remove(c);
+        buttonManifest.clear();
+        for (int ii = btns.size()-1; ii >= 0; ii--) {
+            JButton btn = btns.get(ii);
+            textBtnPanel.add(btn);
+            buttonManifest.add(btn);
+        }
+        validate();
     }
 }
