@@ -160,7 +160,7 @@ public class Layer implements Serializable{
 
     public SpecialText getSpecialText (int col, int row){
         //System.out.println(String.format("Layer getSpecialText: [%1$d,%2$d] of [%3$dx%4$d]", col, row, textMatrix.length, textMatrix[0].length));
-        if (isLayerLocInvalid(col, row))
+        if (isLayerLocInvalid(col, row) || textMatrix[col][row] == null)
             return null;
         return textMatrix[col][row];
     }

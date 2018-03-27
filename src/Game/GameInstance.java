@@ -52,7 +52,7 @@ public class GameInstance {
 
     boolean isPlayerTurn() { return isPlayerTurn; }
 
-    public void doEnemyTurn(){
+    void doEnemyTurn(){
         isPlayerTurn = false;
         for (Entity e : entities) e.onTurn();
         isPlayerTurn = true;
