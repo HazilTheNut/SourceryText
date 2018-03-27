@@ -25,8 +25,8 @@ public class Player extends KeyAdapter{
 
         window.addKeyListener(this);
 
-        x = 0;
-        y = 0;
+        x = 27;
+        y = 15;
 
         playerLayer = new Layer(new SpecialText[1][1], "player", x, y, 5);
         playerLayer.editLayer(0, 0, new SpecialText('@'));

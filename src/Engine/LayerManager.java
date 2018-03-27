@@ -83,13 +83,17 @@ public class LayerManager {
     }
 
     public void setCameraPos(int x, int y){
-        camX = x;
-        camY = y;
+        if (bufferOneOpen)
+            operationBufferOne.add(() -> {camX = x; camY = y;});
+        else
+            operationBufferTwo.add(() -> {camX = x; camY = y;});
     }
 
     public void moveCameraPos(int relativeX, int relativeY){
-        camX += relativeX;
-        camY += relativeY;
+        if (bufferOneOpen)
+            operationBufferOne.add(() -> {camX += relativeX; camY += relativeY;});
+        else
+            operationBufferTwo.add(() -> {camX += relativeX; camY += relativeY;});
     }
 
     public Point getCameraPos() {return new Point(camX, camY); }
@@ -98,10 +102,14 @@ public class LayerManager {
 
     private Layer compileLayers(Dimension targetResolution){
         bufferOneOpen = !bufferOneOpen;
-        if (bufferOneOpen) //Why it's you might ask? Well, don't we want to operate from the closed buffer?
+        if (bufferOneOpen) {//Why it's you might ask? Well, don't we want to operate from the closed buffer?
             for (LayerOperation operation : operationBufferTwo) operation.doOperation();
-        else
+            operationBufferTwo.clear();
+        } else {
             for (LayerOperation operation : operationBufferOne) operation.doOperation();
+            operationBufferOne.clear();
+        }
+
         Layer finalResult = new Layer(new SpecialText[(int)targetResolution.getWidth()][(int)targetResolution.getHeight()], "final", 0, 0);
         for (int col = 0; col < finalResult.getCols(); col++){
             for (int row = 0; row < finalResult.getRows(); row++){
