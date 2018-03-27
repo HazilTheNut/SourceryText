@@ -28,6 +28,6 @@ public class EditorStart {
 
         WindowWatcher watcher = new WindowWatcher();
 
-        EditorFrame ef = new EditorFrame(ldata, watcher);
+        new EditorFrame(ldata, watcher);
     }
 }

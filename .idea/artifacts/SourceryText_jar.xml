@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SourceryText.jar">
+    <output-path>$PROJECT_DIR$/CompiledGame</output-path>
+    <root id="archive" name="SourceryText.jar">
+      <element id="module-output" name="WonderText" />
+    </root>
+  </artifact>
+</component>

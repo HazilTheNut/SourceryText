@@ -10,7 +10,7 @@ import java.util.Random;
 /**
  * Created by Jared on 3/26/2018.
  */
-public class LayerManangerTest {
+public class LayerManagerTest {
 
     public static void main (String[] args) {
 
