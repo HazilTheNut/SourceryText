@@ -2,7 +2,10 @@ package Game.Registries;
 
 import Data.EntityStruct;
 import Engine.SpecialText;
+import Game.Entities.Entity;
+import Game.Entities.FallingTestEntity;
 
+import java.awt.*;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -11,20 +14,18 @@ import java.util.TreeMap;
  */
 public class EntityRegistry {
 
-    private TreeMap<Integer, EntityStruct> entityMap = new TreeMap<>();
+    private TreeMap<Integer, EntityStruct> entityStructMap = new TreeMap<>();
+    private TreeMap<Integer, Class> entityObjMap = new TreeMap<>();
 
     public EntityRegistry(){
 
-        registerEntity(0, "Empty", new SpecialText(' '));
+        registerEntity(0, "Empty", new SpecialText(' '), null);
 
-        registerEntity(50, "Test Entity 1", new SpecialText('1'));
-        registerEntity(51, "Test Entity 2", new SpecialText('2'));
-        registerEntity(52, "Test Entity 3", new SpecialText('3'));
-        registerEntity(53, "Test Entity 4", new SpecialText('4'));
+        registerEntity(50, "Falling Entity", new SpecialText('F', new Color(180, 180, 255), new Color(180, 180, 255, 40)), FallingTestEntity.class);
     }
 
     public int[] getMapKeys() {
-        Set<Integer> ints = entityMap.keySet();
+        Set<Integer> ints = entityStructMap.keySet();
         int[] output = new int[ints.size()];
         int index = 0;
         for (int i : ints){
@@ -34,9 +35,15 @@ public class EntityRegistry {
         return output;
     }
 
-    public EntityStruct getEntityStruct (int id) { return entityMap.get(id).copy(); }
+    public EntityStruct getEntityStruct (int id) { return entityStructMap.get(id).copy(); }
 
-    private void registerEntity(int id, String name, SpecialText text, int... tags){
-        entityMap.put(id, new EntityStruct(id, name, text, tags));
+    public Class getEntityClass (int id) { return entityObjMap.get(id); }
+
+    private void registerEntity(int id, String name, SpecialText text, Class entityClass, int... tags){
+        entityStructMap.put(id, new EntityStruct(id, name, text, tags));
+        if (entityClass != null)
+            entityObjMap.put(id, entityClass);
+        else
+            entityObjMap.put(id, null);
     }
 }

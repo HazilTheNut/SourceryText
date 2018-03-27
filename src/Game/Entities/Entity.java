@@ -19,10 +19,10 @@ public class Entity {
     private Coordinate location;
     private Layer sprite; //Not to be mistaken with 7-up
 
-    public Entity(Coordinate pos, LayerManager lm, String name){
+    public void initialize(Coordinate pos, LayerManager lm, String name, SpecialText icon){
         location = pos;
         sprite = new Layer(new SpecialText[1][1], name, getLocation().getX(), getLocation().getY());
-        sprite.editLayer(0, 0, new SpecialText('F', new Color(255, 200, 200)));
+        sprite.editLayer(0, 0, icon);
         lm.addLayer(sprite);
     }
 
