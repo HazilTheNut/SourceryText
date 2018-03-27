@@ -13,34 +13,42 @@ import java.awt.event.KeyEvent;
  */
 public class Player extends KeyAdapter{
 
-    int x;
-    int y;
+    private int x;
+    private int y;
+
+    private int cameraOffsetX = -28;
+    private int cameraOffsetY = -14;
 
     private Layer playerLayer;
     private LayerManager manager;
+    private GameInstance gi;
 
-    public Player(ViewWindow window, LayerManager lm){
+    Player(ViewWindow window, LayerManager lm, GameInstance gameInstance){
 
         manager = lm;
 
         window.addKeyListener(this);
 
-        x = 27;
-        y = 15;
+        manager.setCameraPos(x + cameraOffsetX, y + cameraOffsetY);
 
         playerLayer = new Layer(new SpecialText[1][1], "player", x, y, 5);
         playerLayer.editLayer(0, 0, new SpecialText('@'));
 
         lm.addLayer(playerLayer);
+
+        gi = gameInstance;
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) x++;
-        if (e.getKeyCode() == KeyEvent.VK_LEFT)  x--;
-        if (e.getKeyCode() == KeyEvent.VK_DOWN)  y++;
-        if (e.getKeyCode() == KeyEvent.VK_UP)    y--;
-        playerLayer.setPos(x, y);
-        manager.setCameraPos(x - 27, y - 15);
+        if (gi.isPlayerTurn()) {
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT) x++;
+            if (e.getKeyCode() == KeyEvent.VK_LEFT) x--;
+            if (e.getKeyCode() == KeyEvent.VK_DOWN) y++;
+            if (e.getKeyCode() == KeyEvent.VK_UP) y--;
+            playerLayer.setPos(x, y);
+            manager.setCameraPos(x + cameraOffsetX, y + cameraOffsetY);
+            gi.doEnemyTurn();
+        }
     }
 }

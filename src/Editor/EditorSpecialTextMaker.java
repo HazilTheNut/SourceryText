@@ -285,12 +285,12 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            onMouseInput(e);
+
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-
+            onMouseInput(e);
         }
 
         @Override

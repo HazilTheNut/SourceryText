@@ -34,7 +34,8 @@ public class LayerManager {
         window = viewWindow;
         window.manager = this;
         drawTimer = new Timer();
-        drawTimer.scheduleAtFixedRate(new DrawUpdateTask(), 10, 50);
+        Thread displayThread = new Thread(() -> drawTimer.scheduleAtFixedRate(new DrawUpdateTask(), 10, 50));
+        displayThread.start();
     }
 
     public void addLayer (Layer toAdd){
