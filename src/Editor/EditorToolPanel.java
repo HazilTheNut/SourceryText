@@ -211,15 +211,15 @@ public class EditorToolPanel extends JPanel {
                 case "A":
                     cm.artButton = btn;
                     btn.doClick();
-                    setButtonMnemonic(btn, KeyEvent.VK_1);
+                    setButtonMnemonic(btn, KeyEvent.VK_F1);
                     break;
                 case "T":
                     cm.tileButton = btn;
-                    setButtonMnemonic(btn, KeyEvent.VK_2);
+                    setButtonMnemonic(btn, KeyEvent.VK_F2);
                     break;
                 case "E":
                     cm.entityButton = btn;
-                    setButtonMnemonic(btn, KeyEvent.VK_3);
+                    setButtonMnemonic(btn, KeyEvent.VK_F3);
                     break;
                 case "+":
                     setButtonMnemonic(btn, KeyEvent.VK_EQUALS);

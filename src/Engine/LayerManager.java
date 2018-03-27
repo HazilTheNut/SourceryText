@@ -12,6 +12,11 @@ public class LayerManager {
 
     private ArrayList<Layer> layerStack = new ArrayList<>();
 
+    private ArrayList<LayerOperation> operationBufferOne = new ArrayList<>(); //Double buffering to prevent concurrent modification errors
+    private ArrayList<LayerOperation> operationBufferTwo = new ArrayList<>();
+
+    private boolean bufferOneOpen = true;
+
     private int camX;
     private int camY;
 
@@ -33,10 +38,30 @@ public class LayerManager {
     }
 
     public void addLayer (Layer toAdd){
-        layerStack.add(toAdd);
+        if (bufferOneOpen)
+            operationBufferOne.add(() -> addLayerOperation(toAdd));
+        else
+            operationBufferTwo.add(() -> addLayerOperation(toAdd));
     }
 
-    public void removeLayer (String toRemove){
+    private void addLayerOperation (Layer toAdd){
+        for (int ii = layerStack.size()-1; ii >= 0; ii--){
+            if (layerStack.get(ii).getImportance() <= toAdd.getImportance()){
+                layerStack.add(ii+1, toAdd);
+                return;
+            }
+        }
+        layerStack.add(0, toAdd);
+    }
+
+    public void removeLayer(String toRemove){
+        if (bufferOneOpen)
+            operationBufferOne.add(() -> removeLayerOperation(toRemove));
+        else
+            operationBufferTwo.add(() -> removeLayerOperation(toRemove));
+    }
+
+    private void removeLayerOperation(String toRemove){
         for (Layer layer : layerStack){
             if (layer.getName().equals(toRemove)) {
                 layerStack.remove(layer);
@@ -44,6 +69,13 @@ public class LayerManager {
                 return;
             }
         }
+    }
+
+    public void clearLayers(){
+        if (bufferOneOpen)
+            operationBufferOne.add(() -> layerStack.clear());
+        else
+            operationBufferTwo.add(() -> layerStack.clear());
     }
 
     public void removeLayer (Layer toRemove){
@@ -62,7 +94,14 @@ public class LayerManager {
 
     public Point getCameraPos() {return new Point(camX, camY); }
 
-    public Layer compileLayers(Dimension targetResolution){
+    public ArrayList<Layer> getLayerStack() { return layerStack; }
+
+    private Layer compileLayers(Dimension targetResolution){
+        bufferOneOpen = !bufferOneOpen;
+        if (bufferOneOpen) //Why it's you might ask? Well, don't we want to operate from the closed buffer?
+            for (LayerOperation operation : operationBufferTwo) operation.doOperation();
+        else
+            for (LayerOperation operation : operationBufferOne) operation.doOperation();
         Layer finalResult = new Layer(new SpecialText[(int)targetResolution.getWidth()][(int)targetResolution.getHeight()], "final", 0, 0);
         for (int col = 0; col < finalResult.getCols(); col++){
             for (int row = 0; row < finalResult.getRows(); row++){
@@ -137,6 +176,10 @@ public class LayerManager {
         for (Layer layer : layerStack){
             System.out.println(layer.getName());
         }
+    }
+
+    private interface LayerOperation{
+        void doOperation();
     }
 
     /*

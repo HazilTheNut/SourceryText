@@ -18,6 +18,8 @@ public class Layer implements Serializable{
     private int ypos = 0;
     private String name;
 
+    private int importance = 0;
+
     public boolean fixedScreenPos = false;
     boolean visible = true;
 
@@ -26,6 +28,14 @@ public class Layer implements Serializable{
         name = layerName;
         xpos = x;
         ypos = y;
+    }
+
+    public Layer (SpecialText[][] layerData, String layerName, int x, int y, int priority){
+        textMatrix = layerData;
+        name = layerName;
+        xpos = x;
+        ypos = y;
+        importance = priority;
     }
 
     public Layer (String[][] layerData, String layerName, int x, int y){
@@ -180,6 +190,10 @@ public class Layer implements Serializable{
     public void setVisible(boolean visible) { this.visible = visible; }
 
     public boolean getVisible(){ return visible; }
+
+    public int getImportance() { return importance; }
+
+    public void setImportance(int importance) { this.importance = importance; }
 
     public void printLayer(){
         String output = "";
