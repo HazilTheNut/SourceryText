@@ -55,11 +55,11 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     }
 
     private int getLayerMousePosX(int mouseX){
-        return window.getSnappedMouseX(mouseX) + (int)manager.getCameraPos().getX() - backdropLayer.getX();
+        return window.getSnappedMouseX(mouseX) + manager.getCameraPos().getX() - backdropLayer.getX();
     }
 
     private int getLayerMousePosY(int mouseY){
-        return window.getSnappedMouseY(mouseY) + (int)manager.getCameraPos().getY() - backdropLayer.getY();
+        return window.getSnappedMouseY(mouseY) + manager.getCameraPos().getY() - backdropLayer.getY();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     @Override
     public void mouseMoved(MouseEvent e) {
         if (window.getSnappedMouseX(e.getX()) != previousCharXPos || window.getSnappedMouseY(e.getY()) != previousCharYPos)
-            ldata.updateWarpZoneLayer(window.getSnappedMouseX(e.getX()) + (int)manager.getCameraPos().getX(), window.getSnappedMouseY(e.getY()) + (int)manager.getCameraPos().getY());
+            ldata.updateWarpZoneLayer(window.getSnappedMouseX(e.getX()) + manager.getCameraPos().getX(), window.getSnappedMouseY(e.getY()) + manager.getCameraPos().getY());
         updateMouseCursorPos(e.getX(), e.getY());
         warpZoneFilePathView.updateMousePosition(e.getX(), e.getY());
         entityNameTooltip.updateMousePosition(e.getX(), e.getY(), getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()));
@@ -131,7 +131,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     private void updateMouseCursorPos(int rawX, int rawY){
         highlightLayer.editLayer(previousCharXPos, previousCharYPos, null);
-        if (!backdropLayer.isLayerLocInvalid(window.getSnappedMouseX(rawX) + (int)manager.getCameraPos().getX() - backdropLayer.getX(), window.getSnappedMouseY(rawY) + (int)manager.getCameraPos().getY() - backdropLayer.getY()))
+        if (!backdropLayer.isLayerLocInvalid(window.getSnappedMouseX(rawX) + manager.getCameraPos().getX() - backdropLayer.getX(), window.getSnappedMouseY(rawY) + manager.getCameraPos().getY() - backdropLayer.getY()))
             highlightLayer.editLayer(window.getSnappedMouseX(rawX), window.getSnappedMouseY(rawY), new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 120)));
         else
             highlightLayer.editLayer(window.getSnappedMouseX(rawX), window.getSnappedMouseY(rawY), new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 40)));

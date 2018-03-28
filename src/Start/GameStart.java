@@ -1,8 +1,13 @@
 package Start;
 
+import Data.LayerImportances;
+import Editor.EditorMouseInput;
+import Engine.Layer;
 import Engine.LayerManager;
+import Engine.SpecialText;
 import Engine.ViewWindow;
 import Game.GameInstance;
+import Game.GameMouseInput;
 
 import javax.swing.*;
 
@@ -34,7 +39,16 @@ public class GameStart {
 
         LayerManager lm = new LayerManager(window);
 
-        new GameInstance(lm, window);
+        Layer mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH*4][window.RESOLUTION_HEIGHT*4], "mouse", 0, 0, LayerImportances.CURSOR);
+        mouseHighlight.fixedScreenPos = true;
+
+        lm.addLayer(mouseHighlight);
+
+        GameInstance gi = new GameInstance(lm, window);
+
+        GameMouseInput mi = new GameMouseInput(window, lm, gi);
+        window.addMouseListener(mi);
+        window.addMouseMotionListener(mi);
     }
 
 }

@@ -36,7 +36,7 @@ public class Entity {
         return String.format("%1$s [%2$d,%3$d]", struct.getEntityName(), coordinate.getX(), coordinate.getY());
     }
 
-    Coordinate getLocation(){ return location; }
+    public Coordinate getLocation(){ return location; }
 
     Layer getSprite() { return sprite; }
 

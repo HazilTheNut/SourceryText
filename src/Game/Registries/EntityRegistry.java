@@ -4,6 +4,7 @@ import Data.EntityStruct;
 import Engine.SpecialText;
 import Game.Entities.Entity;
 import Game.Entities.FallingTestEntity;
+import Game.Entities.TargetDummy;
 
 import java.awt.*;
 import java.util.Set;
@@ -22,6 +23,7 @@ public class EntityRegistry {
         registerEntity(0, "Empty", new SpecialText(' '), null);
 
         registerEntity(50, "Falling Entity", new SpecialText('F', new Color(180, 180, 255), new Color(180, 180, 255, 20)), FallingTestEntity.class);
+        registerEntity(1,  "Target Dummy",   new SpecialText('D', new Color(255, 180, 180), new Color(255, 180, 180, 15)), TargetDummy.class);
     }
 
     public int[] getMapKeys() {

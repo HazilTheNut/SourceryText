@@ -19,6 +19,7 @@ public class GameInstance {
     private boolean isPlayerTurn = true;
 
     private Layer backdrop;
+    private Player player;
     private ArrayList<Entity> entities = new ArrayList<>();
     private ArrayList<EntityOperation> entityOperations = new ArrayList<>();
 
@@ -49,7 +50,7 @@ public class GameInstance {
             }
         }
 
-        new Player(window, manager, this);
+        player = new Player(window, manager, this);
     }
 
     boolean isPlayerTurn() { return isPlayerTurn; }
@@ -66,6 +67,13 @@ public class GameInstance {
         isPlayerTurn = false;
         EnemyTurnThread thread = new EnemyTurnThread();
         thread.start();
+    }
+
+    Entity getEntityAt(Coordinate loc){
+        for (Entity e : entities){
+            if (e.getLocation().equals(loc)) return e;
+        }
+        return null;
     }
 
     private class EnemyTurnThread extends Thread {

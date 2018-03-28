@@ -1,5 +1,7 @@
 package Game;
 
+import Game.Entities.Entity;
+
 /**
  * Created by Jared on 3/27/2018.
  */
@@ -30,8 +32,21 @@ public class Coordinate {
         y += yDiff;
     }
 
+    public Coordinate add(Coordinate other){
+        return new Coordinate(x + other.getX(), y + other.getY());
+    }
+
     @Override
     public String toString() {
         return String.format("[%1$d,%2$d]", x, y);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Coordinate){
+            Coordinate other = (Coordinate)obj;
+            return x == other.getX() && y == other.getY();
+        }
+        return false;
     }
 }

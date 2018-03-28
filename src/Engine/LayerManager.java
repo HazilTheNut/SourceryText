@@ -1,5 +1,7 @@
 package Engine;
 
+import Game.Coordinate;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -115,7 +117,7 @@ public class LayerManager {
             operationBufferTwo.add(() -> {camX += relativeX; camY += relativeY;});
     }
 
-    public Point getCameraPos() {return new Point(camX, camY); }
+    public Coordinate getCameraPos() {return new Coordinate(camX, camY); }
 
     public ArrayList<Layer> getLayerStack() { return layerStack; }
 
