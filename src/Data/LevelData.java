@@ -107,7 +107,7 @@ public class LevelData implements Serializable {
     }
 
     public void removeEntity(int col, int row){
-        if (col > 0 && col < entityData.length && row > 0 && row < entityData[0].length)
+        if (col >= 0 && col < entityData.length && row >= 0 && row < entityData[0].length)
             entityData[col][row] = null;
     }
 

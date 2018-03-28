@@ -3,11 +3,9 @@ package Game;
 import Data.EntityStruct;
 import Data.FileIO;
 import Data.LevelData;
-import Engine.Layer;
 import Engine.LayerManager;
 import Engine.ViewWindow;
 import Game.Entities.Entity;
-import Game.Entities.FallingTestEntity;
 import Game.Registries.EntityRegistry;
 
 import java.util.ArrayList;
