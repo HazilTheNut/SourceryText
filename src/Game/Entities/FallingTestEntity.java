@@ -11,7 +11,7 @@ public class FallingTestEntity extends Entity {
 
     @Override
     public void onTurn() {
-        getLocation().movePos(0, 1);
-        getSprite().movePos(0, 1);
+        turnSleep(400);
+        move(0, 1);
     }
 }

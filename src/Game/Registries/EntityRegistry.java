@@ -21,7 +21,7 @@ public class EntityRegistry {
 
         registerEntity(0, "Empty", new SpecialText(' '), null);
 
-        registerEntity(50, "Falling Entity", new SpecialText('F', new Color(180, 180, 255), new Color(180, 180, 255, 40)), FallingTestEntity.class);
+        registerEntity(50, "Falling Entity", new SpecialText('F', new Color(180, 180, 255), new Color(180, 180, 255, 20)), FallingTestEntity.class);
     }
 
     public int[] getMapKeys() {

@@ -23,10 +23,14 @@ public class LayerManager {
     private Timer drawTimer;
     private ViewWindow window;
 
+    int arbitraryNumber = 0;
+
     private class DrawUpdateTask extends TimerTask {
         @Override
         public void run() {
             window.drawImage(compileLayers(new Dimension(window.RESOLUTION_WIDTH, window.RESOLUTION_HEIGHT)));
+            arbitraryNumber++;
+            //System.out.printf("Draw! #%1$d\n", arbitraryNumber);
         }
     }
 
@@ -34,8 +38,7 @@ public class LayerManager {
         window = viewWindow;
         window.manager = this;
         drawTimer = new Timer();
-        Thread displayThread = new Thread(() -> drawTimer.scheduleAtFixedRate(new DrawUpdateTask(), 10, 50));
-        displayThread.start();
+        drawTimer.scheduleAtFixedRate(new DrawUpdateTask(), 10, 50);
     }
 
     public void addLayer (Layer toAdd){
@@ -49,10 +52,12 @@ public class LayerManager {
         for (int ii = layerStack.size()-1; ii >= 0; ii--){
             if (layerStack.get(ii).getImportance() <= toAdd.getImportance()){
                 layerStack.add(ii+1, toAdd);
+                System.out.printf("[LayerManager] Added layer \'%1$s\' at position %2$d\n", toAdd.getName(), ii+1);
                 return;
             }
         }
         layerStack.add(0, toAdd);
+        System.out.printf("[LayerManager] Added layer \'%1$s\' at position 0\n", toAdd.getName());
     }
 
     public void removeLayer(String toRemove){
@@ -60,6 +65,13 @@ public class LayerManager {
             operationBufferOne.add(() -> removeLayerOperation(toRemove));
         else
             operationBufferTwo.add(() -> removeLayerOperation(toRemove));
+    }
+
+    public Layer getLayer(String name){
+        for (Layer layer : layerStack){
+            if (layer.getName().equals(name)) return layer;
+        }
+        return null;
     }
 
     private void removeLayerOperation(String toRemove){
@@ -74,9 +86,15 @@ public class LayerManager {
 
     public void clearLayers(){
         if (bufferOneOpen)
-            operationBufferOne.add(() -> layerStack.clear());
+            operationBufferOne.add(() -> {
+                layerStack.clear();
+                System.out.println("[LayerManager] Cleared Layer stack");
+            });
         else
-            operationBufferTwo.add(() -> layerStack.clear());
+            operationBufferTwo.add(() -> {
+                layerStack.clear();
+                System.out.println("[LayerManager] Cleared Layer stack");
+            });
     }
 
     public void removeLayer (Layer toRemove){

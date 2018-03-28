@@ -36,7 +36,7 @@ public class GameInstance {
                     Class entityClass = registry.getEntityClass(struct.getEntityId());
                     try {
                         Entity e = (Entity)entityClass.newInstance();
-                        e.initialize(new Coordinate(col, row), manager, struct.getEntityName(), struct.getDisplayChar());
+                        e.initialize(new Coordinate(col, row), manager, struct, this);
                         entities.add(e);
                     } catch (InstantiationException | IllegalAccessException e) {
                         e.printStackTrace();
@@ -52,7 +52,18 @@ public class GameInstance {
 
     void doEnemyTurn(){
         isPlayerTurn = false;
-        for (Entity e : entities) e.onTurn();
-        isPlayerTurn = true;
+        EnemyTurnThread thread = new EnemyTurnThread();
+        thread.start();
+    }
+
+    private class EnemyTurnThread extends Thread {
+
+        @Override
+        public void run() {
+            for (Entity e : entities) {
+                e.onTurn();
+            }
+            isPlayerTurn = true;
+        }
     }
 }

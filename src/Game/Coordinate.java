@@ -29,4 +29,9 @@ public class Coordinate {
         x += xDiff;
         y += yDiff;
     }
+
+    @Override
+    public String toString() {
+        return String.format("[%1$d,%2$d]", x, y);
+    }
 }

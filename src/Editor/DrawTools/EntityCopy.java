@@ -46,7 +46,7 @@ public class EntityCopy extends DrawTool {
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        ldata.setEntityData(col + (int)lm.getCameraPos().getX(), row + (int)lm.getCameraPos().getX(), toCopy.copy());
+        ldata.setEntityData(col, row, toCopy.copy());
         highlight.clearLayer();
     }
 
