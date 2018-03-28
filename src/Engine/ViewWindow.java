@@ -21,8 +21,8 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
     public int HOR_MARGIN = 0;
     public int VER_MARGIN = 0;
 
-    public int RESOLUTION_WIDTH = 55;
-    public int RESOLUTION_HEIGHT = 29;
+    public int RESOLUTION_WIDTH  = 59;
+    public int RESOLUTION_HEIGHT = 31;
 
     private ArrayList<SpecialGraphics> specialGraphicsList;
 

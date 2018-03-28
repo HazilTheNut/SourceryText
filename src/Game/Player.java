@@ -16,8 +16,8 @@ public class Player extends KeyAdapter{
     private int x;
     private int y;
 
-    private int cameraOffsetX = -28;
-    private int cameraOffsetY = -14;
+    private int cameraOffsetX = -30;
+    private int cameraOffsetY = -15;
 
     private Layer playerLayer;
     private LayerManager manager;

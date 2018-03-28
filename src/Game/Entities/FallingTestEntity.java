@@ -11,7 +11,10 @@ public class FallingTestEntity extends Entity {
 
     @Override
     public void onTurn() {
-        turnSleep(400);
+        turnSleep(100);
         move(0, 1);
+        if (getLocation().getY() > getGameInstance().getBackdrop().getRows()){
+            selfDestruct();
+        }
     }
 }

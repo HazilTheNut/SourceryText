@@ -1,4 +1,4 @@
-package Game;
+package Data;
 
 /**
  * Created by Jared on 3/28/2018.

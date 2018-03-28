@@ -6,7 +6,7 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Coordinate;
 import Game.GameInstance;
-import Game.LayerImportances;
+import Data.LayerImportances;
 import Game.Tags.Tag;
 import java.util.ArrayList;
 
@@ -40,10 +40,17 @@ public class Entity {
 
     Layer getSprite() { return sprite; }
 
+    GameInstance getGameInstance() { return gi; }
+
     void move(int relativeX, int relativeY){
         location.movePos(relativeX, relativeY);
         //sprite.movePos(relativeX, relativeY);
         lm.getLayer(sprite.getName()).movePos(relativeX, relativeY);
+    }
+
+    void selfDestruct(){
+        gi.removeEntity(this);
+        lm.removeLayer(sprite);
     }
 
     void turnSleep(int time){

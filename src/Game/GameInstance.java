@@ -3,6 +3,7 @@ package Game;
 import Data.EntityStruct;
 import Data.FileIO;
 import Data.LevelData;
+import Engine.Layer;
 import Engine.LayerManager;
 import Engine.ViewWindow;
 import Game.Entities.Entity;
@@ -17,7 +18,9 @@ public class GameInstance {
 
     private boolean isPlayerTurn = true;
 
+    private Layer backdrop;
     private ArrayList<Entity> entities = new ArrayList<>();
+    private ArrayList<EntityOperation> entityOperations = new ArrayList<>();
 
     public GameInstance(LayerManager manager, ViewWindow window){
 
@@ -25,7 +28,8 @@ public class GameInstance {
 
         LevelData ldata = io.openLevel(io.chooseLevel());
 
-        manager.addLayer(ldata.getBackdrop());
+        backdrop = ldata.getBackdrop();
+        manager.addLayer(backdrop);
 
         EntityStruct[][] entityMatrix = ldata.getEntityData();
         EntityRegistry registry = new EntityRegistry();
@@ -50,6 +54,14 @@ public class GameInstance {
 
     boolean isPlayerTurn() { return isPlayerTurn; }
 
+    public Layer getBackdrop() {
+        return backdrop;
+    }
+
+    public void removeEntity(Entity e){
+        entityOperations.add(() -> entities.remove(e));
+    }
+
     void doEnemyTurn(){
         isPlayerTurn = false;
         EnemyTurnThread thread = new EnemyTurnThread();
@@ -60,10 +72,16 @@ public class GameInstance {
 
         @Override
         public void run() {
+            for (EntityOperation op : entityOperations)
+                op.run();
             for (Entity e : entities) {
                 e.onTurn();
             }
             isPlayerTurn = true;
         }
+    }
+
+    private interface EntityOperation{
+        void run();
     }
 }
