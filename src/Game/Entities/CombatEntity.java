@@ -1,8 +1,10 @@
 package Game.Entities;
 
 import Engine.SpecialText;
+import Game.Coordinate;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 /**
  * Created by Jared on 3/28/2018.
@@ -25,6 +27,15 @@ public class CombatEntity extends Entity{
         turnSleep(250);
         getSprite().editLayer(0, 0, originalSprite);
         if (health <= 0) selfDestruct();
+    }
+
+    protected boolean attackEnemy(Coordinate loc){
+        Entity entity = getGameInstance().getEntityAt(loc);
+        if (entity != null && entity instanceof CombatEntity){
+            ((CombatEntity)entity).receiveDamage(1);
+            return true;
+        }
+        return false;
     }
 
     public void heal(int amount){

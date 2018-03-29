@@ -4,14 +4,16 @@ import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Engine.ViewWindow;
+import Game.Entities.CombatEntity;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * Created by Jared on 3/27/2018.
  */
-public class Player extends KeyAdapter{
+public class Player extends CombatEntity implements MouseInputReceiver, KeyListener{
 
     private int x;
     private int y;
@@ -44,6 +46,12 @@ public class Player extends KeyAdapter{
         for (int ii = 0; ii < 10; ii++){
             inv.addItem(String.format("Item #%1$d", ii));
         }
+        inv.addItem("123456789012345678");
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
     }
 
     @Override
@@ -62,5 +70,20 @@ public class Player extends KeyAdapter{
                 gi.doEnemyTurn();
             }
         }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    @Override
+    public void onMouseMove(Coordinate pos) {
+
+    }
+
+    @Override
+    public boolean onMouseClick(Coordinate pos) {
+        return attackEnemy(pos);
     }
 }

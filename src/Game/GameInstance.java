@@ -71,7 +71,7 @@ public class GameInstance {
         thread.start();
     }
 
-    Entity getEntityAt(Coordinate loc){
+    public Entity getEntityAt(Coordinate loc){
         for (Entity e : entities){
             if (e.getLocation().equals(loc)) return e;
         }

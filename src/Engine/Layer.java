@@ -213,9 +213,13 @@ public class Layer implements Serializable{
     }
 
     public void inscribeString (String str, int col, int row){
+        inscribeString(str, col, row, Color.WHITE);
+    }
+
+    public void inscribeString (String str, int col, int row, Color fontColor){
         for (int index = 0; index < str.length(); index++){
             if (isLayerLocInvalid(col + index, row)) return;
-            editLayer(col + index, row, new SpecialText(str.charAt(index), Color.WHITE, getSpecialText(col + index, row).getBkgColor()));
+            editLayer(col + index, row, new SpecialText(str.charAt(index), fontColor, getSpecialText(col + index, row).getBkgColor()));
         }
     }
 

@@ -8,6 +8,7 @@ import Game.Entities.Entity;
 
 import javax.swing.event.MouseInputListener;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 3/28/2018.
@@ -21,6 +22,8 @@ public class GameMouseInput implements MouseInputListener{
 
     private Layer highlight;
 
+    private ArrayList<MouseInputReceiver> inputReceivers = new ArrayList<>();
+
     public GameMouseInput (ViewWindow viewWindow, LayerManager layerManager, GameInstance gameInstance, Layer highlightLayer){
         window = viewWindow;
         lm = layerManager;
@@ -33,6 +36,10 @@ public class GameMouseInput implements MouseInputListener{
         return tiledPos.add(lm.getCameraPos());
     }
 
+    public void addInputReceiver(MouseInputReceiver receiver)    { inputReceivers.add(receiver); }
+
+    public void removeInputReceiver(MouseInputReceiver receiver) { inputReceivers.remove(receiver); }
+
     @Override
     public void mouseClicked(MouseEvent e) {
 
@@ -40,8 +47,6 @@ public class GameMouseInput implements MouseInputListener{
 
     @Override
     public void mousePressed(MouseEvent e) {
-        Thread animationThread = new Thread(() -> attackEnemy(e));
-        animationThread.start();
     }
 
     @Override
@@ -69,10 +74,5 @@ public class GameMouseInput implements MouseInputListener{
         highlight.setPos(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()));
     }
 
-    private void attackEnemy(MouseEvent e){
-        Entity entity = gi.getEntityAt(getTiledMousePos(new Coordinate(e.getX(), e.getY())));
-        if (entity != null && entity instanceof CombatEntity){
-            ((CombatEntity)entity).receiveDamage(1);
-        }
-    }
+
 }
