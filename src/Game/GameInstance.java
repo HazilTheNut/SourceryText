@@ -53,6 +53,8 @@ public class GameInstance {
         player = new Player(window, manager, this);
     }
 
+    public Player getPlayer() { return player; }
+
     boolean isPlayerTurn() { return isPlayerTurn; }
 
     public Layer getBackdrop() {

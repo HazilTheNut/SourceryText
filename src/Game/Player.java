@@ -23,6 +23,8 @@ public class Player extends KeyAdapter{
     private LayerManager manager;
     private GameInstance gi;
 
+    private PlayerInventory inv;
+
     Player(ViewWindow window, LayerManager lm, GameInstance gameInstance){
 
         manager = lm;
@@ -37,18 +39,28 @@ public class Player extends KeyAdapter{
         lm.addLayer(playerLayer);
 
         gi = gameInstance;
+
+        inv = new PlayerInventory();
+        for (int ii = 0; ii < 10; ii++){
+            inv.addItem(String.format("Item #%1$d", ii));
+        }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         if (gi.isPlayerTurn()) {
-            if (e.getKeyCode() == KeyEvent.VK_RIGHT) x++;
-            if (e.getKeyCode() == KeyEvent.VK_LEFT) x--;
-            if (e.getKeyCode() == KeyEvent.VK_DOWN) y++;
-            if (e.getKeyCode() == KeyEvent.VK_UP) y--;
-            playerLayer.setPos(x, y);
-            manager.setCameraPos(x + cameraOffsetX, y + cameraOffsetY);
-            gi.doEnemyTurn();
+            if (e.getKeyCode() == KeyEvent.VK_E){
+                if (inv.isShowing()) inv.close(manager);
+                else inv.show(manager);
+            } else {
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) x++;
+                if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) x--;
+                if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) y++;
+                if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) y--;
+                playerLayer.setPos(x, y);
+                manager.setCameraPos(x + cameraOffsetX, y + cameraOffsetY);
+                gi.doEnemyTurn();
+            }
         }
     }
 }

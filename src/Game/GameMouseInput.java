@@ -1,5 +1,6 @@
 package Game;
 
+import Engine.Layer;
 import Engine.LayerManager;
 import Engine.ViewWindow;
 import Game.Entities.CombatEntity;
@@ -18,10 +19,13 @@ public class GameMouseInput implements MouseInputListener{
 
     private GameInstance gi;
 
-    public GameMouseInput (ViewWindow viewWindow, LayerManager layerManager, GameInstance gameInstance){
+    private Layer highlight;
+
+    public GameMouseInput (ViewWindow viewWindow, LayerManager layerManager, GameInstance gameInstance, Layer highlightLayer){
         window = viewWindow;
         lm = layerManager;
         gi = gameInstance;
+        highlight = highlightLayer;
     }
 
     private Coordinate getTiledMousePos(Coordinate mousePos){
@@ -62,7 +66,7 @@ public class GameMouseInput implements MouseInputListener{
 
     @Override
     public void mouseMoved(MouseEvent e) {
-
+        highlight.setPos(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()));
     }
 
     private void attackEnemy(MouseEvent e){

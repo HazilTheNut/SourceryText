@@ -12,19 +12,19 @@ public class CombatEntity extends Entity{
     protected int health;
     protected int maxHealth;
 
-    protected void setMaxHealth(int maxHP){
+    void setMaxHealth(int maxHP){
         maxHealth = maxHP;
         health = maxHP;
     }
 
     public void receiveDamage(int amount) {
         health -= amount;
-        double percentage = Math.max(Math.min(amount / maxHealth, 1),0);
+        double percentage = Math.sqrt(Math.max(Math.min((double)amount / maxHealth, 1),0.1));
         SpecialText originalSprite = getSprite().getSpecialText(0, 0);
         getSprite().editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), originalSprite.getFgColor(), new Color(255, 0, 0, (int)(255*percentage))));
-        turnSleep(500);
+        turnSleep(250);
         getSprite().editLayer(0, 0, originalSprite);
-        System.out.printf("Health remaining: %1$d\n", health);
+        if (health <= 0) selfDestruct();
     }
 
     public void heal(int amount){

@@ -1,6 +1,7 @@
 package Engine;
 
 import Data.SerializationVersion;
+import Game.Coordinate;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -187,6 +188,8 @@ public class Layer implements Serializable{
     public void setPos(int x, int y) { xpos = x; ypos = y; }
     public void movePos(int x, int y) { xpos += x; ypos += y; }
 
+    public void setPos(Coordinate loc) {xpos = loc.getX(); ypos = loc.getY(); }
+
     public void setVisible(boolean visible) { this.visible = visible; }
 
     public boolean getVisible(){ return visible; }
@@ -212,7 +215,7 @@ public class Layer implements Serializable{
     public void inscribeString (String str, int col, int row){
         for (int index = 0; index < str.length(); index++){
             if (isLayerLocInvalid(col + index, row)) return;
-            editLayer(col + index, row, new SpecialText(str.charAt(index), Color.WHITE, Color.BLACK));
+            editLayer(col + index, row, new SpecialText(str.charAt(index), Color.WHITE, getSpecialText(col + index, row).getBkgColor()));
         }
     }
 
