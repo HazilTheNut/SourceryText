@@ -51,6 +51,8 @@ public class GameStart {
         GameMouseInput mi = new GameMouseInput(window, lm, gi, mouseHighlight);
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);
+
+        gi.establishMouseInput(mi);
     }
 
 }

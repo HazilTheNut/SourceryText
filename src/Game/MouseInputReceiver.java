@@ -8,6 +8,6 @@ public interface MouseInputReceiver {
     //Ran whenever mouse moves
     void onMouseMove(Coordinate pos);
 
-    //Ran whenever mouse clicks (on button press). Boolean output should be true if an action happened, so that listeners below this is doesn't get ran
-    boolean onMouseClick(Coordinate pos);
+    //Ran whenever mouse clicks (on button press). Return true to prevent mouse input reaching elements below current one
+    boolean onMouseClick(Coordinate levelPos, Coordinate screenPos);
 }

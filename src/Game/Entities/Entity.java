@@ -17,7 +17,7 @@ public class Entity {
 
     private ArrayList<Tag> tags;
 
-    private GameInstance gi;
+    protected GameInstance gi;
     protected LayerManager lm;
 
     private Coordinate location;
@@ -40,7 +40,7 @@ public class Entity {
 
     Layer getSprite() { return sprite; }
 
-    GameInstance getGameInstance() { return gi; }
+    public GameInstance getGameInstance() { return gi; }
 
     void move(int relativeX, int relativeY){
         location.movePos(relativeX, relativeY);

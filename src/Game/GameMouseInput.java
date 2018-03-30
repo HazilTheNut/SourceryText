@@ -32,8 +32,12 @@ public class GameMouseInput implements MouseInputListener{
     }
 
     private Coordinate getTiledMousePos(Coordinate mousePos){
-        Coordinate tiledPos = new Coordinate(window.getSnappedMouseX(mousePos.getX()), window.getSnappedMouseY(mousePos.getY()));
+        Coordinate tiledPos = getScreenPos(mousePos);
         return tiledPos.add(lm.getCameraPos());
+    }
+
+    private Coordinate getScreenPos(Coordinate mousePos){
+        return new Coordinate(window.getSnappedMouseX(mousePos.getX()), window.getSnappedMouseY(mousePos.getY()));
     }
 
     public void addInputReceiver(MouseInputReceiver receiver)    { inputReceivers.add(receiver); }
@@ -47,6 +51,12 @@ public class GameMouseInput implements MouseInputListener{
 
     @Override
     public void mousePressed(MouseEvent e) {
+        Coordinate mousePos = new Coordinate(e.getX(), e.getY());
+        for (MouseInputReceiver receiver : inputReceivers){
+            if (receiver.onMouseClick(getTiledMousePos(mousePos), getScreenPos(mousePos))){
+                break;
+            }
+        }
     }
 
     @Override

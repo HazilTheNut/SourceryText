@@ -16,16 +16,24 @@ class PlayerInventory implements MouseInputReceiver{
     private ArrayList<String> items = new ArrayList<>();
 
     private Layer invLayer;
-    private boolean isShowing = false;
 
     public void addItem(String item) { items.add(item); }
 
-    void show(LayerManager lm){
+    PlayerInventory(LayerManager lm){
         invLayer = new Layer(new SpecialText[20][100], "inventory", 0, 1, LayerImportances.MENU);
         invLayer.fixedScreenPos = true;
+        invLayer.setVisible(false);
+        lm.addLayer(invLayer);
+    }
+
+    private int getInvHeight() {
+        return items.size() + 1;
+    }
+
+    void show(){
         Color bkg = new Color(35, 35, 35);
         System.out.printf("[PlayerInventory] Size: %1$d\n", items.size());
-        int height = items.size() + 1;
+        int height = getInvHeight();
         for (int row = 0; row < height; row++){ //Draw base inv panel
             for (int col = 0; col < invLayer.getCols(); col++){
                 invLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, bkg));
@@ -44,16 +52,14 @@ class PlayerInventory implements MouseInputReceiver{
             invLayer.inscribeString(items.get(ii), 0, ii+1);
         }
         invLayer.inscribeString("Inventory", 1, 0, new Color(255, 255, 200));
-        lm.addLayer(invLayer);
-        isShowing = true;
+        invLayer.setVisible(true);
     }
 
-    void close(LayerManager lm){
-        lm.removeLayer(invLayer);
-        isShowing = false;
+    void close(){
+        invLayer.setVisible(false);
     }
 
-    public boolean isShowing() { return isShowing; }
+    boolean isShowing() { return invLayer.getVisible(); }
 
 
     @Override
@@ -62,7 +68,8 @@ class PlayerInventory implements MouseInputReceiver{
     }
 
     @Override
-    public boolean onMouseClick(Coordinate pos) {
-        return false;
+    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
+        System.out.printf("[PlayerInventory] Mouse press event: %1$b ;  %2$b\n", invLayer.getVisible(), invLayer.isLayerLocInvalid(screenPos));
+        return invLayer.getVisible() && !invLayer.isLayerLocInvalid(screenPos);
     }
 }

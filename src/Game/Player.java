@@ -5,8 +5,8 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Engine.ViewWindow;
 import Game.Entities.CombatEntity;
+import Game.Entities.Entity;
 
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -22,18 +22,16 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     private int cameraOffsetY = -15;
 
     private Layer playerLayer;
-    private LayerManager manager;
-    private GameInstance gi;
 
     private PlayerInventory inv;
 
     Player(ViewWindow window, LayerManager lm, GameInstance gameInstance){
 
-        manager = lm;
+        super.lm = lm;
 
         window.addKeyListener(this);
 
-        manager.setCameraPos(x + cameraOffsetX, y + cameraOffsetY);
+        lm.setCameraPos(x + cameraOffsetX, y + cameraOffsetY);
 
         playerLayer = new Layer(new SpecialText[1][1], "player", x, y, 5);
         playerLayer.editLayer(0, 0, new SpecialText('@'));
@@ -42,11 +40,16 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         gi = gameInstance;
 
-        inv = new PlayerInventory();
+        inv = new PlayerInventory(lm);
         for (int ii = 0; ii < 10; ii++){
             inv.addItem(String.format("Item #%1$d", ii));
         }
         inv.addItem("123456789012345678");
+    }
+
+    public void assignMouseInput(GameMouseInput mi){
+        mi.addInputReceiver(inv);
+        mi.addInputReceiver(this);
     }
 
     @Override
@@ -58,15 +61,15 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     public void keyPressed(KeyEvent e) {
         if (gi.isPlayerTurn()) {
             if (e.getKeyCode() == KeyEvent.VK_E){
-                if (inv.isShowing()) inv.close(manager);
-                else inv.show(manager);
+                if (inv.isShowing()) inv.close();
+                else inv.show();
             } else {
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) x++;
                 if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) x--;
                 if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) y++;
                 if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) y--;
                 playerLayer.setPos(x, y);
-                manager.setCameraPos(x + cameraOffsetX, y + cameraOffsetY);
+                lm.setCameraPos(x + cameraOffsetX, y + cameraOffsetY);
                 gi.doEnemyTurn();
             }
         }
@@ -83,7 +86,14 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     }
 
     @Override
-    public boolean onMouseClick(Coordinate pos) {
-        return attackEnemy(pos);
+    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
+        System.out.println("[Player] Attack!");
+        Entity e = getGameInstance().getEntityAt(levelPos);
+        if (e != null && e instanceof CombatEntity){
+            Thread attackThread = new Thread(() -> ((CombatEntity)e).receiveDamage(1));
+            attackThread.start();
+            return true;
+        }
+        return false;
     }
 }

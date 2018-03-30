@@ -9,8 +9,7 @@ public class LayerImportances {
     public static final int TILE_LAYER_ONE = 1;
     public static final int TILE_LAYER_TWO = 2;
     public static final int ENTITY         = 3;
-    public static final int MENU           = 4;
-    public static final int HUD            = 5;
-    public static final int CURSOR         = 6;
-
+    public static final int CURSOR         = 4;
+    public static final int MENU           = 5;
+    public static final int HUD            = 6;
 }

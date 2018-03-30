@@ -65,6 +65,10 @@ public class GameInstance {
         entityOperations.add(() -> entities.remove(e));
     }
 
+    public void establishMouseInput(GameMouseInput mi){
+        player.assignMouseInput(mi);
+    }
+
     void doEnemyTurn(){
         isPlayerTurn = false;
         EnemyTurnThread thread = new EnemyTurnThread();

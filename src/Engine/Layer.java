@@ -180,6 +180,10 @@ public class Layer implements Serializable{
         return (col < 0 || col >= textMatrix.length || row < 0 || row >= textMatrix[0].length);
     }
 
+    public boolean isLayerLocInvalid(Coordinate pos){
+        return (pos.getX() < 0 || pos.getX() >= textMatrix.length || pos.getY() < 0 || pos.getY() >= textMatrix[0].length);
+    }
+
     public int getCols(){ return textMatrix.length; }
     public int getRows(){ return textMatrix[0].length; }
 
