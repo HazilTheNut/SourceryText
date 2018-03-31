@@ -1,11 +1,13 @@
 package Game;
 
+import Data.ItemStruct;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Engine.ViewWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.Registries.ItemRegistry;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -41,10 +43,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         gi = gameInstance;
 
         inv = new PlayerInventory(lm);
-        for (int ii = 0; ii < 2; ii++){
-            inv.addItem(String.format("Item #%1$d", ii));
-        }
-        inv.addItem("1234567890123456");
+        ItemRegistry registry = new ItemRegistry();
+
+        inv.addItem(registry.generateItem(1));
+        inv.addItem(registry.generateItem(2));
     }
 
     public void assignMouseInput(GameMouseInput mi){

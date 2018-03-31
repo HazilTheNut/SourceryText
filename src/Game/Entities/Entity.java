@@ -7,15 +7,14 @@ import Engine.SpecialText;
 import Game.Coordinate;
 import Game.GameInstance;
 import Data.LayerImportances;
+import Game.TagHolder;
 import Game.Tags.Tag;
 import java.util.ArrayList;
 
 /**
  * Created by Jared on 3/27/2018.
  */
-public class Entity {
-
-    private ArrayList<Tag> tags;
+public class Entity extends TagHolder{
 
     protected GameInstance gi;
     protected LayerManager lm;

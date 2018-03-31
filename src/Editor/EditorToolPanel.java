@@ -174,7 +174,7 @@ public class EditorToolPanel extends JPanel {
 
         levelMenu.addSeparator();
 
-        JMenuItem syncTileDataItem = new JMenuItem("Sync Display Data");
+        JMenuItem syncTileDataItem = new JMenuItem("Sync Data Display");
         syncTileDataItem.addActionListener(e -> ldata.syncDisplayWithData());
         levelMenu.add(syncTileDataItem);
 

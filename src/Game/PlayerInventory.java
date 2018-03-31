@@ -13,14 +13,15 @@ import java.util.ArrayList;
  */
 class PlayerInventory implements MouseInputReceiver{
 
-    private ArrayList<String> items = new ArrayList<>();
+    private Player player;
+    private ArrayList<Item> items = new ArrayList<>();
 
     private Layer invLayer;
     private Layer selectorLayer;
 
     private final int ITEM_STRING_LENGTH = 16;
 
-    public void addItem(String item) { items.add(item); }
+    public void addItem(Item item) { items.add(item); }
 
     PlayerInventory(LayerManager lm){
         invLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 2][100], "inventory", 0, 1, LayerImportances.MENU);
@@ -60,9 +61,10 @@ class PlayerInventory implements MouseInputReceiver{
                     invLayer.editLayer(col, ii+1, new SpecialText(' ', Color.WHITE, new Color(45, 45, 45)));
                 }
             }
-            invLayer.inscribeString(items.get(ii), 0, ii+1);
+            invLayer.inscribeString(items.get(ii).getItemData().getName(), 0, ii+1);
+            invLayer.inscribeString(String.format("%1$02d", items.get(ii).getItemData().getQty()), 16, ii+1, new Color(240, 255, 200));
         }
-        invLayer.inscribeString("Inventory", 1, 0, new Color(255, 255, 200));
+        invLayer.inscribeString("Inventory", 1, 0, new Color(240, 255, 200));
     }
 
     void close(){
@@ -77,16 +79,21 @@ class PlayerInventory implements MouseInputReceiver{
         return !invLayer.isLayerLocInvalid(adjustedPosition);
     }
 
-    @Override
-    public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
+    private Item getItemAtCursor(Coordinate screenPos){
         if (cursorInInvLayer(screenPos) && invLayer.getVisible()){
             int index = screenPos.getY() - invLayer.getY() - 1;
             if (index >= 0 && index < items.size()){
-                selectorLayer.setVisible(true);
-                selectorLayer.setPos(invLayer.getX(), index + invLayer.getY() + 1);
-            } else {
-                selectorLayer.setVisible(false);
+                return items.get(index);
             }
+        }
+        return null;
+    }
+
+    @Override
+    public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
+        if (getItemAtCursor(screenPos) != null){
+            selectorLayer.setVisible(true);
+            selectorLayer.setPos(invLayer.getX(), screenPos.getY());
         } else {
             selectorLayer.setVisible(false);
         }
@@ -94,7 +101,10 @@ class PlayerInventory implements MouseInputReceiver{
 
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
-        System.out.printf("[PlayerInventory] Mouse press event: %1$b ; %2$b\n", invLayer.getVisible(), cursorInInvLayer(screenPos));
+        Item selectedItem = getItemAtCursor(screenPos);
+        if (selectedItem != null){
+            selectedItem.onItemUse();
+        }
         return invLayer.getVisible() && cursorInInvLayer(screenPos);
     }
 }

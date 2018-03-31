@@ -1,6 +1,8 @@
 package Game.Registries;
 
 import Data.ItemStruct;
+import Game.Item;
+import Game.Tags.Tag;
 
 import java.util.Set;
 import java.util.TreeMap;
@@ -16,11 +18,8 @@ public class ItemRegistry {
 
         registerItem(0, "Empty");
 
-        registerItem(50, "Test Item 1");
-        registerItem(500, "Test Item 2");
-        registerItem(5000, "Test Item 3");
-        registerItem(50000, "Test Item 4");
-        registerItem(99999, "1234567890123456");
+        registerItem(1, "TEST heal item", 1000);
+        registerItem(2, "TEST weapon");
     }
 
     public int[] getMapKeys() {
@@ -35,6 +34,19 @@ public class ItemRegistry {
     }
 
     public ItemStruct getItemStruct(int id) { return itemStructMap.get(id).copy(); }
+
+    public Item generateItem(int id){
+        ItemStruct struct = getItemStruct(id);
+        Item item = new Item(struct);
+        TagRegistry tagRegistry = new TagRegistry();
+        for (int tagId : struct.getTags()){
+            Tag toAdd = tagRegistry.getTag(tagId);
+            if (toAdd != null){
+                item.addTag(toAdd);
+            }
+        }
+        return item;
+    }
 
     private void registerItem(int id, String name, int... tags){
         itemStructMap.put(id, new ItemStruct(id, 1, name, tags));

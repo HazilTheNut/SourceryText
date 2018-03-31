@@ -4,7 +4,6 @@ import Engine.SpecialText;
 import Game.Coordinate;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 
 /**
  * Created by Jared on 3/28/2018.
@@ -38,6 +37,7 @@ public class CombatEntity extends Entity{
         return false;
     }
 
+    @Override
     public void heal(int amount){
         health += amount;
     }
