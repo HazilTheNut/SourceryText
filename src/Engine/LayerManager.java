@@ -4,6 +4,7 @@ import Game.Coordinate;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -122,15 +123,18 @@ public class LayerManager {
     public ArrayList<Layer> getLayerStack() { return layerStack; }
 
     private Layer compileLayers(Dimension targetResolution){
-        bufferOneOpen = !bufferOneOpen;
-        if (bufferOneOpen) {//Why it's you might ask? Well, don't we want to operate from the closed buffer?
-            for (LayerOperation operation : operationBufferTwo) operation.doOperation();
-            operationBufferTwo.clear();
-        } else {
-            for (LayerOperation operation : operationBufferOne) operation.doOperation();
-            operationBufferOne.clear();
+        try {
+            bufferOneOpen = !bufferOneOpen;
+            if (bufferOneOpen) {//Why it's you might ask? Well, don't we want to operate from the closed buffer?
+                for (LayerOperation operation : operationBufferTwo) operation.doOperation();
+                operationBufferTwo.clear();
+            } else {
+                for (LayerOperation operation : operationBufferOne) operation.doOperation();
+                operationBufferOne.clear();
+            }
+        } catch (ConcurrentModificationException e){
+            e.printStackTrace();
         }
-
         Layer finalResult = new Layer(new SpecialText[(int)targetResolution.getWidth()][(int)targetResolution.getHeight()], "final", 0, 0);
         for (int col = 0; col < finalResult.getCols(); col++){
             for (int row = 0; row < finalResult.getRows(); row++){

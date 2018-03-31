@@ -10,7 +10,7 @@ import java.util.TreeMap;
  */
 public class ItemRegistry {
 
-    private TreeMap<Integer, ItemStruct> entityMap = new TreeMap<>();
+    private TreeMap<Integer, ItemStruct> itemStructMap = new TreeMap<>();
 
     public ItemRegistry(){
 
@@ -20,11 +20,11 @@ public class ItemRegistry {
         registerItem(500, "Test Item 2");
         registerItem(5000, "Test Item 3");
         registerItem(50000, "Test Item 4");
-        registerItem(99999, "123456789012345678");
+        registerItem(99999, "1234567890123456");
     }
 
     public int[] getMapKeys() {
-        Set<Integer> ints = entityMap.keySet();
+        Set<Integer> ints = itemStructMap.keySet();
         int[] output = new int[ints.size()];
         int index = 0;
         for (int i : ints){
@@ -34,9 +34,9 @@ public class ItemRegistry {
         return output;
     }
 
-    public ItemStruct getItemStruct(int id) { return entityMap.get(id).copy(); }
+    public ItemStruct getItemStruct(int id) { return itemStructMap.get(id).copy(); }
 
     private void registerItem(int id, String name, int... tags){
-        entityMap.put(id, new ItemStruct(id, 1, name, tags));
+        itemStructMap.put(id, new ItemStruct(id, 1, name, tags));
     }
 }

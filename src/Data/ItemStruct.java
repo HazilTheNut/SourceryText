@@ -41,11 +41,13 @@ public class ItemStruct implements Serializable {
         this.qty = qty;
     }
 
+    public void setTags(int[] tags) { this.tags = tags; }
+
     public ItemStruct copy() { return new ItemStruct(itemId, qty, name, tags); }
 
     @Override
     public String toString() {
-        return String.format("%1$-6s %2$-19s x%3$d", Integer.toString(itemId), name, qty);
+        return String.format("%1$-6s %2$-17s x%3$d", Integer.toString(itemId), name, qty);
     }
 }
 

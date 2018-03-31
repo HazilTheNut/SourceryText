@@ -140,7 +140,12 @@ public class EntityEditor extends JFrame {
     private void updateEntityInventory(){
         ArrayList<ItemStruct> items = entity.getItems();
         entityInvModel.clear();
-        for (ItemStruct i : items) entityInvModel.addElement(i);
+        ItemRegistry registry = new ItemRegistry();
+        for (ItemStruct i : items) {
+            ItemStruct struct = registry.getItemStruct(i.getItemId());
+            struct.setQty(i.getQty());
+            entityInvModel.addElement(struct);
+        }
     }
 
     private void changeItemQty(String textData, ItemStruct item){
@@ -148,7 +153,7 @@ public class EntityEditor extends JFrame {
         if (sc.hasNextInt()){
             int qty = Integer.parseInt(textData);
             if (qty < 0)  qty = 0;
-            if (qty > 999) qty = 999;
+            if (qty > 99) qty = 99;
             item.setQty(qty);
         }
     }

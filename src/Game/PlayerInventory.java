@@ -18,14 +18,16 @@ class PlayerInventory implements MouseInputReceiver{
     private Layer invLayer;
     private Layer selectorLayer;
 
+    private final int ITEM_STRING_LENGTH = 16;
+
     public void addItem(String item) { items.add(item); }
 
     PlayerInventory(LayerManager lm){
-        invLayer = new Layer(new SpecialText[20][100], "inventory", 0, 1, LayerImportances.MENU);
+        invLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 2][100], "inventory", 0, 1, LayerImportances.MENU);
         invLayer.fixedScreenPos = true;
         invLayer.setVisible(false);
-        selectorLayer = new Layer(new SpecialText[20][1],   "inventory_selector", 0, 1, LayerImportances.MENU_CURSOR);
-        selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(200, 200, 200, 125)));
+        selectorLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 2][1],   "inventory_selector", 0, 1, LayerImportances.MENU_CURSOR);
+        selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(200, 200, 200, 100)));
         selectorLayer.setVisible(false);
         selectorLayer.fixedScreenPos = true;
         lm.addLayer(invLayer);
@@ -37,28 +39,30 @@ class PlayerInventory implements MouseInputReceiver{
     }
 
     void show(){
-        Color bkg = new Color(35, 35, 35);
+        updateDisplay();
+        invLayer.setVisible(true);
+    }
+
+    public void updateDisplay(){
         System.out.printf("[PlayerInventory] Size: %1$d\n", items.size());
         int height = getInvHeight();
         for (int row = 0; row < height; row++){ //Draw base inv panel
             for (int col = 0; col < invLayer.getCols(); col++){
-                invLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, bkg));
+                invLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(35, 35, 35)));
             }
         }
         for (int col = 0; col < invLayer.getCols(); col++){ //Create top border
-            invLayer.editLayer(col, 0,        new SpecialText('#', Color.GRAY, bkg));
-            //invLayer.editLayer(col, height-1, new SpecialText('#', Color.GRAY, bkg));
+            invLayer.editLayer(col, 0,        new SpecialText('#', Color.GRAY, new Color(30, 30, 30)));
         }
         for (int ii = 0; ii < items.size(); ii++){ //Inscribe inv contents
             if (ii % 2 == 1){
-                for (int col = 0; col < invLayer.getCols()-2   ; col++){
+                for (int col = 0; col < ITEM_STRING_LENGTH   ; col++){
                     invLayer.editLayer(col, ii+1, new SpecialText(' ', Color.WHITE, new Color(45, 45, 45)));
                 }
             }
             invLayer.inscribeString(items.get(ii), 0, ii+1);
         }
         invLayer.inscribeString("Inventory", 1, 0, new Color(255, 255, 200));
-        invLayer.setVisible(true);
     }
 
     void close(){
