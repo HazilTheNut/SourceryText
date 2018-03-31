@@ -24,7 +24,7 @@ public class CombatEntity extends Entity{
         double percentage = Math.sqrt(Math.max(Math.min((double)amount / maxHealth, 1),0.1));
         SpecialText originalSprite = getSprite().getSpecialText(0, 0);
         getSprite().editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), originalSprite.getFgColor(), new Color(255, 0, 0, (int)(255*percentage))));
-        turnSleep(500);
+        turnSleep(100 + (int)(400 * percentage));
         getSprite().editLayer(0, 0, originalSprite);
         if (health <= 0) selfDestruct();
     }

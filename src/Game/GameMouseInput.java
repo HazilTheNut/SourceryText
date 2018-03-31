@@ -1,12 +1,13 @@
 package Game;
 
+import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
+import Engine.SpecialText;
 import Engine.ViewWindow;
-import Game.Entities.CombatEntity;
-import Game.Entities.Entity;
 
 import javax.swing.event.MouseInputListener;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -20,15 +21,20 @@ public class GameMouseInput implements MouseInputListener{
 
     private GameInstance gi;
 
-    private Layer highlight;
+    private Layer mouseHighlight;
 
     private ArrayList<MouseInputReceiver> inputReceivers = new ArrayList<>();
 
-    public GameMouseInput (ViewWindow viewWindow, LayerManager layerManager, GameInstance gameInstance, Layer highlightLayer){
+    public GameMouseInput (ViewWindow viewWindow, LayerManager layerManager, GameInstance gameInstance){
         window = viewWindow;
         lm = layerManager;
         gi = gameInstance;
-        highlight = highlightLayer;
+
+        mouseHighlight = new Layer(new SpecialText[1][1], "mouse", 0, 0, LayerImportances.CURSOR);
+        mouseHighlight.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(200, 200, 200, 75)));
+        mouseHighlight.fixedScreenPos = true;
+
+        lm.addLayer(mouseHighlight);
     }
 
     private Coordinate getTiledMousePos(Coordinate mousePos){
@@ -81,7 +87,11 @@ public class GameMouseInput implements MouseInputListener{
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        highlight.setPos(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()));
+        mouseHighlight.setPos(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()));
+        Coordinate mousePos = new Coordinate(e.getX(), e.getY());
+        for (MouseInputReceiver receiver : inputReceivers){
+            receiver.onMouseMove(getTiledMousePos(mousePos), getScreenPos(mousePos));
+        }
     }
 
 

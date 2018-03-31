@@ -16,6 +16,7 @@ class PlayerInventory implements MouseInputReceiver{
     private ArrayList<String> items = new ArrayList<>();
 
     private Layer invLayer;
+    private Layer selectorLayer;
 
     public void addItem(String item) { items.add(item); }
 
@@ -23,7 +24,12 @@ class PlayerInventory implements MouseInputReceiver{
         invLayer = new Layer(new SpecialText[20][100], "inventory", 0, 1, LayerImportances.MENU);
         invLayer.fixedScreenPos = true;
         invLayer.setVisible(false);
+        selectorLayer = new Layer(new SpecialText[20][1],   "inventory_selector", 0, 1, LayerImportances.MENU_CURSOR);
+        selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(200, 200, 200, 125)));
+        selectorLayer.setVisible(false);
+        selectorLayer.fixedScreenPos = true;
         lm.addLayer(invLayer);
+        lm.addLayer(selectorLayer);
     }
 
     private int getInvHeight() {
@@ -57,19 +63,34 @@ class PlayerInventory implements MouseInputReceiver{
 
     void close(){
         invLayer.setVisible(false);
+        selectorLayer.setVisible(false);
     }
 
     boolean isShowing() { return invLayer.getVisible(); }
 
+    private boolean cursorInInvLayer(Coordinate screenPos){
+        Coordinate adjustedPosition = new Coordinate(screenPos.getX() - invLayer.getX(), screenPos.getY() - invLayer.getY());
+        return !invLayer.isLayerLocInvalid(adjustedPosition);
+    }
 
     @Override
-    public void onMouseMove(Coordinate pos) {
-
+    public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
+        if (cursorInInvLayer(screenPos) && invLayer.getVisible()){
+            int index = screenPos.getY() - invLayer.getY() - 1;
+            if (index >= 0 && index < items.size()){
+                selectorLayer.setVisible(true);
+                selectorLayer.setPos(invLayer.getX(), index + invLayer.getY() + 1);
+            } else {
+                selectorLayer.setVisible(false);
+            }
+        } else {
+            selectorLayer.setVisible(false);
+        }
     }
 
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
-        System.out.printf("[PlayerInventory] Mouse press event: %1$b ;  %2$b\n", invLayer.getVisible(), invLayer.isLayerLocInvalid(screenPos));
-        return invLayer.getVisible() && !invLayer.isLayerLocInvalid(screenPos);
+        System.out.printf("[PlayerInventory] Mouse press event: %1$b ; %2$b\n", invLayer.getVisible(), cursorInInvLayer(screenPos));
+        return invLayer.getVisible() && cursorInInvLayer(screenPos);
     }
 }

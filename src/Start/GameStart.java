@@ -40,15 +40,9 @@ public class GameStart {
 
         LayerManager lm = new LayerManager(window);
 
-        Layer mouseHighlight = new Layer(new SpecialText[1][1], "mouse", 0, 0, LayerImportances.CURSOR);
-        mouseHighlight.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(200, 200, 200, 75)));
-        mouseHighlight.fixedScreenPos = true;
-
-        lm.addLayer(mouseHighlight);
-
         GameInstance gi = new GameInstance(lm, window);
 
-        GameMouseInput mi = new GameMouseInput(window, lm, gi, mouseHighlight);
+        GameMouseInput mi = new GameMouseInput(window, lm, gi);
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);
 

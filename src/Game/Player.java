@@ -81,7 +81,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     }
 
     @Override
-    public void onMouseMove(Coordinate pos) {
+    public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
 
     }
 

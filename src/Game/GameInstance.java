@@ -2,6 +2,7 @@ package Game;
 
 import Data.EntityStruct;
 import Data.FileIO;
+import Data.LayerImportances;
 import Data.LevelData;
 import Engine.Layer;
 import Engine.LayerManager;
@@ -30,6 +31,7 @@ public class GameInstance {
         LevelData ldata = io.openLevel(io.chooseLevel());
 
         backdrop = ldata.getBackdrop();
+        backdrop.setImportance(LayerImportances.BACKDROP);
         manager.addLayer(backdrop);
 
         EntityStruct[][] entityMatrix = ldata.getEntityData();

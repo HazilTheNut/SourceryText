@@ -11,5 +11,6 @@ public class LayerImportances {
     public static final int ENTITY         = 3;
     public static final int CURSOR         = 4;
     public static final int MENU           = 5;
-    public static final int HUD            = 6;
+    public static final int MENU_CURSOR    = 6;
+    public static final int HUD            = 7;
 }
