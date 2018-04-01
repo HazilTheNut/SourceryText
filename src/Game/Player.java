@@ -28,8 +28,6 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         setLocation(new Coordinate(122, 58));
 
-        updateCameraPos();
-
         Layer playerLayer = new Layer(new SpecialText[1][1], "player", getLocation().getX(), getLocation().getY(), 5);
         playerLayer.editLayer(0, 0, new SpecialText('@'));
 
@@ -39,6 +37,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         gi = gameInstance;
 
+        updateCameraPos();
+
         inv = new PlayerInventory(lm, this);
         ItemRegistry registry = new ItemRegistry();
 
@@ -46,8 +46,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         inv.addItem(registry.generateItem(2));
         inv.addItem(registry.generateItem(3).setQty(25));
 
-        setMaxHealth(250);
-        health = 50;
+        setMaxHealth(20);
 
         hud = new HUD(lm, this);
     }
