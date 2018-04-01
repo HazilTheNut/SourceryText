@@ -14,10 +14,10 @@ public class TagRegistry {
 
     private TreeMap<Integer, TagStruct> tagMap = new TreeMap<>();
 
-    public TagRegistry(){
+    public static int DAMAGE_START = 1000;
+    public static int HEALING_START = 2000;
 
-        registerTag(1000, "Healing", HealingTag.class);
-        registerTag(2000, "Damage",  DamageTag.class);
+    public TagRegistry(){
     }
 
     public int[] getMapKeys() {
@@ -31,7 +31,37 @@ public class TagRegistry {
         return output;
     }
 
-    public Tag getTag (int id) {
+    /**
+     * Returns a tag generated from the given id value.
+     *
+     * On most occasions, you just use one of the static variables assigned above.
+     * But if you want to define the damage or healing value of an item, you will need to add the desired value onto the id that marks the beginning of the tag's range.
+     *
+     * Most tags: id 0-999 & 3000+
+     * Damage:    id 1000-1999 (Ex: DAMAGE_START + 50  deals 50 damage)
+     * Healing:   id 2000-2999 (Ex: HEALING START + 25 heals 25 health)
+     *
+     * @param id Tag id to generate from
+     * @return Generated tag
+     */
+    Tag getTag(int id) {
+        if (id >= DAMAGE_START && id < HEALING_START){
+            DamageTag tag = new DamageTag(id - DAMAGE_START);
+            tag.setName(String.format("Damage: %1$d", id - DAMAGE_START));
+            tag.setId(DAMAGE_START);
+            return tag;
+        } else if (id >= HEALING_START && id < HEALING_START + 1000) {
+            HealingTag tag = new HealingTag(id - HEALING_START);
+            tag.setName(String.format("Damage: %1$d", id - HEALING_START));
+            tag.setId(HEALING_START);
+            return tag;
+        } else {
+            return generateTag(id);
+        }
+    }
+
+    private Tag generateTag(int id){
+        System.out.printf("[TagRegistry.generateTag] ID: %1$d\n", id);
         Class tagClass = tagMap.get(id).getTagClass();
         if (tagClass != null){
             Object obj;

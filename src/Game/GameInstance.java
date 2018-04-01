@@ -77,6 +77,10 @@ public class GameInstance {
         player.assignMouseInput(mi);
     }
 
+    public void setPlayerTurn(boolean playerTurn) {
+        isPlayerTurn = playerTurn;
+    }
+
     void doEnemyTurn(){
         isPlayerTurn = false;
         EnemyTurnThread thread = new EnemyTurnThread();

@@ -18,9 +18,9 @@ public class ItemRegistry {
 
         registerItem(0, "Empty");
 
-        registerItem(1, "TEST heal item", 1000);
+        registerItem(1, "TEST heal item", TagRegistry.HEALING_START + 25);
         registerItem(2, "TEST weapon");
-        registerItem(3, "TEST dmg item",  2000);
+        registerItem(3, "TEST dmg item",  TagRegistry.DAMAGE_START + 10);
     }
 
     public int[] getMapKeys() {

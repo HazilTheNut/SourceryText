@@ -8,9 +8,15 @@ import Game.TagHolder;
  */
 public class HealingTag extends Tag{
 
+    private int healingAmount;
+
+    public HealingTag(int amount){
+        healingAmount = amount;
+    }
+
     @Override
     public void onItemUse(TagEvent e, TagHolder user) {
-        user.heal(2);
+        user.heal(healingAmount);
         e.setSuccess(true);
     }
 }

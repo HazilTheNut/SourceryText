@@ -8,9 +8,15 @@ import Game.TagHolder;
  */
 public class DamageTag extends Tag{
 
+    private int damageAmount;
+
+    public DamageTag(int dmg){
+        damageAmount = dmg;
+    }
+
     @Override
     public void onItemUse(TagEvent e, TagHolder user) {
-        user.receiveDamage(3);
+        user.receiveDamage(damageAmount);
         e.setSuccess(true);
     }
 }

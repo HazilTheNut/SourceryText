@@ -105,7 +105,7 @@ class PlayerInventory implements MouseInputReceiver{
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
         Item selectedItem = getItemAtCursor(screenPos);
-        if (selectedItem != null){
+        if (selectedItem != null && !player.isFrozen()){
             Thread itemUseThread = new Thread(() -> useItem(selectedItem));
             itemUseThread.start();
         }
@@ -113,6 +113,7 @@ class PlayerInventory implements MouseInputReceiver{
     }
 
     private void useItem(Item selectedItem){
+        player.freeze();
         TagEvent e = selectedItem.onItemUse(player);
         if (e.isSuccessful() && !e.isCanceled()){
             selectedItem.decrementQty();
@@ -121,6 +122,8 @@ class PlayerInventory implements MouseInputReceiver{
             }
             updateDisplay();
             player.doEnemyTurn();
+        } else {
+            player.unfreeze();
         }
     }
 }

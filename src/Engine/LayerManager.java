@@ -44,6 +44,10 @@ public class LayerManager {
         drawTimer.scheduleAtFixedRate(new DrawUpdateTask(), 10, 50);
     }
 
+    public ViewWindow getWindow() {
+        return window;
+    }
+
     public void addLayer (Layer toAdd){
         if (bufferOneOpen)
             operationBufferOne.add(() -> addLayerOperation(toAdd));

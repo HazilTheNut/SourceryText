@@ -16,8 +16,6 @@ import java.awt.event.KeyListener;
  * Created by Jared on 3/27/2018.
  */
 public class Player extends CombatEntity implements MouseInputReceiver, KeyListener{
-    private final int cameraOffsetX = -30;
-    private final int cameraOffsetY = -15;
 
     private HUD hud;
     private PlayerInventory inv;
@@ -48,14 +46,21 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         inv.addItem(registry.generateItem(2));
         inv.addItem(registry.generateItem(3).setQty(25));
 
-        setMaxHealth(20);
-        health = 1;
+        setMaxHealth(250);
+        health = 50;
 
         hud = new HUD(lm, this);
     }
 
     private void updateCameraPos(){
-        lm.setCameraPos(getLocation().getX() + cameraOffsetX, getLocation().getY() + cameraOffsetY);
+        int cameraOffsetX = (lm.getWindow().RESOLUTION_WIDTH / -2) - 1;
+        int cameraOffsetY = (lm.getWindow().RESOLUTION_HEIGHT / -2);
+        int camNewX = getLocation().getX() + cameraOffsetX;
+        int camNewY = getLocation().getY() + cameraOffsetY;
+        if (gi != null)
+            lm.setCameraPos(Math.max(Math.min(camNewX, gi.getBackdrop().getCols() - lm.getWindow().RESOLUTION_WIDTH), 0), Math.max(Math.min(camNewY, gi.getBackdrop().getRows() - lm.getWindow().RESOLUTION_HEIGHT), 0));
+        else
+            lm.setCameraPos(camNewX, camNewY);
     }
 
     @Override
@@ -85,7 +90,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (gi.isPlayerTurn()) {
+        if (!isFrozen()) {
             if (e.getKeyCode() == KeyEvent.VK_E){
                 if (inv.isShowing()) inv.close();
                 else inv.show();
@@ -129,4 +134,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     void doEnemyTurn(){
         gi.doEnemyTurn();
     }
+
+    void freeze() {gi.setPlayerTurn(false);}
+
+    void unfreeze() {gi.setPlayerTurn(true);}
+
+    boolean isFrozen() {return !gi.isPlayerTurn(); }
 }
