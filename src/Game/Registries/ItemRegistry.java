@@ -20,6 +20,7 @@ public class ItemRegistry {
 
         registerItem(1, "TEST heal item", 1000);
         registerItem(2, "TEST weapon");
+        registerItem(3, "TEST dmg item",  2000);
     }
 
     public int[] getMapKeys() {

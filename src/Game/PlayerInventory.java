@@ -106,16 +106,21 @@ class PlayerInventory implements MouseInputReceiver{
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
         Item selectedItem = getItemAtCursor(screenPos);
         if (selectedItem != null){
-            TagEvent e = selectedItem.onItemUse(player);
-            if (e.isSuccessful() && !e.isCanceled()){
-                selectedItem.decrementQty();
-                if (selectedItem.getItemData().getQty() <= 0) {
-                    items.remove(selectedItem);
-                }
-                updateDisplay();
-            }
+            Thread itemUseThread = new Thread(() -> useItem(selectedItem));
+            itemUseThread.start();
         }
-        System.out.printf("[PlayerInventory] Player hp: %1$d\n", player.getHealth());
         return invLayer.getVisible() && cursorInInvLayer(screenPos);
+    }
+
+    private void useItem(Item selectedItem){
+        TagEvent e = selectedItem.onItemUse(player);
+        if (e.isSuccessful() && !e.isCanceled()){
+            selectedItem.decrementQty();
+            if (selectedItem.getItemData().getQty() <= 0) {
+                items.remove(selectedItem);
+            }
+            updateDisplay();
+            player.doEnemyTurn();
+        }
     }
 }

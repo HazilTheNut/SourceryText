@@ -1,13 +1,9 @@
 package Game.Registries;
 
-import Data.EntityStruct;
-import Engine.SpecialText;
-import Game.Entities.FallingTestEntity;
-import Game.Entities.TargetDummy;
 import Game.Tags.HealingTag;
+import Game.Tags.DamageTag;
 import Game.Tags.Tag;
 
-import java.awt.*;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -21,6 +17,7 @@ public class TagRegistry {
     public TagRegistry(){
 
         registerTag(1000, "Healing", HealingTag.class);
+        registerTag(2000, "Damage",  DamageTag.class);
     }
 
     public int[] getMapKeys() {

@@ -18,8 +18,9 @@ public class CombatEntity extends Entity{
         health = maxHP;
     }
 
+    @Override
     public void receiveDamage(int amount) {
-        health -= amount;
+        health -= Math.max(amount, 0);
         double percentage = Math.sqrt(Math.max(Math.min((double)amount / maxHealth, 1),0.1));
         SpecialText originalSprite = getSprite().getSpecialText(0, 0);
         getSprite().editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), originalSprite.getFgColor(), new Color(255, 0, 0, (int)(255*percentage))));
@@ -47,6 +48,7 @@ public class CombatEntity extends Entity{
 
     @Override
     public void heal(int amount){
-        health += amount;
+        health += Math.max(amount, 0);
+        if (health > maxHealth) health = maxHealth;
     }
 }

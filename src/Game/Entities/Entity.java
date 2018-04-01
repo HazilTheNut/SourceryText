@@ -39,11 +39,14 @@ public class Entity extends TagHolder{
 
     Layer getSprite() { return sprite; }
 
-    public GameInstance getGameInstance() { return gi; }
+    protected void setSprite(Layer sprite) { this.sprite = sprite; }
 
-    void move(int relativeX, int relativeY){
+    protected GameInstance getGameInstance() { return gi; }
+
+    protected void setLocation(Coordinate pos) {location = pos;}
+
+    protected void move(int relativeX, int relativeY){
         location.movePos(relativeX, relativeY);
-        //sprite.movePos(relativeX, relativeY);
         lm.getLayer(sprite.getName()).movePos(relativeX, relativeY);
     }
 

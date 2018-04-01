@@ -25,36 +25,43 @@ public class HUD implements MouseInputReceiver{
         HUDLayer = new Layer(new SpecialText[59][1], "HUD", 0, 0, LayerImportances.HUD);
         HUDLayer.fixedScreenPos = true;
         lm.addLayer(HUDLayer);
-
-        Timer updateTimer = new Timer();
-        updateTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                updateHUD();
-            }
-        }, 100, 100);
+        updateHUD();
     }
 
     private Coordinate mousePos;
 
-    private void updateHUD(){
+    void updateHUD(){
         Layer tempLayer = new Layer(new SpecialText[HUDLayer.getCols()][HUDLayer.getRows()], "temp", 0, 0);
 
-        tempLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(15, 15, 15)));
+        Color bkg = new Color(15, 15, 15);
+        tempLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
 
-        if ((mousePos != null && mousePos.equals(new Coordinate(0,0))) ||(player.getInv().isShowing()))
+        if ((mousePos != null && mousePos.equals(new Coordinate(0,0))) ||(player.getInv().isShowing())) //Inventory Button
             tempLayer.editLayer(0, 0, new SpecialText('V', Color.WHITE, new Color(70, 70, 70)));
         else
             tempLayer.editLayer(0, 0, new SpecialText('V', Color.WHITE, new Color(30, 30, 30)));
 
         int pos = 1;
 
-        String hpDisplay = String.format("[%1$02d==========]", player.getHealth());
-        Color fontColor = new Color(155, 240, 155);
+        double playerHealthPercentage = (double)player.getHealth() / player.getMaxHealth();
+
+        String hpDisplay = String.format("[%1$02d", player.getHealth()); //Displaying health
+        Color fontColor = Color.getHSBColor((float)playerHealthPercentage * 0.4f, 0.5f, 0.95f);
+        Color hpBkgColor = Color.getHSBColor((float)playerHealthPercentage * 0.4f, 0.5f, 0.1f);
         tempLayer.inscribeString(hpDisplay, pos, 0, fontColor);
         pos += hpDisplay.length();
 
-        pos++;
+        for (int ii = 1; ii <= 10; ii++){
+            double diff = playerHealthPercentage - ((double)ii / 10);
+            if (diff >= 0)
+                tempLayer.editLayer(pos, 0, new SpecialText('=', fontColor, hpBkgColor));
+            else
+                tempLayer.editLayer(pos, 0, new SpecialText('_', fontColor, bkg));
+            pos++;
+        }
+        tempLayer.editLayer(pos, 0, new SpecialText(']', fontColor, bkg));
+
+        pos+=2;
         for (int ii = 0; ii < player.getInv().ITEM_STRING_LENGTH + 2; ii++){
             tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(25, 25, 25)));
         }
@@ -77,7 +84,13 @@ public class HUD implements MouseInputReceiver{
 
     @Override
     public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
-        mousePos = screenPos;
+        if (!screenPos.equals(mousePos)) {
+            mousePos = screenPos;
+            updateHUD();
+        } else {
+            mousePos = screenPos;
+        }
+
     }
 
     @Override
@@ -87,6 +100,7 @@ public class HUD implements MouseInputReceiver{
                 player.getInv().close();
             else
                 player.getInv().show();
+            updateHUD();
         }
         return false;
     }

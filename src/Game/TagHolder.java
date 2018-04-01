@@ -25,4 +25,6 @@ public class TagHolder {
     }
 
     public void heal(int amount){}
+
+    public void receiveDamage(int amount){}
 }

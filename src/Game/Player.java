@@ -16,14 +16,9 @@ import java.awt.event.KeyListener;
  * Created by Jared on 3/27/2018.
  */
 public class Player extends CombatEntity implements MouseInputReceiver, KeyListener{
+    private final int cameraOffsetX = -30;
+    private final int cameraOffsetY = -15;
 
-    private int x;
-    private int y;
-
-    private int cameraOffsetX = -30;
-    private int cameraOffsetY = -15;
-
-    private Layer playerLayer;
     private HUD hud;
     private PlayerInventory inv;
 
@@ -33,24 +28,46 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         window.addKeyListener(this);
 
-        lm.setCameraPos(x + cameraOffsetX, y + cameraOffsetY);
+        setLocation(new Coordinate(122, 58));
 
-        playerLayer = new Layer(new SpecialText[1][1], "player", x, y, 5);
+        updateCameraPos();
+
+        Layer playerLayer = new Layer(new SpecialText[1][1], "player", getLocation().getX(), getLocation().getY(), 5);
         playerLayer.editLayer(0, 0, new SpecialText('@'));
 
         lm.addLayer(playerLayer);
+
+        setSprite(playerLayer);
 
         gi = gameInstance;
 
         inv = new PlayerInventory(lm, this);
         ItemRegistry registry = new ItemRegistry();
 
-        inv.addItem(registry.generateItem(1).setQty(10));
+        inv.addItem(registry.generateItem(1).setQty(25));
         inv.addItem(registry.generateItem(2));
-
-        hud = new HUD(lm, this);
+        inv.addItem(registry.generateItem(3).setQty(25));
 
         setMaxHealth(20);
+        health = 1;
+
+        hud = new HUD(lm, this);
+    }
+
+    private void updateCameraPos(){
+        lm.setCameraPos(getLocation().getX() + cameraOffsetX, getLocation().getY() + cameraOffsetY);
+    }
+
+    @Override
+    public void heal(int amount) {
+        super.heal(amount);
+        hud.updateHUD();
+    }
+
+    @Override
+    public void receiveDamage(int amount) {
+        super.receiveDamage(amount);
+        hud.updateHUD();
     }
 
     public PlayerInventory getInv() { return inv; }
@@ -72,13 +89,13 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             if (e.getKeyCode() == KeyEvent.VK_E){
                 if (inv.isShowing()) inv.close();
                 else inv.show();
+                hud.updateHUD();
             } else {
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) x++;
-                if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A) x--;
-                if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) y++;
-                if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) y--;
-                playerLayer.setPos(x, y);
-                lm.setCameraPos(x + cameraOffsetX, y + cameraOffsetY);
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) move(1,  0);
+                if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A)  move(-1, 0);
+                if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S)  move(0,  1);
+                if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W)    move(0, -1);
+                updateCameraPos();
                 gi.doEnemyTurn();
             }
         }
@@ -99,10 +116,17 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         System.out.println("[Player] Attack!");
         Entity e = getGameInstance().getEntityAt(levelPos);
         if (e != null && e instanceof CombatEntity){
-            Thread attackThread = new Thread(() -> ((CombatEntity)e).receiveDamage(1));
+            Thread attackThread = new Thread(() -> {
+                e.receiveDamage(1);
+                gi.doEnemyTurn();
+            });
             attackThread.start();
             return true;
         }
         return false;
+    }
+
+    void doEnemyTurn(){
+        gi.doEnemyTurn();
     }
 }
