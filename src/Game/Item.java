@@ -14,11 +14,22 @@ public class Item extends TagHolder{
 
     public Item(ItemStruct itemData){ this.itemData = itemData; }
 
-    public void onItemUse(TagHolder target){
+    public void decrementQty() {
+        itemData.setQty(itemData.getQty()-1);
+    }
+
+    public Item setQty(int amount){
+        itemData.setQty(amount);
+        return this;
+    }
+
+    TagEvent onItemUse(TagHolder target){
         System.out.printf("[Item] \'%1$s\' Tags:\n", itemData.getName());
+        TagEvent useEvent = new TagEvent(0, false);
         for (Tag tag : getTags()) {
             System.out.printf("[Item] > %1$s\n", tag.getName());
-            tag.onItemUse(target);
+            tag.onItemUse(useEvent, target);
         }
+        return useEvent;
     }
 }

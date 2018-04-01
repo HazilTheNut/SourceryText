@@ -24,7 +24,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     private int cameraOffsetY = -15;
 
     private Layer playerLayer;
-
+    private HUD hud;
     private PlayerInventory inv;
 
     Player(ViewWindow window, LayerManager lm, GameInstance gameInstance){
@@ -45,14 +45,19 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         inv = new PlayerInventory(lm, this);
         ItemRegistry registry = new ItemRegistry();
 
-        inv.addItem(registry.generateItem(1));
+        inv.addItem(registry.generateItem(1).setQty(10));
         inv.addItem(registry.generateItem(2));
+
+        hud = new HUD(lm, this);
 
         setMaxHealth(20);
     }
 
+    public PlayerInventory getInv() { return inv; }
+
     public void assignMouseInput(GameMouseInput mi){
         mi.addInputReceiver(inv);
+        mi.addInputReceiver(hud);
         mi.addInputReceiver(this);
     }
 

@@ -1,5 +1,6 @@
 package Game.Tags;
 
+import Game.TagEvent;
 import Game.TagHolder;
 
 /**
@@ -8,7 +9,8 @@ import Game.TagHolder;
 public class HealingTag extends Tag{
 
     @Override
-    public void onItemUse(TagHolder user) {
+    public void onItemUse(TagEvent e, TagHolder user) {
         user.heal(5);
+        e.setSuccess(true);
     }
 }

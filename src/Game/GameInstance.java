@@ -57,8 +57,6 @@ public class GameInstance {
         }
 
         player = new Player(window, manager, this);
-
-        new HUD(manager, player);
     }
 
     public LayerManager getLayerManager() { return lm; }

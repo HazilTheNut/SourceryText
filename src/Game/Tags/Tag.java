@@ -1,5 +1,6 @@
 package Game.Tags;
 
+import Game.TagEvent;
 import Game.TagHolder;
 
 /**
@@ -20,5 +21,5 @@ public class Tag {
 
     // E V E N T S
 
-    public void onItemUse(TagHolder user) {}
+    public void onItemUse(TagEvent e, TagHolder user) {}
 }

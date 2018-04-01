@@ -19,7 +19,7 @@ class PlayerInventory implements MouseInputReceiver{
     private Layer invLayer;
     private Layer selectorLayer;
 
-    private final int ITEM_STRING_LENGTH = 16;
+    public final int ITEM_STRING_LENGTH = 16;
 
     public void addItem(Item item) { items.add(item); }
 
@@ -46,26 +46,28 @@ class PlayerInventory implements MouseInputReceiver{
     }
 
     public void updateDisplay(){
-        System.out.printf("[PlayerInventory] Size: %1$d\n", items.size());
+        Layer tempLayer = new Layer(new SpecialText[invLayer.getCols()][invLayer.getRows()], "temp", 0, 0);
         int height = getInvHeight();
         for (int row = 0; row < height; row++){ //Draw base inv panel
-            for (int col = 0; col < invLayer.getCols(); col++){
-                invLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(35, 35, 35)));
+            for (int col = 0; col < tempLayer.getCols(); col++){
+                tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(35, 35, 35)));
             }
         }
-        for (int col = 0; col < invLayer.getCols(); col++){ //Create top border
-            invLayer.editLayer(col, 0,        new SpecialText('#', Color.GRAY, new Color(30, 30, 30)));
+        for (int col = 0; col < tempLayer.getCols(); col++){ //Create top border
+            tempLayer.editLayer(col, 0,        new SpecialText('#', Color.GRAY, new Color(30, 30, 30)));
         }
         for (int ii = 0; ii < items.size(); ii++){ //Inscribe inv contents
             if (ii % 2 == 1){
                 for (int col = 0; col < ITEM_STRING_LENGTH   ; col++){
-                    invLayer.editLayer(col, ii+1, new SpecialText(' ', Color.WHITE, new Color(45, 45, 45)));
+                    tempLayer.editLayer(col, ii+1, new SpecialText(' ', Color.WHITE, new Color(45, 45, 45)));
                 }
             }
-            invLayer.inscribeString(items.get(ii).getItemData().getName(), 0, ii+1, new Color(210, 210, 255));
-            invLayer.inscribeString(String.format("%1$02d", items.get(ii).getItemData().getQty()), 16, ii+1, new Color(240, 255, 200));
+            tempLayer.inscribeString(items.get(ii).getItemData().getName(), 0, ii+1, new Color(240, 240, 255));
+            tempLayer.inscribeString(String.format("%1$02d", items.get(ii).getItemData().getQty()), 16, ii+1, new Color(240, 255, 200));
         }
-        invLayer.inscribeString("Inventory", 1, 0, new Color(240, 255, 200));
+        tempLayer.inscribeString("Inventory", 1, 0, new Color(240, 255, 200));
+
+        invLayer.transpose(tempLayer);
     }
 
     void close(){
@@ -104,7 +106,14 @@ class PlayerInventory implements MouseInputReceiver{
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
         Item selectedItem = getItemAtCursor(screenPos);
         if (selectedItem != null){
-            selectedItem.onItemUse(player);
+            TagEvent e = selectedItem.onItemUse(player);
+            if (e.isSuccessful() && !e.isCanceled()){
+                selectedItem.decrementQty();
+                if (selectedItem.getItemData().getQty() <= 0) {
+                    items.remove(selectedItem);
+                }
+                updateDisplay();
+            }
         }
         System.out.printf("[PlayerInventory] Player hp: %1$d\n", player.getHealth());
         return invLayer.getVisible() && cursorInInvLayer(screenPos);
