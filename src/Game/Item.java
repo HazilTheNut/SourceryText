@@ -14,8 +14,11 @@ public class Item extends TagHolder{
 
     public Item(ItemStruct itemData){ this.itemData = itemData; }
 
-    public void onItemUse(){
+    public void onItemUse(TagHolder target){
         System.out.printf("[Item] \'%1$s\' Tags:\n", itemData.getName());
-        for (Tag tag : getTags()) System.out.printf("[Item] > %1$s\n", tag.getName());
+        for (Tag tag : getTags()) {
+            System.out.printf("[Item] > %1$s\n", tag.getName());
+            tag.onItemUse(target);
+        }
     }
 }

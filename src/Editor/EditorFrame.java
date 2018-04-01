@@ -1,5 +1,6 @@
 package Editor;
 
+import Data.LayerImportances;
 import Data.LevelData;
 import Engine.Layer;
 import Engine.LayerManager;
@@ -20,7 +21,6 @@ public class EditorFrame extends JFrame {
 
     private EditorToolPanel toolPanel;
     private EditorTextPanel textPanel;
-    private UndoManager undoManager;
 
     public EditorFrame(LevelData ldata, WindowWatcher watcher){
 
@@ -32,7 +32,7 @@ public class EditorFrame extends JFrame {
         c.addComponentListener(window);
         c.addKeyListener(window);
 
-        Layer mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH*4][window.RESOLUTION_HEIGHT*4], "mouse", 0, 0);
+        Layer mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH*4][window.RESOLUTION_HEIGHT*4], "mouse", 0, 0, LayerImportances.CURSOR);
         mouseHighlight.fixedScreenPos = true;
 
         Layer tileDataLayer = ldata.getTileDataLayer();
@@ -54,7 +54,7 @@ public class EditorFrame extends JFrame {
         textPanel = new EditorTextPanel();
         c.add(textPanel, BorderLayout.LINE_START);
 
-        undoManager = new UndoManager(ldata, manager);
+        UndoManager undoManager = new UndoManager(ldata, manager);
 
         EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, textPanel, ldata.getBackdrop(), ldata, undoManager);
         window.addMouseListener(mi);

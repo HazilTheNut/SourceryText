@@ -13,7 +13,7 @@ public class CombatEntity extends Entity{
     protected int health;
     protected int maxHealth;
 
-    void setMaxHealth(int maxHP){
+    protected void setMaxHealth(int maxHP){
         maxHealth = maxHP;
         health = maxHP;
     }
@@ -35,6 +35,14 @@ public class CombatEntity extends Entity{
             return true;
         }
         return false;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
     }
 
     @Override

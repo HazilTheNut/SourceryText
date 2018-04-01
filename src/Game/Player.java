@@ -42,11 +42,13 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         gi = gameInstance;
 
-        inv = new PlayerInventory(lm);
+        inv = new PlayerInventory(lm, this);
         ItemRegistry registry = new ItemRegistry();
 
         inv.addItem(registry.generateItem(1));
         inv.addItem(registry.generateItem(2));
+
+        setMaxHealth(20);
     }
 
     public void assignMouseInput(GameMouseInput mi){

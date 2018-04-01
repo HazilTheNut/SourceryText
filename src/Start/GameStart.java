@@ -1,10 +1,6 @@
 package Start;
 
-import Data.LayerImportances;
-import Editor.EditorMouseInput;
-import Engine.Layer;
 import Engine.LayerManager;
-import Engine.SpecialText;
 import Engine.ViewWindow;
 import Game.GameInstance;
 import Game.GameMouseInput;
@@ -26,15 +22,17 @@ public class GameStart {
         }
 
         JFrame gameFrame = new JFrame("Sourcery Text");
+        ViewWindow window = new ViewWindow();
+
+        gameFrame.getContentPane().add(window);
+        gameFrame.getContentPane().addComponentListener(window);
+
+        gameFrame.getContentPane().validate();
+
         gameFrame.setSize(500, 500);
         gameFrame.setResizable(true);
         gameFrame.setVisible(true);
         gameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        ViewWindow window = new ViewWindow();
-
-        gameFrame.add(window);
-        gameFrame.addComponentListener(window);
 
         window.requestFocusInWindow();
 

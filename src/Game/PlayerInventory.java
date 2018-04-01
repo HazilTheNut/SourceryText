@@ -23,7 +23,7 @@ class PlayerInventory implements MouseInputReceiver{
 
     public void addItem(Item item) { items.add(item); }
 
-    PlayerInventory(LayerManager lm){
+    PlayerInventory(LayerManager lm, Player player){
         invLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 2][100], "inventory", 0, 1, LayerImportances.MENU);
         invLayer.fixedScreenPos = true;
         invLayer.setVisible(false);
@@ -33,6 +33,7 @@ class PlayerInventory implements MouseInputReceiver{
         selectorLayer.fixedScreenPos = true;
         lm.addLayer(invLayer);
         lm.addLayer(selectorLayer);
+        this.player = player;
     }
 
     private int getInvHeight() {
@@ -61,7 +62,7 @@ class PlayerInventory implements MouseInputReceiver{
                     invLayer.editLayer(col, ii+1, new SpecialText(' ', Color.WHITE, new Color(45, 45, 45)));
                 }
             }
-            invLayer.inscribeString(items.get(ii).getItemData().getName(), 0, ii+1);
+            invLayer.inscribeString(items.get(ii).getItemData().getName(), 0, ii+1, new Color(210, 210, 255));
             invLayer.inscribeString(String.format("%1$02d", items.get(ii).getItemData().getQty()), 16, ii+1, new Color(240, 255, 200));
         }
         invLayer.inscribeString("Inventory", 1, 0, new Color(240, 255, 200));
@@ -103,8 +104,9 @@ class PlayerInventory implements MouseInputReceiver{
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
         Item selectedItem = getItemAtCursor(screenPos);
         if (selectedItem != null){
-            selectedItem.onItemUse();
+            selectedItem.onItemUse(player);
         }
+        System.out.printf("[PlayerInventory] Player hp: %1$d\n", player.getHealth());
         return invLayer.getVisible() && cursorInInvLayer(screenPos);
     }
 }

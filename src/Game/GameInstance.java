@@ -24,7 +24,11 @@ public class GameInstance {
     private ArrayList<Entity> entities = new ArrayList<>();
     private ArrayList<EntityOperation> entityOperations = new ArrayList<>();
 
+    private LayerManager lm;
+
     public GameInstance(LayerManager manager, ViewWindow window){
+
+        lm = manager;
 
         FileIO io = new FileIO();
 
@@ -53,7 +57,11 @@ public class GameInstance {
         }
 
         player = new Player(window, manager, this);
+
+        new HUD(manager, player);
     }
+
+    public LayerManager getLayerManager() { return lm; }
 
     public Player getPlayer() { return player; }
 
