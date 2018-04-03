@@ -31,6 +31,7 @@ public class HUD implements MouseInputReceiver{
     private Coordinate mousePos;
 
     void updateHUD(){
+        System.out.printf("[HUD} Update!\n");
         Layer tempLayer = new Layer(new SpecialText[HUDLayer.getCols()][HUDLayer.getRows()], "temp", 0, 0);
 
         Color bkg = new Color(15, 15, 15);
@@ -66,10 +67,14 @@ public class HUD implements MouseInputReceiver{
         tempLayer.editLayer(pos, 0, new SpecialText(']', fontColor, bkg));
 
         pos+=2;
-        for (int ii = 0; ii < player.getInv().ITEM_STRING_LENGTH + 2; ii++){
-            tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(25, 25, 25)));
+        if (player.getWeapon() != null) {
+            for (int ii = 0; ii < player.getInv().ITEM_STRING_LENGTH + 2; ii++) {
+                tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(25, 25, 25)));
+            }
+            tempLayer.inscribeString(player.getWeapon().getItemData().getName(), pos, 0);
+            tempLayer.inscribeString(String.valueOf(player.getWeapon().getItemData().getQty()), pos + player.getInv().ITEM_STRING_LENGTH, 0, new Color(240, 255, 200));
+            pos += player.getInv().ITEM_STRING_LENGTH + 2;
         }
-        pos += player.getInv().ITEM_STRING_LENGTH + 2;
 
         pos++;
         for (int ii = 0; ii < 13; ii++){
@@ -88,13 +93,12 @@ public class HUD implements MouseInputReceiver{
 
     @Override
     public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
-        if (!screenPos.equals(mousePos)) {
+        if (!screenPos.equals(mousePos) && screenPos.getY() <= 1) {
             mousePos = screenPos;
             updateHUD();
         } else {
             mousePos = screenPos;
         }
-
     }
 
     @Override

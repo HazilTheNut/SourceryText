@@ -13,13 +13,13 @@ public class TagRegistry {
 
     private TreeMap<Integer, TagStruct> tagMap = new TreeMap<>();
 
-    static int WEAPON        = 10;
-    static int WEAPON_STRIKE = 11;
-    static int WEAPON_THRUST = 12;
-    static int WEAPON_SWEEP  = 13;
+    public final static int WEAPON        = 10;
+    public final static int WEAPON_STRIKE = 11;
+    public final static int WEAPON_THRUST = 12;
+    public final static int WEAPON_SWEEP  = 13;
 
-    static int DAMAGE_START = 1000;
-    static int HEALING_START = 2000;
+    public final static int DAMAGE_START = 1000;
+    public final static int HEALING_START = 2000;
 
     public TagRegistry(){
         registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);

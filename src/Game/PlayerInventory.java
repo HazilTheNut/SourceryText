@@ -126,5 +126,6 @@ class PlayerInventory implements MouseInputReceiver{
         } else {
             player.unfreeze();
         }
+        player.updateHUD();
     }
 }

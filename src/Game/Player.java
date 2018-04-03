@@ -43,8 +43,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         ItemRegistry registry = new ItemRegistry();
 
         inv.addItem(registry.generateItem(1).setQty(25));
-        inv.addItem(registry.generateItem(2));
-        inv.addItem(registry.generateItem(3).setQty(25));
+        inv.addItem(registry.generateItem(2).setQty(45));
+        inv.addItem(registry.generateItem(3).setQty(45));
+        inv.addItem(registry.generateItem(4).setQty(45));
 
         setMaxHealth(20);
 
@@ -61,6 +62,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         else
             lm.setCameraPos(camNewX, camNewY);
     }
+
+    public void updateHUD() {hud.updateHUD();}
 
     @Override
     public void heal(int amount) {
@@ -117,16 +120,12 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
-        System.out.println("[Player] Attack!");
-        Entity e = getGameInstance().getEntityAt(levelPos);
-        if (e != null && e instanceof CombatEntity){
-            Thread attackThread = new Thread(() -> {
-                e.receiveDamage(1);
-                gi.doEnemyTurn();
-            });
-            attackThread.start();
-            return true;
-        }
+        Thread attackThread = new Thread(() -> {
+            freeze();
+            doWeaponAttack(levelPos);
+            gi.doEnemyTurn();
+        });
+        attackThread.start();
         return false;
     }
 

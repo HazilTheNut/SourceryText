@@ -36,6 +36,10 @@ public class Coordinate {
         return new Coordinate(x + other.getX(), y + other.getY());
     }
 
+    public Coordinate subtract(Coordinate other){
+        return new Coordinate(x - other.getX(), y - other.getY());
+    }
+
     @Override
     public String toString() {
         return String.format("[%1$d,%2$d]", x, y);
