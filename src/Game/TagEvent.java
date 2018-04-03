@@ -1,5 +1,7 @@
 package Game;
 
+import java.util.ArrayList;
+
 /**
  * Created by Jared on 4/1/2018.
  */
@@ -9,10 +11,17 @@ public class TagEvent {
     private boolean successful;
     private boolean canceled;
 
-    public TagEvent(int startingAmount, boolean successful){
+    private TagHolder target;
+    private TagHolder source;
+
+    private ArrayList<EventAction> eventActions = new ArrayList<>();
+
+    public TagEvent(int startingAmount, boolean successful, TagHolder source, TagHolder target){
         amount = startingAmount;
         this.successful = successful;
         canceled = false;
+        this.target = target;
+        this.source = source;
     }
 
     public void setSuccess(boolean success) { successful = success; }
@@ -26,4 +35,22 @@ public class TagEvent {
     }
 
     public void cancel() { canceled = true; }
+
+    public TagHolder getSource() {
+        return source;
+    }
+
+    public TagHolder getTarget() {
+        return target;
+    }
+
+    public void addCancelableAction(EventAction e){ eventActions.add(e); }
+
+    public void enactEvent(){
+        for (EventAction action : eventActions) action.doAction();
+    }
+
+    public interface EventAction{
+        void doAction();
+    }
 }

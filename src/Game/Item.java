@@ -25,10 +25,10 @@ public class Item extends TagHolder{
 
     TagEvent onItemUse(TagHolder target){
         System.out.printf("[Item] \'%1$s\' Tags:\n", itemData.getName());
-        TagEvent useEvent = new TagEvent(0, false);
+        TagEvent useEvent = new TagEvent(0, false, this, target);
         for (Tag tag : getTags()) {
             System.out.printf("[Item] > %1$s\n", tag.getName());
-            tag.onItemUse(useEvent, target);
+            tag.onItemUse(useEvent);
         }
         return useEvent;
     }

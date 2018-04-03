@@ -116,6 +116,7 @@ class PlayerInventory implements MouseInputReceiver{
         player.freeze();
         TagEvent e = selectedItem.onItemUse(player);
         if (e.isSuccessful() && !e.isCanceled()){
+            e.enactEvent();
             selectedItem.decrementQty();
             if (selectedItem.getItemData().getQty() <= 0) {
                 items.remove(selectedItem);

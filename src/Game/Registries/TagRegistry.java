@@ -1,8 +1,7 @@
 package Game.Registries;
 
-import Game.Tags.HealingTag;
-import Game.Tags.DamageTag;
-import Game.Tags.Tag;
+import Game.Tags.*;
+import Game.Tags.PropertyTags.*;
 
 import java.util.Set;
 import java.util.TreeMap;
@@ -14,10 +13,19 @@ public class TagRegistry {
 
     private TreeMap<Integer, TagStruct> tagMap = new TreeMap<>();
 
-    public static int DAMAGE_START = 1000;
-    public static int HEALING_START = 2000;
+    static int WEAPON        = 10;
+    static int WEAPON_STRIKE = 11;
+    static int WEAPON_THRUST = 12;
+    static int WEAPON_SWEEP  = 13;
+
+    static int DAMAGE_START = 1000;
+    static int HEALING_START = 2000;
 
     public TagRegistry(){
+        registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);
+        registerTag(WEAPON_STRIKE, "Striking Weapon",  StrikeWeaponTypeTag.class);
+        registerTag(WEAPON_THRUST, "Thrusting Weapon", ThrustWeaponTypeTag.class);
+        registerTag(WEAPON_SWEEP,  "Sweeping Weapon",  SweepWeaponTypeTag.class);
     }
 
     public int[] getMapKeys() {
@@ -61,9 +69,9 @@ public class TagRegistry {
     }
 
     private Tag generateTag(int id){
-        System.out.printf("[TagRegistry.generateTag] ID: %1$d\n", id);
         Class tagClass = tagMap.get(id).getTagClass();
         if (tagClass != null){
+            System.out.printf("[TagRegistry.generateTag] ID: %1$d Name: %2$s\n", id, tagClass.getName());
             Object obj;
             try {
                 obj = tagClass.newInstance();

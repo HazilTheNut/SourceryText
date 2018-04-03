@@ -2,6 +2,7 @@ package Game.Entities;
 
 import Engine.SpecialText;
 import Game.Coordinate;
+import Game.Item;
 
 import java.awt.*;
 
@@ -10,8 +11,10 @@ import java.awt.*;
  */
 public class CombatEntity extends Entity{
 
-    protected int health;
-    protected int maxHealth;
+    private int health;
+    private int maxHealth;
+
+    private Item weapon;
 
     protected void setMaxHealth(int maxHP){
         maxHealth = maxHP;
@@ -44,6 +47,14 @@ public class CombatEntity extends Entity{
 
     public int getMaxHealth() {
         return maxHealth;
+    }
+
+    public void setWeapon(Item weapon) {
+        this.weapon = weapon;
+    }
+
+    public Item getWeapon() {
+        return weapon;
     }
 
     @Override

@@ -15,8 +15,8 @@ public class DamageTag extends Tag{
     }
 
     @Override
-    public void onItemUse(TagEvent e, TagHolder user) {
-        user.receiveDamage(damageAmount);
+    public void onItemUse(TagEvent e) {
+        e.addCancelableAction(() -> e.getTarget().receiveDamage(damageAmount));
         e.setSuccess(true);
     }
 }
