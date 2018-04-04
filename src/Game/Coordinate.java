@@ -40,6 +40,10 @@ public class Coordinate {
         return new Coordinate(x - other.getX(), y - other.getY());
     }
 
+    public int stepDistance(Coordinate other) {
+        return Math.abs(getX() - other.getX()) + Math.abs(getY() - other.getY());
+    }
+
     @Override
     public String toString() {
         return String.format("[%1$d,%2$d]", x, y);

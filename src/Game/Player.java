@@ -43,13 +43,15 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         ItemRegistry registry = new ItemRegistry();
 
         inv.addItem(registry.generateItem(1).setQty(25));
-        inv.addItem(registry.generateItem(2).setQty(45));
-        inv.addItem(registry.generateItem(3).setQty(45));
-        inv.addItem(registry.generateItem(4).setQty(45));
+        inv.addItem(registry.generateItem(2).setQty(15));
+        inv.addItem(registry.generateItem(3).setQty(15));
+        inv.addItem(registry.generateItem(4).setQty(15));
 
         setMaxHealth(20);
 
         hud = new HUD(lm, this);
+
+        setName("Player");
     }
 
     private void updateCameraPos(){
@@ -74,6 +76,15 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     @Override
     public void receiveDamage(int amount) {
         super.receiveDamage(amount);
+        hud.updateHUD();
+    }
+
+    @Override
+    protected void doAttackEvent(CombatEntity ce) {
+        if (getWeapon() != null && getWeapon().getItemData().getQty() == 1)
+            inv.removeItem(getWeapon());
+        super.doAttackEvent(ce);
+        hud.updateSynopsis(ce.getLocation());
         hud.updateHUD();
     }
 
@@ -120,12 +131,14 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
-        Thread attackThread = new Thread(() -> {
-            freeze();
-            doWeaponAttack(levelPos);
-            gi.doEnemyTurn();
-        });
-        attackThread.start();
+        if (!isFrozen()) {
+            Thread attackThread = new Thread(() -> {
+                freeze();
+                doWeaponAttack(levelPos);
+                gi.doEnemyTurn();
+            });
+            attackThread.start();
+        }
         return false;
     }
 

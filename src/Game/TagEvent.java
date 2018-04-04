@@ -34,6 +34,14 @@ public class TagEvent {
         return canceled;
     }
 
+    public int getAmount(){
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
     public void cancel() { canceled = true; }
 
     public TagHolder getSource() {
@@ -43,6 +51,8 @@ public class TagEvent {
     public TagHolder getTarget() {
         return target;
     }
+
+    public boolean eventPassed() { return isSuccessful() && !isCanceled(); }
 
     public void addCancelableAction(EventAction e){ eventActions.add(e); }
 

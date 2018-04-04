@@ -22,4 +22,6 @@ public class Tag {
     // E V E N T S
 
     public void onItemUse(TagEvent e) {}
+
+    public void onDealDamage(TagEvent e) {}
 }

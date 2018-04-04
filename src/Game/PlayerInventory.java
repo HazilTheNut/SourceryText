@@ -23,6 +23,8 @@ class PlayerInventory implements MouseInputReceiver{
 
     public void addItem(Item item) { items.add(item); }
 
+    void removeItem (Item item) { items.remove(item); }
+
     PlayerInventory(LayerManager lm, Player player){
         invLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 2][100], "inventory", 0, 1, LayerImportances.MENU);
         invLayer.fixedScreenPos = true;
@@ -46,11 +48,13 @@ class PlayerInventory implements MouseInputReceiver{
     }
 
     public void updateDisplay(){
+        int translucentValue = 225;
+
         Layer tempLayer = new Layer(new SpecialText[invLayer.getCols()][invLayer.getRows()], "temp", 0, 0);
         int height = getInvHeight();
         for (int row = 0; row < height; row++){ //Draw base inv panel
             for (int col = 0; col < tempLayer.getCols(); col++){
-                tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(35, 35, 35)));
+                tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(35, 35, 35, translucentValue)));
             }
         }
         for (int col = 0; col < tempLayer.getCols(); col++){ //Create top border
@@ -59,7 +63,7 @@ class PlayerInventory implements MouseInputReceiver{
         for (int ii = 0; ii < items.size(); ii++){ //Inscribe inv contents
             if (ii % 2 == 1){
                 for (int col = 0; col < ITEM_STRING_LENGTH   ; col++){
-                    tempLayer.editLayer(col, ii+1, new SpecialText(' ', Color.WHITE, new Color(45, 45, 45)));
+                    tempLayer.editLayer(col, ii+1, new SpecialText(' ', Color.WHITE, new Color(45, 45, 45, translucentValue)));
                 }
             }
             tempLayer.inscribeString(items.get(ii).getItemData().getName(), 0, ii+1, new Color(240, 240, 255));
@@ -115,7 +119,7 @@ class PlayerInventory implements MouseInputReceiver{
     private void useItem(Item selectedItem){
         player.freeze();
         TagEvent e = selectedItem.onItemUse(player);
-        if (e.isSuccessful() && !e.isCanceled()){
+        if (e.eventPassed()){
             e.enactEvent();
             selectedItem.decrementQty();
             if (selectedItem.getItemData().getQty() <= 0) {

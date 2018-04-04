@@ -6,6 +6,7 @@ import Engine.SpecialText;
 import Game.Coordinate;
 import Game.Item;
 import Game.Registries.TagRegistry;
+import Game.TagEvent;
 import Game.Tags.Tag;
 
 import java.awt.*;
@@ -18,10 +19,16 @@ public class CombatEntity extends Entity{
     private int health;
     private int maxHealth;
 
-    public static final int UP = 0;
-    public static final int LEFT = 1;
-    public static final int DOWN = 2;
-    public static final int RIGHT = 3;
+    private static final int RIGHT = 0;
+    private static final int UP_RIGHT = 45;
+    private static final int UP = 90;
+    private static final int UP_LEFT = 135;
+    private static final int LEFT = 180;
+    private static final int DOWN_LEFT = 225;
+    private static final int DOWN = 270;
+    private static final int DOWN_RIGHT = 315;
+
+    private static final int[] directions = {RIGHT, UP_RIGHT, UP, UP_LEFT, LEFT, DOWN_LEFT, DOWN, DOWN_RIGHT};
 
     private Item weapon;
 
@@ -32,16 +39,18 @@ public class CombatEntity extends Entity{
 
     @Override
     public void receiveDamage(int amount) {
-        health -= Math.max(amount, 0);
-        double percentage = Math.sqrt(Math.max(Math.min((double)amount / maxHealth, 1),0.1));
-        SpecialText originalSprite = getSprite().getSpecialText(0, 0);
-        getSprite().editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), originalSprite.getFgColor(), new Color(255, 0, 0, (int)(255*percentage))));
-        turnSleep(100 + (int)(500 * percentage));
-        getSprite().editLayer(0, 0, originalSprite);
-        if (health <= 0) selfDestruct();
+        if (amount > 0 ) {
+            health -= amount;
+            double percentage = Math.sqrt(Math.max(Math.min((double) amount / maxHealth, 1), 0.1));
+            SpecialText originalSprite = getSprite().getSpecialText(0, 0);
+            getSprite().editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), originalSprite.getFgColor(), new Color(255, 0, 0, (int) (255 * percentage))));
+            turnSleep(100 + (int) (500 * percentage));
+            getSprite().editLayer(0, 0, originalSprite);
+            if (health <= 0) selfDestruct();
+        }
     }
 
-    private boolean attackEnemy(Coordinate loc){
+    private boolean attack(Coordinate loc){
         Layer swooshLayer = new Layer(new SpecialText[1][1], getSprite().getName().concat("_attack"), loc.getX(), loc.getY(), LayerImportances.ANIMATION);
         swooshLayer.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 150)));
         lm.addLayer(swooshLayer);
@@ -49,10 +58,23 @@ public class CombatEntity extends Entity{
         lm.removeLayer(swooshLayer);
         Entity entity = getGameInstance().getEntityAt(loc);
         if (entity != null && entity instanceof CombatEntity){
-            entity.receiveDamage(1);
+            doAttackEvent((CombatEntity)entity);
             return true;
         }
         return false;
+    }
+
+    protected void doAttackEvent(CombatEntity ce){
+        TagEvent event = new TagEvent(0, true, this, ce);
+        for (Tag tag : getWeapon().getTags())
+            tag.onDealDamage(event);
+        if (event.eventPassed()){
+            ce.receiveDamage(event.getAmount());
+            getWeapon().decrementQty();
+            if (getWeapon().getItemData().getQty() <= 0){
+                setWeapon(null);
+            }
+        }
     }
 
     protected int calculateMeleeDirection(Coordinate target){
@@ -61,16 +83,11 @@ public class CombatEntity extends Entity{
         double angle = (180 / Math.PI) * Math.atan2(dy, dx);
         if (angle < 0) angle += 360;
         System.out.printf("[CombatEntity.calculateMeleeDirection] Angle: %1$f dx: %2$d dy: %3$d\n", angle, dx, dy);
-        if (angle <= 45 || angle > 315){
-            return RIGHT;
-        } else if (angle > 45 && angle <= 135){
-            return UP;
-        } else if (angle > 135 && angle <= 225){
-            return LEFT;
-        } else if (angle > 225 && angle <= 315){
-            return DOWN;
-        } else
-            return 0;
+        for (int dir : directions){
+            if (Math.abs(angle - dir) <= 22.5)
+                return dir;
+        }
+        return -1;
     }
 
     protected void doWeaponAttack(Coordinate loc){
@@ -93,68 +110,78 @@ public class CombatEntity extends Entity{
     }
 
     private void doStrikeWeaponAttack(int direction){
-        System.out.println("[CombatEntity] Attacking with a strike weapon");
         switch (direction){
             case UP:
-                attackEnemy(getLocation().add(new Coordinate(0, -1)));
+                attack(getLocation().add(new Coordinate(0, -1)));
                 break;
-            case DOWN:
-                attackEnemy(getLocation().add(new Coordinate(0, 1)));
-                break;
-            case LEFT:
-                attackEnemy(getLocation().add(new Coordinate(-1, 0)));
+            case UP_RIGHT:
+                attack(getLocation().add(new Coordinate(1, -1)));
                 break;
             case RIGHT:
-                attackEnemy(getLocation().add(new Coordinate(1, 0)));
+                attack(getLocation().add(new Coordinate(1, 0)));
+                break;
+            case DOWN_RIGHT:
+                attack(getLocation().add(new Coordinate(1, 1)));
+                break;
+            case DOWN:
+                attack(getLocation().add(new Coordinate(0, 1)));
+                break;
+            case DOWN_LEFT:
+                attack(getLocation().add(new Coordinate(-1, 1)));
+                break;
+            case LEFT:
+                attack(getLocation().add(new Coordinate(-1, 0)));
+                break;
+            case UP_LEFT:
+                attack(getLocation().add(new Coordinate(-1, -1)));
                 break;
         }
     }
 
     private void doThrustWeaponAttack(int direction){
-        System.out.println("[CombatEntity] Attacking with a strike weapon");
         switch (direction){
             case UP:
-                attackEnemy(getLocation().add(new Coordinate(0, -1)));
-                attackEnemy(getLocation().add(new Coordinate(0, -2)));
+                attack(getLocation().add(new Coordinate(0, -1)));
+                attack(getLocation().add(new Coordinate(0, -2)));
                 break;
-            case DOWN:
-                attackEnemy(getLocation().add(new Coordinate(0, 1)));
-                attackEnemy(getLocation().add(new Coordinate(0, 2)));
-                break;
-            case LEFT:
-                attackEnemy(getLocation().add(new Coordinate(-1, 0)));
-                attackEnemy(getLocation().add(new Coordinate(-2, 0)));
+            case UP_RIGHT:
+                attack(getLocation().add(new Coordinate(1, -1)));
+                attack(getLocation().add(new Coordinate(2, -2)));
                 break;
             case RIGHT:
-                attackEnemy(getLocation().add(new Coordinate(1, 0)));
-                attackEnemy(getLocation().add(new Coordinate(2, 0)));
+                attack(getLocation().add(new Coordinate(1, 0)));
+                attack(getLocation().add(new Coordinate(2, 0)));
+                break;
+            case DOWN_RIGHT:
+                attack(getLocation().add(new Coordinate(1, 1)));
+                attack(getLocation().add(new Coordinate(2, 2)));
+                break;
+            case DOWN:
+                attack(getLocation().add(new Coordinate(0, 1)));
+                attack(getLocation().add(new Coordinate(0, 2)));
+                break;
+            case DOWN_LEFT:
+                attack(getLocation().add(new Coordinate(-1, 1)));
+                attack(getLocation().add(new Coordinate(-2, 2)));
+                break;
+            case LEFT:
+                attack(getLocation().add(new Coordinate(-1, 0)));
+                attack(getLocation().add(new Coordinate(-2, 0)));
+                break;
+            case UP_LEFT:
+                attack(getLocation().add(new Coordinate(-1, -1)));
+                attack(getLocation().add(new Coordinate(-2, -2)));
                 break;
         }
     }
 
     private void doSweepWeaponAttack(int direction){
-        System.out.println("[CombatEntity] Attacking with a strike weapon");
-        switch (direction){
-            case UP:
-                attackEnemy(getLocation().add(new Coordinate(1, -1)));
-                attackEnemy(getLocation().add(new Coordinate(0, -1)));
-                attackEnemy(getLocation().add(new Coordinate(-1, -1)));
-                break;
-            case DOWN:
-                attackEnemy(getLocation().add(new Coordinate(-1, 1)));
-                attackEnemy(getLocation().add(new Coordinate(0, 1)));
-                attackEnemy(getLocation().add(new Coordinate(1, 1)));
-                break;
-            case LEFT:
-                attackEnemy(getLocation().add(new Coordinate(-1, -1)));
-                attackEnemy(getLocation().add(new Coordinate(-1, 0)));
-                attackEnemy(getLocation().add(new Coordinate(-1, 1)));
-                break;
-            case RIGHT:
-                attackEnemy(getLocation().add(new Coordinate(1, 1)));
-                attackEnemy(getLocation().add(new Coordinate(1, 0)));
-                attackEnemy(getLocation().add(new Coordinate(1, -1)));
-                break;
+        int dir = direction - 45;
+        if (dir < 0 ) dir = 315;
+        for (int ii = 0; ii < 3; ii++){
+            doStrikeWeaponAttack(dir);
+            dir += 45;
+            if (dir == 360) dir = 0;
         }
     }
 

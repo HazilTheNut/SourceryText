@@ -57,6 +57,11 @@ public class GameInstance {
         }
 
         player = new Player(window, manager, this);
+        entities.add(player);
+    }
+
+    public boolean isSpaceAvailable(Coordinate loc){
+        return getEntityAt(loc) == null;
     }
 
     public LayerManager getLayerManager() { return lm; }

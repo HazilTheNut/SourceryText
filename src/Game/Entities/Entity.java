@@ -7,6 +7,7 @@ import Engine.SpecialText;
 import Game.Coordinate;
 import Game.GameInstance;
 import Data.LayerImportances;
+import Game.Registries.EntityRegistry;
 import Game.TagHolder;
 import Game.Tags.Tag;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public class Entity extends TagHolder{
     private Coordinate location;
     private Layer sprite; //Not to be mistaken with 7-up
 
+    private String name;
+
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance){
         location = pos;
         sprite = new Layer(new SpecialText[1][1], createEntityLayerName(entityStruct, pos), getLocation().getX(), getLocation().getY(), LayerImportances.ENTITY);
@@ -29,6 +32,8 @@ public class Entity extends TagHolder{
         lm.addLayer(sprite);
         gi = gameInstance;
         this.lm = lm;
+        EntityRegistry er = new EntityRegistry();
+        name = er.getEntityStruct(entityStruct.getEntityId()).getEntityName();
     }
 
     protected String createEntityLayerName(EntityStruct struct, Coordinate coordinate){
@@ -41,13 +46,15 @@ public class Entity extends TagHolder{
 
     protected void setSprite(Layer sprite) { this.sprite = sprite; }
 
-    protected GameInstance getGameInstance() { return gi; }
+    public GameInstance getGameInstance() { return gi; }
 
     protected void setLocation(Coordinate pos) {location = pos;}
 
     protected void move(int relativeX, int relativeY){
-        location.movePos(relativeX, relativeY);
-        lm.getLayer(sprite.getName()).movePos(relativeX, relativeY);
+        if (getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)))) {
+            location.movePos(relativeX, relativeY);
+            lm.getLayer(sprite.getName()).movePos(relativeX, relativeY);
+        }
     }
 
     void selfDestruct(){
@@ -62,6 +69,12 @@ public class Entity extends TagHolder{
             e.printStackTrace();
         }
     }
+
+    public String getName() {
+        return name;
+    }
+
+    protected void setName(String str){ name = str; }
 
     //Ran when it is their turn to do something
     public void onTurn(){}

@@ -19,4 +19,9 @@ public class DamageTag extends Tag{
         e.addCancelableAction(() -> e.getTarget().receiveDamage(damageAmount));
         e.setSuccess(true);
     }
+
+    @Override
+    public void onDealDamage(TagEvent e) {
+        e.setAmount(e.getAmount() + damageAmount);
+    }
 }
