@@ -14,6 +14,8 @@ public class BasicEnemy extends CombatEntity {
         setWeapon(registry.generateItem(4).setQty(50));
     }
 
+    int detectRange = 10;
+
     @Override
     public void onTurn() {
         Player player = getGameInstance().getPlayer();
@@ -31,4 +33,6 @@ public class BasicEnemy extends CombatEntity {
                 move(0, 1);
         }
     }
+
+
 }

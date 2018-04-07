@@ -99,35 +99,52 @@ public class HUD implements MouseInputReceiver{
         HUDLayer.transpose(tempLayer);
     }
 
+    private int boxLength = 0;
+    private int boxHeight = 0;
+    private int startingRow = 0;
+
     public void updateSynopsis(Coordinate levelPos){
         Entity e = player.getGameInstance().getEntityAt(levelPos);
+        Tile t = player.getGameInstance().getTileAt(levelPos);
         synopsisLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(40, 40, 40, 175)));
+        startingRow = 0;
+        boxHeight = 0;
+        boxLength = 0;
         if (e != null){
-            synopsisLayer.setVisible(true);
-            System.out.printf("[HUD] Entity name: \"%1$s\"\n", e.getName());
-            int boxLength = e.getName().length() + 2;
-            if (boxLength < 5) boxLength = 7;
-            int boxHeight = 1;
-            if (e instanceof CombatEntity) boxHeight = 2;
-            synopsisLayer.setPos(59 - boxLength, 31 - boxHeight);
-            synopsisLayer.inscribeString(e.getName(), 1, 0);
-            if (e instanceof CombatEntity){
-                CombatEntity ce = (CombatEntity)e;
-                double percent = (double)ce.getHealth() / ce.getMaxHealth();
-                float dv = 1f/(boxLength - 2);
-                for (int ii = 0; ii < boxLength - 2; ii++){
-                    if (percent >= ii * dv){
-                        synopsisLayer.editLayer(ii + 1, 1, new SpecialText(' ', Color.WHITE, new Color(215, 75, 75, 200)));
-                    } else {
-                        synopsisLayer.editLayer(ii + 1, 1, new SpecialText(' ', Color.WHITE, new Color(55, 25, 25, 150)));
-                    }
-                }
-                String hpDisplay = String.format("%1$d/%2$d", ce.getHealth(), ce.getMaxHealth());
-                synopsisLayer.inscribeString(hpDisplay, (boxLength - hpDisplay.length()) / 2, 1);
-            }
-        } else {
-            synopsisLayer.setVisible(false);
+            drawEntitySynopsis(e);
         }
+        if (t != null){
+            boxHeight++;
+            boxLength = Math.max(boxLength, t.getName().length() + 2);
+            synopsisLayer.inscribeString(t.getName(), 1, startingRow);
+            startingRow++;
+        }
+        if (boxLength < 9) boxLength = 9;
+        synopsisLayer.setPos(59 - boxLength, 31 - boxHeight);
+    }
+
+    private void drawEntitySynopsis(Entity e){
+        boxHeight++;
+        System.out.printf("[HUD] Entity name: \"%1$s\"\n", e.getName());
+        boxLength = Math.max(boxLength, e.getName().length() + 2);
+        synopsisLayer.inscribeString(e.getName(), 1, startingRow);
+        if (e instanceof CombatEntity){
+            boxHeight++;
+            CombatEntity ce = (CombatEntity)e;
+            double percent = (double)ce.getHealth() / ce.getMaxHealth();
+            float dv = 1f/(boxLength - 2);
+            for (int ii = 0; ii < boxLength - 2; ii++){
+                if (percent >= ii * dv){
+                    synopsisLayer.editLayer(ii + 1, startingRow + 1, new SpecialText(' ', Color.WHITE, new Color(215, 75, 75, 200)));
+                } else {
+                    synopsisLayer.editLayer(ii + 1, startingRow + 1, new SpecialText(' ', Color.WHITE, new Color(55, 25, 25, 150)));
+                }
+            }
+            String hpDisplay = String.format("%1$d/%2$d", ce.getHealth(), ce.getMaxHealth());
+            synopsisLayer.inscribeString(hpDisplay, (boxLength - hpDisplay.length()) / 2, startingRow + 1);
+            startingRow++;
+        }
+        startingRow++;
     }
 
     @Override

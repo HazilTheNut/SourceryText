@@ -65,14 +65,16 @@ public class CombatEntity extends Entity{
     }
 
     protected void doAttackEvent(CombatEntity ce){
-        TagEvent event = new TagEvent(0, true, this, ce);
-        for (Tag tag : getWeapon().getTags())
-            tag.onDealDamage(event);
-        if (event.eventPassed()){
-            ce.receiveDamage(event.getAmount());
-            getWeapon().decrementQty();
-            if (getWeapon().getItemData().getQty() <= 0){
-                setWeapon(null);
+        if (getWeapon() != null) {
+            TagEvent event = new TagEvent(0, true, this, ce);
+            for (Tag tag : getWeapon().getTags())
+                tag.onDealDamage(event);
+            if (event.eventPassed()) {
+                ce.receiveDamage(event.getAmount());
+                getWeapon().decrementQty();
+                if (getWeapon().getItemData().getQty() <= 0) {
+                    setWeapon(null);
+                }
             }
         }
     }

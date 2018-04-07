@@ -38,6 +38,8 @@ public class EntityStruct implements Serializable{
         this.args = args;
     }
 
+    public void setItems(ArrayList<ItemStruct> items) {  this.items = items; }
+
     public int[] getTagIDs() { return tagIDs; }
 
     public ArrayList<ItemStruct> getItems() {return items; }

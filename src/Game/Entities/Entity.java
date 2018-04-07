@@ -29,11 +29,14 @@ public class Entity extends TagHolder{
         location = pos;
         sprite = new Layer(new SpecialText[1][1], createEntityLayerName(entityStruct, pos), getLocation().getX(), getLocation().getY(), LayerImportances.ENTITY);
         sprite.editLayer(0, 0, entityStruct.getDisplayChar());
-        lm.addLayer(sprite);
         gi = gameInstance;
         this.lm = lm;
         EntityRegistry er = new EntityRegistry();
         name = er.getEntityStruct(entityStruct.getEntityId()).getEntityName();
+    }
+
+    public void onLevelEnter(){
+        lm.addLayer(sprite);
     }
 
     protected String createEntityLayerName(EntityStruct struct, Coordinate coordinate){

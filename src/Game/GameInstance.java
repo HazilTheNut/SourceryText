@@ -9,7 +9,9 @@ import Engine.LayerManager;
 import Engine.ViewWindow;
 import Game.Entities.Entity;
 import Game.Registries.EntityRegistry;
+import Game.Registries.TagRegistry;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -19,10 +21,10 @@ public class GameInstance {
 
     private boolean isPlayerTurn = true;
 
-    private Layer backdrop;
     private Player player;
-    private ArrayList<Entity> entities = new ArrayList<>();
     private ArrayList<EntityOperation> entityOperations = new ArrayList<>();
+
+    private Level currentLevel;
 
     private LayerManager lm;
 
@@ -32,23 +34,43 @@ public class GameInstance {
 
         FileIO io = new FileIO();
 
-        LevelData ldata = io.openLevel(io.chooseLevel());
+        currentLevel = loadLevel(io.chooseLevel().getPath(), lm);
+        currentLevel.onEnter(lm);
 
-        backdrop = ldata.getBackdrop();
+        player = new Player(window, manager, this);
+    }
+
+    /**
+     * Unpacks a level from storage, but doesn't set the current room to the newly unpacked one automatically.
+     * @param levelFilePath The non-relative file path to the level's file
+     * @return returns the loaded level
+     */
+    private Level loadLevel(String levelFilePath, LayerManager manager){
+        Level newLevel = new Level();
+
+        FileIO io = new FileIO();
+
+        File levelFile = new File(levelFilePath);
+        LevelData ldata = io.openLevel(levelFile);
+
+        Layer backdrop = ldata.getBackdrop();
         backdrop.setImportance(LayerImportances.BACKDROP);
-        manager.addLayer(backdrop);
+        newLevel.setBackdrop(backdrop);
 
         EntityStruct[][] entityMatrix = ldata.getEntityData();
         EntityRegistry registry = new EntityRegistry();
         for (int col = 0; col < entityMatrix.length; col++){
             for (int row = 0; row < entityMatrix[0].length; row++){
-                EntityStruct struct = entityMatrix[col][row];
-                if (struct != null){
+                if (entityMatrix[col][row] != null){
+                    EntityStruct savedStruct = entityMatrix[col][row];
+                    EntityStruct struct = registry.getEntityStruct(savedStruct.getEntityId());
+                    struct.setArgs(savedStruct.getArgs());
+                    struct.setItems(savedStruct.getItems());
                     Class entityClass = registry.getEntityClass(struct.getEntityId());
                     try {
                         Entity e = (Entity)entityClass.newInstance();
                         e.initialize(new Coordinate(col, row), manager, struct, this);
-                        entities.add(e);
+                        newLevel.addEntity(e);
                     } catch (InstantiationException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -56,12 +78,17 @@ public class GameInstance {
             }
         }
 
-        player = new Player(window, manager, this);
-        entities.add(player);
+        newLevel.intitializeTiles(ldata);
+
+        return newLevel;
     }
 
     public boolean isSpaceAvailable(Coordinate loc){
-        return getEntityAt(loc) == null;
+        return getEntityAt(loc) == null && !currentLevel.getTileAt(loc).hasTag(TagRegistry.TILE_WALL);
+    }
+
+    public Tile getTileAt(Coordinate loc){
+        return currentLevel.getTileAt(loc);
     }
 
     public LayerManager getLayerManager() { return lm; }
@@ -71,11 +98,11 @@ public class GameInstance {
     boolean isPlayerTurn() { return isPlayerTurn; }
 
     public Layer getBackdrop() {
-        return backdrop;
+        return currentLevel.getBackdrop();
     }
 
     public void removeEntity(Entity e){
-        entityOperations.add(() -> entities.remove(e));
+        entityOperations.add(() -> currentLevel.removeEntity(e));
     }
 
     public void establishMouseInput(GameMouseInput mi){
@@ -93,9 +120,10 @@ public class GameInstance {
     }
 
     public Entity getEntityAt(Coordinate loc){
-        for (Entity e : entities){
+        for (Entity e : currentLevel.getEntities()){
             if (e.getLocation().equals(loc)) return e;
         }
+        if (player.getLocation().equals(loc)) return player;
         return null;
     }
 
@@ -105,7 +133,7 @@ public class GameInstance {
         public void run() {
             for (EntityOperation op : entityOperations)
                 op.run();
-            for (Entity e : entities) {
+            for (Entity e : currentLevel.getEntities()) {
                 e.onTurn();
             }
             isPlayerTurn = true;

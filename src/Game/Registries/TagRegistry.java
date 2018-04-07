@@ -13,15 +13,35 @@ public class TagRegistry {
 
     private TreeMap<Integer, TagStruct> tagMap = new TreeMap<>();
 
-    public final static int WEAPON        = 10;
-    public final static int WEAPON_STRIKE = 11;
-    public final static int WEAPON_THRUST = 12;
-    public final static int WEAPON_SWEEP  = 13;
+    /**
+     * Tag Organization:
+     *
+     *    0 -  199 : Basic / shared properties
+     *  200 -  399 : Item-Related
+     *  400 -  599 : Tile-Related
+     *  600 -  799 : Entity-Related
+     *  800 -  999 : Extra space
+     *
+     * 1000 - 1999 : Damage Tag [0-999]
+     * 2000 - 2999 : Health Tag [0-999]
+     *
+     * 3000 - Beyond : Unclaimed real-estate
+     *
+     */
 
-    public final static int DAMAGE_START = 1000;
-    public final static int HEALING_START = 2000;
+    public final static int WEAPON        = 200;
+    public final static int WEAPON_STRIKE = 201;
+    public final static int WEAPON_THRUST = 202;
+    public final static int WEAPON_SWEEP  = 203;
+
+    public final static int TILE_WALL     = 400;
+
+    public final static int DAMAGE_START  = 1000;
+    public final static int HEALTH_START  = 2000;
 
     public TagRegistry(){
+        registerTag(TILE_WALL, "Wall", WallTag.class);
+
         registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);
         registerTag(WEAPON_STRIKE, "Striking Weapon",  StrikeWeaponTypeTag.class);
         registerTag(WEAPON_THRUST, "Thrusting Weapon", ThrustWeaponTypeTag.class);
@@ -52,16 +72,16 @@ public class TagRegistry {
      * @param id Tag id to generate from
      * @return Generated tag
      */
-    Tag getTag(int id) {
-        if (id >= DAMAGE_START && id < HEALING_START){
+    public Tag getTag(int id) {
+        if (id >= DAMAGE_START && id < HEALTH_START){
             DamageTag tag = new DamageTag(id - DAMAGE_START);
             tag.setName(String.format("Damage: %1$d", id - DAMAGE_START));
             tag.setId(DAMAGE_START);
             return tag;
-        } else if (id >= HEALING_START && id < HEALING_START + 1000) {
-            HealingTag tag = new HealingTag(id - HEALING_START);
-            tag.setName(String.format("Damage: %1$d", id - HEALING_START));
-            tag.setId(HEALING_START);
+        } else if (id >= HEALTH_START && id < HEALTH_START + 1000) {
+            HealingTag tag = new HealingTag(id - HEALTH_START);
+            tag.setName(String.format("Damage: %1$d", id - HEALTH_START));
+            tag.setId(HEALTH_START);
             return tag;
         } else {
             return generateTag(id);
