@@ -26,7 +26,21 @@ public class EntityStruct implements Serializable{
         entityName = name;
     }
 
-    public void addItem(ItemStruct item) { items.add(item); }
+    public void addItem(ItemStruct item) {
+        ItemStruct fromInv = getItemById(item.getItemId());
+        if (fromInv == null) {
+            items.add(item);
+        } else {
+            fromInv.setQty(fromInv.getQty() + item.getQty());
+        }
+    }
+
+    private ItemStruct getItemById(int id){
+        for (ItemStruct item : items){
+            if (id == item.getItemId()) return item;
+        }
+        return null;
+    }
 
     public void removeItem(ItemStruct item) { items.remove(item); }
 

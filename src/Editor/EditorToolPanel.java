@@ -8,7 +8,6 @@ import Editor.DrawTools.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
-import Game.Registries.EntityRegistry;
 import Game.Registries.TileRegistry;
 
 import javax.swing.*;
@@ -317,30 +316,29 @@ public class EditorToolPanel extends JPanel {
         toolsPanel.add(tileDataPanel);
     }
 
+    private EntityPlace entityPlaceTool;
+    private JLabel entityPreview;
+    private JButton selectEntityButton;
+
     private void createEntityDataPanel(LevelData ldata){
 
         CollapsiblePanel entityDataPanel = new CollapsiblePanel();
         entityDataPanel.setBorder(BorderFactory.createTitledBorder("Entity Data"));
 
-        JComboBox<EntityStruct> entitySelectBox = new JComboBox<>();
-        EntityRegistry entityRegistry = new EntityRegistry();
+        entityPlaceTool = new EntityPlace(ldata);
 
-        EntityPlace entityPlaceTool = new EntityPlace(ldata);
+        JPanel entitySelectPanel = new JPanel(new BorderLayout());
 
-        int[] mapKeys = entityRegistry.getMapKeys();
-        for (int i : mapKeys){
-            entitySelectBox.addItem(entityRegistry.getEntityStruct(i));
-        }
+        entityPreview = new JLabel(new SingleTextRenderer(null));
+        entitySelectPanel.add(entityPreview, BorderLayout.LINE_START);
 
-        entityPlaceTool.setEntityStruct(mapKeys[0]);
-        entitySelectBox.addActionListener(e ->
-            {
-                int id = ((EntityStruct)entitySelectBox.getSelectedItem()).getEntityId();
-                System.out.println(id);
-                entityPlaceTool.setEntityStruct(id);
-            });
+        selectEntityButton = new JButton("Select...");
+        selectEntityButton.setMaximumSize(new Dimension(90, 20));
+        selectEntityButton.setMargin(new Insets(0, 0, 0, 0));
+        selectEntityButton.addActionListener(e -> new EditorEntitySelector(this));
+        entitySelectPanel.add(selectEntityButton, BorderLayout.CENTER);
 
-        entityDataPanel.add(entitySelectBox);
+        entityDataPanel.add(entitySelectPanel);
 
         JButton placeEntityButton = createDrawToolButton("Place Entity", entityPlaceTool, KeyEvent.VK_P);
         placeEntityButton.setMaximumSize(new Dimension(90, 20));
@@ -362,6 +360,17 @@ public class EditorToolPanel extends JPanel {
         sizeToolsPanel(entityDataPanel);
         entityDataPanel.validate();
         toolsPanel.add(entityDataPanel);
+    }
+
+    void assignEntityPlaceStruct(EntityStruct struct){
+        entityPlaceTool.setEntityStruct(struct.getEntityId());
+        Color bkg = struct.getDisplayChar().getBkgColor();
+        Color newBkg = new Color((bkg.getRed() * bkg.getAlpha()) / 255, (bkg.getGreen() * bkg.getAlpha()) / 255, (bkg.getBlue() * bkg.getAlpha()) / 255);
+        System.out.println("[EditorToolPanel.assignEntityPlaceStruct] Entity char: " + struct.getDisplayChar());
+        SpecialText icon = new SpecialText(struct.getDisplayChar().getCharacter(), struct.getDisplayChar().getFgColor(), newBkg);
+        entityPreview.setIcon(new SingleTextRenderer(icon));
+        entityPreview.repaint();
+        selectEntityButton.setText(struct.getEntityName());
     }
 
     private void createWarpZonePanel(LevelData ldata){

@@ -68,7 +68,7 @@ public class EditorFrame extends JFrame {
 
         c.validate();
 
-        setSize(new Dimension(850, 780));
+        setSize(new Dimension(850, 790));
 
         setTitle("Sourcery Text Level Editor");
 

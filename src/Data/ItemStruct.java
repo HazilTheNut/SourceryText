@@ -49,5 +49,16 @@ public class ItemStruct implements Serializable {
     public String toString() {
         return String.format("%1$-6s %2$-17s x%3$d", Integer.toString(itemId), name, qty);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ItemStruct) {
+            ItemStruct other = (ItemStruct) obj;
+            return other.getItemId() == itemId && other.getQty() == qty;
+        } else {
+            return false;
+        }
+
+    }
 }
 

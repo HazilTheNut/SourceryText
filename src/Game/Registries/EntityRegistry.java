@@ -26,6 +26,7 @@ public class EntityRegistry {
         registerEntity(50, "Falling Entity", new SpecialText('F', new Color(180, 180, 255), new Color(180, 180, 255, 20)), FallingTestEntity.class);
         registerEntity(1,  "Target Dummy",   new SpecialText('D', new Color(255, 180, 180), new Color(255, 180, 180, 15)), TargetDummy.class);
         registerEntity(2,  "Basic Enemy",    new SpecialText('E', new Color(255, 130, 130), new Color(255, 180, 180, 15)), BasicEnemy.class);
+        registerEntity(3,  "Enemy with a name",    new SpecialText('E', new Color(255, 143, 160), new Color(255, 180, 180, 15)), BasicEnemy.class);
     }
 
     public int[] getMapKeys() {
