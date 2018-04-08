@@ -16,7 +16,7 @@ public class ArtFill extends DrawTool {
     
     @Override
     public void onActivate(JPanel panel) {
-        fillSizeBox = new JSpinner(new SpinnerNumberModel(100, 1, 999, 1));
+        fillSizeBox = new JSpinner(new SpinnerNumberModel(150, 1, 999, 1));
         fillSizeBox.setMaximumSize(new Dimension(45, 20));
         panel.setBorder(BorderFactory.createTitledBorder("Fill Tool"));
         JLabel boxLabel = new JLabel("Max: ");

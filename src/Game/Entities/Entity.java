@@ -60,6 +60,10 @@ public class Entity extends TagHolder{
         }
     }
 
+    protected void teleport(Coordinate pos){
+        move(pos.getX() - location.getX(), pos.getY() - location.getY());
+    }
+
     void selfDestruct(){
         gi.removeEntity(this);
         lm.removeLayer(sprite);
