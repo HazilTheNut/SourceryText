@@ -1,7 +1,7 @@
 package Editor;
 
 import Data.EntityStruct;
-import Editor.DrawTools.EntityPlace;
+import Engine.SpecialText;
 import Game.Registries.EntityRegistry;
 
 import javax.swing.*;
@@ -28,7 +28,8 @@ public class EditorEntitySelector extends JFrame {
         }
         structList.setModel(entityStructModel);
         structList.setLayoutOrientation(JList.VERTICAL);
-        structList.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));
+        EntityListRenderer renderer = new EntityListRenderer();
+        structList.setCellRenderer(renderer);
 
         JScrollPane listPane = new JScrollPane(structList, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -55,7 +56,8 @@ public class EditorEntitySelector extends JFrame {
 
         JButton finishButton = new JButton("Finish");
         finishButton.addActionListener(e -> {
-            editorToolPanel.assignEntityPlaceStruct(structList.getSelectedValue());
+            if (structList.getSelectedValue() != null)
+                editorToolPanel.assignEntityPlaceStruct(structList.getSelectedValue());
             dispose();
         });
         bottomPanel.add(finishButton);
@@ -65,5 +67,47 @@ public class EditorEntitySelector extends JFrame {
         validate();
 
         setVisible(true);
+    }
+
+    class EntityListRenderer extends JLabel implements ListCellRenderer {
+
+        public EntityListRenderer(){
+            setOpaque(true);
+            setHorizontalAlignment(LEFT);
+            setVerticalAlignment(CENTER);
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            if (value instanceof EntityStruct){
+                EntityStruct struct = (EntityStruct)value;
+                Color bkg = struct.getDisplayChar().getBkgColor();
+                Color newBkg = new Color((bkg.getRed() * bkg.getAlpha()) / 255, (bkg.getGreen() * bkg.getAlpha()) / 255, (bkg.getBlue() * bkg.getAlpha()) / 255);
+                SpecialText icon = new SpecialText(struct.getDisplayChar().getCharacter(), struct.getDisplayChar().getFgColor(), newBkg);
+                setIcon(new SingleTextRenderer(icon));
+                setText(struct.getEntityName());
+            } else {
+                setIcon(new SingleTextRenderer(new SpecialText('/', Color.RED, Color.BLACK)));
+                setText("ENTITY LOAD ERROR");
+            }
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            } else {
+                if (index % 2 == 0)
+                    setBackground(list.getBackground());
+                else
+                    setBackground(shade(list.getBackground()));
+                setForeground(list.getForeground());
+            }
+            return this;
+        }
+
+        private Color shade(Color color){
+            float multiplier = 0.95f;
+            int[] rgb = {(int)(color.getRed() * multiplier), (int)(color.getGreen() * multiplier), (int)(color.getBlue() * multiplier)};
+            //System.out.printf("[EditorEntitySelector.shade] r: %1$d g: %2$d b: %3$d\n", rgb[0], rgb[1], rgb[2]);
+            return new Color(rgb[0], rgb[1], rgb[2]);
+        }
     }
 }
