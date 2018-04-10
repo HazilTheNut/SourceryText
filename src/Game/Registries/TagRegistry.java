@@ -28,6 +28,7 @@ public class TagRegistry {
      * 3000 - Beyond : Unclaimed real-estate
      *
      */
+    public final static int FLAMMABLE     = 0;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -40,6 +41,8 @@ public class TagRegistry {
     public final static int HEALTH_START  = 2000;
 
     public TagRegistry(){
+        registerTag(FLAMMABLE, "Flammable", FlammableTag.class);
+
         registerTag(TILE_WALL, "Wall", WallTag.class);
 
         registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);

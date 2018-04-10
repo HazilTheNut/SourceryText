@@ -1,5 +1,7 @@
 package Engine;
 
+import Data.SerializationVersion;
+
 import java.awt.*;
 import java.io.Serializable;
 
@@ -7,6 +9,8 @@ import java.io.Serializable;
  * Created by Jared on 2/18/2018.
  */
 public class SpecialText implements Serializable{
+
+    private static final long serialVersionUID = SerializationVersion.LEVELDATA_SERIALIZATION_VERSION;
 
     private char character = ' ';
     private Color fgColor =  new Color(255, 255, 255, 255);
@@ -60,5 +64,11 @@ public class SpecialText implements Serializable{
     @Override
     public String toString() {
         return String.format("%1$c [%2$d,%3$d,%4$d,%5$d] [%6$d,%7$d,%8$d,%9$d]", getCharacter(), fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue(), fgColor.getAlpha(), bkgColor.getRed(), bkgColor.getGreen(), bkgColor.getBlue(), bkgColor.getAlpha());
+    }
+
+    public void transpose(SpecialText text){
+        character = text.getCharacter();
+        fgColor = text.getFgColor();
+        bkgColor = text.getBkgColor();
     }
 }

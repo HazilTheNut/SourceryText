@@ -104,7 +104,7 @@ public class EditorEntitySelector extends JFrame {
         }
 
         private Color shade(Color color){
-            float multiplier = 0.95f;
+            float multiplier = 0.96f;
             int[] rgb = {(int)(color.getRed() * multiplier), (int)(color.getGreen() * multiplier), (int)(color.getBlue() * multiplier)};
             //System.out.printf("[EditorEntitySelector.shade] r: %1$d g: %2$d b: %3$d\n", rgb[0], rgb[1], rgb[2]);
             return new Color(rgb[0], rgb[1], rgb[2]);

@@ -13,7 +13,7 @@ public class TagHolder {
 
     public ArrayList<Tag> getTags() { return tags; }
 
-    public void addTag(Tag tag) { tags.add(tag); }
+    public void addTag(Tag tag) { if (!tags.contains(tag)) tags.add(tag); }
 
     public void removeTag (int id) {
         for (Tag tag : tags){

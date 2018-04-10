@@ -18,7 +18,7 @@ public class BasicEnemy extends CombatEntity {
         setWeapon(registry.generateItem(4).setQty(50));
     }
 
-    protected int detectRange = 9;
+    protected int detectRange = 15;
 
     @Override
     public void onTurn() {

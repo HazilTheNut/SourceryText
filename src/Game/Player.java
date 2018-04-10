@@ -26,7 +26,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         window.addKeyListener(this);
 
-        setLocation(new Coordinate(122, 58));
+        setLocation(new Coordinate(40, 43));
 
         Layer playerLayer = new Layer(new SpecialText[1][1], "player", getLocation().getX(), getLocation().getY(), 5);
         playerLayer.editLayer(0, 0, new SpecialText('@'));

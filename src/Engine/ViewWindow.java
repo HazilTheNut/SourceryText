@@ -71,16 +71,20 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
             for (int col = 0; col < RESOLUTION_WIDTH; col++) {
                 for (int row = 0; row < RESOLUTION_HEIGHT; row++) {
                     SpecialText text = drawnImage.getSpecialText(col, row);
-                    g.setColor(text.getBkgColor());
-                    g.fillRect(col * HOR_SEPARATION + HOR_MARGIN, row * VER_SEPARATION + VER_MARGIN + 1, HOR_SEPARATION, VER_SEPARATION); //Fill background
+                    if (text != null) {
+                        g.setColor(text.getBkgColor());
+                        g.fillRect(col * HOR_SEPARATION + HOR_MARGIN, row * VER_SEPARATION + VER_MARGIN + 1, HOR_SEPARATION, VER_SEPARATION); //Fill background
+                    }
                 }
             }
 
             for (int col = 0; col < RESOLUTION_WIDTH; col++) {
                 for (int row = 0; row < RESOLUTION_HEIGHT; row++) {
                     SpecialText text = drawnImage.getSpecialText(col, row);
-                    g.setColor(text.getFgColor());
-                    g.drawString(text.getStr(), col * HOR_SEPARATION + HOR_MARGIN + (HOR_SEPARATION - metrics.stringWidth(text.getStr())) / 2, VER_SEPARATION * row + VER_MARGIN + (int) (VER_SEPARATION * 0.75)); //Fill foreground (the text)
+                    if (text != null) {
+                        g.setColor(text.getFgColor());
+                        g.drawString(text.getStr(), col * HOR_SEPARATION + HOR_MARGIN + (HOR_SEPARATION - metrics.stringWidth(text.getStr())) / 2, VER_SEPARATION * row + VER_MARGIN + (int) (VER_SEPARATION * 0.75)); //Fill foreground (the text)
+                    }
                 }
             }
         }

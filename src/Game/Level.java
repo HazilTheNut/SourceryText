@@ -30,7 +30,7 @@ public class Level {
         for (int col = 0; col < backdrop.getCols(); col++){
             for (int row = 0; row < backdrop.getRows(); row++){
                 TileStruct struct = tileRegistry.getTileStruct(ldata.getTileId(col, row));
-                Tile tile = new Tile(new Coordinate(col, row), struct.getTileName());
+                Tile tile = new Tile(new Coordinate(col, row), struct.getTileName(), backdrop.getSpecialText(col, row));
                 for (int id : struct.getTagIDs()){
                     Tag toAdd = tagRegistry.getTag(id);
                     if (toAdd != null)

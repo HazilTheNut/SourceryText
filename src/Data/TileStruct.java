@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Created by Jared on 3/3/2018.
  */
-public class TileStruct implements Serializable{
+public class TileStruct{
 
     private int tileId;
     private int[] tagIDs;
