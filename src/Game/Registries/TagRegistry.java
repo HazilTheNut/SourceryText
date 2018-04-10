@@ -83,7 +83,7 @@ public class TagRegistry {
             return tag;
         } else if (id >= HEALTH_START && id < HEALTH_START + 1000) {
             HealingTag tag = new HealingTag(id - HEALTH_START);
-            tag.setName(String.format("Damage: %1$d", id - HEALTH_START));
+            tag.setName(String.format("Health: %1$d", id - HEALTH_START));
             tag.setId(HEALTH_START);
             return tag;
         } else {

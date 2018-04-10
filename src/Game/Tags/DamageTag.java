@@ -14,11 +14,13 @@ public class DamageTag extends Tag{
         damageAmount = dmg;
     }
 
+    /*
     @Override
     public void onItemUse(TagEvent e) {
-        e.addCancelableAction(() -> e.getTarget().receiveDamage(damageAmount));
+        e.addCancelableAction(event -> e.getTarget().receiveDamage(damageAmount));
         e.setSuccess(true);
     }
+    */
 
     @Override
     public void onDealDamage(TagEvent e) {

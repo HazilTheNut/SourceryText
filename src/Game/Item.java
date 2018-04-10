@@ -32,4 +32,14 @@ public class Item extends TagHolder{
         }
         return useEvent;
     }
+
+    @Override
+    public void heal(int amount) {
+        itemData.setQty(itemData.getQty()+amount);
+    }
+
+    @Override
+    public void receiveDamage(int amount) {
+        itemData.setQty(itemData.getQty()-amount);
+    }
 }

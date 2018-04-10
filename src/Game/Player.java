@@ -142,7 +142,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         return false;
     }
 
-    void doEnemyTurn(){
+    public void doEnemyTurn(){
         gi.doEnemyTurn();
     }
 

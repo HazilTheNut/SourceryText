@@ -16,7 +16,7 @@ public class HealingTag extends Tag{
 
     @Override
     public void onItemUse(TagEvent e) {
-        e.addCancelableAction(() -> e.getTarget().heal(healingAmount));
+        e.addCancelableAction(event -> e.getTarget().heal(healingAmount));
         e.setSuccess(true);
     }
 }

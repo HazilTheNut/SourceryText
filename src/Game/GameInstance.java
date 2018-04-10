@@ -131,11 +131,13 @@ public class GameInstance {
 
         @Override
         public void run() {
-            for (EntityOperation op : entityOperations)
+            for (EntityOperation op : entityOperations) {
                 op.run();
+            }
             for (Entity e : currentLevel.getEntities()) {
                 e.onTurn();
             }
+            player.getInv().scanInventory();
             isPlayerTurn = true;
         }
     }

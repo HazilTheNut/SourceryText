@@ -119,17 +119,26 @@ class PlayerInventory implements MouseInputReceiver{
     private void useItem(Item selectedItem){
         player.freeze();
         TagEvent e = selectedItem.onItemUse(player);
-        if (e.eventPassed()){
+        if (!e.isCanceled()){
             e.enactEvent();
-            selectedItem.decrementQty();
-            if (selectedItem.getItemData().getQty() <= 0) {
-                items.remove(selectedItem);
-            }
+            if (e.isSuccessful())
+                selectedItem.decrementQty();
             updateDisplay();
             player.doEnemyTurn();
         } else {
             player.unfreeze();
         }
         player.updateHUD();
+    }
+
+    void scanInventory(){
+        for (int ii = 0; ii < items.size();){
+            if (items.get(ii).getItemData().getQty() <= 0){
+                items.remove(items.get(ii));
+                updateDisplay();
+            } else {
+                ii++;
+            }
+        }
     }
 }

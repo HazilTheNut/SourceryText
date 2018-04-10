@@ -57,10 +57,10 @@ public class TagEvent {
     public void addCancelableAction(EventAction e){ eventActions.add(e); }
 
     public void enactEvent(){
-        for (EventAction action : eventActions) action.doAction();
+        for (EventAction action : eventActions) action.doAction(this);
     }
 
     public interface EventAction{
-        void doAction();
+        void doAction(TagEvent event);
     }
 }
