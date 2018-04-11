@@ -33,6 +33,8 @@ public class TagHolder {
 
     public boolean hasTag(int id){ return getTag(id) != null; }
 
+    //E V E N T S
+
     public void heal(int amount){}
 
     public void receiveDamage(int amount){}

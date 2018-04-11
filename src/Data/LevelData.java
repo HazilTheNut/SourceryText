@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class LevelData implements Serializable {
 
-    private static final long serialVersionUID = SerializationVersion.LEVELDATA_SERIALIZATION_VERSION;
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Layer backdrop;
     private Layer tileDataLayer;

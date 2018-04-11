@@ -5,6 +5,6 @@ package Data;
  */
 public class SerializationVersion {
 
-    public static final long LEVELDATA_SERIALIZATION_VERSION = 100001;
+    public static final long SERIALIZATION_VERSION = 100001;
 
 }

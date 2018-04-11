@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class EntityArg implements Serializable {
 
-    private static final long serialVersionUID = SerializationVersion.LEVELDATA_SERIALIZATION_VERSION;
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private String argName;
     private String argValue;

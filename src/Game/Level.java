@@ -10,6 +10,7 @@ import Game.Registries.TileRegistry;
 import Game.Tags.Tag;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Jared on 4/7/2018.
@@ -67,5 +68,13 @@ public class Level {
             return baseTiles[loc.getX()][loc.getY()];
         else
             return null;
+    }
+
+    ArrayList<Tile> getAllTiles(){
+        ArrayList<Tile> tiles = new ArrayList<>();
+        for (Tile[] baseTile : baseTiles) {
+            tiles.addAll(Arrays.asList(baseTile).subList(0, baseTiles[0].length));
+        }
+        return tiles;
     }
 }

@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class WarpZone implements Serializable{
 
-    private static final long serialVersionUID = SerializationVersion.LEVELDATA_SERIALIZATION_VERSION;
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int xpos;
     private int ypos;

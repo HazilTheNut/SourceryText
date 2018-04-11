@@ -27,8 +27,9 @@ public class CombatEntity extends Entity{
     private static final int DOWN_LEFT = 225;
     private static final int DOWN = 270;
     private static final int DOWN_RIGHT = 315;
+    private static final int RIGHT_360 = 360;
 
-    private static final int[] directions = {RIGHT, UP_RIGHT, UP, UP_LEFT, LEFT, DOWN_LEFT, DOWN, DOWN_RIGHT};
+    private static final int[] directions = {RIGHT, UP_RIGHT, UP, UP_LEFT, LEFT, DOWN_LEFT, DOWN, DOWN_RIGHT, RIGHT_360};
 
     private Item weapon;
 
@@ -120,6 +121,7 @@ public class CombatEntity extends Entity{
                 attack(getLocation().add(new Coordinate(1, -1)));
                 break;
             case RIGHT:
+            case RIGHT_360:
                 attack(getLocation().add(new Coordinate(1, 0)));
                 break;
             case DOWN_RIGHT:
@@ -151,6 +153,7 @@ public class CombatEntity extends Entity{
                 attack(getLocation().add(new Coordinate(2, -2)));
                 break;
             case RIGHT:
+            case RIGHT_360:
                 attack(getLocation().add(new Coordinate(1, 0)));
                 attack(getLocation().add(new Coordinate(2, 0)));
                 break;
@@ -183,7 +186,7 @@ public class CombatEntity extends Entity{
         for (int ii = 0; ii < 3; ii++){
             doStrikeWeaponAttack(dir);
             dir += 45;
-            if (dir == 360) dir = 0;
+            if (dir >= 360) dir -= 360;
         }
     }
 

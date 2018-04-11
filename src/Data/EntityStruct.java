@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class EntityStruct implements Serializable{
 
-    private static final long serialVersionUID = SerializationVersion.LEVELDATA_SERIALIZATION_VERSION;
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int entityId;
     private int[] tagIDs;

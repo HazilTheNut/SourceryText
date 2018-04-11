@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 public class SpecialText implements Serializable{
 
-    private static final long serialVersionUID = SerializationVersion.LEVELDATA_SERIALIZATION_VERSION;
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private char character = ' ';
     private Color fgColor =  new Color(255, 255, 255, 255);

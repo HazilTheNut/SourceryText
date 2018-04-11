@@ -77,7 +77,10 @@ public class HUD implements MouseInputReceiver{
         pos+=2;
         if (player.getWeapon() != null) {
             for (int ii = 0; ii < player.getInv().ITEM_STRING_LENGTH + 2; ii++) {
-                tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(25, 25, 25)));
+                if (player.isInSpellMode())
+                    tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(25, 25, 25)));
+                else
+                    tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(33, 33, 33)));
             }
             tempLayer.inscribeString(player.getWeapon().getItemData().getName(), pos, 0);
             tempLayer.inscribeString(String.valueOf(player.getWeapon().getItemData().getQty()), pos + player.getInv().ITEM_STRING_LENGTH, 0, new Color(240, 255, 200));
@@ -86,8 +89,12 @@ public class HUD implements MouseInputReceiver{
 
         pos++;
         for (int ii = 0; ii < 13; ii++){
-            tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(28, 25, 32)));
+            if (player.isInSpellMode())
+                tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(37, 34, 43)));
+            else
+                tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(28, 25, 32)));
         }
+        tempLayer.inscribeString("Finger Snap", pos, 0);
         pos += 13;
 
         pos++;

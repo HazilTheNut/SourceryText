@@ -12,7 +12,7 @@ import java.util.Random;
  */
 public class Layer implements Serializable{
 
-    private static final long serialVersionUID = SerializationVersion.LEVELDATA_SERIALIZATION_VERSION;
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private SpecialText[][] textMatrix; //In form textMatrix[col][row]
     private int xpos = 0;

@@ -137,6 +137,9 @@ public class GameInstance {
             for (Entity e : currentLevel.getEntities()) {
                 e.onTurn();
             }
+            for (Tile tile : currentLevel.getAllTiles()){
+                tile.onTurn(GameInstance.this);
+            }
             player.getInv().scanInventory();
             isPlayerTurn = true;
         }

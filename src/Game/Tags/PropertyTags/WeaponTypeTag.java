@@ -20,9 +20,6 @@ public class WeaponTypeTag extends Tag {
     private void assignWeapon(TagEvent e){
         if (e.getTarget() instanceof CombatEntity && e.getSource() instanceof Item){
             ((CombatEntity)e.getTarget()).setWeapon((Item)e.getSource());
-            if (e.getTarget() instanceof Player) {
-                Player target = (Player) e.getTarget();
-            }
         }
     }
 }

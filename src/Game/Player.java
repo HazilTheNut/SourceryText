@@ -20,6 +20,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     private HUD hud;
     private PlayerInventory inv;
 
+    private boolean spellMode = false;
+
     Player(ViewWindow window, LayerManager lm, GameInstance gameInstance){
 
         super.lm = lm;
@@ -108,6 +110,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 if (inv.isShowing()) inv.close();
                 else inv.show();
                 hud.updateHUD();
+            } else if (e.getKeyCode() == KeyEvent.VK_SHIFT){
+                spellMode = true;
+                updateHUD();
             } else {
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) move(1,  0);
                 if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A)  move(-1, 0);
@@ -121,8 +126,13 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     @Override
     public void keyReleased(KeyEvent e) {
-
+        if (e.getKeyCode() == KeyEvent.VK_SHIFT){
+            spellMode = false;
+            updateHUD();
+        }
     }
+
+    public boolean isInSpellMode() { return spellMode; }
 
     @Override
     public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
@@ -132,12 +142,16 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
         if (!isFrozen()) {
-            Thread attackThread = new Thread(() -> {
-                freeze();
-                doWeaponAttack(levelPos);
-                gi.doEnemyTurn();
-            });
-            attackThread.start();
+            if (!spellMode) {
+                Thread attackThread = new Thread(() -> {
+                    freeze();
+                    doWeaponAttack(levelPos);
+                    gi.doEnemyTurn();
+                });
+                attackThread.start();
+            } else {
+                System.out.printf("[Player.onMouseClick] Spell casted! %1$s\n", levelPos);
+            }
         }
         return false;
     }

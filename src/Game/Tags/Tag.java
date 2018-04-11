@@ -24,4 +24,6 @@ public class Tag {
     public void onItemUse(TagEvent e) {}
 
     public void onDealDamage(TagEvent e) {}
+
+    public void onTurn(TagEvent e){}
 }
