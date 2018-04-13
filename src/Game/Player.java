@@ -8,6 +8,7 @@ import Engine.ViewWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Registries.ItemRegistry;
+import Game.Tags.OnFireTag;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -113,6 +114,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             } else if (e.getKeyCode() == KeyEvent.VK_SHIFT){
                 spellMode = true;
                 updateHUD();
+            } else if (e.getKeyCode() == KeyEvent.VK_L) {
+                lm.printLayerStack();
             } else {
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) move(1,  0);
                 if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A)  move(-1, 0);
@@ -151,6 +154,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 attackThread.start();
             } else {
                 System.out.printf("[Player.onMouseClick] Spell casted! %1$s\n", levelPos);
+                OnFireTag forConvenience = new OnFireTag();
+                forConvenience.attemptFireTileSpread(getGameInstance().getCurrentLevel(), levelPos, 1);
             }
         }
         return false;

@@ -14,14 +14,21 @@ public class TagEvent {
     private TagHolder target;
     private TagHolder source;
 
+    private GameInstance gi;
+
     private ArrayList<EventAction> eventActions = new ArrayList<>();
 
-    public TagEvent(int startingAmount, boolean successful, TagHolder source, TagHolder target){
+    public TagEvent(int startingAmount, boolean successful, TagHolder source, TagHolder target, GameInstance gameInstance){
         amount = startingAmount;
         this.successful = successful;
         canceled = false;
         this.target = target;
         this.source = source;
+        gi = gameInstance;
+    }
+
+    public GameInstance getGameInstance() {
+        return gi;
     }
 
     public void setSuccess(boolean success) { successful = success; }

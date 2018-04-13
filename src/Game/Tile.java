@@ -11,24 +11,21 @@ public class Tile extends TagHolder {
     private Coordinate location;
     private String name;
 
-    private SpecialText icon;
-
-    public Tile(Coordinate loc, String name, SpecialText icon){
+    public Tile(Coordinate loc, String name){
         location = loc;
         this.name = name;
-        this.icon = icon;
+    }
+
+    public Coordinate getLocation() {
+        return location;
     }
 
     public String getName() {
         return name;
     }
 
-    public SpecialText getIcon() {
-        return icon;
-    }
-
     public void onTurn(GameInstance gi){
-        TagEvent event = new TagEvent(0, false, this, gi.getEntityAt(location));
+        TagEvent event = new TagEvent(0, false, this, gi.getEntityAt(location), gi);
         for (Tag tag : getTags()){
             tag.onTurn(event);
         }

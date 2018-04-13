@@ -127,6 +127,10 @@ public class GameInstance {
         return null;
     }
 
+    public Level getCurrentLevel() {
+        return currentLevel;
+    }
+
     private class EnemyTurnThread extends Thread {
 
         @Override

@@ -1,6 +1,7 @@
 package Game;
 
 import Data.ItemStruct;
+import Game.Entities.Entity;
 import Game.Tags.Tag;
 
 /**
@@ -25,7 +26,13 @@ public class Item extends TagHolder{
 
     TagEvent onItemUse(TagHolder target){
         System.out.printf("[Item] \'%1$s\' Tags:\n", itemData.getName());
-        TagEvent useEvent = new TagEvent(0, false, this, target);
+        TagEvent useEvent;
+        if (target instanceof Entity) {
+            Entity entity = (Entity) target;
+            useEvent = new TagEvent(0, false, this, target, entity.getGameInstance());
+        } else {
+            useEvent = new TagEvent(0, false, this, target, null);
+        }
         for (Tag tag : getTags()) {
             System.out.printf("[Item] > %1$s\n", tag.getName());
             tag.onItemUse(useEvent);
