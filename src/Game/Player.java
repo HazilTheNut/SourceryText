@@ -47,9 +47,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         ItemRegistry registry = new ItemRegistry();
 
         inv.addItem(registry.generateItem(1).setQty(25));
-        inv.addItem(registry.generateItem(2).setQty(15));
-        inv.addItem(registry.generateItem(3).setQty(15));
-        inv.addItem(registry.generateItem(4).setQty(15));
+        inv.addItem(registry.generateItem(10).setQty(35));
 
         setMaxHealth(20);
 

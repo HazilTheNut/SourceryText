@@ -64,12 +64,15 @@ public class OnFireTag extends Tag {
     @Override
     public void onContact(TagEvent e) {
         if (e.getTarget().hasTag(TagRegistry.FLAMMABLE) && !e.getTarget().hasTag(TagRegistry.ON_FIRE)) {
-            if (e.getTarget() instanceof Tile) {
+            if (e.getSource() instanceof Entity && e.getTarget() instanceof Tile) {
                 Tile target = (Tile) e.getTarget();
                 e.cancel();
                 attemptFireTileSpread(e.getGameInstance().getCurrentLevel(), target.getLocation(), 1);
             }
-            e.addCancelableAction(event -> e.getTarget().addTag(tagRegistry.getTag(TagRegistry.ON_FIRE), e.getSource()));
+            e.addCancelableAction(event -> {
+                e.getTarget().addTag(tagRegistry.getTag(TagRegistry.ON_FIRE), e.getSource());
+                System.out.printf("[OnFireTag.onContact] Set \'%1$s\' on fire", e.getTarget().getClass().getSimpleName());
+            });
         }
         e.setSuccess(true);
     }

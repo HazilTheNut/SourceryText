@@ -14,7 +14,7 @@ public class TagHolder {
     public ArrayList<Tag> getTags() { return tags; }
 
     public void addTag(Tag tag, TagHolder source) {
-        if (!tags.contains(tag)) {
+        if (!hasTag(tag.getId())) {
             TagEvent e = new TagEvent(0, true, source, this, null);
             for (Tag currentTag : tags){
                 currentTag.onAdd(e);
@@ -51,11 +51,12 @@ public class TagHolder {
 
     public void receiveDamage(int amount){}
 
-    protected void onContact(TagHolder other, GameInstance gi){
+    public void onContact(TagHolder other, GameInstance gi){
         contactEvent(this, other, gi);
         contactEvent(other, this, gi);
-        //System.out.println("[TagHolder.onContact] Tags of me: " + getTagList());
-        //System.out.println("[TagHolder.onContact] Tags of other: " + other.getTagList());
+        System.out.println("[TagHolder.onContact] TagHolder \'" + this.getClass().getSimpleName() + "\'");
+        System.out.println("[TagHolder.onContact] Tags of me: " + getTagList());
+        System.out.println("[TagHolder.onContact] Tags of other: " + other.getTagList());
     }
 
     private void contactEvent(TagHolder source, TagHolder target, GameInstance gi){

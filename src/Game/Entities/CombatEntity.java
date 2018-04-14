@@ -61,6 +61,11 @@ public class CombatEntity extends Entity{
         if (entity != null && entity instanceof CombatEntity){
             doAttackEvent((CombatEntity)entity);
             return true;
+        } else {
+            if (getWeapon() != null)
+                getWeapon().onContact(getGameInstance().getTileAt(loc), getGameInstance());
+            else
+                onContact(getGameInstance().getTileAt(loc), getGameInstance());
         }
         return false;
     }
@@ -76,6 +81,10 @@ public class CombatEntity extends Entity{
                 if (getWeapon().getItemData().getQty() <= 0) {
                     setWeapon(null);
                 }
+                if (getWeapon() != null)
+                    getWeapon().onContact(ce, getGameInstance());
+                else
+                    onContact(ce, getGameInstance());
             }
         }
     }
@@ -99,14 +108,13 @@ public class CombatEntity extends Entity{
                 switch (tag.getId()) {
                     case TagRegistry.WEAPON_STRIKE:
                         doStrikeWeaponAttack(calculateMeleeDirection(loc));
-                        break;
+                        return;
                     case TagRegistry.WEAPON_THRUST:
                         doThrustWeaponAttack(calculateMeleeDirection(loc));
-                        break;
+                        return;
                     case TagRegistry.WEAPON_SWEEP:
                         doSweepWeaponAttack(calculateMeleeDirection(loc));
-                    default:
-                        System.out.printf("[CombatEntity.doWeaponAttack] Tag: \'%1$s\' id: %2$d\n", tag.getName(), tag.getId());
+                        return;
                 }
             }
         }

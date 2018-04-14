@@ -22,6 +22,8 @@ public class ItemRegistry {
         registerItem(2, "Strike weapon",  TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_STRIKE);
         registerItem(3, "Thrust weapon",  TagRegistry.DAMAGE_START + 1, TagRegistry.WEAPON_THRUST);
         registerItem(4, "Sweep weapon",   TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_SWEEP);
+
+        registerItem(10, "Wooden Pole",   TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE);
     }
 
     public int[] getMapKeys() {
