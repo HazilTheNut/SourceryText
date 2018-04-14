@@ -8,6 +8,7 @@ import Game.Coordinate;
 import Game.GameInstance;
 import Data.LayerImportances;
 import Game.Registries.EntityRegistry;
+import Game.TagEvent;
 import Game.TagHolder;
 import Game.Tags.Tag;
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public class Entity extends TagHolder{
         if (getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)))) {
             location.movePos(relativeX, relativeY);
             lm.getLayer(sprite.getName()).movePos(relativeX, relativeY);
+            onContact(gi.getTileAt(location), gi);
         }
     }
 
@@ -84,6 +86,14 @@ public class Entity extends TagHolder{
     protected void setName(String str){ name = str; }
 
     //Ran when it is their turn to do something
-    public void onTurn(){}
+    public void onTurn(){
+        TagEvent turnEvent = new TagEvent(0, true, this, this, getGameInstance());
+        for (Tag tag : getTags()){
+            tag.onTurn(turnEvent);
+        }
+        if (turnEvent.eventPassed()){
+            turnEvent.enactEvent();
+        }
+    }
 
 }

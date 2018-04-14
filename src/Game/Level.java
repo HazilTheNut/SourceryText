@@ -97,6 +97,13 @@ public class Level {
             return null;
     }
 
+    public Entity getEntityAt(Coordinate loc){
+        for (Entity e : entities){
+            if (e.getLocation().equals(loc)) return e;
+        }
+        return null;
+    }
+
     private Tile getOverlayTileAt(Coordinate loc){
         for (Tile tile : overlayTiles){
             if (tile.getLocation().equals(loc))

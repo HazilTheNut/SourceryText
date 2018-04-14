@@ -38,4 +38,29 @@ public class TagHolder {
     public void heal(int amount){}
 
     public void receiveDamage(int amount){}
+
+    protected void onContact(TagHolder other, GameInstance gi){
+        contactEvent(this, other, gi);
+        contactEvent(other, this, gi);
+        System.out.println("[TagHolder.onContact] Tags of me: " + getTagList());
+        System.out.println("[TagHolder.onContact] Tags of other: " + other.getTagList());
+    }
+
+    private void contactEvent(TagHolder source, TagHolder target, GameInstance gi){
+        TagEvent e = new TagEvent(0, true, source, target, gi);
+        for (Tag tag : source.getTags()){
+            tag.onContact(e);
+        }
+        if (e.eventPassed()){
+            e.enactEvent();
+        }
+    }
+
+    protected String getTagList(){
+        String output = "";
+        for (Tag tag : getTags()){
+            output += "\n> " + tag.getName();
+        }
+        return output;
+    }
 }

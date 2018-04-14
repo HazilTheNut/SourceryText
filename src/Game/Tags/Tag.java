@@ -26,4 +26,6 @@ public class Tag {
     public void onDealDamage(TagEvent e) {}
 
     public void onTurn(TagEvent e){}
+
+    public void onContact(TagEvent e){}
 }

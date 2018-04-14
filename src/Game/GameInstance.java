@@ -38,6 +38,7 @@ public class GameInstance {
         currentLevel.onEnter(lm);
 
         player = new Player(window, manager, this);
+        currentLevel.addEntity(player);
     }
 
     /**
@@ -120,11 +121,7 @@ public class GameInstance {
     }
 
     public Entity getEntityAt(Coordinate loc){
-        for (Entity e : currentLevel.getEntities()){
-            if (e.getLocation().equals(loc)) return e;
-        }
-        if (player.getLocation().equals(loc)) return player;
-        return null;
+        return currentLevel.getEntityAt(loc);
     }
 
     public Level getCurrentLevel() {

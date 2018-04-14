@@ -29,6 +29,7 @@ public class BasicEnemy extends CombatEntity {
         } else if (distance < detectRange){
             pathToPosition(player.getLocation());
         }
+        super.onTurn();
     }
 
     protected void pathToPosition(Coordinate target){

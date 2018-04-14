@@ -3,6 +3,8 @@ package Game.Tags;
 import Engine.Layer;
 import Engine.SpecialText;
 import Game.Coordinate;
+import Game.Entities.CombatEntity;
+import Game.Entities.Entity;
 import Game.Level;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
@@ -18,7 +20,7 @@ public class OnFireTag extends Tag {
 
     private TagRegistry tagRegistry = new TagRegistry();
     private Random random = new Random();
-    private int lifetime = 3;
+    private int lifetime = 8;
 
     private final double SPREAD_LIKELIHOOD = 0.45;
 
@@ -38,8 +40,22 @@ public class OnFireTag extends Tag {
                     level.removeOverlayTile(tile);
                     level.addOverlayTile(createAshTile(tile.getLocation(), level.getOverlayTileLayer()));
                 }
+            } else {
+                if (lifetime > 0) {
+                    e.getSource().receiveDamage(1);
+                    lifetime--;
+                } else
+                    e.getSource().removeTag(getId());
             }
         });
+        e.setSuccess(true);
+    }
+
+    @Override
+    public void onContact(TagEvent e) {
+        if (e.getTarget().hasTag(TagRegistry.FLAMMABLE) && !e.getTarget().hasTag(TagRegistry.FIRE)) {
+            e.getTarget().addTag(tagRegistry.getTag(TagRegistry.FIRE));
+        }
         e.setSuccess(true);
     }
 
@@ -49,6 +65,10 @@ public class OnFireTag extends Tag {
             fireTile.addTag(tagRegistry.getTag(TagRegistry.FIRE));
             level.addOverlayTile(fireTile);
             level.getOverlayTileLayer().editLayer(pos.getX(), pos.getY(), new SpecialText(' ', Color.WHITE, new Color(225, 100, 0)));
+            Entity entity = level.getEntityAt(pos);
+            if (entity != null && !entity.hasTag(TagRegistry.FIRE)) {
+                entity.addTag(tagRegistry.getTag(TagRegistry.FIRE));
+            }
         }
     }
 

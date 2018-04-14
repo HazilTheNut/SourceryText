@@ -8,6 +8,7 @@ import Engine.ViewWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Registries.ItemRegistry;
+import Game.Registries.TagRegistry;
 import Game.Tags.OnFireTag;
 
 import java.awt.event.KeyEvent;
@@ -55,6 +56,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         hud = new HUD(lm, this);
 
         setName("Player");
+
+        TagRegistry tagRegistry = new TagRegistry();
+        addTag(tagRegistry.getTag(TagRegistry.FLAMMABLE));
     }
 
     private void updateCameraPos(){
