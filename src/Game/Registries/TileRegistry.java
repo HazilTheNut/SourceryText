@@ -18,11 +18,11 @@ public class TileRegistry {
 
         registerTile(0, "Floor", new SpecialText(' ', Color.WHITE, new Color(30, 30, 30)));
         registerTile(1, "Wall", new SpecialText('x', Color.WHITE, new Color(150, 150, 150)), TagRegistry.TILE_WALL);
-        registerTile(2, "Grass", new SpecialText(' ', Color.WHITE, new Color(63, 104, 42)), TagRegistry.FLAMMABLE);
-        registerTile(3, "Tree", new SpecialText('T', new Color(181, 255, 172), new Color(39, 68, 39)), TagRegistry.TILE_WALL, TagRegistry.FLAMMABLE);
+        registerTile(2, "Grass", new SpecialText(' ', Color.WHITE, new Color(63, 104, 42)), TagRegistry.FLAMMABLE, TagRegistry.BURN_FAST);
+        registerTile(3, "Tree", new SpecialText('T', new Color(181, 255, 172), new Color(39, 68, 39)), TagRegistry.TILE_WALL, TagRegistry.FLAMMABLE, TagRegistry.BURN_SLOW);
         registerTile(4, "Shallow Water", new SpecialText('~', new Color(100, 100, 175), new Color(85, 85, 160)));
         registerTile(5, "Deep Water", new SpecialText('~', new Color(50, 50, 90), new Color(45, 45, 80)));
-        registerTile(6, "Wooden Wall", new SpecialText('x', new Color(116, 58, 0), new Color(75, 35, 0)), TagRegistry.TILE_WALL, TagRegistry.FLAMMABLE);
+        registerTile(6, "Wooden Wall", new SpecialText('x', new Color(116, 58, 0), new Color(75, 35, 0)), TagRegistry.TILE_WALL, TagRegistry.FLAMMABLE, TagRegistry.BURN_SLOW);
         registerTile(7, "Metallic Wall", new SpecialText('x', new Color(255, 255, 220), new Color(110, 110, 110)), TagRegistry.TILE_WALL);
     }
 

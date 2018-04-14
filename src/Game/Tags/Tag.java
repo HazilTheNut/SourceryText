@@ -28,4 +28,9 @@ public class Tag {
     public void onTurn(TagEvent e){}
 
     public void onContact(TagEvent e){}
+
+    //Ran when the tag holder containing this tag receives a new tag
+    public void onAdd(TagEvent e){}
+    //Ran when this tag is being added to a tag holder
+    public void onAddThis(TagEvent e){}
 }

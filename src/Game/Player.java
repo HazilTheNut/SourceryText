@@ -58,7 +58,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         setName("Player");
 
         TagRegistry tagRegistry = new TagRegistry();
-        addTag(tagRegistry.getTag(TagRegistry.FLAMMABLE));
+        addTag(tagRegistry.getTag(TagRegistry.FLAMMABLE), this);
     }
 
     private void updateCameraPos(){

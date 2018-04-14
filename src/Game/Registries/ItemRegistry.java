@@ -44,7 +44,7 @@ public class ItemRegistry {
         for (int tagId : struct.getTags()){
             Tag toAdd = tagRegistry.getTag(tagId);
             if (toAdd != null){
-                item.addTag(toAdd);
+                item.addTag(toAdd, item);
             }
         }
         return item;

@@ -85,7 +85,7 @@ public class GameInstance {
     }
 
     public boolean isSpaceAvailable(Coordinate loc){
-        return getEntityAt(loc) == null && !currentLevel.getTileAt(loc).hasTag(TagRegistry.TILE_WALL);
+        return currentLevel.isLocationValid(loc) && getEntityAt(loc) == null && !getTileAt(loc).hasTag(TagRegistry.TILE_WALL);
     }
 
     public Tile getTileAt(Coordinate loc){

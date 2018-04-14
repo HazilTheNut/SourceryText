@@ -29,8 +29,9 @@ public class TagRegistry {
      *
      */
     public final static int FLAMMABLE     = 0;
-
-    public final static int FIRE          = 1;
+    public final static int ON_FIRE       = 1;
+    public final static int BURN_FAST     = 2;
+    public final static int BURN_SLOW     = 3;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -44,7 +45,9 @@ public class TagRegistry {
 
     public TagRegistry(){
         registerTag(FLAMMABLE, "Flammable", FlammableTag.class);
-        registerTag(FIRE,      "On Fire",   OnFireTag.class);
+        registerTag(ON_FIRE,      "On Fire",   OnFireTag.class);
+        registerTag(BURN_SLOW, "Slow Burning", BurnSlowTag.class);
+        registerTag(BURN_FAST, "Fast Burning", BurnFastTag.class);
 
         registerTag(TILE_WALL, "Wall", WallTag.class);
 

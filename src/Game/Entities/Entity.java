@@ -8,6 +8,7 @@ import Game.Coordinate;
 import Game.GameInstance;
 import Data.LayerImportances;
 import Game.Registries.EntityRegistry;
+import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
 import Game.Tags.Tag;
@@ -34,6 +35,10 @@ public class Entity extends TagHolder{
         this.lm = lm;
         EntityRegistry er = new EntityRegistry();
         name = er.getEntityStruct(entityStruct.getEntityId()).getEntityName();
+        TagRegistry tagRegistry = new TagRegistry();
+        for (int id : entityStruct.getTagIDs()){
+            addTag(tagRegistry.getTag(id), this);
+        }
     }
 
     public void onLevelEnter(){
@@ -58,6 +63,7 @@ public class Entity extends TagHolder{
         if (getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)))) {
             location.movePos(relativeX, relativeY);
             lm.getLayer(sprite.getName()).movePos(relativeX, relativeY);
+            //System.out.printf("[Entity.move] \'%1$s\':\n", getName());
             onContact(gi.getTileAt(location), gi);
         }
     }

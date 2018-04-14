@@ -13,7 +13,19 @@ public class TagHolder {
 
     public ArrayList<Tag> getTags() { return tags; }
 
-    public void addTag(Tag tag) { if (!tags.contains(tag)) tags.add(tag); }
+    public void addTag(Tag tag, TagHolder source) {
+        if (!tags.contains(tag)) {
+            TagEvent e = new TagEvent(0, true, source, this, null);
+            for (Tag currentTag : tags){
+                currentTag.onAdd(e);
+            }
+            tag.onAddThis(e);
+            if (e.eventPassed()){
+                e.enactEvent();
+                tags.add(tag);
+            }
+        }
+    }
 
     public void removeTag (int id) {
         for (Tag tag : tags){
@@ -42,8 +54,8 @@ public class TagHolder {
     protected void onContact(TagHolder other, GameInstance gi){
         contactEvent(this, other, gi);
         contactEvent(other, this, gi);
-        System.out.println("[TagHolder.onContact] Tags of me: " + getTagList());
-        System.out.println("[TagHolder.onContact] Tags of other: " + other.getTagList());
+        //System.out.println("[TagHolder.onContact] Tags of me: " + getTagList());
+        //System.out.println("[TagHolder.onContact] Tags of other: " + other.getTagList());
     }
 
     private void contactEvent(TagHolder source, TagHolder target, GameInstance gi){

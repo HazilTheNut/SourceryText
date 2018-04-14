@@ -40,7 +40,7 @@ public class Level {
                 for (int id : struct.getTagIDs()){
                     Tag toAdd = tagRegistry.getTag(id);
                     if (toAdd != null)
-                        tile.addTag(toAdd);
+                        tile.addTag(toAdd, tile);
                 }
                 baseTiles[col][row] = tile;
             }

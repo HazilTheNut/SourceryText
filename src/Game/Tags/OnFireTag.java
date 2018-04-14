@@ -3,7 +3,6 @@ package Game.Tags;
 import Engine.Layer;
 import Engine.SpecialText;
 import Game.Coordinate;
-import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Level;
 import Game.Registries.TagRegistry;
@@ -20,9 +19,20 @@ public class OnFireTag extends Tag {
 
     private TagRegistry tagRegistry = new TagRegistry();
     private Random random = new Random();
-    private int lifetime = 8;
+    private int lifetime = 6;
 
-    private final double SPREAD_LIKELIHOOD = 0.45;
+    private double spreadLikelihood = 0.5;
+
+    @Override
+    public void onAddThis(TagEvent e) {
+        if (e.getSource().hasTag(TagRegistry.BURN_FAST)){
+            lifetime = 3;
+            spreadLikelihood = 0.8;
+        } else if (e.getSource().hasTag(TagRegistry.BURN_SLOW)){
+            lifetime = 12;
+            spreadLikelihood = 0.3;
+        }
+    }
 
     @Override
     public void onTurn(TagEvent e) {
@@ -31,10 +41,10 @@ public class OnFireTag extends Tag {
                 Level level = e.getGameInstance().getCurrentLevel();
                 Tile tile = (Tile)e.getSource();
                 if (lifetime > 0) {
-                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(1, 0)),  SPREAD_LIKELIHOOD);
-                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(0, 1)),  SPREAD_LIKELIHOOD);
-                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(-1, 0)), SPREAD_LIKELIHOOD);
-                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(0, -1)), SPREAD_LIKELIHOOD);
+                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(1, 0)), spreadLikelihood);
+                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(0, 1)), spreadLikelihood);
+                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(-1, 0)), spreadLikelihood);
+                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(0, -1)), spreadLikelihood);
                     lifetime--;
                 } else {
                     level.removeOverlayTile(tile);
@@ -53,8 +63,13 @@ public class OnFireTag extends Tag {
 
     @Override
     public void onContact(TagEvent e) {
-        if (e.getTarget().hasTag(TagRegistry.FLAMMABLE) && !e.getTarget().hasTag(TagRegistry.FIRE)) {
-            e.getTarget().addTag(tagRegistry.getTag(TagRegistry.FIRE));
+        if (e.getTarget().hasTag(TagRegistry.FLAMMABLE) && !e.getTarget().hasTag(TagRegistry.ON_FIRE)) {
+            if (e.getTarget() instanceof Tile) {
+                Tile target = (Tile) e.getTarget();
+                e.cancel();
+                attemptFireTileSpread(e.getGameInstance().getCurrentLevel(), target.getLocation(), 1);
+            }
+            e.addCancelableAction(event -> e.getTarget().addTag(tagRegistry.getTag(TagRegistry.ON_FIRE), e.getSource()));
         }
         e.setSuccess(true);
     }
@@ -62,13 +77,15 @@ public class OnFireTag extends Tag {
     public void attemptFireTileSpread(Level level, Coordinate pos, double likelihood){
         if (level.isLocationValid(pos) && level.getTileAt(pos).hasTag(TagRegistry.FLAMMABLE) && random.nextDouble() < likelihood){
             Tile fireTile = new Tile(pos, "Fire");
-            fireTile.addTag(tagRegistry.getTag(TagRegistry.FIRE));
+            fireTile.addTag(tagRegistry.getTag(TagRegistry.ON_FIRE), level.getTileAt(pos));
             level.addOverlayTile(fireTile);
             level.getOverlayTileLayer().editLayer(pos.getX(), pos.getY(), new SpecialText(' ', Color.WHITE, new Color(225, 100, 0)));
+            /**/
             Entity entity = level.getEntityAt(pos);
-            if (entity != null && !entity.hasTag(TagRegistry.FIRE)) {
-                entity.addTag(tagRegistry.getTag(TagRegistry.FIRE));
+            if (entity != null && !entity.hasTag(TagRegistry.ON_FIRE)) {
+                entity.addTag(tagRegistry.getTag(TagRegistry.ON_FIRE), level.getTileAt(pos));
             }
+            /**/
         }
     }
 
