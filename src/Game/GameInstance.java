@@ -165,7 +165,7 @@ public class GameInstance {
             for (Tile tile : currentLevel.getAllTiles()){
                 tile.onTurn(GameInstance.this);
             }
-            player.getInv().scanInventory();
+            player.updateInventory();
             isPlayerTurn = true;
         }
     }

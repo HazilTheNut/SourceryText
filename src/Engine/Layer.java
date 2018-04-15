@@ -39,6 +39,14 @@ public class Layer implements Serializable{
         importance = priority;
     }
 
+    public Layer (int w, int h, String layerName, int x, int y, int priority){
+        textMatrix = new SpecialText[w][h];
+        name = layerName;
+        xpos = x;
+        ypos = y;
+        importance = priority;
+    }
+
     public Layer (String[][] layerData, String layerName, int x, int y){
         textMatrix = new SpecialText[layerData.length][layerData[0].length];
         for (int col = 0; col < layerData.length; col ++){

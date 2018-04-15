@@ -1,17 +1,19 @@
 package Game.Entities;
 
 import Data.EntityStruct;
+import Data.ItemStruct;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Data.Coordinate;
-import Game.GameInstance;
+import Game.*;
 import Data.LayerImportances;
 import Game.Registries.EntityRegistry;
+import Game.Registries.ItemRegistry;
 import Game.Registries.TagRegistry;
-import Game.TagEvent;
-import Game.TagHolder;
 import Game.Tags.Tag;
+
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 3/27/2018.
@@ -20,6 +22,8 @@ public class Entity extends TagHolder{
 
     protected GameInstance gi;
     protected LayerManager lm;
+
+    private ArrayList<Item> items = new ArrayList<>();
 
     private Coordinate location;
     private Layer sprite; //Not to be mistaken with 7-up
@@ -37,6 +41,11 @@ public class Entity extends TagHolder{
         TagRegistry tagRegistry = new TagRegistry();
         for (int id : entityStruct.getTagIDs()){
             addTag(tagRegistry.getTag(id), this);
+        }
+        ItemRegistry itemRegistry = new ItemRegistry();
+        for (ItemStruct struct : entityStruct.getItems()){
+            Item item = itemRegistry.generateItem(struct.getItemId()).setQty(struct.getQty());
+            addItem(item);
         }
     }
 
@@ -94,6 +103,53 @@ public class Entity extends TagHolder{
 
     protected void setName(String str){ name = str; }
 
+    public void addItem(Item item) {
+        if (item.isStackable())
+            for (Item i : items){
+                if (i.getItemData().getItemId() == item.getItemData().getItemId()){
+                    int total = i.getItemData().getQty() + item.getItemData().getQty();
+                    if (total < 100){
+                        i.setQty(total);
+                        return;
+                    } else {
+                        i.setQty(99);
+                        items.add(item.setQty(total - 99));
+                        return;
+                    }
+                }
+            }
+        items.add(item);
+    }
+
+    public void removeItem(Item item) { items.remove(item); }
+
+    public ArrayList<Item> getItems() {
+        return items;
+    }
+
+    public void updateInventory(){
+        for (int ii = 0; ii < items.size();){
+            if (items.get(ii).getItemData().getQty() <= 0){
+                items.remove(items.get(ii));
+            } else {
+                TagEvent updateEvent = new TagEvent(0, true, items.get(ii), items.get(ii), getGameInstance());
+                for (Tag tag : items.get(ii).getTags()) tag.onTurn(updateEvent);
+                if (updateEvent.eventPassed()) updateEvent.enactEvent();
+                ii++;
+            }
+        }
+    }
+
+    public void scanInventory(){
+        for (int ii = 0; ii < items.size();){
+            if (items.get(ii).getItemData().getQty() <= 0){
+                items.remove(items.get(ii));
+            } else {
+                ii++;
+            }
+        }
+    }
+
     //Ran when it is their turn to do something
     public void onTurn(){
         TagEvent turnEvent = new TagEvent(0, true, this, this, getGameInstance());
@@ -103,6 +159,8 @@ public class Entity extends TagHolder{
         if (turnEvent.eventPassed()){
             turnEvent.enactEvent();
         }
+        updateInventory();
     }
 
+    public void onInteract(Player player){}
 }

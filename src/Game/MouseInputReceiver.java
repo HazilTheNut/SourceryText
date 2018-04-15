@@ -11,5 +11,5 @@ public interface MouseInputReceiver {
     void onMouseMove(Coordinate levelPos, Coordinate screenPos);
 
     //Ran whenever mouse clicks (on button press). Return true to prevent mouse input reaching elements below current one
-    boolean onMouseClick(Coordinate levelPos, Coordinate screenPos);
+    boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton);
 }

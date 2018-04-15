@@ -44,7 +44,7 @@ public class HUD implements MouseInputReceiver{
         Color bkg = new Color(15, 15, 15);
         tempLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
 
-        if ((mousePos != null && mousePos.equals(new Coordinate(0,0))) ||(player.getInv().isShowing())) //Inventory Button
+        if ((mousePos != null && mousePos.equals(new Coordinate(0,0))) ||(player.getInv().getPlayerInv().isShowing())) //Inventory Button
             tempLayer.editLayer(0, 0, new SpecialText('V', Color.WHITE, new Color(70, 70, 70)));
         else
             tempLayer.editLayer(0, 0, new SpecialText('V', Color.WHITE, new Color(30, 30, 30)));
@@ -165,12 +165,12 @@ public class HUD implements MouseInputReceiver{
     }
 
     @Override
-    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
+    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPo, int mouseButtons) {
         if (mousePos.equals(new Coordinate(0,0))){
-            if (player.getInv().isShowing())
-                player.getInv().close();
+            if (player.getInv().getPlayerInv().isShowing())
+                player.getInv().getPlayerInv().close();
             else
-                player.getInv().show();
+                player.getInv().getPlayerInv().show();
             updateHUD();
         }
         return false;

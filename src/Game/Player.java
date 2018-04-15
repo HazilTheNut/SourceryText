@@ -9,12 +9,14 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Engine.ViewWindow;
 import Game.Entities.CombatEntity;
+import Game.Entities.Entity;
 import Game.Registries.ItemRegistry;
 import Game.Registries.TagRegistry;
 import Game.Tags.OnFireTag;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 /**
@@ -24,6 +26,11 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     private HUD hud;
     private PlayerInventory inv;
+
+    private Thread pathingThread;
+    private boolean terminatePathing;
+
+    private Coordinate mouseLevelPos;
 
     private boolean spellMode = false;
 
@@ -45,10 +52,6 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         setLocation(new Coordinate(0, 0));
 
         inv = new PlayerInventory(lm, this);
-        ItemRegistry registry = new ItemRegistry();
-
-        inv.addItem(registry.generateItem(1).setQty(25));
-        inv.addItem(registry.generateItem(10).setQty(35));
 
         setMaxHealth(20);
 
@@ -79,6 +82,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         ArrayList<WarpZone> warpZones = gi.getCurrentLevel().getWarpZones();
         for (WarpZone wz : warpZones){
             if (wz.isInsideZone(getLocation())){
+                terminatePathing = true;
                 FileIO io = new FileIO();
                 String path = io.getRootFilePath() + wz.getRoomFilePath();
                 Coordinate wzNewPos = new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY());
@@ -89,9 +93,26 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     }
 
     @Override
+    public void scanInventory() {
+        super.scanInventory();
+        if (inv.getPlayerInv().isShowing())
+            inv.getPlayerInv().updateDisplay();
+        updateHUD();
+    }
+
+    @Override
+    public void updateInventory() {
+        super.updateInventory();
+        if (inv.getPlayerInv().isShowing())
+            inv.getPlayerInv().updateDisplay();
+        updateHUD();
+    }
+
+    @Override
     protected void move(int relativeX, int relativeY) {
         super.move(relativeX, relativeY);
         checkForWarpZones();
+        updateCameraPos();
     }
 
     @Override
@@ -104,12 +125,13 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     public void receiveDamage(int amount) {
         super.receiveDamage(amount);
         hud.updateHUD();
+        if (pathingThread != null && pathingThread.isAlive()) terminatePathing = true;
     }
 
     @Override
     protected void doAttackEvent(CombatEntity ce) {
         if (getWeapon() != null && getWeapon().getItemData().getQty() == 1)
-            inv.removeItem(getWeapon());
+            removeItem(getWeapon());
         super.doAttackEvent(ce);
         hud.updateSynopsis(ce.getLocation());
         hud.updateHUD();
@@ -128,27 +150,39 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     }
 
+    private void toggleInventory(){
+        if (inv.getPlayerInv().isShowing()) {
+            inv.getPlayerInv().close();
+            inv.closeOtherInventory();
+        } else {
+            inv.getPlayerInv().changeMode(PlayerInventory.CONFIG_PLAYER_USE);
+            inv.getPlayerInv().show();
+            inv.updateItemDescription(null);
+        }
+        updateHUD();
+    }
+
     @Override
     public void keyPressed(KeyEvent e) {
         if (!isFrozen()) {
             if (e.getKeyCode() == KeyEvent.VK_E){
-                if (inv.isShowing()) inv.close();
-                else inv.show();
-                hud.updateHUD();
+                toggleInventory();
             } else if (e.getKeyCode() == KeyEvent.VK_SHIFT){
                 spellMode = true;
                 updateHUD();
             } else if (e.getKeyCode() == KeyEvent.VK_L) {
                 System.out.printf("[Player LOG] pos: %1$s\n", getLocation());
                 lm.printLayerStack();
+            } else if (e.getKeyCode() == KeyEvent.VK_Q){
+                inv.openOtherInventory(gi.getEntityAt(mouseLevelPos));
             } else {
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) move(1,  0);
                 if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A)  move(-1, 0);
                 if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S)  move(0,  1);
                 if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W)    move(0, -1);
-                updateCameraPos();
                 gi.doEnemyTurn();
             }
+            terminatePathing = true;
         }
     }
 
@@ -164,11 +198,22 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     @Override
     public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
-
+        mouseLevelPos = levelPos;
     }
 
     @Override
-    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos) {
+    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton) {
+        if (mouseButton == MouseEvent.BUTTON1){
+            //System.out.println("[Player.onMouseClick] Left click event!");
+            doLeftClick(levelPos);
+        } else if (mouseButton == MouseEvent.BUTTON3){
+            //System.out.println("[Player.onMouseClick] Right click event!");
+            doRightClick(levelPos);
+        }
+        return false;
+    }
+
+    private void doLeftClick(Coordinate levelPos){
         if (!isFrozen()) {
             if (!spellMode) {
                 Thread attackThread = new Thread(() -> {
@@ -183,8 +228,32 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 forConvenience.attemptFireTileSpread(getGameInstance().getCurrentLevel(), levelPos, 1);
             }
         }
-        checkForWarpZones();
-        return false;
+    }
+
+    private void doRightClick(Coordinate levelPos){
+        if (pathingThread != null && pathingThread.isAlive())
+            terminatePathing = true;
+        else {
+            terminatePathing = false;
+            pathingThread = new Thread(() -> {
+                Coordinate prevPos = null;
+                Entity target = gi.getEntityAt(levelPos);
+                while ((prevPos == null || !prevPos.equals(getLocation())) && !terminatePathing) {
+                    prevPos = new Coordinate(getLocation().getX(), getLocation().getY());
+                    pathToPosition(levelPos, 50);
+                    gi.doEnemyTurn();
+                    if (target != null && getLocation().stepDistance(target.getLocation()) <= 1){
+                        target.onInteract(this);
+                    }
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            pathingThread.start();
+        }
     }
 
     public void doEnemyTurn(){

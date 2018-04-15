@@ -10,13 +10,18 @@ import Game.Tags.Tag;
 public class Item extends TagHolder{
 
     private ItemStruct itemData;
+    private boolean isStackable = true;
 
     public ItemStruct getItemData() { return itemData; }
 
     public Item(ItemStruct itemData){ this.itemData = itemData; }
 
-    public void decrementQty() {
+    public void decrementQty(){
         itemData.setQty(itemData.getQty()-1);
+    }
+
+    public void incrementQty(){
+        itemData.setQty(itemData.getQty()+1);
     }
 
     public Item setQty(int amount){
@@ -38,6 +43,14 @@ public class Item extends TagHolder{
             tag.onItemUse(useEvent);
         }
         return useEvent;
+    }
+
+    public void setStackable(boolean stackable) {
+        isStackable = stackable;
+    }
+
+    public boolean isStackable() {
+        return isStackable;
     }
 
     @Override

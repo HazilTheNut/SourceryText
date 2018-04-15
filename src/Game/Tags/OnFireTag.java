@@ -20,6 +20,7 @@ public class OnFireTag extends Tag {
     private TagRegistry tagRegistry = new TagRegistry();
     private Random random = new Random();
     private int lifetime = 6;
+    protected boolean burnForever = false;
 
     private double spreadLikelihood = 0.5;
 
@@ -50,7 +51,7 @@ public class OnFireTag extends Tag {
                     level.removeOverlayTile(tile);
                     level.addOverlayTile(createAshTile(tile.getLocation(), level.getOverlayTileLayer()));
                 }
-            } else {
+            } else if (!burnForever) {
                 if (lifetime > 0) {
                     e.getSource().receiveDamage(1);
                     lifetime--;

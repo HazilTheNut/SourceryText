@@ -22,4 +22,12 @@ public class WeaponTypeTag extends Tag {
             ((CombatEntity)e.getTarget()).setWeapon((Item)e.getSource());
         }
     }
+
+    @Override
+    public void onAddThis(TagEvent e) {
+        if (e.getSource() instanceof Item) {
+            Item source = (Item) e.getSource();
+            source.setStackable(false);
+        }
+    }
 }

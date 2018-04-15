@@ -74,13 +74,11 @@ public class EntityEditor extends JFrame {
         itemQtySetter.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                changeItemQty(itemQtySetter.getText(), invSelectionList.getSelectedValue());
-                invSelectionList.repaint();
+                onTextBoxUpdate(itemQtySetter, invSelectionList);
             }
             @Override
             public void removeUpdate(DocumentEvent e) {
-                changeItemQty(itemQtySetter.getText(), invSelectionList.getSelectedValue());
-                invSelectionList.repaint();
+                onTextBoxUpdate(itemQtySetter, invSelectionList);
             }
             @Override
             public void changedUpdate(DocumentEvent e) {}
@@ -156,5 +154,11 @@ public class EntityEditor extends JFrame {
             if (qty > 99) qty = 99;
             item.setQty(qty);
         }
+    }
+
+    private void onTextBoxUpdate(JTextField itemQtySetter, JList invSelectionList){
+        changeItemQty(itemQtySetter.getText(), entity.getItems().get(invSelectionList.getSelectedIndex()));
+        changeItemQty(itemQtySetter.getText(), (ItemStruct)invSelectionList.getSelectedValue());
+        invSelectionList.repaint();
     }
 }

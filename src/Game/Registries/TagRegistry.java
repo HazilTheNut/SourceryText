@@ -16,22 +16,22 @@ public class TagRegistry {
     /**
      * Tag Organization:
      *
-     *    0 -  199 : Basic / shared properties
-     *  200 -  399 : Item-Related
-     *  400 -  599 : Tile-Related
-     *  600 -  799 : Entity-Related
-     *  800 -  999 : Extra space
-     *
-     * 1000 - 1999 : Damage Tag [0-999]
-     * 2000 - 2999 : Health Tag [0-999]
-     *
-     * 3000 - Beyond : Unclaimed real-estate
+     * idMin idMax | Purpose
+     * ------------|----------
+     * 0     199   | Basic / shared properties
+     * 200   399   | Item-Related
+     * 400   599   | Tile-Related
+     * 600   799   | Entity-Related
+     * 800   999   | Extra Space
+     * 1000  1999  | Damage Tag
+     * 2000  2999  | Health Tag
      *
      */
     public final static int FLAMMABLE     = 0;
     public final static int ON_FIRE       = 1;
     public final static int BURN_FAST     = 2;
     public final static int BURN_SLOW     = 3;
+    public final static int FLAME_ENCHANT = 4;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -48,6 +48,7 @@ public class TagRegistry {
         registerTag(ON_FIRE,   "On Fire",   OnFireTag.class);
         registerTag(BURN_SLOW, "Slow Burning", BurnSlowTag.class);
         registerTag(BURN_FAST, "Fast Burning", BurnFastTag.class);
+        registerTag(FLAME_ENCHANT, "Fire Enchantment", FlameEnchantTag.class);
 
         registerTag(TILE_WALL, "Wall", WallTag.class);
 
