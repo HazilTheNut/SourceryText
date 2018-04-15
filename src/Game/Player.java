@@ -81,9 +81,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             if (wz.isInsideZone(getLocation())){
                 FileIO io = new FileIO();
                 String path = io.getRootFilePath() + wz.getRoomFilePath();
-                Coordinate wzPos = new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY());
-                System.out.printf("[Player.checkForWarpZones] Attempting level file path: %1$s \n* wz pos: %2$s\n", path, wzPos);
-                gi.enterLevel(path, wzPos);
+                Coordinate wzNewPos = new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY());
+                System.out.printf("[Player.checkForWarpZones] Attempting level file path: %1$s \n* wz pos: %2$s\n", path, wzNewPos);
+                gi.enterLevel(path, wzNewPos.add(getLocation()).subtract(new Coordinate(wz.getXpos(), wz.getYpos())));
             }
         }
     }

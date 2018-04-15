@@ -45,7 +45,7 @@ public class TagRegistry {
 
     public TagRegistry(){
         registerTag(FLAMMABLE, "Flammable", FlammableTag.class);
-        registerTag(ON_FIRE,      "On Fire",   OnFireTag.class);
+        registerTag(ON_FIRE,   "On Fire",   OnFireTag.class);
         registerTag(BURN_SLOW, "Slow Burning", BurnSlowTag.class);
         registerTag(BURN_FAST, "Fast Burning", BurnFastTag.class);
 
