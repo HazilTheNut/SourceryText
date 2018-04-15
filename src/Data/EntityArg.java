@@ -24,4 +24,6 @@ public class EntityArg implements Serializable {
     public String getArgValue() {
         return argValue;
     }
+
+    public void setArgValue(String value) { argValue = value; }
 }

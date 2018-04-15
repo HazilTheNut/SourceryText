@@ -1,16 +1,22 @@
 package Game.Entities;
 
+import Data.EntityArg;
+import Data.EntityStruct;
 import Data.LayerImportances;
 import Engine.Layer;
+import Engine.LayerManager;
 import Engine.SpecialText;
 import Data.Coordinate;
+import Game.GameInstance;
 import Game.Item;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.Tags.Tag;
 
 import java.awt.*;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Created by Jared on 3/28/2018.
@@ -18,7 +24,9 @@ import java.util.ArrayList;
 public class CombatEntity extends Entity{
 
     private int health;
-    private int maxHealth;
+    private int maxHealth = 10;
+
+    private int strength = 0;
 
     private static final int RIGHT = 0;
     private static final int UP_RIGHT = 45;
@@ -37,6 +45,52 @@ public class CombatEntity extends Entity{
     protected void setMaxHealth(int maxHP){
         maxHealth = maxHP;
         health = maxHP;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    @Override
+    public ArrayList<EntityArg> generateArgs() {
+        ArrayList<EntityArg> args = new ArrayList<>();
+        args.add(new EntityArg("interactText", "Having a conversation right now probably isn't a good idea."));
+        args.add(new EntityArg("maxHealth", String.valueOf(maxHealth)));
+        args.add(new EntityArg("strength",  String.valueOf(strength)));
+        return args;
+    }
+
+    /**
+     * Reads an EntityArg and returns an integer
+     * @param arg EntityArg to read
+     * @param def Default number if contents of arg are not integer-formatted
+     * @return Resulting integer
+     */
+    protected int readIntArg(EntityArg arg, int def){
+        Scanner sc = new Scanner(arg.getArgValue());
+        if (sc.hasNextInt()){
+            return sc.nextInt();
+        }
+        return def;
+    }
+
+    protected EntityArg searchForArg(ArrayList<EntityArg> providedArgs, String name){
+        for (EntityArg arg : providedArgs){
+            if (arg.getArgName().equals(name))
+                return arg;
+        }
+        return null;
+    }
+
+    @Override
+    public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
+        super.initialize(pos, lm, entityStruct, gameInstance);
+        EntityArg hpArg = searchForArg(entityStruct.getArgs(), "maxHealth");
+        if (hpArg != null) setMaxHealth(readIntArg(hpArg, 10));
     }
 
     @Override
@@ -73,7 +127,7 @@ public class CombatEntity extends Entity{
 
     protected void doAttackEvent(CombatEntity ce){
         if (getWeapon() != null) {
-            TagEvent event = new TagEvent(0, true, this, ce, getGameInstance());
+            TagEvent event = new TagEvent(strength, true, this, ce, getGameInstance());
             for (Tag tag : getWeapon().getTags())
                 tag.onDealDamage(event);
             if (event.eventPassed()) {

@@ -1,13 +1,10 @@
 package Game.Entities;
 
-import Data.EntityStruct;
-import Data.ItemStruct;
+import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
-import Data.Coordinate;
 import Game.*;
-import Data.LayerImportances;
 import Game.Registries.EntityRegistry;
 import Game.Registries.ItemRegistry;
 import Game.Registries.TagRegistry;
@@ -148,6 +145,12 @@ public class Entity extends TagHolder{
                 ii++;
             }
         }
+    }
+
+    public ArrayList<EntityArg> generateArgs(){
+        ArrayList<EntityArg> args = new ArrayList<>();
+        args.add(new EntityArg("interactText", ""));
+        return args;
     }
 
     //Ran when it is their turn to do something

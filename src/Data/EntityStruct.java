@@ -72,4 +72,8 @@ public class EntityStruct implements Serializable{
 
     @Override
     public String toString() { return entityName; }
+
+    public void addArg(EntityArg arg) {
+        args.add(arg);
+    }
 }
