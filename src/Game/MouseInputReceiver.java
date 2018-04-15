@@ -1,5 +1,7 @@
 package Game;
 
+import Data.Coordinate;
+
 /**
  * Created by Jared on 3/29/2018.
  */

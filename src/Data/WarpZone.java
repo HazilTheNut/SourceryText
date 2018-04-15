@@ -85,4 +85,8 @@ public class WarpZone implements Serializable{
         wz.setRoomFilePath(roomFilePath);
         return wz;
     }
+
+    public boolean isInsideZone(Coordinate loc){
+        return (loc.getX() - xpos < width && loc.getX() >= xpos && loc.getY() - ypos < height && loc.getY() >= ypos);
+    }
 }

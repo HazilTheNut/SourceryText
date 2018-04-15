@@ -1,6 +1,4 @@
-package Game;
-
-import Game.Entities.Entity;
+package Data;
 
 /**
  * Created by Jared on 3/27/2018.
@@ -39,6 +37,8 @@ public class Coordinate {
     public Coordinate subtract(Coordinate other){
         return new Coordinate(x - other.getX(), y - other.getY());
     }
+
+    public Coordinate multiply(double amount) { return new Coordinate((int)(x * amount), (int)(y * amount)); }
 
     public int stepDistance(Coordinate other) {
         return Math.abs(getX() - other.getX()) + Math.abs(getY() - other.getY());

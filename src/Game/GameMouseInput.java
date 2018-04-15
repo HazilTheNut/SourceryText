@@ -1,5 +1,6 @@
 package Game;
 
+import Data.Coordinate;
 import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;

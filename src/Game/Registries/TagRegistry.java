@@ -100,7 +100,7 @@ public class TagRegistry {
     private Tag generateTag(int id){
         Class tagClass = tagMap.get(id).getTagClass();
         if (tagClass != null){
-            System.out.printf("[TagRegistry.generateTag] ID: %1$d Name: %2$s\n", id, tagClass.getName());
+            //System.out.printf("[TagRegistry.generateTag] ID: %1$d Name: %2$s\n", id, tagClass.getName());
             Object obj;
             try {
                 obj = tagClass.newInstance();

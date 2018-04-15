@@ -54,9 +54,11 @@ public class TagHolder {
     public void onContact(TagHolder other, GameInstance gi){
         contactEvent(this, other, gi);
         contactEvent(other, this, gi);
+        /*
         System.out.println("[TagHolder.onContact] TagHolder \'" + this.getClass().getSimpleName() + "\'");
         System.out.println("[TagHolder.onContact] Tags of me: " + getTagList());
         System.out.println("[TagHolder.onContact] Tags of other: " + other.getTagList());
+        /**/
     }
 
     private void contactEvent(TagHolder source, TagHolder target, GameInstance gi){

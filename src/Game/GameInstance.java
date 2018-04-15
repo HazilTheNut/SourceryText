@@ -1,9 +1,6 @@
 package Game;
 
-import Data.EntityStruct;
-import Data.FileIO;
-import Data.LayerImportances;
-import Data.LevelData;
+import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.ViewWindow;
@@ -25,6 +22,7 @@ public class GameInstance {
     private ArrayList<EntityOperation> entityOperations = new ArrayList<>();
 
     private Level currentLevel;
+    private ArrayList<Level> levels = new ArrayList<>();
 
     private LayerManager lm;
 
@@ -34,11 +32,33 @@ public class GameInstance {
 
         FileIO io = new FileIO();
 
-        currentLevel = loadLevel(io.chooseLevel().getPath(), lm);
-        currentLevel.onEnter(lm);
-
         player = new Player(window, manager, this);
-        currentLevel.addEntity(player);
+
+        enterLevel(io.decodeFilePath(io.chooseLevel().getPath()), new Coordinate(40, 43));
+    }
+
+    public void enterLevel(String levelFilePath, Coordinate playerPos){
+        if (currentLevel != null) {
+            currentLevel.onExit(lm);
+            currentLevel.removeEntity(player);
+        }
+        for (Level level : levels){
+            if (level.getFilePath().equals(levelFilePath)){
+                System.out.printf("[GameInstance.enterLevel] Level already found loaded at %1$s\n", levelFilePath);
+                currentLevel = level;
+                startLevel(currentLevel, playerPos);
+                return;
+            }
+        }
+        currentLevel = loadLevel(levelFilePath);
+        startLevel(currentLevel, playerPos);
+    }
+
+    private void startLevel(Level level, Coordinate loc){
+        level.addEntity(player);
+        level.onEnter(lm);
+        player.teleport(loc);
+        player.updateCameraPos();
     }
 
     /**
@@ -46,8 +66,8 @@ public class GameInstance {
      * @param levelFilePath The non-relative file path to the level's file
      * @return returns the loaded level
      */
-    private Level loadLevel(String levelFilePath, LayerManager manager){
-        Level newLevel = new Level();
+    private Level loadLevel(String levelFilePath){
+        Level newLevel = new Level(levelFilePath);
 
         FileIO io = new FileIO();
 
@@ -70,7 +90,7 @@ public class GameInstance {
                     Class entityClass = registry.getEntityClass(struct.getEntityId());
                     try {
                         Entity e = (Entity)entityClass.newInstance();
-                        e.initialize(new Coordinate(col, row), manager, struct, this);
+                        e.initialize(new Coordinate(col, row), lm, struct, this);
                         newLevel.addEntity(e);
                     } catch (InstantiationException | IllegalAccessException e) {
                         e.printStackTrace();
@@ -80,6 +100,10 @@ public class GameInstance {
         }
 
         newLevel.intitializeTiles(ldata);
+
+        newLevel.setWarpZones(ldata.getWarpZones());
+
+        levels.add(newLevel);
 
         return newLevel;
     }

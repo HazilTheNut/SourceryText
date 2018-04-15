@@ -2,7 +2,7 @@ package Game.Tags;
 
 import Engine.Layer;
 import Engine.SpecialText;
-import Game.Coordinate;
+import Data.Coordinate;
 import Game.Entities.Entity;
 import Game.Level;
 import Game.Registries.TagRegistry;
@@ -30,7 +30,7 @@ public class OnFireTag extends Tag {
             spreadLikelihood = 0.8;
         } else if (e.getSource().hasTag(TagRegistry.BURN_SLOW)){
             lifetime = 12;
-            spreadLikelihood = 0.3;
+            spreadLikelihood = 0.1;
         }
     }
 

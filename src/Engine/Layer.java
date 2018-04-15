@@ -1,7 +1,7 @@
 package Engine;
 
 import Data.SerializationVersion;
-import Game.Coordinate;
+import Data.Coordinate;
 
 import java.awt.*;
 import java.io.Serializable;

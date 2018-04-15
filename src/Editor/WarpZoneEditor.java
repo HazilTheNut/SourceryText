@@ -1,5 +1,6 @@
 package Editor;
 
+import Data.Coordinate;
 import Data.LevelData;
 import Data.WarpZone;
 import Engine.Layer;
@@ -36,6 +37,7 @@ public class WarpZoneEditor extends JFrame{
         lm.addLayer(ldata.getBackdrop());
 
         warpZoneLayer = new Layer(new SpecialText[wz.getWidth()][wz.getHeight()], "previewZone", wz.getNewRoomStartX(), wz.getNewRoomStartY());
+        System.out.printf("[WarpZoneEditor] New Room Pos: %1$s", new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY()));
         warpZoneLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(50, 175, 0, 75)));
 
         lm.addLayer(warpZoneLayer);
@@ -80,6 +82,7 @@ public class WarpZoneEditor extends JFrame{
 
     private void confirm(){
         wz.setTranslation(warpZoneLayer.getX(), warpZoneLayer.getY());
+        System.out.printf("[WarpZoneEditor.confirm] New Room Pos: %1$s", new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY()));
         dispose();
     }
 

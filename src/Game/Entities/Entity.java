@@ -4,7 +4,7 @@ import Data.EntityStruct;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
-import Game.Coordinate;
+import Data.Coordinate;
 import Game.GameInstance;
 import Data.LayerImportances;
 import Game.Registries.EntityRegistry;
@@ -12,7 +12,6 @@ import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
 import Game.Tags.Tag;
-import java.util.ArrayList;
 
 /**
  * Created by Jared on 3/27/2018.
@@ -45,19 +44,23 @@ public class Entity extends TagHolder{
         lm.addLayer(sprite);
     }
 
+    public void onLevelExit(){
+        lm.removeLayer(sprite);
+    }
+
     protected String createEntityLayerName(EntityStruct struct, Coordinate coordinate){
         return String.format("%1$s [%2$d,%3$d]", struct.getEntityName(), coordinate.getX(), coordinate.getY());
     }
 
     public Coordinate getLocation(){ return location; }
 
-    Layer getSprite() { return sprite; }
+    public Layer getSprite() { return sprite; }
 
     protected void setSprite(Layer sprite) { this.sprite = sprite; }
 
     public GameInstance getGameInstance() { return gi; }
 
-    protected void setLocation(Coordinate pos) {location = pos;}
+    protected void setLocation(Coordinate pos) { location = pos; }
 
     protected void move(int relativeX, int relativeY){
         if (getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)))) {
@@ -68,7 +71,7 @@ public class Entity extends TagHolder{
         }
     }
 
-    protected void teleport(Coordinate pos){
+    public void teleport(Coordinate pos){
         move(pos.getX() - location.getX(), pos.getY() - location.getY());
     }
 

@@ -1,5 +1,6 @@
 package Game;
 
+import Data.Coordinate;
 import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
@@ -8,8 +9,6 @@ import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 
 import java.awt.*;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Jared on 01-Apr-18.

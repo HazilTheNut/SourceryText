@@ -1,6 +1,6 @@
 package Engine;
 
-import Game.Coordinate;
+import Data.Coordinate;
 
 import java.awt.*;
 import java.util.ArrayList;

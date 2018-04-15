@@ -1,18 +1,21 @@
 package Game;
 
-import Data.ItemStruct;
+import Data.Coordinate;
+import Data.FileIO;
+import Data.LayerImportances;
+import Data.WarpZone;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Engine.ViewWindow;
 import Game.Entities.CombatEntity;
-import Game.Entities.Entity;
 import Game.Registries.ItemRegistry;
 import Game.Registries.TagRegistry;
 import Game.Tags.OnFireTag;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 3/27/2018.
@@ -30,9 +33,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         window.addKeyListener(this);
 
-        setLocation(new Coordinate(40, 43));
-
-        Layer playerLayer = new Layer(new SpecialText[1][1], "player", getLocation().getX(), getLocation().getY(), 5);
+        Layer playerLayer = new Layer(new SpecialText[1][1], "player", 0, 0, LayerImportances.ENTITY);
         playerLayer.editLayer(0, 0, new SpecialText('@'));
 
         lm.addLayer(playerLayer);
@@ -41,7 +42,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         gi = gameInstance;
 
-        updateCameraPos();
+        setLocation(new Coordinate(0, 0));
 
         inv = new PlayerInventory(lm, this);
         ItemRegistry registry = new ItemRegistry();
@@ -57,9 +58,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         TagRegistry tagRegistry = new TagRegistry();
         addTag(tagRegistry.getTag(TagRegistry.FLAMMABLE), this);
+
     }
 
-    private void updateCameraPos(){
+    public void updateCameraPos(){
         int cameraOffsetX = (lm.getWindow().RESOLUTION_WIDTH / -2) - 1;
         int cameraOffsetY = (lm.getWindow().RESOLUTION_HEIGHT / -2);
         int camNewX = getLocation().getX() + cameraOffsetX;
@@ -68,9 +70,29 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             lm.setCameraPos(Math.max(Math.min(camNewX, gi.getBackdrop().getCols() - lm.getWindow().RESOLUTION_WIDTH), 0), Math.max(Math.min(camNewY, gi.getBackdrop().getRows() - lm.getWindow().RESOLUTION_HEIGHT), 0));
         else
             lm.setCameraPos(camNewX, camNewY);
+        getSprite().setPos(getLocation());
     }
 
     public void updateHUD() {hud.updateHUD();}
+
+    private void checkForWarpZones(){
+        ArrayList<WarpZone> warpZones = gi.getCurrentLevel().getWarpZones();
+        for (WarpZone wz : warpZones){
+            if (wz.isInsideZone(getLocation())){
+                FileIO io = new FileIO();
+                String path = io.getRootFilePath() + wz.getRoomFilePath();
+                Coordinate wzPos = new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY());
+                System.out.printf("[Player.checkForWarpZones] Attempting level file path: %1$s \n* wz pos: %2$s\n", path, wzPos);
+                gi.enterLevel(path, wzPos);
+            }
+        }
+    }
+
+    @Override
+    protected void move(int relativeX, int relativeY) {
+        super.move(relativeX, relativeY);
+        checkForWarpZones();
+    }
 
     @Override
     public void heal(int amount) {
@@ -117,6 +139,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 spellMode = true;
                 updateHUD();
             } else if (e.getKeyCode() == KeyEvent.VK_L) {
+                System.out.printf("[Player LOG] pos: %1$s\n", getLocation());
                 lm.printLayerStack();
             } else {
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) move(1,  0);
@@ -160,6 +183,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 forConvenience.attemptFireTileSpread(getGameInstance().getCurrentLevel(), levelPos, 1);
             }
         }
+        checkForWarpZones();
         return false;
     }
 

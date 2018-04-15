@@ -37,7 +37,7 @@ public class EditorWarpZoneFilePathView implements SpecialGraphics {
                 int startX = mouseX + 5;
                 startX = (startX + stringWidth < window.getWidth()) ? startX : startX - stringWidth;
                 int startY = mouseY + 15;
-                g.drawRect(startX, startY, stringWidth + 2, stringHeight + 2);
+                g.drawRect(startX, startY, stringWidth + 1, stringHeight + 1);
                 g.setColor(new Color(40, 40, 40));
                 g.fillRect(startX+1, startY+1, stringWidth, stringHeight);
                 g.setColor(Color.WHITE);

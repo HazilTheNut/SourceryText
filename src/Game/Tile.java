@@ -1,6 +1,6 @@
 package Game;
 
-import Engine.SpecialText;
+import Data.Coordinate;
 import Game.Tags.Tag;
 
 /**

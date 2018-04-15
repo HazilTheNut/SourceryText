@@ -196,7 +196,7 @@ public class LevelData implements Serializable {
         for (WarpZone warpZone : warpZones){
             for (int col = 0; col < warpZone.getWidth(); col++){
                 for (int row = 0; row < warpZone.getHeight(); row++){
-                    if (mouseX - warpZone.getXpos() < warpZone.getWidth() && mouseX >= warpZone.getXpos() && mouseY - warpZone.getYpos() < warpZone.getHeight() && mouseY >= warpZone.getYpos()) {
+                    if (warpZone.isInsideZone(new Coordinate(mouseX, mouseY))) {
                         warpZoneLayer.editLayer(col + warpZone.getXpos(), row + warpZone.getYpos(), new SpecialText(' ', Color.WHITE, new Color(125, 65, 0, 75)));
                         warpZone.setSelected(true);
                     } else {

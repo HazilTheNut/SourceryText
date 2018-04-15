@@ -1,7 +1,6 @@
 package Game.Entities;
 
-import Engine.SpecialText;
-import Game.Coordinate;
+import Data.Coordinate;
 import Game.Player;
 import Game.Registries.ItemRegistry;
 

@@ -3,7 +3,7 @@ package Game.Entities;
 import Data.LayerImportances;
 import Engine.Layer;
 import Engine.SpecialText;
-import Game.Coordinate;
+import Data.Coordinate;
 import Game.Item;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;

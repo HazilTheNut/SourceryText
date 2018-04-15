@@ -1,8 +1,6 @@
 package Game;
 
-import Data.LayerImportances;
-import Data.LevelData;
-import Data.TileStruct;
+import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
@@ -19,13 +17,21 @@ import java.util.Arrays;
  */
 public class Level {
 
+    private String filePath;
+
     private Layer backdrop;
 
     private Tile[][] baseTiles;
     private ArrayList<Tile> overlayTiles;
     private Layer overlayTileLayer;
 
+    private ArrayList<WarpZone> warpZones = new ArrayList<>();
+
     private ArrayList<Entity> entities = new ArrayList<>();
+
+    public Level(String path){
+        filePath = path;
+    }
 
     void intitializeTiles(LevelData ldata){
         baseTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
@@ -75,6 +81,18 @@ public class Level {
         return !backdrop.isLayerLocInvalid(loc);
     }
 
+    void setWarpZones(ArrayList<WarpZone> warpZones) {
+        this.warpZones = warpZones;
+    }
+
+    public ArrayList<WarpZone> getWarpZones() {
+        return warpZones;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
     void setBackdrop(Layer backdrop) {
         this.backdrop = backdrop;
         overlayTileLayer = new Layer(new SpecialText[backdrop.getCols()][backdrop.getRows()], "tile_overlay", 0, 0, LayerImportances.TILE_OVERLAY);
@@ -84,6 +102,12 @@ public class Level {
         for (Entity e : entities) e.onLevelEnter();
         lm.addLayer(backdrop);
         lm.addLayer(overlayTileLayer);
+    }
+
+    void onExit(LayerManager lm){
+        for (Entity e : entities) e.onLevelExit();
+        lm.removeLayer(backdrop);
+        lm.removeLayer(overlayTileLayer);
     }
 
     public Tile getTileAt(Coordinate loc){
