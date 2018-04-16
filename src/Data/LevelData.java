@@ -25,6 +25,8 @@ public class LevelData implements Serializable {
     private EntityStruct[][] entityData;
     private ArrayList<WarpZone> warpZones;
 
+    private ArrayList<Integer> levelScripts = new ArrayList<>();
+
     public void reset(){
         backdrop = new Layer(new SpecialText[100][45], "backdrop", 0, 0);
         tileData = new int[backdrop.getCols()][backdrop.getRows()];
@@ -241,5 +243,17 @@ public class LevelData implements Serializable {
             }
         }
         updateWarpZoneLayer(-50, -50);
+    }
+
+    public void addLevelScript(int scriptId){
+        levelScripts.add(scriptId);
+    }
+
+    public void removeLevelScript(int scriptId){
+        levelScripts.remove(new Integer(scriptId));
+    }
+
+    public boolean hasScript(int scriptId){
+        return levelScripts.contains(scriptId);
     }
 }

@@ -194,6 +194,10 @@ public class EditorToolPanel extends JPanel {
         findAndReplaceItem.addActionListener(e -> new EditorFindAndReplace(mi.getTextPanel(), ldata, undoManager));
         levelMenu.add(findAndReplaceItem);
 
+        JMenuItem levelScriptsItem = new JMenuItem("Level Scripts....");
+        levelScriptsItem.addActionListener(e -> new LevelScriptEditor(ldata));
+        levelMenu.add(levelScriptsItem);
+
         menuPanel.add(new LonelyMenu(levelMenu, menuPanel));
         menuPanel.setBorder(BorderFactory.createEtchedBorder());
         menuPanel.setMaximumSize(new Dimension(100, 20));

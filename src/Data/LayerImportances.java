@@ -6,11 +6,12 @@ package Data;
 public class LayerImportances {
 
     public static final int BACKDROP       = 0;
-    public static final int TILE_OVERLAY   = 1;
-    public static final int ENTITY         = 2;
-    public static final int ANIMATION      = 3;
-    public static final int CURSOR         = 4;
-    public static final int MENU           = 5;
-    public static final int MENU_CURSOR    = 6;
-    public static final int HUD            = 7;
+    public static final int TILE_OVERLAY   = 10;
+    public static final int ENTITY         = 20;
+    public static final int ANIMATION      = 30;
+    public static final int VFX            = 31;
+    public static final int CURSOR         = 40;
+    public static final int MENU           = 50;
+    public static final int MENU_CURSOR    = 51;
+    public static final int HUD            = 60;
 }
