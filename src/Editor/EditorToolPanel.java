@@ -177,6 +177,19 @@ public class EditorToolPanel extends JPanel {
         syncTileDataItem.addActionListener(e -> ldata.syncDisplayWithData());
         levelMenu.add(syncTileDataItem);
 
+        JCheckBoxMenuItem toggleLocDisplayItem = new JCheckBoxMenuItem("Toggle Coordinate Display");
+        toggleLocDisplayItem.addActionListener(e -> mi.toggleCoordinateDisplay());
+        keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "toggle loc display");
+        rootPane.getActionMap().put("toggle loc display", new MenuAction(() -> {
+            mi.toggleCoordinateDisplay();
+            toggleLocDisplayItem.setState(!toggleLocDisplayItem.getState());
+        }));
+        toggleLocDisplayItem.setAccelerator(keyStroke);
+        levelMenu.add(toggleLocDisplayItem);
+
+        levelMenu.addSeparator();
+
         JMenuItem findAndReplaceItem = new JMenuItem("Find and Replace....");
         findAndReplaceItem.addActionListener(e -> new EditorFindAndReplace(mi.getTextPanel(), ldata, undoManager));
         levelMenu.add(findAndReplaceItem);

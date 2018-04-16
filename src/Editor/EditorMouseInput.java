@@ -4,8 +4,7 @@ import Data.LevelData;
 import Editor.DrawTools.DrawTool;
 import Engine.Layer;
 import Engine.LayerManager;
-import Engine.SpecialGraphics.EditorEntityNameTooltip;
-import Engine.SpecialGraphics.EditorWarpZoneFilePathView;
+import Engine.SpecialGraphics.EditorMouseTooltip;
 import Engine.SpecialText;
 import Engine.ViewWindow;
 
@@ -23,8 +22,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     private ViewWindow window;
     private LayerManager manager;
     private Layer highlightLayer;
-    private EditorWarpZoneFilePathView warpZoneFilePathView;
-    private EditorEntityNameTooltip entityNameTooltip;
+    private EditorMouseTooltip cursorTooltip;
 
     private UndoManager undoManager;
 
@@ -48,10 +46,8 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
         originalResolutionHeight = window.RESOLUTION_HEIGHT;
         ldata = levelData;
         this.undoManager = undoManager;
-        warpZoneFilePathView = new EditorWarpZoneFilePathView(levelData, window);
-        window.addSpecialGraphics(warpZoneFilePathView);
-        entityNameTooltip = new EditorEntityNameTooltip(levelData, window);
-        window.addSpecialGraphics(entityNameTooltip);
+        cursorTooltip = new EditorMouseTooltip(levelData, window);
+        window.addSpecialGraphics(cursorTooltip);
     }
 
     private int getLayerMousePosX(int mouseX){
@@ -125,8 +121,7 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
         if (window.getSnappedMouseX(e.getX()) != previousCharXPos || window.getSnappedMouseY(e.getY()) != previousCharYPos)
             ldata.updateWarpZoneLayer(window.getSnappedMouseX(e.getX()) + manager.getCameraPos().getX(), window.getSnappedMouseY(e.getY()) + manager.getCameraPos().getY());
         updateMouseCursorPos(e.getX(), e.getY());
-        warpZoneFilePathView.updateMousePosition(e.getX(), e.getY());
-        entityNameTooltip.updateMousePosition(e.getX(), e.getY(), getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()));
+        cursorTooltip.updateMousePosition(e.getX(), e.getY(), getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()));
     }
 
     private void updateMouseCursorPos(int rawX, int rawY){
@@ -144,6 +139,10 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
     DrawTool getDrawTool() { return drawTool; }
 
     public EditorTextPanel getTextPanel() { return textPanel; }
+
+    public void toggleCoordinateDisplay(){
+        cursorTooltip.showCoordinate = !cursorTooltip.showCoordinate;
+    }
 
     private int originalResolutionWidth = 0;
     private int originalResolutionHeight = 0;
