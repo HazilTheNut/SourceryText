@@ -496,7 +496,7 @@ public class EditorToolPanel extends JPanel {
         if (levelFile != null) {
             LevelData levelData = io.openLevel(levelFile);
             EditorFrame nf = new EditorFrame(levelData, watcher);
-            nf.setToolPanelFilePath(previousFilePath);
+            nf.setToolPanelFilePath(levelFile.getPath());
             nf.setTextPanelContents(mi.getTextPanel().getButtonManifest());
         }
     }
