@@ -1,12 +1,9 @@
 package Game.Entities;
 
-import Data.EntityArg;
-import Data.EntityStruct;
-import Data.LayerImportances;
+import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
-import Data.Coordinate;
 import Game.GameInstance;
 import Game.Item;
 import Game.Registries.TagRegistry;
@@ -25,8 +22,10 @@ public class CombatEntity extends Entity{
 
     private int health;
     private int maxHealth = 10;
-
     private int strength = 0;
+
+    protected int defaultMaxHealth = 10;
+    protected int defaultStrength  = 1;
 
     private static final int RIGHT = 0;
     private static final int UP_RIGHT = 45;
@@ -59,21 +58,23 @@ public class CombatEntity extends Entity{
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = new ArrayList<>();
         args.add(new EntityArg("interactText", "Having a conversation right now probably isn't a good idea."));
-        args.add(new EntityArg("maxHealth", String.valueOf(maxHealth)));
-        args.add(new EntityArg("strength",  String.valueOf(strength)));
+        args.add(new EntityArg("maxHealth", String.valueOf(defaultMaxHealth)));
+        args.add(new EntityArg("strength",  String.valueOf(defaultStrength)));
         return args;
     }
 
     /**
      * Reads an EntityArg and returns an integer
      * @param arg EntityArg to read
-     * @param def Default number if contents of arg are not integer-formatted
+     * @param def Default number if contents of arg are not integer-formatted or does not exist
      * @return Resulting integer
      */
     protected int readIntArg(EntityArg arg, int def){
-        Scanner sc = new Scanner(arg.getArgValue());
-        if (sc.hasNextInt()){
-            return sc.nextInt();
+        if (arg != null) {
+            Scanner sc = new Scanner(arg.getArgValue());
+            if (sc.hasNextInt()) {
+                return sc.nextInt();
+            }
         }
         return def;
     }
@@ -90,7 +91,9 @@ public class CombatEntity extends Entity{
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
         EntityArg hpArg = searchForArg(entityStruct.getArgs(), "maxHealth");
-        if (hpArg != null) setMaxHealth(readIntArg(hpArg, 10));
+        setMaxHealth(readIntArg(hpArg, defaultMaxHealth));
+        EntityArg strArg = searchForArg(entityStruct.getArgs(), "strength");
+        setStrength(readIntArg(strArg, defaultStrength));
     }
 
     @Override
@@ -158,19 +161,17 @@ public class CombatEntity extends Entity{
     }
 
     protected void doWeaponAttack(Coordinate loc){
-        if (weapon != null) {
-            for (Tag tag : weapon.getTags()) {
-                switch (tag.getId()) {
-                    case TagRegistry.WEAPON_STRIKE:
-                        doStrikeWeaponAttack(calculateMeleeDirection(loc));
-                        return;
-                    case TagRegistry.WEAPON_THRUST:
-                        doThrustWeaponAttack(calculateMeleeDirection(loc));
-                        return;
-                    case TagRegistry.WEAPON_SWEEP:
-                        doSweepWeaponAttack(calculateMeleeDirection(loc));
-                        return;
-                }
+        for (Tag tag : getWeapon().getTags()) {
+            switch (tag.getId()) {
+                case TagRegistry.WEAPON_STRIKE:
+                    doStrikeWeaponAttack(calculateMeleeDirection(loc));
+                    return;
+                case TagRegistry.WEAPON_THRUST:
+                    doThrustWeaponAttack(calculateMeleeDirection(loc));
+                    return;
+                case TagRegistry.WEAPON_SWEEP:
+                    doSweepWeaponAttack(calculateMeleeDirection(loc));
+                    return;
             }
         }
     }
@@ -266,6 +267,12 @@ public class CombatEntity extends Entity{
     }
 
     public Item getWeapon() {
+        if (weapon == null){
+            Item item = new Item(new ItemStruct(-1, 1, "no_weapon"));
+            TagRegistry tr = new TagRegistry();
+            item.addTag(tr.getTag(TagRegistry.WEAPON_STRIKE), item);
+            return item;
+        }
         return weapon;
     }
 

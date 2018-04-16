@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public class BasicEnemy extends CombatEntity {
 
     public BasicEnemy(){
-        setMaxHealth(10);
         ItemRegistry registry = new ItemRegistry();
         setWeapon(registry.generateItem(4).setQty(50));
     }

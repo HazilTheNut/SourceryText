@@ -54,6 +54,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         inv = new PlayerInventory(lm, this);
 
         setMaxHealth(20);
+        setStrength(1);
 
         hud = new HUD(lm, this);
 
@@ -240,7 +241,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 Entity target = gi.getEntityAt(levelPos);
                 while ((prevPos == null || !prevPos.equals(getLocation())) && !terminatePathing) {
                     prevPos = new Coordinate(getLocation().getX(), getLocation().getY());
-                    pathToPosition(levelPos, 50);
+                    pathToPosition(levelPos, 75);
                     gi.doEnemyTurn();
                     if (target != null && getLocation().stepDistance(target.getLocation()) <= 1){
                         target.onInteract(this);

@@ -33,7 +33,6 @@ public class HUD implements MouseInputReceiver{
         lm.addLayer(synopsisLayer);
 
         updateHUD();
-
     }
 
     private Coordinate mousePos;
@@ -74,7 +73,7 @@ public class HUD implements MouseInputReceiver{
         tempLayer.editLayer(pos, 0, new SpecialText(']', fontColor, bkg));
 
         pos+=2;
-        if (player.getWeapon() != null) {
+        if (player.getWeapon().getItemData().getItemId() > 0) {
             for (int ii = 0; ii < player.getInv().ITEM_STRING_LENGTH + 2; ii++) {
                 if (player.isInSpellMode())
                     tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(25, 25, 25)));
