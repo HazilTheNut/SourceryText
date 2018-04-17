@@ -27,6 +27,7 @@ import java.io.File;
  * Ctrl + N             New
  * Ctrl + Z             Undo
  * Ctrl + Shift + Z     Redo
+ * Ctrl + Q             Toggle Coordinate Tooltip
  *
  * 1            Art View
  * 2            Terrain View

@@ -12,19 +12,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * Created by Jared on 3/16/2018.
  */
 public class WarpZoneEditor extends JFrame{
 
-    ViewWindow window;
-    LayerManager lm;
-    WarpZone wz;
+    private ViewWindow window;
+    private LayerManager lm;
+    private WarpZone wz;
 
-    Layer warpZoneLayer;
+    private Layer warpZoneLayer;
 
     public WarpZoneEditor (LevelData ldata, WarpZone toEdit){
+        setTitle("Warp Zone Editor");
+
         wz = toEdit;
         window = new ViewWindow();
         addComponentListener(window);
@@ -41,6 +45,10 @@ public class WarpZoneEditor extends JFrame{
         warpZoneLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(50, 175, 0, 75)));
 
         lm.addLayer(warpZoneLayer);
+
+        ldata.updateWarpZoneLayer(toEdit.getNewRoomStartX(), toEdit.getNewRoomStartY());
+        ldata.getWarpZoneLayer().setVisible(true);
+        lm.addLayer(ldata.getWarpZoneLayer());
 
         updateCameraPos();
 
@@ -66,6 +74,10 @@ public class WarpZoneEditor extends JFrame{
 
         KeyInput input = new KeyInput();
         addKeyListener(input);
+
+        MouseInput mi = new MouseInput();
+        addMouseListener(mi);
+        addMouseMotionListener(mi);
 
         setMinimumSize(new Dimension(Math.max(wz.getWidth() * 40, 300), Math.max((wz.getHeight() * 50) + 50, 350)));
         setVisible(true);
@@ -110,12 +122,40 @@ public class WarpZoneEditor extends JFrame{
             if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT){
                 currentKeyCode = e.getKeyCode();
                 inputUpdate();
+            } else if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                confirm();
+            } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
+                dispose();
             }
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
             currentKeyCode = -1;
+        }
+    }
+
+    private class MouseInput extends MouseAdapter {
+        private Coordinate prevMouseLoc;
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            prevMouseLoc = getMousePos(e);
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            Coordinate mousePos = getMousePos(e);
+            if (mousePos.stepDistance(prevMouseLoc) > 0){
+                Coordinate diff = prevMouseLoc.subtract(mousePos);
+                warpZoneLayer.movePos(diff.getX(), diff.getY());
+                updateCameraPos();
+            }
+            prevMouseLoc = mousePos;
+        }
+
+        private Coordinate getMousePos(MouseEvent e){
+            return new Coordinate(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()));
         }
     }
 }
