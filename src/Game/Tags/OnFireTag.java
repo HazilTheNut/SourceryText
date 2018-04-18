@@ -3,6 +3,7 @@ package Game.Tags;
 import Engine.Layer;
 import Engine.SpecialText;
 import Data.Coordinate;
+import Game.DebugWindow;
 import Game.Entities.Entity;
 import Game.Level;
 import Game.Registries.TagRegistry;
@@ -72,7 +73,7 @@ public class OnFireTag extends Tag {
             }
             e.addCancelableAction(event -> {
                 e.getTarget().addTag(tagRegistry.getTag(TagRegistry.ON_FIRE), e.getSource());
-                System.out.printf("[OnFireTag.onContact] Set \'%1$s\' on fire", e.getTarget().getClass().getSimpleName());
+                DebugWindow.reportf(DebugWindow.TAGS, "[OnFireTag.onContact] Set \'%1$s\' on fire", e.getTarget().getClass().getSimpleName());
             });
         }
         e.setSuccess(true);

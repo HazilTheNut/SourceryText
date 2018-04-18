@@ -284,7 +284,7 @@ public class PlayerInventory implements MouseInputReceiver{
 
         private void moveOneItem(Item selected, Entity from, Entity to){
             if (selected.isStackable()) {
-                System.out.println("SubInventory.moveOneItem]");
+                DebugWindow.reportf(DebugWindow.GAME, "SubInventory.moveOneItem]");
                 selected.decrementQty();
                 from.scanInventory();
                 ItemStruct struct = selected.getItemData();
@@ -297,7 +297,7 @@ public class PlayerInventory implements MouseInputReceiver{
         }
 
         private void moveWholeItem(Item selected, Entity from, Entity to){
-            System.out.println("SubInventory.moveWholeItem]");
+            DebugWindow.reportf(DebugWindow.GAME, "SubInventory.moveWholeItem]");
             to.addItem(selected);
             from.removeItem(selected);
         }

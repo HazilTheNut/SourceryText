@@ -89,7 +89,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 FileIO io = new FileIO();
                 String path = io.getRootFilePath() + wz.getRoomFilePath();
                 Coordinate wzNewPos = new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY());
-                System.out.printf("[Player.checkForWarpZones] Attempting level file path: %1$s \n* wz pos: %2$s\n", path, wzNewPos);
+                DebugWindow.reportf(DebugWindow.GAME, "[Player.checkForWarpZones] Attempting level file path: %1$s \n* wz pos: %2$s\n", path, wzNewPos);
                 gi.enterLevel(path, wzNewPos.add(getLocation()).subtract(new Coordinate(wz.getXpos(), wz.getYpos())));
             }
         }
@@ -174,7 +174,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 spellMode = true;
                 updateHUD();
             } else if (e.getKeyCode() == KeyEvent.VK_L) {
-                System.out.printf("[Player LOG] pos: %1$s\n", getLocation());
+                DebugWindow.reportf(DebugWindow.GAME, "[Player LOG] pos: %1$s\n", getLocation());
                 lm.printLayerStack();
             } else if (e.getKeyCode() == KeyEvent.VK_Q){
                 inv.openOtherInventory(gi.getEntityAt(mouseLevelPos));
@@ -207,10 +207,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton) {
         if (mouseButton == MouseEvent.BUTTON1){
-            //System.out.println("[Player.onMouseClick] Left click event!");
+            DebugWindow.reportf(DebugWindow.STAGE, "[Player.onMouseClick] Left click event! l:%1$s s:%2$s", levelPos, screenPos);
             doLeftClick(levelPos);
         } else if (mouseButton == MouseEvent.BUTTON3){
-            //System.out.println("[Player.onMouseClick] Right click event!");
+            DebugWindow.reportf(DebugWindow.STAGE, "[Player.onMouseClick] Right click event! l:%1$s s:%2$s", levelPos, screenPos);
             doRightClick(levelPos);
         }
         return false;
@@ -226,7 +226,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 });
                 attackThread.start();
             } else {
-                System.out.printf("[Player.onMouseClick] Spell casted! %1$s\n", levelPos);
+                DebugWindow.reportf(DebugWindow.GAME, "[Player.onMouseClick] Spell casted! %1$s\n", levelPos);
                 OnFireTag forConvenience = new OnFireTag();
                 forConvenience.attemptFireTileSpread(getGameInstance().getCurrentLevel(), levelPos, 1);
             }

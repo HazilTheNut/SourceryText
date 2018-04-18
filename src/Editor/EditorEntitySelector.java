@@ -88,7 +88,7 @@ public class EditorEntitySelector extends JFrame {
                 setText(struct.getEntityName());
             } else {
                 setIcon(new SingleTextRenderer(new SpecialText('/', Color.RED, Color.BLACK)));
-                setText("ENTITY LOAD ERROR");
+                setText("GAME LOAD ERROR");
             }
             if (isSelected) {
                 setBackground(list.getSelectionBackground());

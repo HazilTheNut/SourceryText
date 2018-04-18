@@ -26,6 +26,8 @@ public class LayerManager {
     private Timer drawTimer;
     private ViewWindow window;
 
+    private long previousCompileTime;
+
     int arbitraryNumber = 0;
 
     private class DrawUpdateTask extends TimerTask {
@@ -126,7 +128,12 @@ public class LayerManager {
 
     public ArrayList<Layer> getLayerStack() { return layerStack; }
 
+    public long getPreviousCompileTime() {
+        return previousCompileTime;
+    }
+
     private Layer compileLayers(Dimension targetResolution){
+        long startTime = System.nanoTime();
         try {
             bufferOneOpen = !bufferOneOpen;
             if (bufferOneOpen) {//Why it's you might ask? Well, don't we want to operate from the closed buffer?
@@ -148,6 +155,7 @@ public class LayerManager {
             }
         }
         finalResult.convertNullToOpaque();
+        previousCompileTime = System.nanoTime() - startTime;
         return finalResult;
     }
 

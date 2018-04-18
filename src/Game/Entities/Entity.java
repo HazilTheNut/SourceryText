@@ -72,7 +72,7 @@ public class Entity extends TagHolder{
         if (getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)))) {
             location.movePos(relativeX, relativeY);
             lm.getLayer(sprite.getName()).movePos(relativeX, relativeY);
-            //System.out.printf("[Entity.move] \'%1$s\':\n", getName());
+            DebugWindow.reportf(DebugWindow.GAME, "[Entity.move] \'%1$s\'", getName());
             onContact(gi.getTileAt(location), gi);
         }
     }

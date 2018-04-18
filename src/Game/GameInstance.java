@@ -28,8 +28,6 @@ public class GameInstance {
 
     private LayerManager lm;
 
-    private DebugWindow debugWindow;
-
     public GameInstance(LayerManager manager, ViewWindow window){
 
         lm = manager;
@@ -40,13 +38,11 @@ public class GameInstance {
 
         enterLevel(io.decodeFilePath(io.chooseLevel().getPath()), new Coordinate(40, 43));
 
-        debugWindow = new DebugWindow();
-
         window.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_F8)
-                    debugWindow.setVisible(true);
+                    DebugWindow.open();
             }
         });
     }
@@ -58,7 +54,7 @@ public class GameInstance {
         }
         for (Level level : levels){
             if (level.getFilePath().equals(levelFilePath)){
-                System.out.printf("[GameInstance.enterLevel] Level already found loaded at %1$s\n", levelFilePath);
+                DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.enterLevel] Level already found loaded at %1$s", levelFilePath);
                 currentLevel = level;
                 startLevel(currentLevel, playerPos);
                 return;
@@ -166,10 +162,6 @@ public class GameInstance {
         return currentLevel;
     }
 
-    public DebugWindow getDebugWindow() {
-        return debugWindow;
-    }
-
     private class EnemyTurnThread extends Thread {
 
         @Override
@@ -188,9 +180,21 @@ public class GameInstance {
                 tile.onTurn(GameInstance.this);
             }
             runTimes[3] = System.nanoTime();
-            debugWindow.reportPerformance(runTimes);
+            reportUpdatePerformance(runTimes);
             player.updateInventory();
             isPlayerTurn = true;
+        }
+    }
+
+    private void reportUpdatePerformance(long[] times){
+        if (times.length >= 4) {
+            double entityop   = (double)(times[1] - times[0]) / 1000000;
+            double entityturn = (double)(times[2] - times[1]) / 1000000;
+            double tileupdate = (double)(times[3] - times[2]) / 1000000;
+            double total      = (double)(times[3] - times[0]) / 1000000;
+            DebugWindow.clear(DebugWindow.PERFORMANCE);
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "[GameInstance] Turn Update Results:\n>  entityop:   %1$fms\n>  entityturn: %2$fms\n>  tileupdate: %3$fms\n\n>   TOTAL: %4$fms", entityop, entityturn, tileupdate, total);
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "\n[GameInstance] Previous Draw Time:\n>  %1$fms", (double)lm.getPreviousCompileTime() / 1000000);
         }
     }
 

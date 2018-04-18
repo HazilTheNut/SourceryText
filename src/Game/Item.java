@@ -30,7 +30,7 @@ public class Item extends TagHolder{
     }
 
     TagEvent onItemUse(TagHolder target){
-        System.out.printf("[Item] \'%1$s\' Tags:\n", itemData.getName());
+        DebugWindow.reportf(DebugWindow.GAME, "[Item.onItemUse] \'%1$s\' Tags:\n", itemData.getName());
         TagEvent useEvent;
         if (target instanceof Entity) {
             Entity entity = (Entity) target;
@@ -39,7 +39,7 @@ public class Item extends TagHolder{
             useEvent = new TagEvent(0, false, this, target, null);
         }
         for (Tag tag : getTags()) {
-            System.out.printf("[Item] > %1$s\n", tag.getName());
+            DebugWindow.reportf(DebugWindow.GAME, "[Item] > %1$s\n", tag.getName());
             tag.onItemUse(useEvent);
         }
         return useEvent;

@@ -4,6 +4,7 @@ import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.DebugWindow;
 import Game.GameInstance;
 import Game.Item;
 import Game.Registries.TagRegistry;
@@ -159,7 +160,7 @@ public class CombatEntity extends Entity{
         int dx =  target.getX() - getLocation().getX();
         double angle = (180 / Math.PI) * Math.atan2(dy, dx);
         if (angle < 0) angle += 360;
-        System.out.printf("[CombatEntity.calculateMeleeDirection] Angle: %1$f dx: %2$d dy: %3$d\n", angle, dx, dy);
+        DebugWindow.reportf(DebugWindow.GAME, "[CombatEntity.calculateMeleeDirection] Angle: %1$f dx: %2$d dy: %3$d", angle, dx, dy);
         for (int dir : directions){
             if (Math.abs(angle - dir) <= 22.5)
                 return dir;

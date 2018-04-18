@@ -60,7 +60,7 @@ public class GameMouseInput implements MouseInputListener{
     public void mousePressed(MouseEvent e) {
         Coordinate mousePos = new Coordinate(e.getX(), e.getY());
         for (MouseInputReceiver receiver : inputReceivers){
-            //System.out.printf("[GameMouseInput] Mouse button \'%1$d\' fired for class \'%2$s\'\n", e.getButton(), receiver.getClass().getSimpleName());
+            DebugWindow.reportf(DebugWindow.STAGE, "[GameMouseInput] Mouse button \'%1$d\' fired for class \'%2$s\'", e.getButton(), receiver.getClass().getSimpleName());
             if (receiver.onMouseClick(getTiledMousePos(mousePos), getScreenPos(mousePos), e.getButton())){
                 return;
             }

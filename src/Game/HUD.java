@@ -130,7 +130,7 @@ public class HUD implements MouseInputReceiver{
 
     private void drawEntitySynopsis(Entity e){
         boxHeight++;
-        System.out.printf("[HUD] Entity name: \"%1$s\"\n", e.getName());
+        DebugWindow.reportf(DebugWindow.MISC, "[HUD.drawEntitySynopsis] Entity name: \"%1$s\"", e.getName());
         boxLength = Math.max(boxLength, e.getName().length() + 2);
         synopsisLayer.inscribeString(e.getName(), 1, startingRow);
         if (e instanceof CombatEntity){
