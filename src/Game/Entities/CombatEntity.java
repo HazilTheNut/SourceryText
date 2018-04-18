@@ -40,6 +40,7 @@ public class CombatEntity extends Entity{
     private static final int[] directions = {RIGHT, UP_RIGHT, UP, UP_LEFT, LEFT, DOWN_LEFT, DOWN, DOWN_RIGHT, RIGHT_360};
 
     private Item weapon;
+    private Layer swooshLayer;
 
     protected void setMaxHealth(int maxHP){
         maxHealth = maxHP;
@@ -94,6 +95,13 @@ public class CombatEntity extends Entity{
         setMaxHealth(readIntArg(hpArg, defaultMaxHealth));
         EntityArg strArg = searchForArg(entityStruct.getArgs(), "strength");
         setStrength(readIntArg(strArg, defaultStrength));
+        initSwwoshLayer();
+    }
+
+    protected void initSwwoshLayer(){
+        swooshLayer = new Layer(new SpecialText[1][1], getSprite().getName().concat("_attack"), 0, 0, LayerImportances.ANIMATION);
+        swooshLayer.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 150)));
+        lm.addLayer(swooshLayer);
     }
 
     @Override
@@ -110,11 +118,10 @@ public class CombatEntity extends Entity{
     }
 
     private boolean attack(Coordinate loc){
-        Layer swooshLayer = new Layer(new SpecialText[1][1], getSprite().getName().concat("_attack"), loc.getX(), loc.getY(), LayerImportances.ANIMATION);
-        swooshLayer.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 150)));
-        lm.addLayer(swooshLayer);
+        swooshLayer.setVisible(true);
+        swooshLayer.setPos(loc);
         turnSleep(75);
-        lm.removeLayer(swooshLayer);
+        swooshLayer.setVisible(false);
         Entity entity = getGameInstance().getEntityAt(loc);
         if (entity != null && entity instanceof CombatEntity){
             doAttackEvent((CombatEntity)entity);

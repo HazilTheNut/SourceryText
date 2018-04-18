@@ -63,6 +63,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         TagRegistry tagRegistry = new TagRegistry();
         addTag(tagRegistry.getTag(TagRegistry.FLAMMABLE), this);
 
+        initSwwoshLayer();
+
     }
 
     public void updateCameraPos(){

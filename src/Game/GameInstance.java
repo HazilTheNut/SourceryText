@@ -8,6 +8,8 @@ import Game.Entities.Entity;
 import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -26,6 +28,8 @@ public class GameInstance {
 
     private LayerManager lm;
 
+    private DebugWindow debugWindow;
+
     public GameInstance(LayerManager manager, ViewWindow window){
 
         lm = manager;
@@ -35,6 +39,16 @@ public class GameInstance {
         player = new Player(window, manager, this);
 
         enterLevel(io.decodeFilePath(io.chooseLevel().getPath()), new Coordinate(40, 43));
+
+        debugWindow = new DebugWindow();
+
+        window.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_F8)
+                    debugWindow.setVisible(true);
+            }
+        });
     }
 
     public void enterLevel(String levelFilePath, Coordinate playerPos){
@@ -152,19 +166,29 @@ public class GameInstance {
         return currentLevel;
     }
 
+    public DebugWindow getDebugWindow() {
+        return debugWindow;
+    }
+
     private class EnemyTurnThread extends Thread {
 
         @Override
         public void run() {
+            long[] runTimes = new long[4];
+            runTimes[0] = System.nanoTime();
             for (EntityOperation op : entityOperations) {
                 op.run();
             }
+            runTimes[1] = System.nanoTime();
             for (Entity e : currentLevel.getEntities()) {
                 e.onTurn();
             }
+            runTimes[2] = System.nanoTime();
             for (Tile tile : currentLevel.getAllTiles()){
                 tile.onTurn(GameInstance.this);
             }
+            runTimes[3] = System.nanoTime();
+            debugWindow.reportPerformance(runTimes);
             player.updateInventory();
             isPlayerTurn = true;
         }

@@ -17,8 +17,8 @@ public class EntityRegistry {
     private TreeMap<Integer, Class> entityObjMap = new TreeMap<>();
 
     public EntityRegistry(){
-        registerEntity(2,  "Basic Enemy",          new SpecialText('E', new Color(255, 130, 130), new Color(255, 180, 180, 15)), BasicEnemy.class, TagRegistry.FLAMMABLE);
-        registerEntity(4,  "Chest",                new SpecialText('C', new Color(245, 245, 175), new Color(175, 100,  35, 45)), Chest.class);
+        registerEntity(2,  "Basic Enemy", new SpecialText('E', new Color(255, 130, 130), new Color(255, 180, 180, 15)), BasicEnemy.class, TagRegistry.FLAMMABLE);
+        registerEntity(4,  "Chest",       new SpecialText('C', new Color(245, 245, 175), new Color(175, 100,  35, 45)), Chest.class);
     }
 
     public int[] getMapKeys() {

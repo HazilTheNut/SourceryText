@@ -29,9 +29,9 @@ import java.io.File;
  * Ctrl + Shift + Z     Redo
  * Ctrl + Q             Toggle Coordinate Tooltip
  *
- * 1            Art View
- * 2            Terrain View
- * 3            Entity View
+ * F1            Art View
+ * F2            Terrain View
+ * F3            Entity View
  *
  * X            Expand Room
  *
