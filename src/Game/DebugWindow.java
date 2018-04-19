@@ -1,8 +1,6 @@
 package Game;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -55,8 +53,8 @@ public class DebugWindow{
         tabbedPane.addTab("Perf",   createScrollPane(tabbedPane, performance));
         tabbedPane.addTab("Stage",  createScrollPane(tabbedPane, stage));
         tabbedPane.addTab("Tags",   createScrollPane(tabbedPane, tags));
-        tabbedPane.addTab("Entity", createScrollPane(tabbedPane, game));
-        tabbedPane.addTab("Misc",  createScrollPane(tabbedPane, misc));
+        tabbedPane.addTab("Game",   createScrollPane(tabbedPane, game));
+        tabbedPane.addTab("Misc",   createScrollPane(tabbedPane, misc));
 
         frame.add(tabbedPane, BorderLayout.CENTER);
 

@@ -166,4 +166,13 @@ public class Entity extends TagHolder{
     }
 
     public void onInteract(Player player){}
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Entity) {
+            Entity entity = (Entity) obj;
+            return entity.getSprite().getName().equals(getSprite().getName());
+        }
+        return false;
+    }
 }

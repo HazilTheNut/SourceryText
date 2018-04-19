@@ -226,9 +226,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 });
                 attackThread.start();
             } else {
-                DebugWindow.reportf(DebugWindow.GAME, "[Player.onMouseClick] Spell casted! %1$s\n", levelPos);
-                OnFireTag forConvenience = new OnFireTag();
-                forConvenience.attemptFireTileSpread(getGameInstance().getCurrentLevel(), levelPos, 1);
+                DebugWindow.reportf(DebugWindow.GAME, "[Player.onMouseClick] Spell casted! %1$s", levelPos);
+                Projectile spellProj = new Projectile(this, levelPos, new SpecialText('*'), lm);
+                Thread spellThread = new Thread(() -> spellProj.launchProjectile(15, getGameInstance()));
+                spellThread.start();
             }
         }
     }

@@ -57,7 +57,6 @@ public class TagHolder {
         DebugWindow.reportf(DebugWindow.TAGS, "[TagHolder.onContact] TagHolder \'" + this.getClass().getSimpleName() + "\'");
         DebugWindow.reportf(DebugWindow.TAGS, "[TagHolder.onContact] Tags of me: " + getTagList());
         DebugWindow.reportf(DebugWindow.TAGS, "[TagHolder.onContact] Tags of other: " + other.getTagList());
-        /**/
     }
 
     private void contactEvent(TagHolder source, TagHolder target, GameInstance gi){
