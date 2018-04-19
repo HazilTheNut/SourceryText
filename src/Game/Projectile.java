@@ -29,8 +29,8 @@ public class Projectile extends TagHolder {
         source = creator;
         xpos = creator.getLocation().getX();
         ypos = creator.getLocation().getY();
-        double angle = Math.atan2(target.getY() - (int)ypos, target.getX() - (int)xpos);
-        DebugWindow.reportf(DebugWindow.GAME, "[Projectile.init] Start pos: %1$s; Angle: %2$f", creator.getLocation(), angle);
+        double angle = Math.atan2(target.getY() - Math.round(ypos), target.getX() - Math.round(xpos));
+        DebugWindow.reportf(DebugWindow.GAME, "[Projectile.init] Start pos: %1$s; Angle: %2$f", creator.getLocation(), angle * (180 / Math.PI));
         xvelocity = UNITS_PER_CYCLE * Math.cos(angle);
         yvelocity = UNITS_PER_CYCLE * Math.sin(angle);
         iconLayer = new Layer(1, 1, creator.getLocation().toString() + target.toString() + icon.toString(), (int)xpos, (int)ypos, LayerImportances.ANIMATION);
@@ -47,7 +47,7 @@ public class Projectile extends TagHolder {
         for (int i = 0; i < totalCycles; i++) {
             xpos += xvelocity;
             ypos += yvelocity;
-            Coordinate newPos = new Coordinate((int)xpos, (int)ypos);
+            Coordinate newPos = new Coordinate((int)Math.round(xpos), (int)Math.round(ypos));
             iconLayer.setPos(newPos);
             DebugWindow.reportf(DebugWindow.GAME, "[Projectile.launchProjectile] pos: %1$s", newPos);
             Entity entity = gi.getEntityAt(newPos);
@@ -62,7 +62,7 @@ public class Projectile extends TagHolder {
                     return;
                 }
             }
-            sleep(120);
+            sleep(50);
         }
         collideWithTerrain(gi);
     }
