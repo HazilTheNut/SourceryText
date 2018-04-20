@@ -10,9 +10,10 @@ import Engine.SpecialText;
 import Engine.ViewWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
-import Game.Registries.ItemRegistry;
 import Game.Registries.TagRegistry;
-import Game.Tags.OnFireTag;
+import Game.Spells.FireBoltSpell;
+import Game.Spells.MagicBoltSpell;
+import Game.Spells.Spell;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -33,6 +34,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     private Coordinate mouseLevelPos;
 
     private boolean spellMode = false;
+
+    private ArrayList<Spell> spells = new ArrayList<>();
+    private Spell equippedSpell;
 
     Player(ViewWindow window, LayerManager lm, GameInstance gameInstance){
 
@@ -56,15 +60,18 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         setMaxHealth(20);
         setStrength(1);
 
-        hud = new HUD(lm, this);
-
         setName("Player");
 
-        TagRegistry tagRegistry = new TagRegistry();
-        addTag(tagRegistry.getTag(TagRegistry.FLAMMABLE), this);
+        addTag(TagRegistry.getTag(TagRegistry.FLAMMABLE), this);
 
         initSwwoshLayer();
 
+        MagicBoltSpell spell = new MagicBoltSpell();
+        spells.add(spell);
+        spells.add(new FireBoltSpell());
+        equippedSpell = spell;
+
+        hud = new HUD(lm, this);
     }
 
     public void updateCameraPos(){
@@ -142,9 +149,21 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     public PlayerInventory getInv() { return inv; }
 
+    public Spell getEquippedSpell() {
+        return equippedSpell;
+    }
+
+    public ArrayList<Spell> getSpells() {
+        return spells;
+    }
+
+    public void setEquippedSpell(Spell equippedSpell) {
+        this.equippedSpell = equippedSpell;
+    }
+
     public void assignMouseInput(GameMouseInput mi){
-        mi.addInputReceiver(inv);
         mi.addInputReceiver(hud);
+        mi.addInputReceiver(inv);
         mi.addInputReceiver(this);
     }
 
@@ -227,8 +246,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 attackThread.start();
             } else {
                 DebugWindow.reportf(DebugWindow.GAME, "[Player.onMouseClick] Spell casted! %1$s", levelPos);
-                Projectile spellProj = new Projectile(this, levelPos, new SpecialText('*'), lm);
-                Thread spellThread = new Thread(() -> spellProj.launchProjectile(15, getGameInstance()));
+                Thread spellThread = new Thread(() -> {
+                    equippedSpell.castSpell(levelPos, this, getGameInstance());
+                    gi.doEnemyTurn();
+                });
                 spellThread.start();
             }
         }

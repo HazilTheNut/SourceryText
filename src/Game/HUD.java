@@ -7,6 +7,7 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.Spells.Spell;
 
 import java.awt.*;
 
@@ -20,6 +21,8 @@ public class HUD implements MouseInputReceiver{
     private Layer HUDLayer;
     private Layer synopsisLayer;
 
+    private SpellMenu spellMenu;
+
     public HUD (LayerManager lm, Player player){
 
         this.player = player;
@@ -31,6 +34,8 @@ public class HUD implements MouseInputReceiver{
         synopsisLayer = new Layer(new SpecialText[59][20], "Synopsis", 0, 26, LayerImportances.HUD);
         synopsisLayer.fixedScreenPos = true;
         lm.addLayer(synopsisLayer);
+
+        spellMenu = new SpellMenu(player);
 
         updateHUD();
     }
@@ -64,7 +69,7 @@ public class HUD implements MouseInputReceiver{
 
         for (int ii = 1; ii <= 10; ii++){
             double diff = playerHealthPercentage - ((double)ii / 10);
-            if (diff >= 0)
+            if (diff >= 0) //Draw health bar
                 tempLayer.editLayer(pos, 0, new SpecialText('=', fontColor, hpBkgColor));
             else
                 tempLayer.editLayer(pos, 0, new SpecialText('_', fontColor, bkg));
@@ -86,13 +91,8 @@ public class HUD implements MouseInputReceiver{
         }
 
         pos++;
-        for (int ii = 0; ii < 13; ii++){
-            if (player.isInSpellMode())
-                tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(37, 34, 43)));
-            else
-                tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(28, 25, 32)));
-        }
-        tempLayer.inscribeString("Finger Snap", pos, 0);
+        spellMenu.getMenuLayer().setPos(pos, 0);
+        spellMenu.drawTopBand();
         pos += 13;
 
         pos++;
@@ -155,16 +155,17 @@ public class HUD implements MouseInputReceiver{
     @Override
     public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
         if (!screenPos.equals(mousePos)) {
-            if (screenPos.getY() <= 1) {
+            if (screenPos.getY() <= 1 || (mousePos != null && mousePos.getY() <= 1)) {
                 updateHUD();
             }
             updateSynopsis(levelPos);
         }
         mousePos = screenPos;
+        spellMenu.onMouseMove(screenPos);
     }
 
     @Override
-    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPo, int mouseButtons) {
+    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButtons) {
         if (mousePos.equals(new Coordinate(0,0))){
             if (player.getInv().getPlayerInv().isShowing())
                 player.getInv().getPlayerInv().close();
@@ -172,6 +173,121 @@ public class HUD implements MouseInputReceiver{
                 player.getInv().getPlayerInv().show();
             updateHUD();
         }
-        return false;
+        return spellMenu.onMouseClick(screenPos);
+    }
+
+    private class SpellMenu {
+
+        private Layer menuLayer;
+        private Layer cursorLayer;
+        private Player player;
+
+        private int listLength;
+        private boolean isShowing = false;
+        private boolean mouseOverDropdownBtn = false;
+
+        private Coordinate prevMousePos;
+
+        private SpellMenu(Player player){
+            menuLayer = new Layer(13, 50, "HUD_spellmenu", 0, 0, LayerImportances.HUD_SPELL_MENU);
+            menuLayer.fixedScreenPos = true;
+            cursorLayer = new Layer(13, 1, "HUD_spellcursor", 0, 0, LayerImportances.HUD_SPELL_CURSOR);
+            cursorLayer.fixedScreenPos = true;
+            cursorLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(210, 210, 210, 100)));
+            cursorLayer.setVisible(false);
+            this.player = player;
+            player.getGameInstance().getLayerManager().addLayer(menuLayer);
+            player.getGameInstance().getLayerManager().addLayer(cursorLayer);
+        }
+
+        void show(){
+            isShowing = true;
+            menuLayer.clearLayer();
+            drawTopBand();
+            listLength = player.getSpells().size();
+            DebugWindow.reportf(DebugWindow.STAGE, "[HUD.SpellMenu.show] player spell stack size: %1$d", listLength);
+            for (int i = 0; i < listLength; i++) {
+                drawBand(new Color(11, 10, 15), i+1);
+                DebugWindow.reportf(DebugWindow.STAGE, "[HUD.SpellMenu.show] Player spell: %1$s", player.getSpells().get(i).getName());
+                menuLayer.inscribeString(player.getSpells().get(i).getName(), 0, i+1);
+            }
+        }
+
+        void hide(){
+            isShowing = false;
+            menuLayer.clearLayer();
+            cursorLayer.setVisible(false);
+            drawTopBand();
+        }
+
+        private void drawTopBand(){
+            for (int i = 0; i < 13; i++) {
+                if (isShowing)
+                    drawBand(new Color(44, 41, 51), 0);
+                else if (player.isInSpellMode() || isMouseOnDropdownBtn(mousePos))
+                    drawBand(new Color(37, 34, 43), 0);
+                else
+                    drawBand(new Color(28, 25, 32), 0);
+            }
+            menuLayer.inscribeString(player.getEquippedSpell().getName(), 0, 0, new Color(237, 235, 247));
+        }
+
+        private void drawBand(Color color, int row){
+            for (int i = 0; i < 13; i++) {
+                menuLayer.editLayer(i, row, new SpecialText(' ', Color.WHITE, color));
+            }
+        }
+
+        Layer getMenuLayer(){ return menuLayer; }
+
+        private boolean isMouseOnDropdownBtn(Coordinate screenPos){
+            return screenPos != null && screenPos.getX() >= menuLayer.getX() && screenPos.getX() < menuLayer.getX() + menuLayer.getCols() && screenPos.getY() == menuLayer.getY();
+        }
+
+        boolean onMouseClick(Coordinate screenPos){
+            if (isMouseOnDropdownBtn(screenPos)){
+                if (screenPos.getY() == menuLayer.getY()) {
+                    if (isShowing)
+                        hide();
+                    else
+                        show();
+                    return true;
+                }
+            }
+            Spell atCursor = getSpellAtCursor(screenPos);
+            if (isShowing && atCursor != null){
+                player.setEquippedSpell(atCursor);
+                hide();
+                updateHUD();
+                return true;
+            }
+            return false;
+        }
+
+        private Spell getSpellAtCursor(Coordinate screenPos){
+            if (isShowing && screenPos.getX() >= menuLayer.getX() && screenPos.getX() - menuLayer.getX() < menuLayer.getCols() && screenPos.getY() > 0 && screenPos.getY() <= listLength){
+                return player.getSpells().get(screenPos.getY()-1);
+            }
+            return null;
+        }
+
+        void onMouseMove(Coordinate screenPos){
+            if (isMouseOnDropdownBtn(screenPos) && !mouseOverDropdownBtn){
+                mouseOverDropdownBtn = true;
+                drawTopBand();
+            } else if (!isMouseOnDropdownBtn(screenPos) && mouseOverDropdownBtn){
+                mouseOverDropdownBtn = false;
+                drawTopBand();
+            }
+            if (isShowing && (prevMousePos == null || !prevMousePos.equals(screenPos))) { //
+                if (getSpellAtCursor(screenPos) != null){
+                    cursorLayer.setVisible(true);
+                    cursorLayer.setPos(menuLayer.getX(), screenPos.getY());
+                } else {
+                    cursorLayer.setVisible(false);
+                }
+                prevMousePos = screenPos;
+            }
+        }
     }
 }

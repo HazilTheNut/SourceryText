@@ -12,7 +12,7 @@ import java.util.TreeMap;
  */
 public class TagRegistry {
 
-    private TreeMap<Integer, TagStruct> tagMap = new TreeMap<>();
+    private static TreeMap<Integer, TagStruct> tagMap = new TreeMap<>();
 
     /**
      * Tag Organization:
@@ -44,7 +44,7 @@ public class TagRegistry {
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
 
-    public TagRegistry(){
+    static {
         registerTag(FLAMMABLE, "Flammable", FlammableTag.class);
         registerTag(ON_FIRE,   "On Fire",   OnFireTag.class);
         registerTag(BURN_SLOW, "Slow Burning", BurnSlowTag.class);
@@ -83,7 +83,7 @@ public class TagRegistry {
      * @param id Tag id to generate from
      * @return Generated tag
      */
-    public Tag getTag(int id) {
+    public static Tag getTag(int id) {
         if (id >= DAMAGE_START && id < HEALTH_START){
             DamageTag tag = new DamageTag(id - DAMAGE_START);
             tag.setName(String.format("Damage: %1$d", id - DAMAGE_START));
@@ -99,7 +99,7 @@ public class TagRegistry {
         }
     }
 
-    private Tag generateTag(int id){
+    private static Tag generateTag(int id){
         Class tagClass = tagMap.get(id).getTagClass();
         if (tagClass != null){
             DebugWindow.reportf(DebugWindow.TAGS, "[TagRegistry.generateTag] ID: %1$d Name: %2$s", id, tagClass.getName());
@@ -123,11 +123,11 @@ public class TagRegistry {
         }
     }
 
-    private void registerTag(int id, String name, Class tagClass){
+    private static void registerTag(int id, String name, Class tagClass){
         tagMap.put(id, new TagStruct(name, tagClass));
     }
 
-    private class TagStruct{
+    private static class TagStruct{
         private String name;
         private Class tagClass;
         private TagStruct(String name, Class tagClass){
