@@ -190,6 +190,10 @@ public class PlayerInventory implements MouseInputReceiver{
             return e;
         }
 
+        public int getMode() {
+            return mode;
+        }
+
         void updateDisplay(){
             Layer tempLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 2][getInvHeight()+1], "temp", 0, 0);
             ArrayList<Item> items = e.getItems();

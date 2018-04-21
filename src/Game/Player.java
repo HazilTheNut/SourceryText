@@ -15,6 +15,7 @@ import Game.Spells.FireBoltSpell;
 import Game.Spells.MagicBoltSpell;
 import Game.Spells.Spell;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -40,6 +41,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     private int numberSpellBeads = 2;
     private ArrayList<Integer> cooldowns = new ArrayList<>();
 
+    private int noEnterWarpZoneTimer = 0;
+
     Player(ViewWindow window, LayerManager lm, GameInstance gameInstance){
 
         super.lm = lm;
@@ -47,7 +50,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         window.addKeyListener(this);
 
         Layer playerLayer = new Layer(new SpecialText[1][1], "player", 0, 0, LayerImportances.ENTITY);
-        playerLayer.editLayer(0, 0, new SpecialText('@'));
+        playerLayer.editLayer(0, 0, new SpecialText('@', new Color(224, 255, 217)));
 
         lm.addLayer(playerLayer);
 
@@ -94,12 +97,15 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         ArrayList<WarpZone> warpZones = gi.getCurrentLevel().getWarpZones();
         for (WarpZone wz : warpZones){
             if (wz.isInsideZone(getLocation())){
-                terminatePathing = true;
-                FileIO io = new FileIO();
-                String path = io.getRootFilePath() + wz.getRoomFilePath();
-                Coordinate wzNewPos = new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY());
-                DebugWindow.reportf(DebugWindow.GAME, "[Player.checkForWarpZones] Attempting level file path: %1$s \n* wz pos: %2$s\n", path, wzNewPos);
-                gi.enterLevel(path, wzNewPos.add(getLocation()).subtract(new Coordinate(wz.getXpos(), wz.getYpos())));
+                if (noEnterWarpZoneTimer == 0) {
+                    noEnterWarpZoneTimer = 2;
+                    terminatePathing = true;
+                    FileIO io = new FileIO();
+                    String path = io.getRootFilePath() + wz.getRoomFilePath();
+                    Coordinate wzNewPos = new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY());
+                    DebugWindow.reportf(DebugWindow.GAME, "[Player.checkForWarpZones] Attempting level file path: %1$s \n* wz pos: %2$s\n", path, wzNewPos);
+                    gi.enterLevel(path, wzNewPos.add(getLocation()).subtract(new Coordinate(wz.getXpos(), wz.getYpos())));
+                }
             }
         }
     }
@@ -125,6 +131,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         super.move(relativeX, relativeY);
         checkForWarpZones();
         updateCameraPos();
+        if (inv.getOtherInv().getMode() == PlayerInventory.CONFIG_OTHER_EXCHANGE && inv.getOtherInv().isShowing()){
+            inv.closeOtherInventory();
+            inv.getPlayerInv().close();
+        }
     }
 
     @Override
@@ -161,6 +171,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 i--; //To account for the list shifting down
             }
         }
+        if (noEnterWarpZoneTimer > 0) noEnterWarpZoneTimer--;
+        DebugWindow.reportf(DebugWindow.GAME, "[Player.onTurn] noEnterWarpZoneTimer: %1$d", noEnterWarpZoneTimer);
     }
 
     public PlayerInventory getInv() { return inv; }
