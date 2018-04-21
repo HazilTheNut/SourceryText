@@ -90,9 +90,12 @@ public class GameMouseInput implements MouseInputListener{
     @Override
     public void mouseMoved(MouseEvent e) {
         mouseHighlight.setPos(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()));
+        //DebugWindow.reportf(DebugWindow.STAGE, "[GameMouseInput] mouse move event");
         Coordinate mousePos = new Coordinate(e.getX(), e.getY());
         for (MouseInputReceiver receiver : inputReceivers){
-            receiver.onMouseMove(getTiledMousePos(mousePos), getScreenPos(mousePos));
+            //DebugWindow.reportf(DebugWindow.STAGE, "[GameMouseInput] Mouse move fired for class \'%2$s\'", e.getButton(), receiver.getClass().getSimpleName());
+            if (receiver.onMouseMove(getTiledMousePos(mousePos), getScreenPos(mousePos)))
+                return;
         }
     }
 

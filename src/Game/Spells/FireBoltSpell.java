@@ -22,10 +22,11 @@ public class FireBoltSpell extends Spell {
     }
 
     @Override
-    public void castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi) {
+    public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi) {
         Projectile fireBolt = new Projectile(spellCaster, targetLoc, icon, gi.getLayerManager());
         fireBolt.addTag(TagRegistry.getTag(TagRegistry.DAMAGE_START + 4), spellCaster);
         fireBolt.addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), spellCaster);
         fireBolt.launchProjectile(12, gi);
+        return 22;
     }
 }

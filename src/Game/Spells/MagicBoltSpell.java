@@ -22,9 +22,10 @@ public class MagicBoltSpell extends Spell {
     }
 
     @Override
-    public void castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi) {
+    public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi) {
         Projectile magicBolt = new Projectile(spellCaster, targetLoc, icon, gi.getLayerManager());
         magicBolt.addTag(TagRegistry.getTag(TagRegistry.DAMAGE_START + 4), spellCaster);
         magicBolt.launchProjectile(25, gi);
+        return 15;
     }
 }

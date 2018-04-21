@@ -9,7 +9,14 @@ import Game.GameInstance;
  */
 public class Spell {
 
-    public void castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi){}
+    /**
+     * Perfroms spell cast
+     * @param targetLoc Target location for spell (aiming, etc.)
+     * @param spellCaster The one doing the spell casting
+     * @param gi The Game Instance
+     * @return The spell's cooldown
+     */
+    public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi){ return 0; }
 
     public String getName(){ return "~";}
 

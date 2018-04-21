@@ -110,7 +110,7 @@ public class PlayerInventory implements MouseInputReceiver{
     private Coordinate prevMousePos;
 
     @Override
-    public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
+    public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
         if (prevMousePos == null || !prevMousePos.equals(screenPos)) {
             prevMousePos = screenPos;
             selectorLayer.setVisible(false);
@@ -118,6 +118,7 @@ public class PlayerInventory implements MouseInputReceiver{
             playerInv.onMouseMove(screenPos);
             otherInv.onMouseMove(screenPos);
         }
+        return false;
     }
 
     @Override

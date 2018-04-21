@@ -93,12 +93,20 @@ public class HUD implements MouseInputReceiver{
         pos++;
         spellMenu.getMenuLayer().setPos(pos, 0);
         spellMenu.drawTopBand();
-        pos += 13;
+        pos += spellMenu.width;
 
         pos++;
-        for (int ii = 0; ii < 3; ii++){
-            tempLayer.inscribeString("*00", pos, 0);
-            pos += 3;
+        int spellBeadCutoff = player.getNumberSpellBeads() - player.getCooldowns().size();
+        for (int ii = 0; ii < player.getNumberSpellBeads(); ii++){
+            if (ii < spellBeadCutoff) {
+                tempLayer.editLayer(pos, 0, new SpecialText('*', new Color(110, 65, 230), bkg)); //Draws 'enabled' spell beads
+                pos++;
+            } else {
+                tempLayer.editLayer(pos, 0, new SpecialText('_', new Color(102, 55, 85), new Color(29, 22, 38)));
+                String cdText = (player.getCooldowns().get(ii - spellBeadCutoff)).toString();
+                tempLayer.inscribeString(cdText, pos+1, 0, new Color(235, 0, 100));
+                pos += cdText.length() + 1;
+            }
         }
 
         HUDLayer.transpose(tempLayer);
@@ -153,7 +161,7 @@ public class HUD implements MouseInputReceiver{
     }
 
     @Override
-    public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
+    public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
         if (!screenPos.equals(mousePos)) {
             if (screenPos.getY() <= 1 || (mousePos != null && mousePos.getY() <= 1)) {
                 updateHUD();
@@ -161,7 +169,7 @@ public class HUD implements MouseInputReceiver{
             updateSynopsis(levelPos);
         }
         mousePos = screenPos;
-        spellMenu.onMouseMove(screenPos);
+        return spellMenu.onMouseMove(screenPos);
     }
 
     @Override
@@ -188,10 +196,12 @@ public class HUD implements MouseInputReceiver{
 
         private Coordinate prevMousePos;
 
+        final int width = 12;
+
         private SpellMenu(Player player){
-            menuLayer = new Layer(13, 50, "HUD_spellmenu", 0, 0, LayerImportances.HUD_SPELL_MENU);
+            menuLayer = new Layer(width, 50, "HUD_spellmenu", 0, 0, LayerImportances.HUD_SPELL_MENU);
             menuLayer.fixedScreenPos = true;
-            cursorLayer = new Layer(13, 1, "HUD_spellcursor", 0, 0, LayerImportances.HUD_SPELL_CURSOR);
+            cursorLayer = new Layer(width, 1, "HUD_spellcursor", 0, 0, LayerImportances.HUD_SPELL_CURSOR);
             cursorLayer.fixedScreenPos = true;
             cursorLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(210, 210, 210, 100)));
             cursorLayer.setVisible(false);
@@ -221,19 +231,17 @@ public class HUD implements MouseInputReceiver{
         }
 
         private void drawTopBand(){
-            for (int i = 0; i < 13; i++) {
-                if (isShowing)
-                    drawBand(new Color(44, 41, 51), 0);
-                else if (player.isInSpellMode() || isMouseOnDropdownBtn(mousePos))
-                    drawBand(new Color(37, 34, 43), 0);
-                else
-                    drawBand(new Color(28, 25, 32), 0);
-            }
+            if (isShowing)
+                drawBand(new Color(44, 41, 51), 0);
+            else if (player.isInSpellMode() || isMouseOnDropdownBtn(mousePos))
+                drawBand(new Color(37, 34, 43), 0);
+            else
+                drawBand(new Color(28, 25, 32), 0);
             menuLayer.inscribeString(player.getEquippedSpell().getName(), 0, 0, new Color(237, 235, 247));
         }
 
         private void drawBand(Color color, int row){
-            for (int i = 0; i < 13; i++) {
+            for (int i = 0; i < width; i++) {
                 menuLayer.editLayer(i, row, new SpecialText(' ', Color.WHITE, color));
             }
         }
@@ -255,8 +263,9 @@ public class HUD implements MouseInputReceiver{
                 }
             }
             Spell atCursor = getSpellAtCursor(screenPos);
-            if (isShowing && atCursor != null){
-                player.setEquippedSpell(atCursor);
+            if (isShowing){
+                if (atCursor != null)
+                    player.setEquippedSpell(atCursor);
                 hide();
                 updateHUD();
                 return true;
@@ -271,7 +280,7 @@ public class HUD implements MouseInputReceiver{
             return null;
         }
 
-        void onMouseMove(Coordinate screenPos){
+        boolean onMouseMove(Coordinate screenPos){
             if (isMouseOnDropdownBtn(screenPos) && !mouseOverDropdownBtn){
                 mouseOverDropdownBtn = true;
                 drawTopBand();
@@ -279,7 +288,7 @@ public class HUD implements MouseInputReceiver{
                 mouseOverDropdownBtn = false;
                 drawTopBand();
             }
-            if (isShowing && (prevMousePos == null || !prevMousePos.equals(screenPos))) { //
+            if (isShowing && (prevMousePos == null || !prevMousePos.equals(screenPos))) {
                 if (getSpellAtCursor(screenPos) != null){
                     cursorLayer.setVisible(true);
                     cursorLayer.setPos(menuLayer.getX(), screenPos.getY());
@@ -288,6 +297,7 @@ public class HUD implements MouseInputReceiver{
                 }
                 prevMousePos = screenPos;
             }
+            return isShowing;
         }
     }
 }

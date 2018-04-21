@@ -37,6 +37,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     private ArrayList<Spell> spells = new ArrayList<>();
     private Spell equippedSpell;
+    private int numberSpellBeads = 2;
+    private ArrayList<Integer> cooldowns = new ArrayList<>();
 
     Player(ViewWindow window, LayerManager lm, GameInstance gameInstance){
 
@@ -57,7 +59,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         inv = new PlayerInventory(lm, this);
 
-        setMaxHealth(20);
+        setMaxHealth(200);
         setStrength(1);
 
         setName("Player");
@@ -147,6 +149,20 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         hud.updateHUD();
     }
 
+    @Override
+    public void onTurn() {
+        super.onTurn();
+        for (int i = 0; i < cooldowns.size(); i++) {
+            int cd = cooldowns.get(i)-1;
+            if (cd > 0)
+                cooldowns.set(i, cooldowns.get(i)-1);
+            else {
+                cooldowns.remove(i);
+                i--; //To account for the list shifting down
+            }
+        }
+    }
+
     public PlayerInventory getInv() { return inv; }
 
     public Spell getEquippedSpell() {
@@ -219,8 +235,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     public boolean isInSpellMode() { return spellMode; }
 
     @Override
-    public void onMouseMove(Coordinate levelPos, Coordinate screenPos) {
+    public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
         mouseLevelPos = levelPos;
+        return false;
     }
 
     @Override
@@ -235,6 +252,18 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         return false;
     }
 
+    private boolean isSpellReady(){
+        return cooldowns.size() < numberSpellBeads;
+    }
+
+    public int getNumberSpellBeads() {
+        return numberSpellBeads;
+    }
+
+    public ArrayList<Integer> getCooldowns() {
+        return cooldowns;
+    }
+
     private void doLeftClick(Coordinate levelPos){
         if (!isFrozen()) {
             if (!spellMode) {
@@ -247,8 +276,11 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             } else {
                 DebugWindow.reportf(DebugWindow.GAME, "[Player.onMouseClick] Spell casted! %1$s", levelPos);
                 Thread spellThread = new Thread(() -> {
-                    equippedSpell.castSpell(levelPos, this, getGameInstance());
-                    gi.doEnemyTurn();
+                    if (isSpellReady()) {
+                        freeze();
+                        cooldowns.add(equippedSpell.castSpell(levelPos, this, getGameInstance()));
+                        gi.doEnemyTurn();
+                    }
                 });
                 spellThread.start();
             }
