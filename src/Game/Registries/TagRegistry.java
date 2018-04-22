@@ -33,6 +33,7 @@ public class TagRegistry {
     public final static int BURN_FAST     = 2;
     public final static int BURN_SLOW     = 3;
     public final static int FLAME_ENCHANT = 4;
+    public final static int BURN_FOREVER  = 5;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -50,6 +51,7 @@ public class TagRegistry {
         registerTag(BURN_SLOW, "Slow Burning", BurnSlowTag.class);
         registerTag(BURN_FAST, "Fast Burning", BurnFastTag.class);
         registerTag(FLAME_ENCHANT, "Fire Enchantment", FlameEnchantTag.class);
+        registerTag(BURN_FOREVER, "Burns Forever", BurnForeverTag.class);
 
         registerTag(TILE_WALL, "Wall", WallTag.class);
 

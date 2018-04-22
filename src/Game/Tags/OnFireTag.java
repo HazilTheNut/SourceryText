@@ -18,7 +18,6 @@ import java.util.Random;
  */
 public class OnFireTag extends Tag {
 
-    private TagRegistry tagRegistry = new TagRegistry();
     private Random random = new Random();
     private int lifetime = 6;
     protected boolean burnForever = false;
@@ -33,6 +32,9 @@ public class OnFireTag extends Tag {
         } else if (e.getSource().hasTag(TagRegistry.BURN_SLOW)){
             lifetime = 12;
             spreadLikelihood = 0.1;
+        } else if (e.getSource().hasTag(TagRegistry.BURN_FOREVER)){
+            burnForever = true;
+            spreadLikelihood = 0.2;
         }
     }
 
@@ -66,13 +68,13 @@ public class OnFireTag extends Tag {
     @Override
     public void onContact(TagEvent e) {
         if (e.getTarget().hasTag(TagRegistry.FLAMMABLE) && !e.getTarget().hasTag(TagRegistry.ON_FIRE)) {
-            if (e.getSource() instanceof Entity && e.getTarget() instanceof Tile) {
+            if (e.getTarget() instanceof Tile) {
                 Tile target = (Tile) e.getTarget();
                 e.cancel();
                 attemptFireTileSpread(e.getGameInstance().getCurrentLevel(), target.getLocation(), 1);
             }
             e.addCancelableAction(event -> {
-                e.getTarget().addTag(tagRegistry.getTag(TagRegistry.ON_FIRE), e.getSource());
+                e.getTarget().addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), e.getSource());
                 DebugWindow.reportf(DebugWindow.TAGS, "[OnFireTag.onContact] Set \'%1$s\' on fire", e.getTarget().getClass().getSimpleName());
             });
         }
@@ -82,13 +84,13 @@ public class OnFireTag extends Tag {
     public void attemptFireTileSpread(Level level, Coordinate pos, double likelihood){
         if (level.isLocationValid(pos) && level.getTileAt(pos).hasTag(TagRegistry.FLAMMABLE) && random.nextDouble() < likelihood){
             Tile fireTile = new Tile(pos, "Fire");
-            fireTile.addTag(tagRegistry.getTag(TagRegistry.ON_FIRE), level.getTileAt(pos));
+            fireTile.addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), level.getTileAt(pos));
             level.addOverlayTile(fireTile);
             level.getOverlayTileLayer().editLayer(pos.getX(), pos.getY(), new SpecialText(' ', Color.WHITE, new Color(225, 100, 0)));
             /**/
             Entity entity = level.getEntityAt(pos);
             if (entity != null && !entity.hasTag(TagRegistry.ON_FIRE)) {
-                entity.addTag(tagRegistry.getTag(TagRegistry.ON_FIRE), level.getTileAt(pos));
+                entity.addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), level.getTileAt(pos));
             }
             /**/
         }

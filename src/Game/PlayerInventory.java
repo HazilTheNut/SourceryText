@@ -6,6 +6,7 @@ import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Tags.Tag;
 
@@ -32,9 +33,10 @@ public class PlayerInventory implements MouseInputReceiver{
     private final Color bkgMedium = new Color(35, 35, 35, 240);
     private final Color bkgLight  = new Color(38, 38, 38, 240);
 
-    private final Color labelFg = new Color(240, 255, 200);
-    private final Color descFg  = new Color(201, 255, 224);
-    private final Color textFg  = new Color(240, 240, 255);
+    private final Color labelFg     = new Color(240, 255, 200);
+    private final Color stackableFg = new Color(179, 255, 255);
+    private final Color descFg      = new Color(201, 255, 224);
+    private final Color textFg      = new Color(240, 240, 255);
 
     public static final int CONFIG_PLAYER_USE = 0;
     public static final int CONFIG_PLAYER_EXCHANGE = 1;
@@ -96,7 +98,7 @@ public class PlayerInventory implements MouseInputReceiver{
 
     void openOtherInventory(Entity e){
         if (e != null) {
-            otherInv.configure(PLACEMENT_TOP_RIGHT, e.getName(), e, CONFIG_PLAYER_USE);
+            otherInv.configure(PLACEMENT_TOP_RIGHT, e.getName(), e, CONFIG_OTHER_VIEW);
             otherInv.show();
         } else {
             otherInv.close();
@@ -212,8 +214,14 @@ public class PlayerInventory implements MouseInputReceiver{
                         tempLayer.editLayer(col, ii+1, new SpecialText(' ', Color.WHITE, bkgLight));
                     }
                 }
-                tempLayer.inscribeString(items.get(ii).getItemData().getName(), 0, ii+1, textFg);
-                tempLayer.inscribeString(String.format("%1$02d", items.get(ii).getItemData().getQty()), 16, ii+1, labelFg);
+                Color nameColor = textFg;
+                if (e instanceof CombatEntity) {
+                    CombatEntity owner = (CombatEntity) getOwner();
+                    nameColor = (owner.getWeapon().equals(items.get(ii))) ? descFg : nameColor;
+                }
+                tempLayer.inscribeString(items.get(ii).getItemData().getName(), 0, ii+1, nameColor);
+                Color qtyColor = (items.get(ii).isStackable()) ? stackableFg : labelFg;
+                tempLayer.inscribeString(String.format("%1$02d", items.get(ii).getItemData().getQty()), 16, ii+1, qtyColor);
             }
             tempLayer.inscribeString(name, 1, 0, labelFg);
 

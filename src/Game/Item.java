@@ -62,4 +62,13 @@ public class Item extends TagHolder{
     public void receiveDamage(int amount) {
         itemData.setQty(itemData.getQty()-amount);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Item) {
+            Item item = (Item) obj;
+            return item.getItemData().equals(itemData);
+        }
+        return false;
+    }
 }

@@ -182,7 +182,6 @@ public class GameInstance {
             }
             runTimes[3] = System.nanoTime();
             reportUpdatePerformance(runTimes);
-            player.updateInventory();
             isPlayerTurn = true;
         }
     }
