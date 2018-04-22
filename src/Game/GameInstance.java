@@ -148,10 +148,11 @@ public class GameInstance {
         isPlayerTurn = playerTurn;
     }
 
-    void doEnemyTurn(){
+    Thread doEnemyTurn(){
         isPlayerTurn = false;
         EnemyTurnThread thread = new EnemyTurnThread();
         thread.start();
+        return thread;
     }
 
     public Entity getEntityAt(Coordinate loc){

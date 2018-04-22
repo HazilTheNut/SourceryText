@@ -276,18 +276,24 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         if (movementThread == null || !movementThread.isAlive()) {
             movementThread = new Thread(() -> {
                 while (!movementVector.equals(new Coordinate(0, 0))){
-                    /*
+                    /**/
                     if (movementVector.getX() != 0) {
                         move(movementVector.getX(), 0);
-                        gi.doEnemyTurn();
+                        try {
+                            gi.doEnemyTurn().join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                     if (movementVector.getY() != 0) {
                         move(0, movementVector.getY());
-                        gi.doEnemyTurn();
+                        try {
+                            gi.doEnemyTurn().join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    */
-                    move(movementVector.getX(), movementVector.getY());
-                    gi.doEnemyTurn();
+                    /**/
                     sleepMoveThread(MOVEMENT_INTERVAL);
                 }
             });
