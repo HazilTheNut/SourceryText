@@ -3,12 +3,9 @@ package Game.Tags;
 import Engine.Layer;
 import Engine.SpecialText;
 import Data.Coordinate;
-import Game.DebugWindow;
+import Game.*;
 import Game.Entities.Entity;
-import Game.Level;
 import Game.Registries.TagRegistry;
-import Game.TagEvent;
-import Game.Tile;
 
 import java.awt.*;
 import java.util.Random;
@@ -26,13 +23,21 @@ public class OnFireTag extends Tag {
 
     @Override
     public void onAddThis(TagEvent e) {
-        if (e.getSource().hasTag(TagRegistry.BURN_FAST)){
+        if (e.getSource() instanceof Tile && e.getTarget() instanceof Tile){
+            deriveBurnProperties(e.getSource());
+        } else {
+            deriveBurnProperties(e.getTarget());
+        }
+    }
+
+    private void deriveBurnProperties(TagHolder th){
+        if (th.hasTag(TagRegistry.BURN_FAST)){
             lifetime = 3;
             spreadLikelihood = 0.8;
-        } else if (e.getSource().hasTag(TagRegistry.BURN_SLOW)){
+        } else if (th.hasTag(TagRegistry.BURN_SLOW)){
             lifetime = 12;
             spreadLikelihood = 0.1;
-        } else if (e.getSource().hasTag(TagRegistry.BURN_FOREVER)){
+        } else if (th.hasTag(TagRegistry.BURN_FOREVER)){
             burnForever = true;
             spreadLikelihood = 0.2;
         }
