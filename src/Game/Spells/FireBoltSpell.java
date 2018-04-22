@@ -25,6 +25,7 @@ public class FireBoltSpell extends Spell {
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi) {
         Projectile fireBolt = new Projectile(spellCaster, targetLoc, icon, gi.getLayerManager());
         fireBolt.addTag(TagRegistry.getTag(TagRegistry.DAMAGE_START + 6), spellCaster);
+        fireBolt.addTag(TagRegistry.getTag(TagRegistry.FLAMMABLE), spellCaster);
         fireBolt.addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), spellCaster);
         fireBolt.launchProjectile(12, gi);
         return 22;

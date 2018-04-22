@@ -38,13 +38,12 @@ public class Level {
         overlayTiles = new ArrayList<>();
 
         TileRegistry tileRegistry = new TileRegistry();
-        TagRegistry tagRegistry = new TagRegistry();
         for (int col = 0; col < backdrop.getCols(); col++){
             for (int row = 0; row < backdrop.getRows(); row++){
                 TileStruct struct = tileRegistry.getTileStruct(ldata.getTileId(col, row));
-                Tile tile = new Tile(new Coordinate(col, row), struct.getTileName());
+                Tile tile = new Tile(new Coordinate(col, row), struct.getTileName(), this);
                 for (int id : struct.getTagIDs()){
-                    Tag toAdd = tagRegistry.getTag(id);
+                    Tag toAdd = TagRegistry.getTag(id);
                     if (toAdd != null)
                         tile.addTag(toAdd, tile);
                 }

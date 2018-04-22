@@ -19,26 +19,25 @@ public class OnFireTag extends Tag {
     private int lifetime = 6;
     protected boolean burnForever = false;
 
-    private double spreadLikelihood = 0.5;
+    private double spreadLikelihood = 0.4;
+    private boolean shouldSpread = false;
 
     @Override
     public void onAddThis(TagEvent e) {
-        if (e.getSource() instanceof Tile && e.getTarget() instanceof Tile){
-            deriveBurnProperties(e.getSource());
-        } else {
-            deriveBurnProperties(e.getTarget());
-        }
-    }
-
-    private void deriveBurnProperties(TagHolder th){
-        if (th.hasTag(TagRegistry.BURN_FAST)){
-            lifetime = 3;
-            spreadLikelihood = 0.8;
-        } else if (th.hasTag(TagRegistry.BURN_SLOW)){
-            lifetime = 12;
-            spreadLikelihood = 0.1;
-        } else if (th.hasTag(TagRegistry.BURN_FOREVER)){
+        if (!e.getTarget().hasTag(TagRegistry.FLAMMABLE)) e.cancel();
+        e.addCancelableAction(event -> {
+            if (e.getTarget() instanceof Tile) {
+                Tile target = (Tile) e.getTarget();
+                target.getLevel().getOverlayTileLayer().editLayer(target.getLocation().getX(), target.getLocation().getY(), new SpecialText(' ', Color.WHITE, new Color(240, 115, 0)));
+            }
+        });
+        if (e.getTarget().hasTag(TagRegistry.BURN_FOREVER)){
             burnForever = true;
+        } else if (e.getTarget().hasTag(TagRegistry.BURN_FAST)){
+            lifetime = 3;
+            spreadLikelihood = 0.65;
+        } else if (e.getTarget().hasTag(TagRegistry.BURN_SLOW)){
+            lifetime = 12;
             spreadLikelihood = 0.2;
         }
     }
@@ -46,68 +45,59 @@ public class OnFireTag extends Tag {
     @Override
     public void onTurn(TagEvent e) {
         e.addCancelableAction(event -> {
-            if (e.getSource() instanceof Tile) {
-                Level level = e.getGameInstance().getCurrentLevel();
-                Tile tile = (Tile)e.getSource();
-                if (lifetime > 0) {
-                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(1, 0)), spreadLikelihood);
-                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(0, 1)), spreadLikelihood);
-                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(-1, 0)), spreadLikelihood);
-                    attemptFireTileSpread(level, tile.getLocation().add(new Coordinate(0, -1)), spreadLikelihood);
-                    lifetime--;
+            if (shouldSpread) {
+                if (e.getSource() instanceof Tile) {
+                    Tile source = (Tile) e.getSource();
+                    Level level = e.getGameInstance().getCurrentLevel();
+                    spreadToTile(level, source.getLocation().add(new Coordinate(1, 0)), e.getSource());
+                    spreadToTile(level, source.getLocation().add(new Coordinate(-1, 0)), e.getSource());
+                    spreadToTile(level, source.getLocation().add(new Coordinate(0, 1)), e.getSource());
+                    spreadToTile(level, source.getLocation().add(new Coordinate(0, -1)), e.getSource());
+                    if (!burnForever) lifetime--;
+                    if (lifetime <= 0) {
+                        e.getSource().removeTag(TagRegistry.ON_FIRE);
+                        e.getGameInstance().getCurrentLevel().addOverlayTile(createAshTile(source.getLocation(), level));
+                    }
                 } else {
-                    level.removeOverlayTile(tile);
-                    level.addOverlayTile(createAshTile(tile.getLocation(), level.getOverlayTileLayer()));
+                    if (!burnForever) {
+                        lifetime--;
+                        if (lifetime <= 0) {
+                            e.getSource().removeTag(TagRegistry.ON_FIRE);
+                        } else {
+                            e.getSource().receiveDamage(1);
+                        }
+                    }
                 }
-            } else if (!burnForever) {
-                if (lifetime > 0) {
-                    e.getSource().receiveDamage(1);
-                    lifetime--;
-                } else
-                    e.getSource().removeTag(getId());
+            } else {
+                shouldSpread = true;
             }
         });
-        e.setSuccess(true);
     }
 
     @Override
     public void onContact(TagEvent e) {
-        if (e.getTarget().hasTag(TagRegistry.FLAMMABLE) && !e.getTarget().hasTag(TagRegistry.ON_FIRE)) {
-            if (e.getTarget() instanceof Tile) {
-                Tile target = (Tile) e.getTarget();
-                e.cancel();
-                attemptFireTileSpread(e.getGameInstance().getCurrentLevel(), target.getLocation(), 1);
-            }
-            e.addCancelableAction(event -> {
-                e.getTarget().addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), e.getSource());
-                DebugWindow.reportf(DebugWindow.TAGS, "[OnFireTag.onContact] Set \'%1$s\' on fire", e.getTarget().getClass().getSimpleName());
-            });
-        }
-        e.setSuccess(true);
+        e.getTarget().addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), e.getSource());
     }
 
-    public void attemptFireTileSpread(Level level, Coordinate pos, double likelihood){
-        if (level.isLocationValid(pos) && level.getTileAt(pos).hasTag(TagRegistry.FLAMMABLE) && random.nextDouble() < likelihood){
-            Tile fireTile = new Tile(pos, "Fire");
-            fireTile.addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), level.getTileAt(pos));
-            level.addOverlayTile(fireTile);
-            level.getOverlayTileLayer().editLayer(pos.getX(), pos.getY(), new SpecialText(' ', Color.WHITE, new Color(225, 100, 0)));
-            /**/
-            Entity entity = level.getEntityAt(pos);
-            if (entity != null && !entity.hasTag(TagRegistry.ON_FIRE)) {
-                entity.addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), level.getTileAt(pos));
-            }
-            /**/
-        }
-    }
-
-    private Tile createAshTile(Coordinate loc, Layer backdropLayer){
-        Tile tile = new Tile(loc, "Ash");
+    private Tile createAshTile(Coordinate loc, Level level){
+        Tile tile = new Tile(loc, "Ash", level);
         if (random.nextDouble() < 0.25){
-            backdropLayer.editLayer(loc.getX(), loc.getY(), new SpecialText('.', new Color(81, 77, 77), new Color(60, 58, 55)));
+            level.getOverlayTileLayer().editLayer(loc.getX(), loc.getY(), new SpecialText('.', new Color(81, 77, 77), new Color(60, 58, 55)));
         } else {
-            backdropLayer.editLayer(loc.getX(), loc.getY(), new SpecialText(' ', new Color(81, 77, 77), new Color(60, 58, 55)));
+            level.getOverlayTileLayer().editLayer(loc.getX(), loc.getY(), new SpecialText(' ', new Color(81, 77, 77), new Color(60, 58, 55)));
         }
         return tile;
+    }
+
+    private void spreadToTile(Level level, Coordinate pos, TagHolder source){
+        if (random.nextDouble() <= spreadLikelihood) {
+            if (!level.getBackdrop().isLayerLocInvalid(pos)) {
+                level.getTileAt(pos).addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), source);
+            }
+            Entity entity = level.getEntityAt(pos);
+            if (entity != null) {
+                entity.addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), source);
+            }
+        }
     }
 }

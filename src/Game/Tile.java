@@ -11,9 +11,12 @@ public class Tile extends TagHolder {
     private Coordinate location;
     private String name;
 
-    public Tile(Coordinate loc, String name){
+    private Level level;
+
+    public Tile(Coordinate loc, String name, Level level){
         location = loc;
         this.name = name;
+        this.level = level;
     }
 
     public Coordinate getLocation() {
@@ -24,8 +27,12 @@ public class Tile extends TagHolder {
         return name;
     }
 
+    public Level getLevel() {
+        return level;
+    }
+
     public void onTurn(GameInstance gi){
-        TagEvent event = new TagEvent(0, false, this, gi.getEntityAt(location), gi);
+        TagEvent event = new TagEvent(0, true, this, gi.getEntityAt(location), gi);
         for (Tag tag : getTags()){
             tag.onTurn(event);
         }
