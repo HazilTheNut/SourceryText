@@ -43,6 +43,16 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     private int noEnterWarpZoneTimer = 0;
 
+    private Coordinate movementVector = new Coordinate(0, 0);
+    private final Coordinate NORTH    = new Coordinate(0, -1);
+    private final Coordinate EAST     = new Coordinate(1, 0);
+    private final Coordinate SOUTH    = new Coordinate(0, 1);
+    private final Coordinate WEST     = new Coordinate(-1, 0);
+    private Thread movementThread;
+    private final int MOVEMENT_INTERVAL = 125;
+    
+    private ArrayList<Integer> downKeyCodes = new ArrayList<>(); //KeyCodes of keys currently pressed down on the keyboard
+
     Player(ViewWindow window, LayerManager lm, GameInstance gameInstance){
 
         super.lm = lm;
@@ -62,7 +72,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         inv = new PlayerInventory(lm, this);
 
-        setMaxHealth(200);
+        setMaxHealth(20);
         setStrength(1);
 
         setName("Player");
@@ -214,25 +224,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (!isFrozen()) {
-            if (e.getKeyCode() == KeyEvent.VK_E){
-                toggleInventory();
-            } else if (e.getKeyCode() == KeyEvent.VK_SHIFT){
-                spellMode = true;
-                updateHUD();
-            } else if (e.getKeyCode() == KeyEvent.VK_L) {
-                DebugWindow.reportf(DebugWindow.GAME, "[Player LOG] pos: %1$s\n", getLocation());
-                lm.printLayerStack();
-            } else if (e.getKeyCode() == KeyEvent.VK_Q){
-                inv.openOtherInventory(gi.getEntityAt(mouseLevelPos));
-            } else {
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) move(1,  0);
-                if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A)  move(-1, 0);
-                if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S)  move(0,  1);
-                if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W)    move(0, -1);
-                gi.doEnemyTurn();
-            }
-            terminatePathing = true;
+        if (!downKeyCodes.contains(e.getExtendedKeyCode())){
+            onKeyDown(e.getExtendedKeyCode());
+            downKeyCodes.add(e.getExtendedKeyCode());
         }
     }
 
@@ -242,6 +236,76 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             spellMode = false;
             updateHUD();
         }
+        int keyCode = e.getKeyCode();
+        if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) movementKeyUp(EAST);
+        if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A)  movementKeyUp(WEST);
+        if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S)  movementKeyUp(SOUTH);
+        if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W)    movementKeyUp(NORTH);
+        downKeyCodes.remove(new Integer(e.getExtendedKeyCode()));
+        if (downKeyCodes.size() == 0) movementVector = new Coordinate(0, 0);
+        DebugWindow.reportf(DebugWindow.STAGE, "[Player] movementVector: %1$s", movementVector);
+    }
+
+    //Holding down a key on the keyboard fires keyPressed() a gajillion times. This method is ONLY ran when a key is pressed down.
+    private void onKeyDown(int keyCode){
+        if (!isFrozen()) {
+            if (keyCode == KeyEvent.VK_E){
+                toggleInventory();
+            } else if (keyCode == KeyEvent.VK_SHIFT){
+                spellMode = true;
+                updateHUD();
+            } else if (keyCode == KeyEvent.VK_L) {
+                DebugWindow.reportf(DebugWindow.GAME, "[Player LOG] pos: %1$s\n", getLocation());
+                lm.printLayerStack();
+            } else if (keyCode == KeyEvent.VK_Q){
+                inv.openOtherInventory(gi.getEntityAt(mouseLevelPos));
+            } else {
+                if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) movementKeyDown(EAST);
+                if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A)  movementKeyDown(WEST);
+                if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S)  movementKeyDown(SOUTH);
+                if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W)    movementKeyDown(NORTH);
+            }
+            terminatePathing = true;
+        }
+        DebugWindow.reportf(DebugWindow.STAGE, "[Player] movementVector: %1$s", movementVector);
+    }
+
+    private void movementKeyDown(Coordinate vector){
+        movementVector = movementVector.add(vector);
+        movementVector = new Coordinate(Math.max(-1, Math.min(1, movementVector.getX())), Math.max(-1, Math.min(1, movementVector.getY()))); //Sanitates the movement vector
+        if (movementThread == null || !movementThread.isAlive()) {
+            movementThread = new Thread(() -> {
+                while (!movementVector.equals(new Coordinate(0, 0))){
+                    /*
+                    if (movementVector.getX() != 0) {
+                        move(movementVector.getX(), 0);
+                        gi.doEnemyTurn();
+                    }
+                    if (movementVector.getY() != 0) {
+                        move(0, movementVector.getY());
+                        gi.doEnemyTurn();
+                    }
+                    */
+                    move(movementVector.getX(), movementVector.getY());
+                    gi.doEnemyTurn();
+                    sleepMoveThread(MOVEMENT_INTERVAL);
+                }
+            });
+            movementThread.start();
+        }
+    }
+
+    private void sleepMoveThread(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            DebugWindow.reportf(DebugWindow.STAGE, e.getMessage());
+        }
+    }
+
+    private void movementKeyUp(Coordinate vector){
+        movementVector = movementVector.subtract(vector);
     }
 
     public boolean isInSpellMode() { return spellMode; }
