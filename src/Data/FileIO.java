@@ -110,11 +110,11 @@ public class FileIO {
     }
 
     public void quickSerializeLevelData(LevelData ldata, String path){
-        System.out.println("[FileIO.serializeLevelData] Saving level to: " + path);
         try {
             FileOutputStream out = new FileOutputStream(path);
             ObjectOutputStream objOut = new ObjectOutputStream(out);
             objOut.writeObject(ldata);
+            System.out.println("[FileIO.serializeLevelData] Saved level to: " + path);
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }

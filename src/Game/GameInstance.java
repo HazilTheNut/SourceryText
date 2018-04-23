@@ -3,7 +3,9 @@ package Game;
 import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
+import Engine.SpecialText;
 import Engine.ViewWindow;
+import Game.AnimatedTiles.AnimatedTile;
 import Game.Entities.Entity;
 import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
@@ -12,6 +14,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Jared on 3/27/2018.
@@ -25,6 +29,8 @@ public class GameInstance {
 
     private Level currentLevel;
     private ArrayList<Level> levels = new ArrayList<>();
+
+    private ArrayList<AnimatedTile> animatedTiles = new ArrayList<>();
 
     private LayerManager lm;
 
@@ -45,6 +51,26 @@ public class GameInstance {
                     DebugWindow.open();
             }
         });
+
+        Layer backdrop = currentLevel.getBackdrop();
+        Layer animationLayer = new Layer(backdrop.getCols(), backdrop.getRows(), "tile_animation", 0, 0, LayerImportances.TILE_ANIM);
+        lm.addLayer(animationLayer);
+
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                for (int i = 0; i < animatedTiles.size(); i++){
+                    AnimatedTile animatedTile = animatedTiles.get(i);
+                    SpecialText text = animatedTile.onDisplayUpdate();
+                    animationLayer.editLayer(animatedTile.getLocation().getX(), animatedTile.getLocation().getY(), text);
+                    if (text == null) {
+                        animatedTiles.remove(i);
+                        i--;
+                    }
+                }
+            }
+        }, 50, 50);
     }
 
     public void enterLevel(String levelFilePath, Coordinate playerPos){
@@ -147,6 +173,8 @@ public class GameInstance {
     public void setPlayerTurn(boolean playerTurn) {
         isPlayerTurn = playerTurn;
     }
+
+    public void addAnimatedTile(AnimatedTile animatedTile) { animatedTiles.add(animatedTile); }
 
     Thread doEnemyTurn(){
         isPlayerTurn = false;

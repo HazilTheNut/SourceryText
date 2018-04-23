@@ -1,11 +1,13 @@
 package Game.Tags;
 
-import Engine.Layer;
-import Engine.SpecialText;
 import Data.Coordinate;
-import Game.*;
+import Engine.SpecialText;
 import Game.Entities.Entity;
+import Game.Level;
 import Game.Registries.TagRegistry;
+import Game.TagEvent;
+import Game.TagHolder;
+import Game.Tile;
 
 import java.awt.*;
 import java.util.Random;

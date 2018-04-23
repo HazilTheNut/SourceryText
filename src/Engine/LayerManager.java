@@ -35,7 +35,6 @@ public class LayerManager {
         public void run() {
             window.drawImage(compileLayers(new Dimension(window.RESOLUTION_WIDTH, window.RESOLUTION_HEIGHT)));
             arbitraryNumber++;
-            //System.out.printf("Draw! #%1$d\n", arbitraryNumber);
         }
     }
 
