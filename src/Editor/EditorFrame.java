@@ -54,14 +54,14 @@ public class EditorFrame extends JFrame {
         textPanel = new EditorTextPanel();
         c.add(textPanel, BorderLayout.LINE_START);
 
-        UndoManager undoManager = new UndoManager(ldata, manager);
+        UndoManager undoManager = new UndoManager(ldata, this);
 
         EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, textPanel, ldata.getBackdrop(), ldata, undoManager);
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);
         window.addMouseWheelListener(mi);
 
-        toolPanel = new EditorToolPanel(mi, manager, ldata, watcher, undoManager, getRootPane());
+        toolPanel = new EditorToolPanel(mi, manager, ldata, watcher, undoManager, getRootPane(), this);
         c.add(toolPanel, BorderLayout.LINE_END);
 
         textPanel.setToolPanel(toolPanel);

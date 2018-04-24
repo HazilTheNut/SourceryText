@@ -1,8 +1,8 @@
 package Editor;
 
 import Data.LevelData;
-import Engine.LayerManager;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 /**
@@ -13,14 +13,14 @@ class UndoManager {
     private ArrayList<LevelData> pastLevelData = new ArrayList<>();
     private LevelData currentLevelData;
 
-    private LayerManager lm;
+    JFrame editorFrame;
 
     private final int MAX_UNDO_LENGTH = 200;
     private int historyPointer;
 
-    UndoManager(LevelData ldata, LayerManager layerManager){
+    UndoManager(LevelData ldata, JFrame editorFrame){
         currentLevelData = ldata;
-        lm = layerManager;
+        this.editorFrame = editorFrame;
         System.out.printf("[UndoManager] Level history size: %1$d\n", pastLevelData.size());
         recordLevelData();
     }
@@ -36,6 +36,7 @@ class UndoManager {
         historyPointer = pastLevelData.size()-1;
         System.out.printf("[UndoManager.recordLevelData] Level history size: %1$d\n", pastLevelData.size());
         System.out.printf("[UndoManager.recordLevelData] Level history pointer: %1$d\n", historyPointer);
+        addFrameAsterisk();
         /**/
         //previousLevelData = currentLevelData.copy();
     }
@@ -46,6 +47,7 @@ class UndoManager {
         System.out.printf("[UndoManager.doUndo] Level history pointer: %1$d\n", historyPointer);
         LevelData pastData = pastLevelData.get(historyPointer);
         currentLevelData.setAllData(pastData.getBackdrop(), pastData.getTileDataLayer(), pastData.getEntityLayer(), pastData.getWarpZoneLayer(), pastData.getTileData(), pastData.getEntityData(), pastData.getWarpZones());
+        addFrameAsterisk();
     }
 
     void doRedo(){
@@ -54,5 +56,12 @@ class UndoManager {
         System.out.printf("[UndoManager.doRedo] Level history pointer: %1$d\n", historyPointer);
         LevelData pastData = pastLevelData.get(historyPointer);
         currentLevelData.setAllData(pastData.getBackdrop(), pastData.getTileDataLayer(), pastData.getEntityLayer(), pastData.getWarpZoneLayer(), pastData.getTileData(), pastData.getEntityData(), pastData.getWarpZones());
+        addFrameAsterisk();
+    }
+
+    private void addFrameAsterisk(){
+        if (!editorFrame.getTitle().contains("*")){
+            editorFrame.setTitle(editorFrame.getTitle().concat("*"));
+        }
     }
 }

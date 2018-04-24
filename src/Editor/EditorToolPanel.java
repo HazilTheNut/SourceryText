@@ -74,14 +74,17 @@ public class EditorToolPanel extends JPanel {
 
     private TileStruct selectedTileStruct;
 
+    private JFrame editorFrame;
+
     private CameraManager cm;
 
-    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher, UndoManager undoManager, JRootPane rootPane){
+    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher, UndoManager undoManager, JRootPane rootPane, JFrame jFrame){
 
         this.mi = mi;
         lm = manager;
         this.undoManager = undoManager;
         cm = new CameraManager(mi);
+        editorFrame = jFrame;
 
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(110, 400));
@@ -496,12 +499,14 @@ public class EditorToolPanel extends JPanel {
         } else {
             FileIO io = new FileIO();
             io.quickSerializeLevelData(ldata, previousFilePath);
+            removeFrameAsterisk();
         }
     }
 
     private void saveLevelAs (LevelData ldata){
         FileIO io = new FileIO();
         previousFilePath = io.serializeLevelData(ldata);
+        removeFrameAsterisk();
     }
 
     private void openLevel(WindowWatcher watcher){
@@ -524,6 +529,12 @@ public class EditorToolPanel extends JPanel {
         newLData.reset();
         EditorFrame ef = new EditorFrame(newLData, watcher);
         ef.setTextPanelContents(mi.getTextPanel().getButtonManifest());
+    }
+
+    private void removeFrameAsterisk(){
+        if (editorFrame.getTitle().contains("*")){
+            editorFrame.setTitle(editorFrame.getTitle().substring(0, editorFrame.getTitle().length()-1));
+        }
     }
 
     private class MenuAction implements Action{
