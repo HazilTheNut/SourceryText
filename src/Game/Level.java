@@ -4,6 +4,7 @@ import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.AnimatedTiles.AnimatedTile;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.Registries.TileRegistry;
@@ -29,6 +30,9 @@ public class Level {
 
     private ArrayList<Entity> entities = new ArrayList<>();
 
+    private Layer animatedTileLayer;
+    private ArrayList<AnimatedTile> animatedTiles = new ArrayList<>();
+
     public Level(String path){
         filePath = path;
     }
@@ -50,6 +54,8 @@ public class Level {
                 baseTiles[col][row] = tile;
             }
         }
+
+        animatedTileLayer = new Layer(backdrop.getCols(), backdrop.getRows(), "animated_tiles", 0, 0, LayerImportances.TILE_ANIM);
     }
 
     public void addEntity(Entity e){ entities.add(e); }
@@ -101,12 +107,14 @@ public class Level {
         for (Entity e : entities) e.onLevelEnter();
         lm.addLayer(backdrop);
         lm.addLayer(overlayTileLayer);
+        lm.addLayer(animatedTileLayer);
     }
 
     void onExit(LayerManager lm){
         for (Entity e : entities) e.onLevelExit();
         lm.removeLayer(backdrop);
         lm.removeLayer(overlayTileLayer);
+        lm.removeLayer(animatedTileLayer);
     }
 
     public Tile getTileAt(Coordinate loc){
@@ -142,5 +150,28 @@ public class Level {
         }
         for (Tile tile : overlayTiles) tiles.add(tile);
         return tiles;
+    }
+
+    public ArrayList<AnimatedTile> getAnimatedTiles() {
+        return animatedTiles;
+    }
+
+    public void addAnimatedTile(AnimatedTile tile){
+        animatedTiles.add(tile);
+    }
+
+    public void removeAnimatedTile(Coordinate loc){
+        for (int i = 0; i < animatedTiles.size(); i++){
+            if (animatedTiles.get(i).getLocation().equals(loc)){
+                DebugWindow.reportf(DebugWindow.MISC, "[Level.removeAnimatedTile] Removed tile at %1$s", loc);
+                animatedTileLayer.editLayer(animatedTiles.get(i).getLocation().getX(),animatedTiles.get(i).getLocation().getY(), null);
+                animatedTiles.remove(i);
+                i--;
+            }
+        }
+    }
+
+    public Layer getAnimatedTileLayer() {
+        return animatedTileLayer;
     }
 }

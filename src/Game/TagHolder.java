@@ -15,6 +15,7 @@ public class TagHolder {
 
     public void addTag(Tag tag, TagHolder source) {
         if (!hasTag(tag.getId())) {
+            tags.add(tag);
             TagEvent e = new TagEvent(0, true, source, this, null);
             for (Tag currentTag : tags){
                 currentTag.onAdd(e);
@@ -22,7 +23,8 @@ public class TagHolder {
             tag.onAddThis(e);
             if (e.eventPassed()){
                 e.enactEvent();
-                tags.add(tag);
+            } else {
+                tags.remove(tag);
             }
         }
     }

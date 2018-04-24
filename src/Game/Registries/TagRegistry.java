@@ -42,6 +42,7 @@ public class TagRegistry {
 
     public final static int TILE_WALL     = 400;
     public final static int SAND          = 401;
+    public final static int SHALLOW_WATER = 402;
 
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
@@ -56,6 +57,7 @@ public class TagRegistry {
 
         registerTag(TILE_WALL, "Wall", WallTag.class);
         registerTag(SAND, "Sand", SandTag.class);
+        registerTag(SHALLOW_WATER, "Shallow Water", ShallowWaterTag.class);
 
         registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);
         registerTag(WEAPON_STRIKE, "Striking Weapon",  StrikeWeaponTypeTag.class);

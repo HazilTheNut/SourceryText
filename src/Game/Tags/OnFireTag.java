@@ -2,6 +2,7 @@ package Game.Tags;
 
 import Data.Coordinate;
 import Engine.SpecialText;
+import Game.AnimatedTiles.FireAnimation;
 import Game.Entities.Entity;
 import Game.Level;
 import Game.Registries.TagRegistry;
@@ -30,7 +31,7 @@ public class OnFireTag extends Tag {
         e.addCancelableAction(event -> {
             if (e.getTarget() instanceof Tile) {
                 Tile target = (Tile) e.getTarget();
-                target.getLevel().getOverlayTileLayer().editLayer(target.getLocation().getX(), target.getLocation().getY(), new SpecialText(' ', Color.WHITE, new Color(240, 115, 0)));
+                target.getLevel().addAnimatedTile(new FireAnimation(target.getLocation()));
             }
         });
         if (e.getTarget().hasTag(TagRegistry.BURN_FOREVER)){
@@ -58,6 +59,7 @@ public class OnFireTag extends Tag {
                     if (!burnForever) lifetime--;
                     if (lifetime <= 0) {
                         e.getSource().removeTag(TagRegistry.ON_FIRE);
+                        e.getGameInstance().getCurrentLevel().removeAnimatedTile(source.getLocation());
                         e.getGameInstance().getCurrentLevel().addOverlayTile(createAshTile(source.getLocation(), level));
                     }
                 } else {

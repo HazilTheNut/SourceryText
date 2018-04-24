@@ -30,8 +30,6 @@ public class GameInstance {
     private Level currentLevel;
     private ArrayList<Level> levels = new ArrayList<>();
 
-    private ArrayList<AnimatedTile> animatedTiles = new ArrayList<>();
-
     private LayerManager lm;
 
     public GameInstance(LayerManager manager, ViewWindow window){
@@ -52,20 +50,17 @@ public class GameInstance {
             }
         });
 
-        Layer backdrop = currentLevel.getBackdrop();
-        Layer animationLayer = new Layer(backdrop.getCols(), backdrop.getRows(), "tile_animation", 0, 0, LayerImportances.TILE_ANIM);
-        lm.addLayer(animationLayer);
-
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
+                ArrayList<AnimatedTile> animatedTiles = currentLevel.getAnimatedTiles();
                 for (int i = 0; i < animatedTiles.size(); i++){
                     AnimatedTile animatedTile = animatedTiles.get(i);
                     SpecialText text = animatedTile.onDisplayUpdate();
-                    animationLayer.editLayer(animatedTile.getLocation().getX(), animatedTile.getLocation().getY(), text);
+                    currentLevel.getAnimatedTileLayer().editLayer(animatedTile.getLocation().getX(), animatedTile.getLocation().getY(), text);
                     if (text == null) {
-                        animatedTiles.remove(i);
+                        currentLevel.removeAnimatedTile(animatedTile.getLocation());
                         i--;
                     }
                 }
@@ -174,7 +169,7 @@ public class GameInstance {
         isPlayerTurn = playerTurn;
     }
 
-    public void addAnimatedTile(AnimatedTile animatedTile) { animatedTiles.add(animatedTile); }
+    public void addAnimatedTile(AnimatedTile animatedTile) { currentLevel.addAnimatedTile(animatedTile); }
 
     Thread doEnemyTurn(){
         isPlayerTurn = false;
