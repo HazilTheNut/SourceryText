@@ -30,6 +30,8 @@ public class GameInstance {
     private Level currentLevel;
     private ArrayList<Level> levels = new ArrayList<>();
 
+    private String currentZoneName;
+
     private LayerManager lm;
 
     public GameInstance(LayerManager manager, ViewWindow window){
@@ -40,7 +42,7 @@ public class GameInstance {
 
         player = new Player(window, manager, this);
 
-        enterLevel(io.decodeFilePath(io.chooseLevel().getPath()), new Coordinate(40, 43));
+        enterLevel(io.getRootFilePath() + "LevelData/gameStart.lda", new Coordinate(0, 0));
 
         window.addKeyListener(new KeyAdapter() {
             @Override
@@ -68,10 +70,15 @@ public class GameInstance {
         }, 50, 50);
     }
 
-    public void enterLevel(String levelFilePath, Coordinate playerPos){
+    void enterLevel(String levelFilePath, Coordinate playerPos){
         if (currentLevel != null) {
             currentLevel.onExit(lm);
             currentLevel.removeEntity(player);
+        }
+        String zoneName = getFilePathParentFolder(levelFilePath);
+        if (currentZoneName == null || !currentZoneName.equals(zoneName)){
+            currentZoneName = zoneName;
+            levels.clear();
         }
         for (Level level : levels){
             if (level.getFilePath().equals(levelFilePath)){
@@ -83,6 +90,14 @@ public class GameInstance {
         }
         currentLevel = loadLevel(levelFilePath);
         startLevel(currentLevel, playerPos);
+    }
+
+    private String getFilePathParentFolder(String path){
+        int strEndLoc   = path.lastIndexOf('/');
+        int strStartLoc = path.substring(0, strEndLoc-1).lastIndexOf('/');
+        String output = path.substring(strStartLoc+1, strEndLoc);
+        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance] Level folder name: %1$s memory: %2$d", output, levels.size());
+        return output;
     }
 
     private void startLevel(Level level, Coordinate loc){
