@@ -32,7 +32,7 @@ public class EditorFrame extends JFrame {
         c.addComponentListener(window);
         c.addKeyListener(window);
 
-        Layer mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH*4][window.RESOLUTION_HEIGHT*4], "mouse", 0, 0, LayerImportances.CURSOR);
+        Layer mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH*4][window.RESOLUTION_HEIGHT*4], "mouse", 0, 0, LayerImportances.GAME_CURSOR);
         mouseHighlight.fixedScreenPos = true;
 
         Layer tileDataLayer = ldata.getTileDataLayer();

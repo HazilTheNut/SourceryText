@@ -35,9 +35,8 @@ public class Entity extends TagHolder{
         this.lm = lm;
         EntityRegistry er = new EntityRegistry();
         name = er.getEntityStruct(entityStruct.getEntityId()).getEntityName();
-        TagRegistry tagRegistry = new TagRegistry();
         for (int id : entityStruct.getTagIDs()){
-            addTag(tagRegistry.getTag(id), this);
+            addTag(id, this);
         }
         ItemRegistry itemRegistry = new ItemRegistry();
         for (ItemStruct struct : entityStruct.getItems()){
@@ -69,7 +68,7 @@ public class Entity extends TagHolder{
     protected void setLocation(Coordinate pos) { location = pos; }
 
     protected void move(int relativeX, int relativeY){
-        if (getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)))) {
+        if (getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)), TagRegistry.NO_PATHING)) {
             location.movePos(relativeX, relativeY);
             lm.getLayer(sprite.getName()).movePos(relativeX, relativeY);
             DebugWindow.reportf(DebugWindow.GAME, "[Entity.move] \'%1$s\'", getName());

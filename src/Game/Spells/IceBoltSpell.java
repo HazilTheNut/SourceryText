@@ -12,22 +12,21 @@ import java.awt.*;
 /**
  * Created by Jared on 4/19/2018.
  */
-public class FireBoltSpell extends Spell {
+public class IceBoltSpell extends Spell {
 
-    private final SpecialText icon = new SpecialText('*', new Color(173, 105, 87), new Color(120, 65, 50, 20));
+    private final SpecialText icon = new SpecialText('*', new Color(154, 181, 190), new Color(92, 114, 120, 20));
 
     @Override
     public String getName() {
-        return "Fire Bolt";
+        return "Ice Bolt";
     }
 
     @Override
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi) {
         Projectile fireBolt = new Projectile(spellCaster, targetLoc, icon, gi.getLayerManager());
         fireBolt.addTag(TagRegistry.DAMAGE_START + 6, spellCaster);
-        fireBolt.addTag(TagRegistry.FLAMMABLE,        spellCaster);
-        fireBolt.addTag(TagRegistry.ON_FIRE,          spellCaster);
-        fireBolt.launchProjectile(12, gi);
-        return 22;
+        fireBolt.addTag(TagRegistry.FROST_ENCHANT,    spellCaster);
+        fireBolt.launchProjectile(14, gi);
+        return 25;
     }
 }

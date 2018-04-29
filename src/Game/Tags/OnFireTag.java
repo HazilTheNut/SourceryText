@@ -80,7 +80,7 @@ public class OnFireTag extends Tag {
 
     @Override
     public void onContact(TagEvent e) {
-        e.getTarget().addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), e.getSource());
+        e.getTarget().addTag(TagRegistry.ON_FIRE, e.getSource());
     }
 
     private Tile createAshTile(Coordinate loc, Level level){
@@ -96,11 +96,11 @@ public class OnFireTag extends Tag {
     private void spreadToTile(Level level, Coordinate pos, TagHolder source){
         if (random.nextDouble() <= spreadLikelihood) {
             if (!level.getBackdrop().isLayerLocInvalid(pos)) {
-                level.getTileAt(pos).addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), source);
+                level.getTileAt(pos).addTag(TagRegistry.ON_FIRE, source);
             }
             Entity entity = level.getEntityAt(pos);
             if (entity != null) {
-                entity.addTag(TagRegistry.getTag(TagRegistry.ON_FIRE), source);
+                entity.addTag(TagRegistry.ON_FIRE, source);
             }
         }
     }

@@ -13,6 +13,22 @@ import java.util.ArrayList;
  * Created by Jared on 2/26/2018.
  */
 public class LevelData implements Serializable {
+    /**
+     * LevelData:
+     *
+     * The super-struct that contains all the information required to generate a fully featured level, plus some extra stuff too.
+     *
+     * It contains:
+     *  > backdrop      : The level's Backdrop
+     *  > tileDataLayer : The visualization of the Tile Data   //For the Level Editor
+     *  > warpZoneLayer : The visualization of the Warp Zones  //For the Level Editor
+     *  > entityLayer   : The visualization of the Entities    //For the Level Editor
+     *  > tileData      : Integer matrix whose values match ID's in ItemRegistry
+     *  > entityData    : EntityStruct matrix that maps out the Entities
+     *  > warpZones     : ArrayList of WarpZones
+     *  > levelScripts  : ArrayList of integers whose values match Id's in LevelScriptRegistry
+     *
+     */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
@@ -27,6 +43,9 @@ public class LevelData implements Serializable {
 
     private ArrayList<Integer> levelScripts = new ArrayList<>();
 
+    /**
+     * Resets all data to default, what is shown upon startup of Level Editor
+     */
     public void reset(){
         backdrop = new Layer(new SpecialText[100][45], "backdrop", 0, 0);
         tileData = new int[backdrop.getCols()][backdrop.getRows()];
@@ -43,6 +62,9 @@ public class LevelData implements Serializable {
         refreshTileDataLayer();
     }
 
+    /**
+     * Re-assigns all the data in this LevelData, used when hitting 'undo' and 'redo'
+     */
     public void setAllData(Layer backdrop, Layer tileDataLayer, Layer entityLayer, Layer warpZoneLayer, int[][] tileData, EntityStruct[][] entityData, ArrayList<WarpZone> warpZones){
         this.backdrop.transpose(backdrop);
         this.tileDataLayer.transpose(tileDataLayer);
@@ -62,6 +84,10 @@ public class LevelData implements Serializable {
         }
     }
 
+    /**
+     * Creates an identical LevelData that is not a pointer to this LevelData.
+     * @return The copy
+     */
     public LevelData copy(){
         LevelData ldata = new LevelData();
         ldata.reset();
@@ -122,6 +148,15 @@ public class LevelData implements Serializable {
             return null;
     }
 
+    /**
+     * Expands the size of the LevelData.
+     *
+     * The inputs are the location of the cursor when using the 'Expand Room' Tool.
+     * This method then expands and shifts the contents and boundaries of this LevelData so that the LevelData's bounds fit inside the input column and row
+     *
+     * @param col The x location to adjust to
+     * @param row The y location to adjust to
+     */
     public void resize(int col, int row){
         System.out.println("Data dim: " + tileData.length + "x"  + tileData[0].length);
         if (col < 0 || row < 0) {
@@ -150,6 +185,7 @@ public class LevelData implements Serializable {
         }
     }
 
+    //Carries out the resizing of the Tile Data in resize()
     private int[][] resizeTileData(int width, int height, int startX, int startY){
         int[][] newMatrix = new int[width][height];
         for (int col = 0; col < tileData.length; col++){
@@ -164,6 +200,7 @@ public class LevelData implements Serializable {
         return newMatrix;
     }
 
+    //Carries out the resizing of the Entity Data in resize()
     private EntityStruct[][] resizeEntityData(int width, int height, int startX, int startY){
         EntityStruct[][] newMatrix = new EntityStruct[width][height];
         for (int col = 0; col < entityData.length; col++){
@@ -178,12 +215,14 @@ public class LevelData implements Serializable {
         return newMatrix;
     }
 
+    //Carries of the translation of the Warp Zones in resize()
     private void translateWarpZones(int xoffset, int yoffset){
         for (WarpZone wz : warpZones){
             wz.setPos(wz.getXpos() + xoffset, wz.getYpos() + yoffset);
         }
     }
 
+    //Ran upon doing "Sync Data Display" in the Menu. It iterates through its tile data and updates the tileDataLayer
     private void refreshTileDataLayer(){
         TileRegistry tileRegistry = new TileRegistry();
         for (int col = 0; col < tileData.length; col++){
@@ -193,6 +232,7 @@ public class LevelData implements Serializable {
         }
     }
 
+    //Ran upon doing "Sync Data Display" in the Menu. It iterates through its warp zones and updates the warpZoneLayer, coloring the selected one orange
     public void updateWarpZoneLayer(int mouseX, int mouseY){
         warpZoneLayer.clearLayer();
         for (WarpZone warpZone : warpZones){

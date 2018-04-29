@@ -35,6 +35,10 @@ public class TagRegistry {
     public final static int FLAME_ENCHANT = 4;
     public final static int BURN_FOREVER  = 5;
 
+    public final static int FROZEN        = 10;
+    public final static int FROST_ENCHANT = 11;
+    public final static int WET           = 12;
+
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
     public final static int WEAPON_THRUST = 202;
@@ -43,6 +47,8 @@ public class TagRegistry {
     public final static int TILE_WALL     = 400;
     public final static int SAND          = 401;
     public final static int SHALLOW_WATER = 402;
+    public final static int DEEP_WATER    = 403;
+    public final static int NO_PATHING    = 404; //Tag not found.
 
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
@@ -55,9 +61,15 @@ public class TagRegistry {
         registerTag(FLAME_ENCHANT, "Fire Enchantment", FlameEnchantTag.class);
         registerTag(BURN_FOREVER, "Burns Forever", BurnForeverTag.class);
 
+        registerTag(FROZEN, "Frozen", FrozenTag.class);
+        registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);
+        registerTag(WET, "Wet", WetTag.class);
+
         registerTag(TILE_WALL, "Wall", WallTag.class);
         registerTag(SAND, "Sand", SandTag.class);
         registerTag(SHALLOW_WATER, "Shallow Water", ShallowWaterTag.class);
+        registerTag(DEEP_WATER,    "Deep Water", DeepWaterTag.class);
+        registerTag(NO_PATHING, "No Pathing!", NoPathingTag.class);
 
         registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);
         registerTag(WEAPON_STRIKE, "Striking Weapon",  StrikeWeaponTypeTag.class);

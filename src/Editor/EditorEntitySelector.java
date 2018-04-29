@@ -14,7 +14,8 @@ import java.awt.event.MouseEvent;
  */
 public class EditorEntitySelector extends JFrame {
 
-    public EditorEntitySelector(EditorToolPanel editorToolPanel){
+    @SuppressWarnings("unchecked")
+    EditorEntitySelector(EditorToolPanel editorToolPanel){
 
         setTitle("Entity Selector");
         setSize(new Dimension(400, 300));

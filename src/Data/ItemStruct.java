@@ -7,6 +7,23 @@ import java.io.Serializable;
  */
 public class ItemStruct implements Serializable {
 
+    /**
+     * ItemStruct:
+     *
+     * Java does not feature 'structs' like C, C++, or C#, but it's roughly how the ItemStruct functions.
+     *
+     * ItemStructs are a data structure that describes an Item.
+     * It is both used in the LevelEditor and the ItemRegistry.
+     *
+     * It contains:
+     *  > itemID      : The Entity ID from the EntityRegistry
+     *  > qty         : An ArrayList of ItemStructs that describe the inventory of the Entity
+     *
+     * Should be used solely by the ItemRegistry:
+     *  > tags        : An array of integer ID's from the TagRegistry.
+     *  > name        : The name of the Item.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int itemId;

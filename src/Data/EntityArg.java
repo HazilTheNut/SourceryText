@@ -7,6 +7,17 @@ import java.io.Serializable;
  */
 public class EntityArg implements Serializable {
 
+    /**
+     * EntityArg:
+     *
+     * A pair of Strings, one denoting the name of the argument and the other denoting its value.
+     *
+     * For example, an EntityArg could be expressed as ["maxHealth","35"], whose
+     *   Name is "maxHealth" &
+     *   Value being "35"
+     *   ...and together represents "This entity should have a maximum health of 35"
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private String argName;

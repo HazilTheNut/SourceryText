@@ -12,6 +12,22 @@ import java.util.Random;
  */
 public class Layer implements Serializable{
 
+    /**
+     * Layer:
+     *
+     * A grouping of SpecialText's into a rectangular matrix.
+     * If the SpecialText is a 'pixel', then the Layer is an 'image'
+     *
+     * It contains:
+     *  > textMatrix     : A 2D array of SpecialTexts that are the contents of this layer
+     *  > xpos           : The x position of the layer. World-coordinates if not fixedScreenPos, and Screen-coordinates if it is fixedScreenPos //This could be a Coordinate. *sigh* old code...
+     *  > ypos           : The y position of the layer. World-coordinates if not fixedScreenPos, and Screen-coordinates if it is fixedScreenPos
+     *  > name           : The name of the layer. Useful when trying to compare this layer to other ones. Layers of the same name are considered to be the same layer.
+     *  > importance     : An integer that indicates the 'priority' of the layer. Layers of higher priority will display on top of those with lower priorities.
+     *  > fixedScreenPos : A boolean that indicates whether the Layer should obey the LayerManager's camera position. Set to true for creating HUD and menus and whatnot.
+     *  > visible        : A boolean that indicates whether the Layer should be displayed. Very useful if the layer needs to pop in and out of existence, and you don't want to add and remove this layer a bunch from the LayerManager
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private SpecialText[][] textMatrix; //In form textMatrix[col][row]
@@ -39,6 +55,7 @@ public class Layer implements Serializable{
         importance = priority;
     }
 
+    // Harder to read than the other constructors (because there are two pairs of integers), but is written more concisely. Pick your poison, I guess.
     public Layer (int w, int h, String layerName, int x, int y, int priority){
         textMatrix = new SpecialText[w][h];
         name = layerName;
@@ -59,6 +76,11 @@ public class Layer implements Serializable{
         ypos = y;
     }
 
+    /**
+     * Generates an exact copy of this layer, but not as a pointer to this Layer.
+     * WARNING! The output layer's name matches this layer's name, and together are considered one to LayerManager
+     * @return A copy of this layer
+     */
     public Layer copy(){
         Layer copy = new Layer(new SpecialText[getCols()][getRows()], name, xpos, ypos);
         for (int col = 0; col < textMatrix.length; col++){
@@ -71,6 +93,10 @@ public class Layer implements Serializable{
         return copy;
     }
 
+    /**
+     * Copies the SpecialText matrix of another layer onto this layer's text matrix.
+     * @param layer The other layer to transpose from.
+     */
     public void transpose(Layer layer){
         textMatrix = new SpecialText[layer.getCols()][layer.getRows()];
         for (int col = 0; col < textMatrix.length; col++){
@@ -131,6 +157,12 @@ public class Layer implements Serializable{
         }
     }
 
+    /**
+     * Performs a find-and-replace function on the text matrix.
+     * @param find The SpecialText to look for
+     * @param replace The SpecialText to replace with
+     * @param chance The 0-100% chance to perform the operation.
+     */
     public void findAndReplace(SpecialText find, SpecialText replace, int chance){
         System.out.printf("[Layer.findAndReplace] Chance: %1$d\n", chance);
         if (chance <= 0) return;
@@ -182,6 +214,10 @@ public class Layer implements Serializable{
     public void editLayer (int col, int row, SpecialText text) {
         if (isLayerLocInvalid(col, row)) return;
         textMatrix[col][row] = text;
+    }
+
+    public void editLayer (Coordinate loc, SpecialText text){
+        editLayer(loc.getX(), loc.getY(), text);
     }
 
     public boolean isLayerLocInvalid(int col, int row){

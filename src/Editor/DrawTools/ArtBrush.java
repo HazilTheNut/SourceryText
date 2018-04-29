@@ -11,6 +11,18 @@ import java.awt.*;
  */
 public class ArtBrush extends DrawTool {
 
+    /**
+     * ArtBrush:
+     *
+     * The 'basic' art tool.
+     *
+     * Inheritors:
+     *  > ArtEraser
+     *  > ArtLine
+     *
+     * ArtBrush has the code that handles brush size. The Eraser just fills with null chars and the Line uses a Brush tool automatically over a line.
+     */
+
     private JSpinner brushSizeBox;
     String name = "Brush Tool";
     String label = "Size: ";
@@ -37,10 +49,16 @@ public class ArtBrush extends DrawTool {
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        System.out.println("Draw pos: " + col + "," + row);
         drawBrush(layer, col, row, text);
     }
 
+    /**
+     * Draws a square diamond-shape at a cursor position. The length from one corner to the other is (2 * brushSize) - 1
+     * @param layer The layer to draw on
+     * @param centerCol The x position of the center of the diamond
+     * @param centerRow The y position of the center of the diamond
+     * @param text The SpecialText to draw with.
+     */
     void drawBrush(Layer layer, int centerCol, int centerRow, SpecialText text){
         int brushSize = 1;
         try {

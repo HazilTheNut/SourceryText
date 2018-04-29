@@ -7,6 +7,21 @@ import java.io.Serializable;
  */
 public class WarpZone implements Serializable{
 
+    /**
+     * WarpZone:
+     *
+     * The WarpZone is a data structure that defines a Warp Zone linking to another room.
+     *
+     * It contains:
+     *  > xpos          : The x position of upper-left corner of Warp Zone. //This should be a Coordinate, but WarpZone has some older code in it
+     *  > ypos          : The y position of upper-left corner of Warp Zone. //To be honest, it works just as well. Not as neat, but whatever.
+     *  > width         : The width of the WarpZone. A width of zero = infinitely thin.
+     *  > height        : The height of the WarpZone. A height of zero = infinitely thin.
+     *  > roomFilePath  : The relative file path to the new level (the .lda file)
+     *  > newRoomStartX : The x position of the upper-left corner of the "output" of the WarpZone //Yeah, could be a Coordinate too
+     *  > newRoomStartY : The y position of the upper-left corner of the "output" of the WarpZone
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int xpos;

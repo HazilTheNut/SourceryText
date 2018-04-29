@@ -12,6 +12,7 @@ import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.Spells.FireBoltSpell;
+import Game.Spells.IceBoltSpell;
 import Game.Spells.MagicBoltSpell;
 import Game.Spells.Spell;
 
@@ -77,13 +78,14 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         setName("Player");
 
-        addTag(TagRegistry.getTag(TagRegistry.FLAMMABLE), this);
+        addTag(TagRegistry.FLAMMABLE, this);
 
         initSwwoshLayer();
 
         MagicBoltSpell spell = new MagicBoltSpell();
         spells.add(spell);
         spells.add(new FireBoltSpell());
+        spells.add(new IceBoltSpell());
         equippedSpell = spell;
 
         hud = new HUD(lm, this);

@@ -6,9 +6,7 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.AnimatedTiles.AnimatedTile;
 import Game.Entities.Entity;
-import Game.Registries.TagRegistry;
 import Game.Registries.TileRegistry;
-import Game.Tags.Tag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,9 +45,7 @@ public class Level {
                 TileStruct struct = tileRegistry.getTileStruct(ldata.getTileId(col, row));
                 Tile tile = new Tile(new Coordinate(col, row), struct.getTileName(), this);
                 for (int id : struct.getTagIDs()){
-                    Tag toAdd = TagRegistry.getTag(id);
-                    if (toAdd != null)
-                        tile.addTag(toAdd, tile);
+                    tile.addTag(id, tile);
                 }
                 baseTiles[col][row] = tile;
             }
@@ -135,7 +131,7 @@ public class Level {
         return null;
     }
 
-    private Tile getOverlayTileAt(Coordinate loc){
+    public Tile getOverlayTileAt(Coordinate loc){
         for (Tile tile : overlayTiles){
             if (tile.getLocation().equals(loc))
                 return tile;

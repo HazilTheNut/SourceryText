@@ -8,7 +8,6 @@ import Engine.ViewWindow;
 import Game.AnimatedTiles.AnimatedTile;
 import Game.Entities.Entity;
 import Game.Registries.EntityRegistry;
-import Game.Registries.TagRegistry;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -154,8 +153,8 @@ public class GameInstance {
         return newLevel;
     }
 
-    public boolean isSpaceAvailable(Coordinate loc){
-        return currentLevel.isLocationValid(loc) && getEntityAt(loc) == null && !getTileAt(loc).hasTag(TagRegistry.TILE_WALL);
+    public boolean isSpaceAvailable(Coordinate loc, int wallTag){
+        return currentLevel.isLocationValid(loc) && getEntityAt(loc) == null && !getTileAt(loc).hasTag(wallTag);
     }
 
     public Tile getTileAt(Coordinate loc){

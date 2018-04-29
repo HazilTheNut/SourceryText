@@ -14,6 +14,25 @@ import java.net.URLDecoder;
  */
 public class FileIO {
 
+     /*
+      FileIO:
+
+      A catch-all utility class for saving and loading LevelData's (and hopefully game saves soon!)
+     */
+
+    /**
+     * Gets the 'root file path' that points to the file folder where the SourceryText and LevelEditor .jar's are located.
+     *
+     * Useful for trying to reference files nearby the executable, like idk, a .lda or two....
+     * Maybe a couple others too....
+     *
+     * Getting the root file path is handy because that means SourceryText requires no Installation Wizards to correctly configure.
+     * This is also why you can't just run SourceryText out of the IDE, because the root path is now in src instead of CompiledGame
+     *
+     * You gotta configure for outputting a .jar and then run it from there.
+     *
+     * @return The root file path
+     */
     public String getRootFilePath(){
         String path = decodeFilePath(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
         System.out.println("[FileIO.getRootFilePath] base path: " + path);
@@ -23,6 +42,15 @@ public class FileIO {
         return reducedPath;
     }
 
+    /**
+     * Takes a file path and 'cuts off' the portion that contains the root file path.
+     *
+     * If the file path doesn't contain the root path, it throws a hissy fit and returns "PATHS DO NOT MATCH"
+     * So, that it might be easier to discover if the .jar is in the wrong spot.
+     *
+     * @param fullPath The 'full' file path
+     * @return The file path relative to the root file path
+     */
     public String getRelativeFilePath(String fullPath){
         String rootPath = getRootFilePath();
         if (fullPath.contains(rootPath)){
@@ -31,23 +59,35 @@ public class FileIO {
         return "PATHS DO NOT MATCH";
     }
 
+    /**
+     * Cleans up file paths for easier interfacing with.
+     *
+     * 1) It parses the file path using URLDecoder
+     * 2) It replaces every '\' with a '/', which is less of a pain to work with.
+     * 3) It removes the '/' at the start of the file path.
+     *
+     * @param rawPath The 'raw' file path that needs cleaning
+     * @return A much cleaner file path
+     */
     public String decodeFilePath(String rawPath){
         String path;
         try {
             path = URLDecoder.decode(rawPath, "UTF-8");
-            return reformatFilePath(path);
+            String output = path.replace('\\','/');
+            if (output.startsWith("/")) output = output.substring(1);
+            return output;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return rawPath;
         }
     }
 
-    private String reformatFilePath(String path){
-        String output = path.replace('\\','/');
-        if (output.startsWith("/")) output = output.substring(1);
-        return output;
-    }
-
+    /**
+     * Runs the FileChooser to pick a .lda file.
+     *
+     * This method lazily starts the FileChooser beginning location at the root file path
+     * @return The selected File
+     */
     public File chooseLevel(){
         String path = "";
         try {
@@ -59,6 +99,12 @@ public class FileIO {
         return chooseLevel(path);
     }
 
+    /**
+     * Runs the FileChooser to pick a .lda file.
+     *
+     * @param startingPath The beginning location of FileChooser
+     * @return The selected File
+     */
     public File chooseLevel(String startingPath){
         System.out.printf("[FileIO.chooseLevel] Starting path: %1$s\n", startingPath);
         JFileChooser chooser = new JFileChooser(startingPath);
@@ -76,6 +122,12 @@ public class FileIO {
         } else return null;
     }
 
+    /**
+     * De-serializes a .lda file.
+     *
+     * @param savedLevel The LevelData file being opened.
+     * @return The now-usable LevelData.
+     */
     public LevelData openLevel(File savedLevel ){
         try {
             FileInputStream fileIn = new FileInputStream(savedLevel);
@@ -109,6 +161,14 @@ public class FileIO {
         return "";
     }
 
+    /**
+     * Performs a serialization of a LevelData without opening a FileChooser.
+     *
+     * NOTE: the input file path must be the non-relative type.
+     *
+     * @param ldata The LevelData being serialized
+     * @param path The 'full' file path being saved to.
+     */
     public void quickSerializeLevelData(LevelData ldata, String path){
         try {
             FileOutputStream out = new FileOutputStream(path);

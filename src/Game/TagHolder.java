@@ -1,5 +1,6 @@
 package Game;
 
+import Game.Registries.TagRegistry;
 import Game.Tags.Tag;
 
 import java.util.ArrayList;
@@ -13,7 +14,14 @@ public class TagHolder {
 
     public ArrayList<Tag> getTags() { return tags; }
 
-    public void addTag(Tag tag, TagHolder source) {
+    public void addTag(int tagID, TagHolder source){
+        Tag tag = TagRegistry.getTag(tagID);
+        if (tag != null) {
+            addTag(tag, source);
+        }
+    }
+
+    private void addTag(Tag tag, TagHolder source) {
         if (!hasTag(tag.getId())) {
             tags.add(tag);
             TagEvent e = new TagEvent(0, true, source, this, null);

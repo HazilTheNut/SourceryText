@@ -10,6 +10,25 @@ import java.util.ArrayList;
  */
 public class EntityStruct implements Serializable{
 
+    /**
+     * EntityStruct:
+     *
+     * Java does not feature 'structs' like C, C++, or C#, but it's roughly how the EntityStruct functions.
+     *
+     * EntityStructs are a data structure that describes an Entity.
+     * It is both used in the LevelEditor and the EntityRegistry.
+     *
+     * It contains:
+     *  > entityID    : The Entity ID from the EntityRegistry
+     *  > items       : An ArrayList of ItemStructs that describe the inventory of the Entity
+     *  > args        : An ArrayList of EntityArgs that describe the arguments of the Entity
+     *
+     * Should be used solely by the EntityRegistry:
+     *  > tagIDs      : An array of integer ID's from the TagRegistry.
+     *  > displayChar : A SpecialText denoting the 'sprite' to show.
+     *  > entityName  : The name of the Entity.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int entityId;
@@ -64,9 +83,14 @@ public class EntityStruct implements Serializable{
 
     public int getEntityId() { return entityId; }
 
+    /**
+     * Produces a copy of this EntityStruct that does not point to this Entity.
+     * @return The copy of this EntityStruct
+     */
     public EntityStruct copy() {
         EntityStruct struct = new EntityStruct(entityId, entityName, displayChar, tagIDs);
         for (ItemStruct item : items) struct.addItem(item);
+        struct.setArgs(getArgs());
         return struct;
     }
 

@@ -6,6 +6,7 @@ import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Entities.Entity;
+import Game.Registries.TagRegistry;
 import Game.Tags.Tag;
 
 /**
@@ -57,9 +58,11 @@ public class Projectile extends TagHolder {
                     destroy();
                     return;
                 }
-                if (!gi.isSpaceAvailable(newPos)) {
+                if (!gi.isSpaceAvailable(newPos, TagRegistry.TILE_WALL)) {
                     collideWithTerrain(gi);
                     return;
+                } else {
+                    applyFlyover(new Coordinate((int)xpos, (int)ypos), gi);
                 }
             }
             sleep(50);
@@ -83,6 +86,25 @@ public class Projectile extends TagHolder {
             collide(landingTile, gi);
         }
         destroy();
+    }
+
+    private void applyFlyover(Coordinate loc, GameInstance gi){
+        doFlyoverEvent(loc, gi);
+        doFlyoverEvent(loc.add(new Coordinate(1,  0)), gi);
+        doFlyoverEvent(loc.add(new Coordinate(0,  1)), gi);
+        doFlyoverEvent(loc.add(new Coordinate(-1, 0)), gi);
+        doFlyoverEvent(loc.add(new Coordinate(0, -1)), gi);
+    }
+
+    private void doFlyoverEvent(Coordinate loc, GameInstance gi){
+        Tile belowTile = gi.getTileAt(loc);
+        if (belowTile != null) {
+            TagEvent e = new TagEvent(0, true, this, belowTile, gi);
+            for (Tag tag : getTags()){
+                tag.onFlyOver(e);
+            }
+            if (e.eventPassed()) e.enactEvent();
+        }
     }
 
     public void destroy(){

@@ -2,7 +2,6 @@ package Game.Registries;
 
 import Data.ItemStruct;
 import Game.Item;
-import Game.Tags.Tag;
 
 import java.util.Set;
 import java.util.TreeMap;
@@ -58,12 +57,8 @@ public class ItemRegistry {
     public Item generateItem(int id){
         ItemStruct struct = getItemStruct(id);
         Item item = new Item(struct);
-        TagRegistry tagRegistry = new TagRegistry();
         for (int tagId : struct.getTags()){
-            Tag toAdd = tagRegistry.getTag(tagId);
-            if (toAdd != null){
-                item.addTag(toAdd, item);
-            }
+            item.addTag(tagId, item);
         }
         return item;
     }

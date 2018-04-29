@@ -30,8 +30,8 @@ public class EditorLevelBoundGraphics implements SpecialGraphics {
         int topMargin    = window.VER_MARGIN;
         int bottomMargin = window.getHeight() - window.VER_MARGIN;
         //Define bounds of drawn rectangle
-        int left   = -(int)manager.getCameraPos().getX()*window.HOR_SEPARATION+window.HOR_MARGIN;
-        int top    = -(int)manager.getCameraPos().getY()*window.VER_SEPARATION+window.VER_MARGIN;
+        int left   = -manager.getCameraPos().getX() *window.HOR_SEPARATION+window.HOR_MARGIN;
+        int top    = -manager.getCameraPos().getY() *window.VER_SEPARATION+window.VER_MARGIN;
         int right  = left + ldata.getTileDataLayer().getCols()*window.HOR_SEPARATION; //left, top, right, and bottom define bounds of drawn rectangle
         int bottom = top  + ldata.getTileDataLayer().getRows()*window.VER_SEPARATION;
         //Draw!

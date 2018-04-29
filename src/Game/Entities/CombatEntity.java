@@ -12,7 +12,6 @@ import Game.TagEvent;
 import Game.Tags.Tag;
 
 import java.awt.*;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -278,8 +277,7 @@ public class CombatEntity extends Entity{
     public Item getWeapon() {
         if (weapon == null){
             Item item = new Item(new ItemStruct(-1, 1, "no_weapon"));
-            TagRegistry tr = new TagRegistry();
-            item.addTag(tr.getTag(TagRegistry.WEAPON_STRIKE), item);
+            item.addTag(TagRegistry.WEAPON_STRIKE, item);
             return item;
         }
         return weapon;
@@ -331,7 +329,7 @@ public class CombatEntity extends Entity{
     }
 
     private void attemptFuturePoint(int col, int row, int generation){
-        if (getGameInstance().isSpaceAvailable(new Coordinate(col, row)) || getLocation().equals(new Coordinate(col, row))) futurePoints.add(new SpreadPoint(col, row, generation));
+        if (getGameInstance().isSpaceAvailable(new Coordinate(col, row), TagRegistry.NO_PATHING) || getLocation().equals(new Coordinate(col, row))) futurePoints.add(new SpreadPoint(col, row, generation));
     }
 
     private class SpreadPoint{

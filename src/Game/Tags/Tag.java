@@ -1,7 +1,6 @@
 package Game.Tags;
 
 import Game.TagEvent;
-import Game.TagHolder;
 
 /**
  * Created by Jared on 3/26/2018.
@@ -28,6 +27,9 @@ public class Tag {
     public void onTurn(TagEvent e){}
 
     public void onContact(TagEvent e){}
+
+    //Ran on every iteration of projectile over tiles
+    public void onFlyOver(TagEvent e){}
 
     //Ran when the tag holder containing this tag receives a new tag
     public void onAdd(TagEvent e){}
