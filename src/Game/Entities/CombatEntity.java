@@ -101,7 +101,6 @@ public class CombatEntity extends Entity{
     protected void initSwwoshLayer(){
         swooshLayer = new Layer(new SpecialText[1][1], getSprite().getName().concat("_attack"), 0, 0, LayerImportances.ANIMATION);
         swooshLayer.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 150)));
-        lm.addLayer(swooshLayer);
     }
 
     @Override
@@ -117,22 +116,22 @@ public class CombatEntity extends Entity{
         }
     }
 
-    private boolean attack(Coordinate loc){
-        swooshLayer.setVisible(true);
-        swooshLayer.setPos(loc);
-        turnSleep(75);
-        swooshLayer.setVisible(false);
-        Entity entity = getGameInstance().getEntityAt(loc);
-        if (entity != null && entity instanceof CombatEntity){
-            doAttackEvent((CombatEntity)entity);
-            return true;
-        } else {
-            if (getWeapon() != null)
-                getWeapon().onContact(getGameInstance().getTileAt(loc), getGameInstance());
-            else
-                onContact(getGameInstance().getTileAt(loc), getGameInstance());
+    private void attack(Coordinate loc){
+        if (shouldDoAction()){
+            swooshLayer.setVisible(true);
+            swooshLayer.setPos(loc);
+            turnSleep(75);
+            swooshLayer.setVisible(false);
+            Entity entity = getGameInstance().getEntityAt(loc);
+            if (entity != null && entity instanceof CombatEntity) {
+                doAttackEvent((CombatEntity) entity);
+            } else {
+                if (getWeapon() != null)
+                    getWeapon().onContact(getGameInstance().getTileAt(loc), getGameInstance());
+                else
+                    onContact(getGameInstance().getTileAt(loc), getGameInstance());
+            }
         }
-        return false;
     }
 
     protected void doAttackEvent(CombatEntity ce){
@@ -319,6 +318,30 @@ public class CombatEntity extends Entity{
             }
         }
         doPathing(n+1, detectRange);
+    }
+
+    @Override
+    public void onLevelEnter() {
+        super.onLevelEnter();
+        lm.addLayer(swooshLayer);
+    }
+
+    @Override
+    public void onLevelExit() {
+        super.onLevelExit();
+        lm.removeLayer(swooshLayer);
+    }
+
+    @Override
+    public void scanInventory() {
+        super.scanInventory();
+        if (!getItems().contains(weapon)) weapon = null;
+    }
+
+    @Override
+    public void updateInventory() {
+        super.updateInventory();
+        if (!getItems().contains(weapon)) weapon = null;
     }
 
     private void moveFutureToPresentPoints(){

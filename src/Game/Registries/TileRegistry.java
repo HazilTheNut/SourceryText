@@ -12,12 +12,12 @@ import java.util.TreeMap;
  */
 public class TileRegistry {
 
-    private TreeMap<Integer, TileStruct> tileMap = new TreeMap<>();
+    private static TreeMap<Integer, TileStruct> tileMap = new TreeMap<>();
 
-    public TileRegistry(){
+    static {
 
         registerTile(0, "Floor",         new SpecialText(' ', Color.WHITE,              new Color(30, 30, 30)));
-        registerTile(1, "Wall",          new SpecialText('x', Color.WHITE,              new Color(150, 150, 150)), TagRegistry.TILE_WALL);
+        registerTile(1, "Wall",          new SpecialText('x', Color.WHITE,              new Color(150, 150, 150)), TagRegistry.TILE_WALL, TagRegistry.WET);
         registerTile(2, "Grass",         new SpecialText(' ', Color.WHITE,              new Color(63, 104, 42)),   TagRegistry.FLAMMABLE, TagRegistry.BURN_FAST);
         registerTile(3, "Tree",          new SpecialText('T', new Color(181, 255, 172), new Color(39, 68, 39)),    TagRegistry.TILE_WALL, TagRegistry.FLAMMABLE, TagRegistry.BURN_SLOW);
         registerTile(4, "Shallow Water", new SpecialText('~', new Color(100, 100, 175), new Color(85, 85, 160)),   TagRegistry.SHALLOW_WATER, TagRegistry.WET);
@@ -28,7 +28,7 @@ public class TileRegistry {
         registerTile(9, "Sand",          new SpecialText(' ', Color.WHITE,              new Color(189, 182, 153)), TagRegistry.SAND);
     }
 
-    public int[] getMapKeys() {
+    public static int[] getMapKeys() {
         Set<Integer> ints = tileMap.keySet();
         int[] output = new int[ints.size()];
         int index = 0;
@@ -39,9 +39,9 @@ public class TileRegistry {
         return output;
     }
 
-    public TileStruct getTileStruct (int id) { return tileMap.get(id); }
+    public static TileStruct getTileStruct (int id) { return tileMap.get(id); }
 
-    private void registerTile(int id, String name, SpecialText text, int... tags){
+    private static void registerTile(int id, String name, SpecialText text, int... tags){
         tileMap.put(id, new TileStruct(id, name, text, tags));
     }
 }

@@ -46,6 +46,13 @@ public class OnFireTag extends Tag {
     }
 
     @Override
+    public void onAdd(TagEvent e) {
+        if (e.getTarget().hasTag(TagRegistry.FROZEN)){
+            e.addCancelableAction(event -> e.getTarget().removeTag(getId()));
+        }
+    }
+
+    @Override
     public void onTurn(TagEvent e) {
         e.addCancelableAction(event -> {
             if (shouldSpread) {
@@ -103,5 +110,10 @@ public class OnFireTag extends Tag {
                 entity.addTag(TagRegistry.ON_FIRE, source);
             }
         }
+    }
+
+    @Override
+    public Color getTagColor() {
+        return new Color(220, 121, 0);
     }
 }

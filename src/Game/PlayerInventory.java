@@ -8,7 +8,6 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
-import Game.Tags.Tag;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -86,8 +85,10 @@ public class PlayerInventory implements MouseInputReceiver{
                 descLayer.editLayer(col, 0, new SpecialText('#', Color.GRAY, borderBkg));
             }
             descLayer.inscribeString(item.getItemData().getName(), 1, 0, descFg);
-            for (int ii = 0; ii < item.getTags().size(); ii++)
-                descLayer.inscribeString("* " + item.getTags().get(ii).getName(), 0, ii + 1, textFg);
+            for (int ii = 0; ii < item.getTags().size(); ii++) {
+                Color fgColor = item.getTags().get(ii).getTagColor();
+                descLayer.inscribeString("* " + item.getTags().get(ii).getName(), 0, ii + 1, new Color(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
+            }
             descriptionLayer.setVisible(true);
         } else {
             descLayer = new Layer(new SpecialText[1][1], "item_description", 0, 0, LayerImportances.MENU);

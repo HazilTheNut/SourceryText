@@ -1,6 +1,7 @@
 package Game.Tags;
 
 import Engine.SpecialText;
+import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.Tile;
@@ -12,13 +13,12 @@ import java.awt.*;
  */
 public class FrozenTag extends Tag {
 
+    private int duration = 4;
+
     @Override
     public void onAddThis(TagEvent e) {
-        if (!e.getTarget().hasTag(TagRegistry.WET)){
+        if (e.getTarget() instanceof Tile && !e.getTarget().hasTag(TagRegistry.WET)){
             e.cancel();
-            //DebugWindow.reportf(DebugWindow.TAGS, "[FrozenTag] Target is wet!");
-        } else {
-            //DebugWindow.reportf(DebugWindow.TAGS, "[FrozenTag] Target is not wet!");
         }
         e.addCancelableAction(event -> {
             if (e.getTarget() instanceof Tile) {
@@ -41,5 +41,32 @@ public class FrozenTag extends Tag {
                 }
             }
         });
+    }
+
+    @Override
+    public void onAdd(TagEvent e) {
+        if (e.getTarget().hasTag(TagRegistry.ON_FIRE)){
+            e.addCancelableAction(event -> e.getTarget().removeTag(getId()));
+        }
+    }
+
+    @Override
+    public Color getTagColor() {
+        return new Color(145, 150, 199);
+    }
+
+    @Override
+    public void onEntityAction(TagEvent e) {
+        e.cancel();
+    }
+
+    @Override
+    public void onTurn(TagEvent e) {
+        if (e.getTarget() instanceof Entity){
+            duration--;
+            if (duration <= 0){
+                e.addCancelableAction(event -> e.getTarget().removeTag(getId()));
+            }
+        }
     }
 }

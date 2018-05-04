@@ -70,6 +70,7 @@ public class GameInstance {
     }
 
     void enterLevel(String levelFilePath, Coordinate playerPos){
+        player.freeze();
         if (currentLevel != null) {
             currentLevel.onExit(lm);
             currentLevel.removeEntity(player);
@@ -104,6 +105,7 @@ public class GameInstance {
         level.onEnter(lm);
         player.teleport(loc);
         player.updateCameraPos();
+        player.unfreeze();
     }
 
     /**
@@ -112,10 +114,12 @@ public class GameInstance {
      * @return returns the loaded level
      */
     private Level loadLevel(String levelFilePath){
+        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Begin level load to memory from %1$s", levelFilePath);
         Level newLevel = new Level(levelFilePath);
 
         FileIO io = new FileIO();
 
+        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] I/O Deserialization...");
         File levelFile = new File(levelFilePath);
         LevelData ldata = io.openLevel(levelFile);
 
@@ -123,16 +127,16 @@ public class GameInstance {
         backdrop.setImportance(LayerImportances.BACKDROP);
         newLevel.setBackdrop(backdrop);
 
+        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Process entity data...");
         EntityStruct[][] entityMatrix = ldata.getEntityData();
-        EntityRegistry registry = new EntityRegistry();
         for (int col = 0; col < entityMatrix.length; col++){
             for (int row = 0; row < entityMatrix[0].length; row++){
                 if (entityMatrix[col][row] != null){
                     EntityStruct savedStruct = entityMatrix[col][row];
-                    EntityStruct struct = registry.getEntityStruct(savedStruct.getEntityId());
+                    EntityStruct struct = EntityRegistry.getEntityStruct(savedStruct.getEntityId());
                     struct.setArgs(savedStruct.getArgs());
                     struct.setItems(savedStruct.getItems());
-                    Class entityClass = registry.getEntityClass(struct.getEntityId());
+                    Class entityClass = EntityRegistry.getEntityClass(struct.getEntityId());
                     try {
                         Entity e = (Entity)entityClass.newInstance();
                         e.initialize(new Coordinate(col, row), lm, struct, this);
@@ -144,11 +148,15 @@ public class GameInstance {
             }
         }
 
+        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Initialize tiles...");
         newLevel.intitializeTiles(ldata);
 
+        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Assign warp zones...");
         newLevel.setWarpZones(ldata.getWarpZones());
 
         levels.add(newLevel);
+
+        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Loading of level \'%1$s\' complete!", newLevel.getName());
 
         return newLevel;
     }
@@ -185,11 +193,23 @@ public class GameInstance {
 
     public void addAnimatedTile(AnimatedTile animatedTile) { currentLevel.addAnimatedTile(animatedTile); }
 
-    Thread doEnemyTurn(){
-        isPlayerTurn = false;
-        EnemyTurnThread thread = new EnemyTurnThread();
-        thread.start();
-        return thread;
+    void doEnemyTurn(){
+        long[] runTimes = new long[4];
+        runTimes[0] = System.nanoTime();
+        for (EntityOperation op : entityOperations) {
+            op.run();
+        }
+        runTimes[1] = System.nanoTime();
+        for (Entity e : currentLevel.getEntities()) {
+            e.onTurn();
+        }
+        runTimes[2] = System.nanoTime();
+        for (Tile tile : currentLevel.getAllTiles()){
+            tile.onTurn(GameInstance.this);
+        }
+        runTimes[3] = System.nanoTime();
+        reportUpdatePerformance(runTimes);
+        isPlayerTurn = true;
     }
 
     public Entity getEntityAt(Coordinate loc){
@@ -198,29 +218,6 @@ public class GameInstance {
 
     public Level getCurrentLevel() {
         return currentLevel;
-    }
-
-    private class EnemyTurnThread extends Thread {
-
-        @Override
-        public void run() {
-            long[] runTimes = new long[4];
-            runTimes[0] = System.nanoTime();
-            for (EntityOperation op : entityOperations) {
-                op.run();
-            }
-            runTimes[1] = System.nanoTime();
-            for (Entity e : currentLevel.getEntities()) {
-                e.onTurn();
-            }
-            runTimes[2] = System.nanoTime();
-            for (Tile tile : currentLevel.getAllTiles()){
-                tile.onTurn(GameInstance.this);
-            }
-            runTimes[3] = System.nanoTime();
-            reportUpdatePerformance(runTimes);
-            isPlayerTurn = true;
-        }
     }
 
     private void reportUpdatePerformance(long[] times){
@@ -232,6 +229,16 @@ public class GameInstance {
             DebugWindow.clear(DebugWindow.PERFORMANCE);
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "[GameInstance] Turn Update Results:\n>  entityop:   %1$fms\n>  entityturn: %2$fms\n>  tileupdate: %3$fms\n\n>   TOTAL: %4$fms", entityop, entityturn, tileupdate, total);
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "\n[GameInstance] Previous Draw Time:\n>  %1$fms", (double)lm.getPreviousCompileTime() / 1000000);
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "\nLevel \"%6$s\":\n\n > Size : %1$d x %2$d\n > Overlay Tiles : %3$d\n > Total Entities : %4$d\n > Animated Tiles : %5$d",
+                    currentLevel.getBaseTiles().length, currentLevel.getBaseTiles()[0].length, currentLevel.getOverlayTiles().size(), currentLevel.getEntities().size(), currentLevel.getAnimatedTiles().size(), currentLevel.getName());
+            ArrayList<Layer> layerStack = lm.getLayerStack();
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "\nLayers: %1$d\n-------------------\n POS : PRI | NAME", layerStack.size());
+            for (int i = 0; i < layerStack.size(); i++) {
+                if (layerStack.get(i).getVisible())
+                    DebugWindow.reportf(DebugWindow.PERFORMANCE, " %1$3d : %2$3d | %3$s", i, layerStack.get(i).getImportance(), layerStack.get(i).getName());
+                else
+                    DebugWindow.reportf(DebugWindow.PERFORMANCE, " %1$3d : %2$3d | (-) %3$s", i, layerStack.get(i).getImportance(), layerStack.get(i).getName());
+            }
         }
     }
 

@@ -1,10 +1,7 @@
 package Game.Entities;
 
-import Data.Coordinate;
 import Game.Player;
 import Game.Registries.ItemRegistry;
-
-import java.util.ArrayList;
 
 /**
  * Created by Jared on 4/3/2018.
@@ -12,8 +9,7 @@ import java.util.ArrayList;
 public class BasicEnemy extends CombatEntity {
 
     public BasicEnemy(){
-        ItemRegistry registry = new ItemRegistry();
-        setWeapon(registry.generateItem(4).setQty(50));
+        setWeapon(ItemRegistry.generateItem(103).setQty(50));
     }
 
     protected int detectRange = 15;

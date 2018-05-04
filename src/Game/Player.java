@@ -1,9 +1,6 @@
 package Game;
 
-import Data.Coordinate;
-import Data.FileIO;
-import Data.LayerImportances;
-import Data.WarpZone;
+import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
@@ -12,7 +9,6 @@ import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.Spells.FireBoltSpell;
-import Game.Spells.IceBoltSpell;
 import Game.Spells.MagicBoltSpell;
 import Game.Spells.Spell;
 
@@ -51,6 +47,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     private final Coordinate WEST     = new Coordinate(-1, 0);
     private Thread movementThread;
     private final int MOVEMENT_INTERVAL = 125;
+
+    private final SpecialText playerSprite = new SpecialText('@', new Color(223, 255, 214));
     
     private ArrayList<Integer> downKeyCodes = new ArrayList<>(); //KeyCodes of keys currently pressed down on the keyboard
 
@@ -61,9 +59,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         window.addKeyListener(this);
 
         Layer playerLayer = new Layer(new SpecialText[1][1], "player", 0, 0, LayerImportances.ENTITY);
-        playerLayer.editLayer(0, 0, new SpecialText('@', new Color(224, 255, 217)));
-
-        lm.addLayer(playerLayer);
+        playerLayer.editLayer(0, 0, playerSprite);
 
         setSprite(playerLayer);
 
@@ -85,10 +81,15 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         MagicBoltSpell spell = new MagicBoltSpell();
         spells.add(spell);
         spells.add(new FireBoltSpell());
-        spells.add(new IceBoltSpell());
         equippedSpell = spell;
 
         hud = new HUD(lm, this);
+    }
+
+    @Override
+    protected void updateSprite() {
+        getSprite().editLayer(0,0, new SpecialText(playerSprite.getCharacter(), colorateWithTags(playerSprite.getFgColor()), playerSprite.getBkgColor()));
+        DebugWindow.reportf(DebugWindow.MISC, "[Player.updateSprite] Original sprite %1$s ; Calculated: %2$s", getSprite().getSpecialText(0,0), playerSprite);
     }
 
     public void updateCameraPos(){
@@ -184,7 +185,6 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             }
         }
         if (noEnterWarpZoneTimer > 0) noEnterWarpZoneTimer--;
-        DebugWindow.reportf(DebugWindow.GAME, "[Player.onTurn] noEnterWarpZoneTimer: %1$d", noEnterWarpZoneTimer);
     }
 
     public PlayerInventory getInv() { return inv; }
@@ -282,19 +282,11 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                     if (!isFrozen()) {
                         if (movementVector.getX() != 0) {
                             move(movementVector.getX(), 0);
-                            try {
-                                gi.doEnemyTurn().join();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            gi.doEnemyTurn();
                         }
                         if (movementVector.getY() != 0) {
                             move(0, movementVector.getY());
-                            try {
-                                gi.doEnemyTurn().join();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            gi.doEnemyTurn();
                         }
                     /**/
                     }

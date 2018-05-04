@@ -11,7 +11,7 @@ import java.util.TreeMap;
  */
 public class ItemRegistry {
 
-    private TreeMap<Integer, ItemStruct> itemStructMap = new TreeMap<>();
+    private static TreeMap<Integer, ItemStruct> itemStructMap = new TreeMap<>();
 
     /**
      * Item Registry Organization:
@@ -26,7 +26,7 @@ public class ItemRegistry {
      *
      */
 
-    public ItemRegistry(){
+    static {
 
         registerItem(0, "Empty");
 
@@ -38,10 +38,11 @@ public class ItemRegistry {
         registerItem(100, "Wooden Pole",     TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
         registerItem(101, "Wooden Sword",    TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_SWEEP,  TagRegistry.FLAMMABLE);
         registerItem(102, "Flaming Axe",     TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAME_ENCHANT);
+        registerItem(103, "Winter Lance",    TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.FROST_ENCHANT);
         registerItem(1000, "Health Tincture", TagRegistry.HEALTH_START + 10);
     }
 
-    public int[] getMapKeys() {
+    public static int[] getMapKeys() {
         Set<Integer> ints = itemStructMap.keySet();
         int[] output = new int[ints.size()];
         int index = 0;
@@ -52,9 +53,9 @@ public class ItemRegistry {
         return output;
     }
 
-    public ItemStruct getItemStruct(int id) { return itemStructMap.get(id).copy(); }
+    public static ItemStruct getItemStruct(int id) { return itemStructMap.get(id).copy(); }
 
-    public Item generateItem(int id){
+    public static Item generateItem(int id){
         ItemStruct struct = getItemStruct(id);
         Item item = new Item(struct);
         for (int tagId : struct.getTags()){
@@ -63,7 +64,7 @@ public class ItemRegistry {
         return item;
     }
 
-    private void registerItem(int id, String name, int... tags){
+    private static void registerItem(int id, String name, int... tags){
         itemStructMap.put(id, new ItemStruct(id, 1, name, tags));
     }
 }

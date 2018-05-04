@@ -6,7 +6,9 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.AnimatedTiles.AnimatedTile;
 import Game.Entities.Entity;
+import Game.Registries.TagRegistry;
 import Game.Registries.TileRegistry;
+import Game.Tags.Tag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,14 +40,24 @@ public class Level {
     void intitializeTiles(LevelData ldata){
         baseTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
         overlayTiles = new ArrayList<>();
-
-        TileRegistry tileRegistry = new TileRegistry();
+        ArrayList<Tag> generatedTags = new ArrayList<>();
         for (int col = 0; col < backdrop.getCols(); col++){
             for (int row = 0; row < backdrop.getRows(); row++){
-                TileStruct struct = tileRegistry.getTileStruct(ldata.getTileId(col, row));
+                TileStruct struct = TileRegistry.getTileStruct(ldata.getTileId(col, row));
                 Tile tile = new Tile(new Coordinate(col, row), struct.getTileName(), this);
                 for (int id : struct.getTagIDs()){
-                    tile.addTag(id, tile);
+                    boolean tagAlreadyGenerated = false; //Generating new tags is resource-expensive if done in bulk, so a shortcut is made by remembering which tags are already generated and just re-use them.
+                    for (Tag tag : generatedTags){
+                        if (tag.getId() == id){
+                            tile.addTag(tag, tile); //This may have pointer-y issues later, but it probably won't.
+                            tagAlreadyGenerated = true;
+                        }
+                    }
+                    if (!tagAlreadyGenerated){
+                        Tag newTag = TagRegistry.getTag(id);
+                        generatedTags.add(newTag);
+                        tile.addTag(newTag, tile);
+                    }
                 }
                 baseTiles[col][row] = tile;
             }
@@ -146,6 +158,34 @@ public class Level {
         }
         for (Tile tile : overlayTiles) tiles.add(tile);
         return tiles;
+    }
+
+    Tile[][] getBaseTiles() {
+        return baseTiles;
+    }
+
+    public ArrayList<Tile> getOverlayTiles() {
+        return overlayTiles;
+    }
+
+    String getName(){
+        String name = filePath.substring(filePath.lastIndexOf('/')+1);
+        name = name.substring(0, name.length()-4);
+        return name;
+    }
+
+    static String convertFromCamelCase(String str){
+        String output = "";
+        int startLoc = 0;
+        for (int i = 1; i < str.length(); i++){
+            if (Character.isUpperCase(str.charAt(i))){
+                output += str.substring(startLoc, i);
+                output += " ";
+                startLoc = i;
+            }
+        }
+        output += str.substring(startLoc);
+        return output;
     }
 
     public ArrayList<AnimatedTile> getAnimatedTiles() {

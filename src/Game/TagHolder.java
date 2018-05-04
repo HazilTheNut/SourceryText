@@ -3,6 +3,7 @@ package Game;
 import Game.Registries.TagRegistry;
 import Game.Tags.Tag;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +22,7 @@ public class TagHolder {
         }
     }
 
-    private void addTag(Tag tag, TagHolder source) {
+    public void addTag(Tag tag, TagHolder source) {
         if (!hasTag(tag.getId())) {
             tags.add(tag);
             TagEvent e = new TagEvent(0, true, source, this, null);
@@ -85,5 +86,18 @@ public class TagHolder {
             output += "\n> " + tag.getName();
         }
         return output;
+    }
+
+    public Color colorateWithTags(Color baseColor){
+        int baseAlpha = baseColor.getAlpha();
+        int[] colorTotals = {baseColor.getRed() * baseAlpha, baseColor.getGreen() * baseAlpha, baseColor.getBlue() * baseAlpha, baseAlpha}; //Elements refer to r,g,b,a in order
+        for (Tag tag : tags){
+            Color color = tag.getTagColor();
+            colorTotals[0] += color.getRed()   * color.getAlpha();
+            colorTotals[1] += color.getGreen() * color.getAlpha();
+            colorTotals[2] += color.getBlue()  * color.getAlpha();
+            colorTotals[3] += color.getAlpha();
+        }
+        return new Color(colorTotals[0] / colorTotals[3], colorTotals[1] / colorTotals[3], colorTotals[2] / colorTotals[3], Math.min(colorTotals[3], 255)); //Perform weighted average
     }
 }

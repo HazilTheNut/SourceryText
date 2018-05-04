@@ -26,21 +26,21 @@ public class Entity extends TagHolder{
     private Layer sprite; //Not to be mistaken with 7-up
 
     private String name;
+    private int id;
 
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance){
         location = pos;
+        id = entityStruct.getEntityId();
         sprite = new Layer(new SpecialText[1][1], createEntityLayerName(entityStruct, pos), getLocation().getX(), getLocation().getY(), LayerImportances.ENTITY);
         sprite.editLayer(0, 0, entityStruct.getDisplayChar());
         gi = gameInstance;
         this.lm = lm;
-        EntityRegistry er = new EntityRegistry();
-        name = er.getEntityStruct(entityStruct.getEntityId()).getEntityName();
+        name = EntityRegistry.getEntityStruct(entityStruct.getEntityId()).getEntityName();
         for (int id : entityStruct.getTagIDs()){
             addTag(id, this);
         }
-        ItemRegistry itemRegistry = new ItemRegistry();
         for (ItemStruct struct : entityStruct.getItems()){
-            Item item = itemRegistry.generateItem(struct.getItemId()).setQty(struct.getQty());
+            Item item = ItemRegistry.generateItem(struct.getItemId()).setQty(struct.getQty());
             addItem(item);
         }
     }
@@ -68,9 +68,11 @@ public class Entity extends TagHolder{
     protected void setLocation(Coordinate pos) { location = pos; }
 
     protected void move(int relativeX, int relativeY){
-        if (getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)), TagRegistry.NO_PATHING)) {
+        TagEvent moveEvent = new TagEvent(0, true, this, gi.getTileAt(getLocation().add(new Coordinate(relativeX, relativeY))), gi);
+        for (Tag tag : getTags()) tag.onMove(moveEvent);
+        if (moveEvent.eventPassed() && shouldDoAction() && getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)), TagRegistry.NO_PATHING)) {
             location.movePos(relativeX, relativeY);
-            lm.getLayer(sprite.getName()).movePos(relativeX, relativeY);
+            sprite.movePos(relativeX, relativeY);
             DebugWindow.reportf(DebugWindow.GAME, "[Entity.move] \'%1$s\'", getName());
             onContact(gi.getTileAt(location), gi);
         }
@@ -162,6 +164,36 @@ public class Entity extends TagHolder{
             turnEvent.enactEvent();
         }
         updateInventory();
+    }
+
+    @Override
+    public void addTag(int tagID, TagHolder source) {
+        super.addTag(tagID, source);
+        updateSprite();
+    }
+
+    @Override
+    public void removeTag(int id) {
+        super.removeTag(id);
+        updateSprite();
+    }
+
+    boolean shouldDoAction(){
+        TagEvent actionEvent = new TagEvent(0, true, this, null, gi);
+        for (Tag tag : getTags()){
+            tag.onEntityAction(actionEvent);
+        }
+        if (actionEvent.eventPassed()){
+            actionEvent.enactEvent();
+            return true;
+        }
+        return false;
+    }
+
+    protected void updateSprite(){
+        SpecialText originalSprite = EntityRegistry.getEntityStruct(id).getDisplayChar();
+        DebugWindow.reportf(DebugWindow.MISC, "[Entity.updateSprite] Original sprite for %1$s: %2$s", getClass().getSimpleName(), originalSprite);
+        sprite.editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), colorateWithTags(originalSprite.getFgColor()), originalSprite.getBkgColor()));
     }
 
     public void onInteract(Player player){}

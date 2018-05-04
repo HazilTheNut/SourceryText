@@ -13,15 +13,15 @@ import java.util.TreeMap;
  */
 public class EntityRegistry {
 
-    private TreeMap<Integer, EntityStruct> entityStructMap = new TreeMap<>();
-    private TreeMap<Integer, Class> entityObjMap = new TreeMap<>();
+    private static TreeMap<Integer, EntityStruct> entityStructMap = new TreeMap<>();
+    private static TreeMap<Integer, Class> entityObjMap = new TreeMap<>();
 
-    public EntityRegistry(){
+    static {
         registerEntity(2,  "Basic Enemy", new SpecialText('E', new Color(255, 130, 130), new Color(255, 180, 180, 15)), BasicEnemy.class, TagRegistry.FLAMMABLE);
         registerEntity(4,  "Chest",       new SpecialText('C', new Color(245, 245, 175), new Color(175, 100,  35, 45)), Chest.class);
     }
 
-    public int[] getMapKeys() {
+    public static int[] getMapKeys() {
         Set<Integer> ints = entityStructMap.keySet();
         int[] output = new int[ints.size()];
         int index = 0;
@@ -32,11 +32,11 @@ public class EntityRegistry {
         return output;
     }
 
-    public EntityStruct getEntityStruct (int id) { return entityStructMap.get(id).copy(); }
+    public static EntityStruct getEntityStruct (int id) { return entityStructMap.get(id).copy(); }
 
-    public Class getEntityClass (int id) { return entityObjMap.get(id); }
+    public static Class getEntityClass (int id) { return entityObjMap.get(id); }
 
-    private void registerEntity(int id, String name, SpecialText text, Class entityClass, int... tags){
+    private static void registerEntity(int id, String name, SpecialText text, Class entityClass, int... tags){
         entityStructMap.put(id, new EntityStruct(id, name, text, tags));
         if (entityClass != null)
             entityObjMap.put(id, entityClass);
