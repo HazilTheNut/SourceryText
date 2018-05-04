@@ -2,6 +2,7 @@ package Game.Registries;
 
 import Game.DebugWindow;
 import Game.Tags.*;
+import Game.Tags.EnchantmentTags.*;
 import Game.Tags.PropertyTags.*;
 
 import java.util.Set;

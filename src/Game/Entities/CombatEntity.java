@@ -168,17 +168,18 @@ public class CombatEntity extends Entity{
     }
 
     protected void doWeaponAttack(Coordinate loc){
-        for (Tag tag : getWeapon().getTags()) {
+        for (int i = 0; i < getWeapon().getTags().size(); i++) {
+            Tag tag = getWeapon().getTags().get(i);
             switch (tag.getId()) {
                 case TagRegistry.WEAPON_STRIKE:
                     doStrikeWeaponAttack(calculateMeleeDirection(loc));
-                    return;
+                    break;
                 case TagRegistry.WEAPON_THRUST:
                     doThrustWeaponAttack(calculateMeleeDirection(loc));
-                    return;
+                    break;
                 case TagRegistry.WEAPON_SWEEP:
                     doSweepWeaponAttack(calculateMeleeDirection(loc));
-                    return;
+                    break;
             }
         }
     }

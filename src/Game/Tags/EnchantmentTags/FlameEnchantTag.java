@@ -1,4 +1,4 @@
-package Game.Tags.PropertyTags;
+package Game.Tags.EnchantmentTags;
 
 import Game.TagEvent;
 import Game.Tags.OnFireTag;

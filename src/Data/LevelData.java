@@ -222,12 +222,11 @@ public class LevelData implements Serializable {
         }
     }
 
-    //Ran upon doing "Sync Data Display" in the Menu. It iterates through its tile data and updates the tileDataLayer
+    //Ran upon resizing the level. It iterates through its tile data and updates the tileDataLayer
     private void refreshTileDataLayer(){
-        TileRegistry tileRegistry = new TileRegistry();
         for (int col = 0; col < tileData.length; col++){
             for (int row = 0; row < tileData[0].length; row++){
-                tileDataLayer.editLayer(col, row, tileRegistry.getTileStruct(tileData[col][row]).getDisplayChar());
+                tileDataLayer.editLayer(col, row, TileRegistry.getTileStruct(tileData[col][row]).getDisplayChar());
             }
         }
     }
@@ -264,10 +263,9 @@ public class LevelData implements Serializable {
      */
     public void syncDisplayWithData(){
         tileDataLayer.fillLayer(new SpecialText(' '));
-        TileRegistry registry = new TileRegistry();
         for (int col = 0; col < tileData.length; col++){
             for (int row = 0; row < tileData[0].length; row++){
-                SpecialText text = registry.getTileStruct(tileData[col][row]).getDisplayChar();
+                SpecialText text = TileRegistry.getTileStruct(tileData[col][row]).getDisplayChar();
                 System.out.printf("[LevelData] tile sync: col = %1$d row = %2$d char = \'%3$s\' id = %4$d\n", col, row, text.getStr(), tileData[col][row]);
                 tileDataLayer.editLayer(col, row, text);
             }
@@ -276,7 +274,7 @@ public class LevelData implements Serializable {
         for (int col = 0; col < entityData.length; col++){
             for (int row = 0; row < entityData[0].length; row++) {
                 if (entityData[col][row] != null) {
-                    SpecialText text = entityData[col][row].getDisplayChar();
+                    SpecialText text = EntityRegistry.getEntityStruct(entityData[col][row].getEntityId()).getDisplayChar();
                     System.out.printf("[LevelData] ent sync: col = %1$d row = %2$d char = \'%3$s\' id = %4$d\n", col, row, text.getStr(), entityData[col][row].getEntityId());
                     entityLayer.editLayer(col, row, text);
                 }
