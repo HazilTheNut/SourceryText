@@ -24,6 +24,7 @@ public class LayerImportances {
     public static final int ANIMATION        = 30;
     public static final int VFX              = 35;
     public static final int GAME_CURSOR      = 40;
+    public static final int HUD_SYNOPSIS     = 45;
     public static final int MENU             = 50;
     public static final int MENU_CURSOR      = 55;
     public static final int HUD              = 60;

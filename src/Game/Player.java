@@ -75,7 +75,6 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         setName("Player");
 
         addTag(TagRegistry.FLAMMABLE, this);
-
         initSwwoshLayer();
 
         MagicBoltSpell spell = new MagicBoltSpell();
@@ -327,6 +326,11 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             DebugWindow.reportf(DebugWindow.STAGE, "[Player.onMouseClick] Right click event! l:%1$s s:%2$s", levelPos, screenPos);
             doRightClick(levelPos);
         }
+        return false;
+    }
+
+    @Override
+    public boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement) {
         return false;
     }
 

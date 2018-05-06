@@ -10,12 +10,14 @@ import Engine.ViewWindow;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
 /**
  * Created by Jared on 3/28/2018.
  */
-public class GameMouseInput implements MouseInputListener{
+public class GameMouseInput implements MouseInputListener, MouseWheelListener{
 
     private ViewWindow window;
     private LayerManager lm;
@@ -100,4 +102,13 @@ public class GameMouseInput implements MouseInputListener{
     }
 
 
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        Coordinate mousePos = new Coordinate(e.getX(), e.getY());
+        for (MouseInputReceiver receiver : inputReceivers){
+            if (receiver.onMouseWheel(getTiledMousePos(mousePos), getScreenPos(mousePos), e.getPreciseWheelRotation())){
+                return;
+            }
+        }
+    }
 }

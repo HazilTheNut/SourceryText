@@ -31,7 +31,7 @@ public class HUD implements MouseInputReceiver{
         HUDLayer.fixedScreenPos = true;
         lm.addLayer(HUDLayer);
 
-        synopsisLayer = new Layer(new SpecialText[59][20], "Synopsis", 0, 26, LayerImportances.HUD);
+        synopsisLayer = new Layer(new SpecialText[59][20], "Synopsis", 0, 26, LayerImportances.HUD_SYNOPSIS);
         synopsisLayer.fixedScreenPos = true;
         lm.addLayer(synopsisLayer);
 
@@ -136,6 +136,10 @@ public class HUD implements MouseInputReceiver{
         synopsisLayer.setPos(59 - boxLength, 31 - boxHeight);
     }
 
+    public Layer getSynopsisLayer() {
+        return synopsisLayer;
+    }
+
     private void drawEntitySynopsis(Entity e){
         boxHeight++;
         DebugWindow.reportf(DebugWindow.MISC, "[HUD.drawEntitySynopsis] Entity name: \"%1$s\"", e.getName());
@@ -182,6 +186,11 @@ public class HUD implements MouseInputReceiver{
             updateHUD();
         }
         return spellMenu.onMouseClick(screenPos);
+    }
+
+    @Override
+    public boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement) {
+        return false;
     }
 
     private class SpellMenu {

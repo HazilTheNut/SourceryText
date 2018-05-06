@@ -23,14 +23,16 @@ public class PlayerInventory implements MouseInputReceiver{
     private Layer selectorLayer;
     private Layer descriptionLayer;
 
+    private LayerManager lm;
+
     private Item selectedItem;
 
     public final int ITEM_STRING_LENGTH = 16;
 
     private final Color borderBkg = new Color(30, 30, 30);
-    private final Color bkgDark   = new Color(25, 25, 25, 240);
-    private final Color bkgMedium = new Color(35, 35, 35, 240);
-    private final Color bkgLight  = new Color(38, 38, 38, 240);
+    private final Color bkgDark   = new Color(25, 25, 25, 252);
+    private final Color bkgMedium = new Color(35, 35, 35, 252);
+    private final Color bkgLight  = new Color(38, 38, 38, 252);
 
     private final Color labelFg     = new Color(240, 255, 200);
     private final Color stackableFg = new Color(179, 255, 255);
@@ -66,6 +68,7 @@ public class PlayerInventory implements MouseInputReceiver{
         lm.addLayer(selectorLayer);
         lm.addLayer(descriptionLayer);
         this.player = player;
+        this.lm = lm;
     }
 
     public SubInventory getPlayerInv(){
@@ -137,6 +140,13 @@ public class PlayerInventory implements MouseInputReceiver{
         return false;
     }
 
+    @Override
+    public boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement) {
+        playerInv.doScrolling(screenPos, wheelMovement);
+        otherInv.doScrolling(screenPos, wheelMovement);
+        return false;
+    }
+
     private void useItem(Item selectedItem){
         player.freeze();
         TagEvent e = selectedItem.onItemUse(player);
@@ -161,6 +171,8 @@ public class PlayerInventory implements MouseInputReceiver{
 
         private Entity e;
 
+        private int scrollOffset = 0;
+
         private SubInventory(LayerManager lm, String layerName){
             invLayer = new Layer(18, 100, layerName, 0, 0, LayerImportances.MENU);
             invLayer.setVisible(false);
@@ -180,8 +192,10 @@ public class PlayerInventory implements MouseInputReceiver{
         }
 
         private int getInvHeight() {
-            return e.getItems().size() + 1;
+            return Math.min(e.getItems().size() + 1, lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight());
         }
+
+        private int getTagListHeight() { return e.getTags().size() + 1; }
 
         public void show(){
             updateDisplay();
@@ -198,7 +212,29 @@ public class PlayerInventory implements MouseInputReceiver{
         }
 
         void updateDisplay(){
-            Layer tempLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 2][getInvHeight()+1], "temp", 0, 0);
+            Layer tempLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 2][lm.getWindow().RESOLUTION_HEIGHT], "temp", 0, 0);
+
+            drawItems(tempLayer);
+
+            drawTagList(tempLayer);
+
+            invLayer.transpose(tempLayer);
+            invLayer.setPos(loc);
+        }
+
+        void doScrolling(Coordinate screenPos, double scrollAmount){
+            if (invLayer.getVisible() && cursorInInvLayer(screenPos) && screenPos.getY() < getInvHeight() && screenPos.getY() > 1) {
+                scrollOffset += (int) scrollAmount;
+                int maxScrollValue = e.getItems().size() - getInvHeight() + 2;
+                scrollOffset = Math.min(scrollOffset, maxScrollValue); //Sets upper limit of scrollOffset
+                scrollOffset = Math.max(scrollOffset, 0); //Sets lower limit. Note even if maxScrollValue is negative, scrollOffset will set to zero because this method is ran second.
+                DebugWindow.reportf(DebugWindow.STAGE, "[SubInventory.doScrolling]\n offset: %1$d\n Entity: \'%2$s\'", scrollOffset, e.getName());
+                updateDisplay();
+            }
+        }
+
+        private void drawItems(Layer tempLayer){
+            //DebugWindow.reportf(DebugWindow.STAGE, "[SubInventory.drawItems]\n offset: %1$d\n invHeight: %2$d", scrollOffset, getInvHeight());
             ArrayList<Item> items = e.getItems();
             int height = getInvHeight();
             for (int row = 0; row < height; row++){ //Draw base inv panel
@@ -207,10 +243,11 @@ public class PlayerInventory implements MouseInputReceiver{
                 }
             }
             for (int col = 0; col < tempLayer.getCols(); col++){ //Create top border
-                tempLayer.editLayer(col, 0,        new SpecialText('#', Color.GRAY, borderBkg));
+                tempLayer.editLayer(col, 0, new SpecialText('#', Color.GRAY, borderBkg));
             }
-            for (int ii = 0; ii < items.size(); ii++){ //Inscribe inv contents
-                if (ii % 2 == 1){
+            for (int ii = 0; ii < getInvHeight()-2; ii++){ //Inscribe inv contents
+                Item item = items.get(ii + scrollOffset);
+                if ((ii + scrollOffset) % 2 == 1){
                     for (int col = 0; col < ITEM_STRING_LENGTH   ; col++){
                         tempLayer.editLayer(col, ii+1, new SpecialText(' ', Color.WHITE, bkgLight));
                     }
@@ -218,16 +255,29 @@ public class PlayerInventory implements MouseInputReceiver{
                 Color nameColor = textFg;
                 if (e instanceof CombatEntity) {
                     CombatEntity owner = (CombatEntity) getOwner();
-                    nameColor = (owner.getWeapon().equals(items.get(ii))) ? descFg : nameColor;
+                    nameColor = (owner.getWeapon().equals(item)) ? descFg : nameColor;
                 }
-                tempLayer.inscribeString(items.get(ii).getItemData().getName(), 0, ii+1, nameColor);
-                Color qtyColor = (items.get(ii).isStackable()) ? stackableFg : labelFg;
-                tempLayer.inscribeString(String.format("%1$02d", items.get(ii).getItemData().getQty()), 16, ii+1, qtyColor);
+                tempLayer.inscribeString(item.getItemData().getName(), 0, ii+1, nameColor);
+                Color qtyColor = (item.isStackable()) ? stackableFg : labelFg;
+                tempLayer.inscribeString(String.format("%1$02d", item.getItemData().getQty()), 16, ii+1, qtyColor);
             }
             tempLayer.inscribeString(name, 1, 0, labelFg);
+        }
 
-            invLayer.transpose(tempLayer);
-            invLayer.setPos(loc);
+        private void drawTagList(Layer tempLayer){
+            int top = lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1;
+            for (int row = top; row < top + getTagListHeight(); row++) { //Fill tag list panel background
+                for (int col = 0; col < tempLayer.getCols(); col++) {
+                    tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, bkgDark));
+                }
+            }
+            for (int col = 0; col < tempLayer.getCols(); col++) { //Draw top border
+                tempLayer.editLayer(col, top, new SpecialText('#', Color.GRAY, bkgMedium));
+            }
+            tempLayer.inscribeString(e.getName(), 1, top, descFg); //Inscribe entity name
+            for (int i = 0; i < e.getTags().size(); i++) {
+                tempLayer.inscribeString("* " + e.getTags().get(i).getName(), 0, top + i + 1);
+            }
         }
 
         public void close(){

@@ -6,7 +6,6 @@ import Game.GameInstance;
 import Game.GameMouseInput;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Created by Jared on 3/27/2018.
@@ -43,6 +42,7 @@ public class GameStart {
         GameMouseInput mi = new GameMouseInput(window, lm, gi);
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);
+        window.addMouseWheelListener(mi);
 
         gi.establishMouseInput(mi);
     }
