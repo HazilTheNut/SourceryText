@@ -10,11 +10,15 @@ import Game.Tags.Tag;
 public class Item extends TagHolder{
 
     private ItemStruct itemData;
+    private long uniqueID;
     private boolean isStackable = true;
 
     public ItemStruct getItemData() { return itemData; }
 
-    public Item(ItemStruct itemData){ this.itemData = itemData; }
+    public Item(ItemStruct itemData, GameInstance gi){
+        this.itemData = itemData;
+        uniqueID = gi.issueItemUID();
+    }
 
     public void decrementQty(){
         itemData.setQty(itemData.getQty()-1);
@@ -67,8 +71,12 @@ public class Item extends TagHolder{
     public boolean equals(Object obj) {
         if (obj instanceof Item) {
             Item item = (Item) obj;
-            return item.getItemData().equals(itemData);
+            return item.getItemData().equals(itemData) && item.getUniqueID() == uniqueID;
         }
         return false;
+    }
+
+    public long getUniqueID() {
+        return uniqueID;
     }
 }

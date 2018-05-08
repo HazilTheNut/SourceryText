@@ -1,6 +1,7 @@
 package Game.Registries;
 
 import Data.ItemStruct;
+import Game.GameInstance;
 import Game.Item;
 
 import java.util.Set;
@@ -56,9 +57,9 @@ public class ItemRegistry {
 
     public static ItemStruct getItemStruct(int id) { return itemStructMap.get(id).copy(); }
 
-    public static Item generateItem(int id){
+    public static Item generateItem(int id, GameInstance gi){
         ItemStruct struct = getItemStruct(id);
-        Item item = new Item(struct);
+        Item item = new Item(struct, gi);
         for (int tagId : struct.getTags()){
             item.addTag(tagId, item);
         }

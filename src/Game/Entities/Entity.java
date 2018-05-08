@@ -40,7 +40,7 @@ public class Entity extends TagHolder{
             addTag(id, this);
         }
         for (ItemStruct struct : entityStruct.getItems()){
-            Item item = ItemRegistry.generateItem(struct.getItemId()).setQty(struct.getQty());
+            Item item = ItemRegistry.generateItem(struct.getItemId(), gameInstance).setQty(struct.getQty());
             addItem(item);
         }
     }
@@ -111,12 +111,12 @@ public class Entity extends TagHolder{
                         return;
                     } else {
                         i.setQty(99);
-                        items.add(item.setQty(total - 99));
+                        items.add(0, item.setQty(total - 99));
                         return;
                     }
                 }
             }
-        items.add(item);
+        items.add(0, item);
     }
 
     public void removeItem(Item item) { items.remove(item); }

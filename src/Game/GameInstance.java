@@ -33,6 +33,8 @@ public class GameInstance {
 
     private LayerManager lm;
 
+    private long currentItemUID = 0;
+
     public GameInstance(LayerManager manager, ViewWindow window){
 
         lm = manager;
@@ -163,6 +165,11 @@ public class GameInstance {
 
     public boolean isSpaceAvailable(Coordinate loc, int wallTag){
         return currentLevel.isLocationValid(loc) && getEntityAt(loc) == null && !getTileAt(loc).hasTag(wallTag);
+    }
+
+    public long issueItemUID(){
+        currentItemUID++;
+        return currentItemUID;
     }
 
     public Tile getTileAt(Coordinate loc){

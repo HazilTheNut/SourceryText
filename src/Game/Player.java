@@ -83,6 +83,11 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         equippedSpell = spell;
 
         hud = new HUD(lm, this);
+
+        for (int i = 0; i < 15; i++) {
+            addItem(new Item(new ItemStruct(5900 + i, 5, "Item #" + i), gi));
+            DebugWindow.reportf(DebugWindow.GAME, "[Player] Added item # %1$d to inv!", i);
+        }
     }
 
     @Override

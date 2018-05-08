@@ -192,7 +192,8 @@ public class PlayerInventory implements MouseInputReceiver{
         }
 
         private int getInvHeight() {
-            return Math.min(e.getItems().size() + 1, lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight());
+            return Math.min(e.getItems().size() + 1, lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1);
+            //return lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1;
         }
 
         private int getTagListHeight() { return e.getTags().size() + 1; }
@@ -225,7 +226,7 @@ public class PlayerInventory implements MouseInputReceiver{
         void doScrolling(Coordinate screenPos, double scrollAmount){
             if (invLayer.getVisible() && cursorInInvLayer(screenPos) && screenPos.getY() < getInvHeight() && screenPos.getY() > 1) {
                 scrollOffset += (int) scrollAmount;
-                int maxScrollValue = e.getItems().size() - getInvHeight() + 2;
+                int maxScrollValue = e.getItems().size() - getInvHeight() + 1;
                 scrollOffset = Math.min(scrollOffset, maxScrollValue); //Sets upper limit of scrollOffset
                 scrollOffset = Math.max(scrollOffset, 0); //Sets lower limit. Note even if maxScrollValue is negative, scrollOffset will set to zero because this method is ran second.
                 DebugWindow.reportf(DebugWindow.STAGE, "[SubInventory.doScrolling]\n offset: %1$d\n Entity: \'%2$s\'", scrollOffset, e.getName());
@@ -245,21 +246,23 @@ public class PlayerInventory implements MouseInputReceiver{
             for (int col = 0; col < tempLayer.getCols(); col++){ //Create top border
                 tempLayer.editLayer(col, 0, new SpecialText('#', Color.GRAY, borderBkg));
             }
-            for (int ii = 0; ii < getInvHeight()-2; ii++){ //Inscribe inv contents
-                Item item = items.get(ii + scrollOffset);
-                if ((ii + scrollOffset) % 2 == 1){
-                    for (int col = 0; col < ITEM_STRING_LENGTH   ; col++){
-                        tempLayer.editLayer(col, ii+1, new SpecialText(' ', Color.WHITE, bkgLight));
+            for (int ii = 0; ii < getInvHeight()-1; ii++) { //Inscribe inv contents
+                if ((ii + scrollOffset) % 2 == 1) { //Create the alternating colors
+                    for (int col = 0; col < ITEM_STRING_LENGTH; col++) {
+                        tempLayer.editLayer(col, ii + 1, new SpecialText(' ', Color.WHITE, bkgLight));
                     }
                 }
-                Color nameColor = textFg;
-                if (e instanceof CombatEntity) {
-                    CombatEntity owner = (CombatEntity) getOwner();
-                    nameColor = (owner.getWeapon().equals(item)) ? descFg : nameColor;
+                if (ii + scrollOffset < items.size()) {
+                    Item item = items.get(ii + scrollOffset);
+                    Color nameColor = textFg;
+                    if (e instanceof CombatEntity) {
+                        CombatEntity owner = (CombatEntity) getOwner();
+                        nameColor = (owner.getWeapon().equals(item)) ? descFg : nameColor;
+                    }
+                    tempLayer.inscribeString(item.getItemData().getName(), 0, ii + 1, nameColor);
+                    Color qtyColor = (item.isStackable()) ? stackableFg : labelFg;
+                    tempLayer.inscribeString(String.format("%1$02d", item.getItemData().getQty()), 16, ii + 1, qtyColor);
                 }
-                tempLayer.inscribeString(item.getItemData().getName(), 0, ii+1, nameColor);
-                Color qtyColor = (item.isStackable()) ? stackableFg : labelFg;
-                tempLayer.inscribeString(String.format("%1$02d", item.getItemData().getQty()), 16, ii+1, qtyColor);
             }
             tempLayer.inscribeString(name, 1, 0, labelFg);
         }
@@ -297,7 +300,7 @@ public class PlayerInventory implements MouseInputReceiver{
             if (cursorInInvLayer(screenPos) && invLayer.getVisible()){
                 int index = screenPos.getY() - invLayer.getY() - 1;
                 if (index >= 0 && index < e.getItems().size()){
-                    return e.getItems().get(index);
+                    return e.getItems().get(index + scrollOffset);
                 }
             }
             return null;
@@ -352,7 +355,7 @@ public class PlayerInventory implements MouseInputReceiver{
                 selected.decrementQty();
                 from.scanInventory();
                 ItemStruct struct = selected.getItemData();
-                Item singularItem = new Item(new ItemStruct(struct.getItemId(), 1, struct.getName()));
+                Item singularItem = new Item(new ItemStruct(struct.getItemId(), 1, struct.getName()), player.getGameInstance());
                 singularItem.getTags().addAll(selected.getTags());
                 to.addItem(singularItem);
             } else {
