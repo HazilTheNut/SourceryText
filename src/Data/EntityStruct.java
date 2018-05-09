@@ -83,6 +83,13 @@ public class EntityStruct implements Serializable{
 
     public int getEntityId() { return entityId; }
 
+    public boolean hasArg(String name){
+        for (EntityArg arg : args){
+            if (arg.getArgName().equals(name)) return true;
+        }
+        return false;
+    }
+
     /**
      * Produces a copy of this EntityStruct that does not point to this Entity.
      * @return The copy of this EntityStruct

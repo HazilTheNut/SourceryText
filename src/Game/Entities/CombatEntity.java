@@ -13,7 +13,6 @@ import Game.Tags.Tag;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * Created by Jared on 3/28/2018.
@@ -57,35 +56,11 @@ public class CombatEntity extends Entity{
 
     @Override
     public ArrayList<EntityArg> generateArgs() {
-        ArrayList<EntityArg> args = new ArrayList<>();
+        ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("interactText", "Having a conversation right now probably isn't a good idea."));
         args.add(new EntityArg("maxHealth", String.valueOf(defaultMaxHealth)));
         args.add(new EntityArg("strength",  String.valueOf(defaultStrength)));
         return args;
-    }
-
-    /**
-     * Reads an EntityArg and returns an integer
-     * @param arg EntityArg to read
-     * @param def Default number if contents of arg are not integer-formatted or does not exist
-     * @return Resulting integer
-     */
-    protected int readIntArg(EntityArg arg, int def){
-        if (arg != null) {
-            Scanner sc = new Scanner(arg.getArgValue());
-            if (sc.hasNextInt()) {
-                return sc.nextInt();
-            }
-        }
-        return def;
-    }
-
-    protected EntityArg searchForArg(ArrayList<EntityArg> providedArgs, String name){
-        for (EntityArg arg : providedArgs){
-            if (arg.getArgName().equals(name))
-                return arg;
-        }
-        return null;
     }
 
     @Override

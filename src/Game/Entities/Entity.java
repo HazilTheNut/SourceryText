@@ -11,6 +11,7 @@ import Game.Registries.TagRegistry;
 import Game.Tags.Tag;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Created by Jared on 3/27/2018.
@@ -24,18 +25,24 @@ public class Entity extends TagHolder{
 
     private Coordinate location;
     private Layer sprite; //Not to be mistaken with 7-up
+    private SpecialText icon;
 
     private String name;
     private int id;
 
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance){
-        location = pos;
         id = entityStruct.getEntityId();
-        sprite = new Layer(new SpecialText[1][1], createEntityLayerName(entityStruct, pos), getLocation().getX(), getLocation().getY(), LayerImportances.ENTITY);
-        sprite.editLayer(0, 0, entityStruct.getDisplayChar());
         gi = gameInstance;
         this.lm = lm;
-        name = EntityRegistry.getEntityStruct(entityStruct.getEntityId()).getEntityName();
+
+        simpleInit(entityStruct, pos);
+        String defName = EntityRegistry.getEntityStruct(entityStruct.getEntityId()).getEntityName(); //Default name
+        name = readStrArg(searchForArg(entityStruct.getArgs(), "name"), defName); //Searches for name in args list
+
+        icon = readSpecTxtArg(searchForArg(entityStruct.getArgs(), "icon"), icon);
+        sprite = new Layer(new SpecialText[1][1], createEntityLayerName(entityStruct, pos), getLocation().getX(), getLocation().getY(), LayerImportances.ENTITY);
+        sprite.editLayer(0, 0, icon);
+
         for (int id : entityStruct.getTagIDs()){
             addTag(id, this);
         }
@@ -43,6 +50,13 @@ public class Entity extends TagHolder{
             Item item = ItemRegistry.generateItem(struct.getItemId(), gameInstance).setQty(struct.getQty());
             addItem(item);
         }
+    }
+
+    public void simpleInit(EntityStruct entityStruct, Coordinate pos){
+        location = pos;
+        name = entityStruct.getEntityName();
+        icon = entityStruct.getDisplayChar();
+        DebugWindow.reportf(DebugWindow.MISC, "[Entity.simpleInit]\n Original: %1$s\n After conversions: %2$s", icon, SpecialText.fromString(icon.toString()));
     }
 
     public void onLevelEnter(){
@@ -99,7 +113,7 @@ public class Entity extends TagHolder{
         return name;
     }
 
-    protected void setName(String str){ name = str; }
+    public void setName(String str){ name = str; }
 
     public void addItem(Item item) {
         if (item.isStackable())
@@ -150,7 +164,8 @@ public class Entity extends TagHolder{
 
     public ArrayList<EntityArg> generateArgs(){
         ArrayList<EntityArg> args = new ArrayList<>();
-        args.add(new EntityArg("interactText", ""));
+        args.add(new EntityArg("name", name));
+        args.add(new EntityArg("icon", icon.toString()));
         return args;
     }
 
@@ -191,7 +206,7 @@ public class Entity extends TagHolder{
     }
 
     protected void updateSprite(){
-        SpecialText originalSprite = EntityRegistry.getEntityStruct(id).getDisplayChar();
+        SpecialText originalSprite = icon;
         DebugWindow.reportf(DebugWindow.MISC, "[Entity.updateSprite] Original sprite for %1$s: %2$s", getClass().getSimpleName(), originalSprite);
         sprite.editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), colorateWithTags(originalSprite.getFgColor()), originalSprite.getBkgColor()));
     }
@@ -206,4 +221,56 @@ public class Entity extends TagHolder{
         }
         return false;
     }
+
+    /**
+     * Reads an EntityArg and returns an integer
+     * @param arg EntityArg to read
+     * @param def Default number if contents of arg are not integer-formatted or does not exist
+     * @return Resulting integer
+     */
+    protected int readIntArg(EntityArg arg, int def){
+        if (arg != null) {
+            Scanner sc = new Scanner(arg.getArgValue());
+            if (sc.hasNextInt()) {
+                return sc.nextInt();
+            }
+        }
+        return def;
+    }
+
+    /**
+     * Reads an EntityArg and returns a string
+     * @param arg EntityArg to read
+     * @param def Default string if arg does not exist
+     * @return Resulting String
+     */
+    protected String readStrArg(EntityArg arg, String def){
+        if (arg != null) {
+            return arg.getArgValue();
+        }
+        return def;
+    }
+
+    /**
+     * Reads an EntityArg and returns a string
+     * @param arg EntityArg to read
+     * @param def Deafult string if arg does not exist or an error occurred in trying to read the value
+     * @return Resulting SpecialText
+     */
+    protected SpecialText readSpecTxtArg(EntityArg arg, SpecialText def){
+        if (arg != null){
+            SpecialText txt = SpecialText.fromString(arg.getArgValue());
+            if (txt != null) return txt;
+        }
+        return def;
+    }
+
+    protected EntityArg searchForArg(ArrayList<EntityArg> providedArgs, String name){
+        for (EntityArg arg : providedArgs){
+            if (arg.getArgName().equals(name))
+                return arg;
+        }
+        return null;
+    }
+
 }

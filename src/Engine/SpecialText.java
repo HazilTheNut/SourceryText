@@ -1,9 +1,12 @@
 package Engine;
 
 import Data.SerializationVersion;
+import Game.DebugWindow;
 
 import java.awt.*;
 import java.io.Serializable;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 /**
  * Created by Jared on 2/18/2018.
@@ -63,12 +66,35 @@ public class SpecialText implements Serializable{
 
     @Override
     public String toString() {
-        return String.format("%1$c [%2$d,%3$d,%4$d,%5$d] [%6$d,%7$d,%8$d,%9$d]", getCharacter(), fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue(), fgColor.getAlpha(), bkgColor.getRed(), bkgColor.getGreen(), bkgColor.getBlue(), bkgColor.getAlpha());
+        return String.format("/%1$c/[%2$03d,%3$03d,%4$03d,%5$03d];[%6$03d,%7$03d,%8$03d,%9$03d]", getCharacter(), fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue(), fgColor.getAlpha(), bkgColor.getRed(), bkgColor.getGreen(), bkgColor.getBlue(), bkgColor.getAlpha());
     }
 
     public void transpose(SpecialText text){
         character = text.getCharacter();
         fgColor = text.getFgColor();
         bkgColor = text.getBkgColor();
+    }
+
+    public static SpecialText fromString(String text){
+        char c = text.charAt(1);
+        try {
+            int fr = readInt(text.substring(4, 7));
+            int fg = readInt(text.substring(8, 11));
+            int fb = readInt(text.substring(12, 15));
+            int fa = readInt(text.substring(16, 19));
+            int br = readInt(text.substring(22, 25));
+            int bg = readInt(text.substring(26, 29));
+            int bb = readInt(text.substring(30, 33));
+            int ba = readInt(text.substring(34, 37));
+            return new SpecialText(c, new Color(fr, fg, fb, fa), new Color(br, bg, bb, ba));
+        } catch ( NoSuchElementException | IllegalStateException e){
+            DebugWindow.reportf(DebugWindow.MISC, "[SpecialText.fromString] Error: \n" + e.getMessage());
+            return null;
+        }
+    }
+
+    private static int readInt(String str){
+        Scanner sc = new Scanner(str);
+        return sc.nextInt();
     }
 }

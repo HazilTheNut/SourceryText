@@ -44,8 +44,8 @@ public class PlayerInventory implements MouseInputReceiver{
     public static final int CONFIG_OTHER_VIEW = 2;
     public static final int CONFIG_OTHER_EXCHANGE = 3;
 
-    public static final Coordinate PLACEMENT_TOP_LEFT   = new Coordinate(0, 1);
-    public static final Coordinate PLACEMENT_TOP_RIGHT  = new Coordinate(41,1);
+    public static final Coordinate PLACEMENT_TOP_LEFT   = new Coordinate(-1, 1);
+    public static final Coordinate PLACEMENT_TOP_RIGHT  = new Coordinate(40, 1);
 
     private SubInventory playerInv;
     private SubInventory otherInv;
@@ -87,10 +87,12 @@ public class PlayerInventory implements MouseInputReceiver{
             for (int col = 0; col < descLayer.getCols(); col++){ //Create top border
                 descLayer.editLayer(col, 0, new SpecialText('#', Color.GRAY, borderBkg));
             }
-            descLayer.inscribeString(item.getItemData().getName(), 1, 0, descFg);
+            String itemname = item.getItemData().getName();
+            descLayer.inscribeString(itemname, getTitleMiddleAlignment(itemname, 21), 0, descFg);
             for (int ii = 0; ii < item.getTags().size(); ii++) {
                 Color fgColor = item.getTags().get(ii).getTagColor();
-                descLayer.inscribeString("* " + item.getTags().get(ii).getName(), 0, ii + 1, new Color(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
+                descLayer.inscribeString(item.getTags().get(ii).getName(), 2, ii + 1, new Color(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
+                descLayer.editLayer(0, ii + 1, new SpecialText('*', Color.GRAY, bkgDark));
             }
             descriptionLayer.setVisible(true);
         } else {
@@ -162,6 +164,13 @@ public class PlayerInventory implements MouseInputReceiver{
         player.updateHUD();
     }
 
+    private int getTitleMiddleAlignment(String title, int totalWidth){
+        double length = (double)title.length();
+        double adjustment = (totalWidth - length)/2;
+        //DebugWindow.reportf(DebugWindow.STAGE, "[PlayerInventory] Middle alignment start x: %1$f  ", adjustment);
+        return (int)Math.floor(adjustment);
+    }
+
     public class SubInventory {
 
         private Layer invLayer;
@@ -174,7 +183,7 @@ public class PlayerInventory implements MouseInputReceiver{
         private int scrollOffset = 0;
 
         private SubInventory(LayerManager lm, String layerName){
-            invLayer = new Layer(18, 100, layerName, 0, 0, LayerImportances.MENU);
+            invLayer = new Layer(19, 100, layerName, 0, 0, LayerImportances.MENU);
             invLayer.setVisible(false);
             invLayer.fixedScreenPos = true;
             lm.addLayer(invLayer);
@@ -192,8 +201,8 @@ public class PlayerInventory implements MouseInputReceiver{
         }
 
         private int getInvHeight() {
-            return Math.min(e.getItems().size() + 1, lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1);
-            //return lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1;
+            //return Math.min(e.getItems().size() + 1, lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1);
+            return lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1;
         }
 
         private int getTagListHeight() { return e.getTags().size() + 1; }
@@ -213,11 +222,14 @@ public class PlayerInventory implements MouseInputReceiver{
         }
 
         void updateDisplay(){
-            Layer tempLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 2][lm.getWindow().RESOLUTION_HEIGHT], "temp", 0, 0);
+            Layer tempLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 4][lm.getWindow().RESOLUTION_HEIGHT], "temp", 0, 0);
 
             drawItems(tempLayer);
 
-            drawTagList(tempLayer);
+            if (mode == CONFIG_PLAYER_EXCHANGE || mode == CONFIG_PLAYER_USE)
+                drawTagList(tempLayer, 1);
+            else
+                drawTagList(tempLayer, 0);
 
             invLayer.transpose(tempLayer);
             invLayer.setPos(loc);
@@ -248,8 +260,8 @@ public class PlayerInventory implements MouseInputReceiver{
             }
             for (int ii = 0; ii < getInvHeight()-1; ii++) { //Inscribe inv contents
                 if ((ii + scrollOffset) % 2 == 1) { //Create the alternating colors
-                    for (int col = 0; col < ITEM_STRING_LENGTH; col++) {
-                        tempLayer.editLayer(col, ii + 1, new SpecialText(' ', Color.WHITE, bkgLight));
+                    for (int col = 0; col < ITEM_STRING_LENGTH + 2; col++) {
+                        tempLayer.editLayer(col + 1, ii + 1, new SpecialText(' ', Color.WHITE, bkgLight));
                     }
                 }
                 if (ii + scrollOffset < items.size()) {
@@ -259,15 +271,15 @@ public class PlayerInventory implements MouseInputReceiver{
                         CombatEntity owner = (CombatEntity) getOwner();
                         nameColor = (owner.getWeapon().equals(item)) ? descFg : nameColor;
                     }
-                    tempLayer.inscribeString(item.getItemData().getName(), 0, ii + 1, nameColor);
+                    tempLayer.inscribeString(item.getItemData().getName(), 1, ii + 1, nameColor);
                     Color qtyColor = (item.isStackable()) ? stackableFg : labelFg;
-                    tempLayer.inscribeString(String.format("%1$02d", item.getItemData().getQty()), 16, ii + 1, qtyColor);
+                    tempLayer.inscribeString(String.format("%1$02d", item.getItemData().getQty()), ITEM_STRING_LENGTH + 1, ii + 1, qtyColor);
                 }
             }
-            tempLayer.inscribeString(name, 1, 0, labelFg);
+            tempLayer.inscribeString(name, 2, 0, labelFg);
         }
 
-        private void drawTagList(Layer tempLayer){
+        private void drawTagList(Layer tempLayer, int xstart){
             int top = lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1;
             for (int row = top; row < top + getTagListHeight(); row++) { //Fill tag list panel background
                 for (int col = 0; col < tempLayer.getCols(); col++) {
@@ -277,9 +289,9 @@ public class PlayerInventory implements MouseInputReceiver{
             for (int col = 0; col < tempLayer.getCols(); col++) { //Draw top border
                 tempLayer.editLayer(col, top, new SpecialText('#', Color.GRAY, bkgMedium));
             }
-            tempLayer.inscribeString(e.getName(), 1, top, descFg); //Inscribe entity name
+            tempLayer.inscribeString(e.getName(), getTitleMiddleAlignment(e.getName(), ITEM_STRING_LENGTH + 4 - xstart) + xstart, top, descFg); //Inscribe entity name
             for (int i = 0; i < e.getTags().size(); i++) {
-                tempLayer.inscribeString("* " + e.getTags().get(i).getName(), 0, top + i + 1);
+                tempLayer.inscribeString("* " + e.getTags().get(i).getName(), xstart, top + i + 1);
             }
         }
 
@@ -309,7 +321,7 @@ public class PlayerInventory implements MouseInputReceiver{
         private void onMouseMove(Coordinate screenPos){
             Item item = getItemAtCursor(screenPos);
             if (item != null){
-                selectorLayer.setPos(loc.getX(), screenPos.getY());
+                selectorLayer.setPos(loc.getX() + 1, screenPos.getY());
                 selectorLayer.setVisible(true);
                 selectedItem = item;
                 updateItemDescription(selectedItem);

@@ -1,5 +1,6 @@
 package Editor;
 
+import Data.Coordinate;
 import Data.EntityArg;
 import Data.EntityStruct;
 import Game.Entities.Entity;
@@ -22,20 +23,19 @@ public class EntityArgsPanel extends JPanel {
         JPanel argEditorPanel = new JPanel();
         argEditorPanel.setLayout(new BoxLayout(argEditorPanel, BoxLayout.PAGE_AXIS));
 
-        EntityRegistry entityRegistry = new EntityRegistry();
         Entity generated = null;
         try {
-            generated = (Entity)entityRegistry.getEntityClass(entityStruct.getEntityId()).newInstance();
+            generated = (Entity) EntityRegistry.getEntityClass(entityStruct.getEntityId()).newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        if (entityStruct.getArgs().size() == 0) {
-            if (generated != null) {
-                ArrayList<EntityArg> args = generated.generateArgs();
-                if (args != null) {
-                    for (EntityArg arg : args) {
+        if (generated != null) {
+            generated.simpleInit(entityStruct, new Coordinate(0, 0));
+            ArrayList<EntityArg> args = generated.generateArgs();
+            if (args != null) {
+                for (EntityArg arg : args) {
+                    if (!entityStruct.hasArg(arg.getArgName()))
                         entityStruct.addArg(arg);
-                    }
                 }
             }
         }
