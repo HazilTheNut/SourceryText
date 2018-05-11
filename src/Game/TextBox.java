@@ -34,7 +34,7 @@ public class TextBox implements MouseInputReceiver{
     private final Color txt_red    = new Color(255, 128, 128);
     private final Color txt_green  = new Color(130, 255, 130);
     private final Color txt_blue   = new Color(140, 140, 255);
-    private final Color txt_cyan   = new Color(130, 255, 255);
+    private final Color txt_cyan   = new Color(130, 255, 224);
     private final Color txt_yellow = new Color(230, 230, 130);
     private final Color txt_orange = new Color(255, 191, 128);
     private final Color txt_silver = new Color(123, 123, 140);
@@ -125,7 +125,7 @@ public class TextBox implements MouseInputReceiver{
     private int getIndexOfNextSpace(String message, int index){
         int min = message.length() + 1;
         min = Math.min(getCleanedIndexOf(message, index, " "), min);
-        String[] flags = {"<nl>","<sf>","<sn>","<ss>"};
+        String[] flags = {"<nl>","<sf>","<sn>","<ss>","<cw>","<cr>","<cg>","<cb>","<cc>","<cp>","<cy>","<co>","<cs>"};
         for (String flag : flags) {
             min = Math.min(getCleanedIndexOf(message, index, flag), min);
         }
