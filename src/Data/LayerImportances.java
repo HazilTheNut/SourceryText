@@ -30,4 +30,5 @@ public class LayerImportances {
     public static final int HUD              = 60;
     public static final int HUD_SPELL_MENU   = 65;
     public static final int HUD_SPELL_CURSOR = 67;
+    public static final int TEXT_BOX         = 70;
 }

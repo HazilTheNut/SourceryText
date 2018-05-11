@@ -233,6 +233,8 @@ public class Layer implements Serializable{
 
     public int getX() { return xpos; }
     public int getY() { return ypos; }
+    public Coordinate getPos() { return new Coordinate(xpos, ypos); }
+
     public void setPos(int x, int y) { xpos = x; ypos = y; }
     public void movePos(int x, int y) { xpos += x; ypos += y; }
 

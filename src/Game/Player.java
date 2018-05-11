@@ -83,15 +83,6 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         equippedSpell = spell;
 
         hud = new HUD(lm, this);
-
-        for (int i = 0; i < 10; i++) {
-            String name = "Item #";
-            for (int ii = 0; ii < i; ii++){
-                name += "#";
-            }
-            addItem(new Item(new ItemStruct(5900 + i, 5, name), gi));
-            DebugWindow.reportf(DebugWindow.GAME, "[Player] Added item # %1$d to inv!", i);
-        }
     }
 
     @Override
@@ -209,7 +200,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         this.equippedSpell = equippedSpell;
     }
 
-    public void assignMouseInput(GameMouseInput mi){
+    void assignMouseInput(GameMouseInput mi){
         mi.addInputReceiver(hud);
         mi.addInputReceiver(inv);
         mi.addInputReceiver(this);
@@ -269,6 +260,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 lm.printLayerStack();
             } else if (keyCode == KeyEvent.VK_Q){
                 inv.openOtherInventory(gi.getEntityAt(mouseLevelPos));
+            } else if (keyCode == KeyEvent.VK_M) {
+                gi.getTextBox().showMessage("It wasn't a dark and stormy night, <ss>in fact,<sn> today's weather was rather fine.<nl><sf>Sourcery is pretty neat, isn't it?");
             } else {
                 if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) movementKeyDown(EAST);
                 if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A)  movementKeyDown(WEST);

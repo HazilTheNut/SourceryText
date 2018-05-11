@@ -32,6 +32,7 @@ public class GameInstance {
     private String currentZoneName;
 
     private LayerManager lm;
+    private TextBox textBox;
 
     private long currentItemUID = 0;
 
@@ -69,6 +70,9 @@ public class GameInstance {
                 }
             }
         }, 50, 50);
+
+        textBox = new TextBox(lm, player);
+
     }
 
     void enterLevel(String levelFilePath, Coordinate playerPos){
@@ -192,6 +196,7 @@ public class GameInstance {
 
     public void establishMouseInput(GameMouseInput mi){
         player.assignMouseInput(mi);
+        mi.addInputReceiver(textBox);
     }
 
     public void setPlayerTurn(boolean playerTurn) {
@@ -247,6 +252,10 @@ public class GameInstance {
                     DebugWindow.reportf(DebugWindow.PERFORMANCE, " %1$3d : %2$3d | (-) %3$s", i, layerStack.get(i).getImportance(), layerStack.get(i).getName());
             }
         }
+    }
+
+    public TextBox getTextBox() {
+        return textBox;
     }
 
     private interface EntityOperation{

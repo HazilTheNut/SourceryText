@@ -66,7 +66,7 @@ public class SpecialText implements Serializable{
 
     @Override
     public String toString() {
-        return String.format("/%1$c/[%2$03d,%3$03d,%4$03d,%5$03d];[%6$03d,%7$03d,%8$03d,%9$03d]", getCharacter(), fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue(), fgColor.getAlpha(), bkgColor.getRed(), bkgColor.getGreen(), bkgColor.getBlue(), bkgColor.getAlpha());
+        return String.format("|%1$c|[%2$03d,%3$03d,%4$03d,%5$03d],[%6$03d,%7$03d,%8$03d,%9$03d]", getCharacter(), fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue(), fgColor.getAlpha(), bkgColor.getRed(), bkgColor.getGreen(), bkgColor.getBlue(), bkgColor.getAlpha());
     }
 
     public void transpose(SpecialText text){
