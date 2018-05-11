@@ -261,7 +261,12 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             } else if (keyCode == KeyEvent.VK_Q){
                 inv.openOtherInventory(gi.getEntityAt(mouseLevelPos));
             } else if (keyCode == KeyEvent.VK_M) {
-                gi.getTextBox().showMessage("It wasn't a dark and stormy night, <ss>in fact,<sn> today's weather was rather fine.<nl><sf>Sourcery is pretty neat, isn't it?");
+//                gi.getTextBox().showMessage("It wasn't a dark and stormy night, <ss>in fact,<sn> today's weather was rather fine.<nl><sf>Sourcery is pretty neat, isn't it?<nl>What if I put in another sentence?<nl><nl>Again!<nl><nl>" +
+//                        "Wow! <cr>R<co>A<cy>I<cg>N<cc>B<cb>O<cp>W<cs>S<cw>!");
+                String[] flags = {"<cr>","<cg>","<cb>","<cc>","<cp>","<cy>","<co>","<cs>"};
+                String message = "";
+                for (String flag : flags) message += flag + "Something unimportant,<nl>";
+                gi.getTextBox().showMessage(message);
             } else {
                 if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) movementKeyDown(EAST);
                 if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A)  movementKeyDown(WEST);

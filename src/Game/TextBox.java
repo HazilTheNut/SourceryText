@@ -13,8 +13,6 @@ import java.awt.*;
  */
 public class TextBox implements MouseInputReceiver{
 
-    String message;
-
     private Layer textBoxLayer;
     private Player player;
     private final int height = 5;
@@ -31,6 +29,17 @@ public class TextBox implements MouseInputReceiver{
     private final int STATE_END       = 2;
     private int currentState;
 
+    private final Color bkg        = new Color(10,  10,  10);
+    private final Color txt_white  = new Color(225, 225, 225);
+    private final Color txt_red    = new Color(255, 128, 128);
+    private final Color txt_green  = new Color(130, 255, 130);
+    private final Color txt_blue   = new Color(140, 140, 255);
+    private final Color txt_cyan   = new Color(130, 255, 255);
+    private final Color txt_yellow = new Color(230, 230, 130);
+    private final Color txt_orange = new Color(255, 191, 128);
+    private final Color txt_silver = new Color(123, 123, 140);
+    private final Color txt_purple = new Color(191, 128, 255);
+
     public TextBox(LayerManager lm, Player player){
 
         textBoxLayer = new Layer(lm.getWindow().RESOLUTION_WIDTH, height, "text_box", 0, lm.getWindow().RESOLUTION_HEIGHT - height, LayerImportances.TEXT_BOX);
@@ -43,7 +52,7 @@ public class TextBox implements MouseInputReceiver{
     }
 
     public void showMessage(String message){
-        textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, Color.BLACK));
+        textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
         textBoxLayer.setVisible(true);
         player.freeze();
         DebugWindow.reportf(DebugWindow.MISC, "[TextBox.showMessage] First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
@@ -60,10 +69,10 @@ public class TextBox implements MouseInputReceiver{
         int index = 0;
         scrollSpeed = SCROLL_SPEED_NORMAL;
         currentState = STATE_SCROLLING;
+        Color textColor = txt_white;
         while (index < message.length()){
             if (message.charAt(index) == ' ') { //End of a word
-                int nextIndex = message.indexOf(' ', index + 1);
-                if (nextIndex == -1) nextIndex = message.length();
+                int nextIndex = getIndexOfNextSpace(message, index + 1);
                 DebugWindow.reportf(DebugWindow.MISC, "[TextBox.showMessage] Next Word: \"%1$s\"", message.substring(index, nextIndex));
                 if (xpos + nextIndex - index > width - 1) { //If word needs to wrap
                     shiftRow();
@@ -72,26 +81,35 @@ public class TextBox implements MouseInputReceiver{
                 sleep(13); //Somehow, this improves readability
             } else if (message.charAt(index) == '\n'){ //New line character
                 shiftRow();
-            } else if (isFormattedElement(message, index, "<nl>")){ //New line formatted element
+            } else if (isFormattedElement(message, index, "<nl>")){ //New line flag
                 shiftRow();
                 index += 3;
-            } else if (isFormattedElement(message, index, "<sf>")){ //Fast speed formatted element
+            } else if (isFormattedElement(message, index, "<sf>")){ //Fast speed flag
                 if (scrollSpeed != SCROLL_SPEED_SKIM){
                     scrollSpeed = SCROLL_SPEED_FAST;
                 }
                 index += 3;
-            } else if (isFormattedElement(message, index, "<sn>")){ //Normal speed formatted element
+            } else if (isFormattedElement(message, index, "<sn>")){ //Normal speed flag
                 if (scrollSpeed != SCROLL_SPEED_SKIM){
                     scrollSpeed = SCROLL_SPEED_NORMAL;
                 }
                 index += 3;
-            } else if (isFormattedElement(message, index, "<ss>")){ //Slow speed formatted element
+            } else if (isFormattedElement(message, index, "<ss>")){ //Slow speed flag
                 if (scrollSpeed != SCROLL_SPEED_SKIM){
                     scrollSpeed = SCROLL_SPEED_SLOW;
                 }
                 index += 3;
-            } else {
-                textBoxLayer.editLayer(xpos, row, new SpecialText(message.charAt(index), Color.WHITE, Color.BLACK));
+            } else if (isFormattedElement(message, index, "<cw>")){ textColor = txt_white;  index += 3;
+            } else if (isFormattedElement(message, index, "<cr>")){ textColor = txt_red;    index += 3;
+            } else if (isFormattedElement(message, index, "<cg>")){ textColor = txt_green;  index += 3;
+            } else if (isFormattedElement(message, index, "<cb>")){ textColor = txt_blue;   index += 3;
+            } else if (isFormattedElement(message, index, "<cc>")){ textColor = txt_cyan;   index += 3;
+            } else if (isFormattedElement(message, index, "<cy>")){ textColor = txt_yellow; index += 3;
+            } else if (isFormattedElement(message, index, "<co>")){ textColor = txt_orange; index += 3;
+            } else if (isFormattedElement(message, index, "<cs>")){ textColor = txt_silver; index += 3;
+            } else if (isFormattedElement(message, index, "<cp>")){ textColor = txt_purple; index += 3;
+            } else { //It's not a special or formatted character?
+                textBoxLayer.editLayer(xpos, row, new SpecialText(message.charAt(index), textColor, Color.BLACK));
                 xpos++;
             }
             index++;
@@ -101,7 +119,23 @@ public class TextBox implements MouseInputReceiver{
     }
 
     private boolean isFormattedElement(String message, int index, String element){
-        return index < message.length() - element.length() && message.substring(index, index + element.length()).equals(element);
+        return index <= message.length() - element.length() && message.substring(index, index + element.length()).equals(element);
+    }
+
+    private int getIndexOfNextSpace(String message, int index){
+        int min = message.length() + 1;
+        min = Math.min(getCleanedIndexOf(message, index, " "), min);
+        String[] flags = {"<nl>","<sf>","<sn>","<ss>"};
+        for (String flag : flags) {
+            min = Math.min(getCleanedIndexOf(message, index, flag), min);
+        }
+        return min;
+    }
+
+    private int getCleanedIndexOf(String message, int index, String toFind){
+        int i = message.indexOf(toFind, index);
+        if (i > -1) return i;
+        return message.length();
     }
 
     private void shiftRow(){
