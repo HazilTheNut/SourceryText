@@ -19,6 +19,7 @@ public class TextBox implements MouseInputReceiver{
     private int width;
 
     private int scrollSpeed;
+    private boolean isSkimming = false;
     private final int SCROLL_SPEED_SLOW   = 250;
     private final int SCROLL_SPEED_NORMAL = 28;
     private final int SCROLL_SPEED_FAST   = 8;
@@ -29,7 +30,7 @@ public class TextBox implements MouseInputReceiver{
     private final int STATE_END       = 2;
     private int currentState;
 
-    private final Color bkg        = new Color(10,  10,  10);
+    private final Color bkg        = new Color(26, 26, 26);
     private final Color txt_white  = new Color(225, 225, 225);
     private final Color txt_red    = new Color(255, 128, 128);
     private final Color txt_green  = new Color(130, 255, 130);
@@ -67,6 +68,7 @@ public class TextBox implements MouseInputReceiver{
         row = 1;
         xpos = 1;
         int index = 0;
+        isSkimming = false;
         scrollSpeed = SCROLL_SPEED_NORMAL;
         currentState = STATE_SCROLLING;
         Color textColor = txt_white;
@@ -85,21 +87,27 @@ public class TextBox implements MouseInputReceiver{
                 shiftRow();
                 index += 3;
             } else if (isFormattedElement(message, index, "<sf>")){ //Fast speed flag
-                if (scrollSpeed != SCROLL_SPEED_SKIM){
+                if (!isSkimming){
                     scrollSpeed = SCROLL_SPEED_FAST;
                 }
                 index += 3;
             } else if (isFormattedElement(message, index, "<sn>")){ //Normal speed flag
-                if (scrollSpeed != SCROLL_SPEED_SKIM){
+                if (!isSkimming){
                     scrollSpeed = SCROLL_SPEED_NORMAL;
                 }
                 index += 3;
-            } else if (isFormattedElement(message, index, "<ss>")){ //Slow speed flag
-                if (scrollSpeed != SCROLL_SPEED_SKIM){
+            } else if (isFormattedElement(message, index, "<ss>")) { //Slow speed flag
+                if (!isSkimming) {
                     scrollSpeed = SCROLL_SPEED_SLOW;
                 }
                 index += 3;
-            } else if (isFormattedElement(message, index, "<cw>")){ textColor = txt_white;  index += 3;
+            } else if (isFormattedElement(message, index, "<p1>")){ //1 Second Pause Flag
+                sleep(1000);
+                index += 3;
+            } else if (isFormattedElement(message, index, "<p3>")){ //3 Second Pause Flag
+                sleep(3000);
+                index += 3;
+            } else if (isFormattedElement(message, index, "<cw>")){ textColor = txt_white;  index += 3; //Color Flags!
             } else if (isFormattedElement(message, index, "<cr>")){ textColor = txt_red;    index += 3;
             } else if (isFormattedElement(message, index, "<cg>")){ textColor = txt_green;  index += 3;
             } else if (isFormattedElement(message, index, "<cb>")){ textColor = txt_blue;   index += 3;
@@ -109,11 +117,14 @@ public class TextBox implements MouseInputReceiver{
             } else if (isFormattedElement(message, index, "<cs>")){ textColor = txt_silver; index += 3;
             } else if (isFormattedElement(message, index, "<cp>")){ textColor = txt_purple; index += 3;
             } else { //It's not a special or formatted character?
-                textBoxLayer.editLayer(xpos, row, new SpecialText(message.charAt(index), textColor, Color.BLACK));
+                textBoxLayer.editLayer(xpos, row, new SpecialText(message.charAt(index), textColor, bkg));
                 xpos++;
             }
             index++;
-            sleep(scrollSpeed);
+            if (isSkimming)
+                sleep(SCROLL_SPEED_SKIM);
+            else
+                sleep(scrollSpeed);
         }
         currentState = STATE_END;
     }
@@ -125,7 +136,7 @@ public class TextBox implements MouseInputReceiver{
     private int getIndexOfNextSpace(String message, int index){
         int min = message.length() + 1;
         min = Math.min(getCleanedIndexOf(message, index, " "), min);
-        String[] flags = {"<nl>","<sf>","<sn>","<ss>","<cw>","<cr>","<cg>","<cb>","<cc>","<cp>","<cy>","<co>","<cs>"};
+        String[] flags = {"<nl>","<sf>","<sn>","<ss>","<cw>","<cr>","<cg>","<cb>","<cc>","<cp>","<cy>","<co>","<cs>","<p1>","<p3>"};
         for (String flag : flags) {
             min = Math.min(getCleanedIndexOf(message, index, flag), min);
         }
@@ -144,8 +155,9 @@ public class TextBox implements MouseInputReceiver{
         if (row > 3){
             currentState = STATE_PAGE_END;
             stopUntilState(STATE_SCROLLING);
-            textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, Color.BLACK));
+            textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
             row = 1;
+            isSkimming = false;
         }
     }
 
@@ -180,7 +192,7 @@ public class TextBox implements MouseInputReceiver{
                     currentState = STATE_SCROLLING;
                     break;
                 case STATE_SCROLLING:
-                    scrollSpeed = SCROLL_SPEED_SKIM;
+                    isSkimming = true;
                     break;
             }
         }

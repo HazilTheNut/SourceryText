@@ -266,7 +266,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 String[] flags = {"<cr>","<cg>","<cb>","<cc>","<cp>","<cy>","<co>","<cs>"};
                 String message = "";
                 for (String flag : flags) message += flag + "Something unimportant,<nl>";
-                gi.getTextBox().showMessage(message);
+                gi.getTextBox().showMessage(message + "Pause: <p1>1 sec ; Pause: <p3>3 sec");
             } else {
                 if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) movementKeyDown(EAST);
                 if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A)  movementKeyDown(WEST);
