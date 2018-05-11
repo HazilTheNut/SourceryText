@@ -19,6 +19,7 @@ public class EntityRegistry {
     static {
         registerEntity(2,  "Basic Enemy", new SpecialText('E', new Color(255, 130, 130), new Color(255, 180, 180, 15)), BasicEnemy.class, TagRegistry.FLAMMABLE);
         registerEntity(4,  "Chest",       new SpecialText('C', new Color(245, 245, 175), new Color(175, 100,  35, 45)), Chest.class);
+        registerEntity(3,  "Sign",        new SpecialText('S', new Color(110, 100, 250), new Color(55, 50, 125, 30)),   Sign.class);
     }
 
     public static int[] getMapKeys() {

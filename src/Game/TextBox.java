@@ -38,13 +38,14 @@ public class TextBox implements MouseInputReceiver{
     private final Color txt_cyan   = new Color(130, 255, 224);
     private final Color txt_yellow = new Color(230, 230, 130);
     private final Color txt_orange = new Color(255, 191, 128);
-    private final Color txt_silver = new Color(123, 123, 140);
+    private final Color txt_silver = new Color(119, 119, 128);
     private final Color txt_purple = new Color(191, 128, 255);
 
     public TextBox(LayerManager lm, Player player){
 
         textBoxLayer = new Layer(lm.getWindow().RESOLUTION_WIDTH, height, "text_box", 0, lm.getWindow().RESOLUTION_HEIGHT - height, LayerImportances.TEXT_BOX);
         textBoxLayer.fixedScreenPos = true;
+        textBoxLayer.setVisible(false);
         lm.addLayer(textBoxLayer);
 
         this.player = player;
@@ -53,12 +54,14 @@ public class TextBox implements MouseInputReceiver{
     }
 
     public void showMessage(String message){
-        textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
-        textBoxLayer.setVisible(true);
-        player.freeze();
-        DebugWindow.reportf(DebugWindow.MISC, "[TextBox.showMessage] First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
-        Thread writeThread = new Thread(() -> writeMessage(message));
-        writeThread.start();
+        if (!textBoxLayer.getVisible()) {
+            textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
+            textBoxLayer.setVisible(true);
+            player.freeze();
+            DebugWindow.reportf(DebugWindow.MISC, "[TextBox.showMessage] First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
+            Thread writeThread = new Thread(() -> writeMessage(message));
+            writeThread.start();
+        }
     }
 
     private int row = 1;
