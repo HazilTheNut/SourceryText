@@ -83,11 +83,13 @@ public class LayerManager {
     }
 
     private void removeLayerOperation(String toRemove){
-        for (Layer layer : layerStack){
+        for (int i = 0; i < layerStack.size();){
+            Layer layer = layerStack.get(i);
             if (layer.getName().equals(toRemove)) {
                 layerStack.remove(layer);
                 System.out.printf("[LayerManager] Successful removal of layer \"%1$s\"\n", toRemove);
-                return;
+            } else {
+                i++;
             }
         }
     }

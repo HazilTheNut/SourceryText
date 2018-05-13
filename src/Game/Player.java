@@ -97,7 +97,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         int camNewX = getLocation().getX() + cameraOffsetX;
         int camNewY = getLocation().getY() + cameraOffsetY;
         if (gi != null)
-            lm.setCameraPos(Math.max(Math.min(camNewX, gi.getBackdrop().getCols() - lm.getWindow().RESOLUTION_WIDTH), 0), Math.max(Math.min(camNewY, gi.getBackdrop().getRows() - lm.getWindow().RESOLUTION_HEIGHT), 0));
+            lm.setCameraPos(Math.max(Math.min(camNewX, gi.getBackdrop().getCols() - lm.getWindow().RESOLUTION_WIDTH), 0), Math.max(Math.min(camNewY, gi.getBackdrop().getRows() - lm.getWindow().RESOLUTION_HEIGHT), -1));
         else
             lm.setCameraPos(camNewX, camNewY);
         getSprite().setPos(getLocation());
@@ -390,6 +390,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                     gi.doEnemyTurn();
                     if (target != null && getLocation().stepDistance(target.getLocation()) <= 1){
                         target.onInteract(this);
+                        return;
                     }
                     try {
                         Thread.sleep(100);

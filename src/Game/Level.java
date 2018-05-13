@@ -37,11 +37,13 @@ public class Level {
         filePath = path;
     }
 
-    void intitializeTiles(LevelData ldata){
+    void initialize(LevelData ldata){
         baseTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
         overlayTiles = new ArrayList<>();
         ArrayList<Tag> generatedTags = new ArrayList<>();
+        DebugWindow.reportf(DebugWindow.STAGE, "[Level.initialize] Columns: %1$d", backdrop.getCols());
         for (int col = 0; col < backdrop.getCols(); col++){
+            //DebugWindow.reportf(DebugWindow.STAGE, "[Level.initialize] Col %1$d ; Tags generated: %2$d", col, generatedTags.size());
             for (int row = 0; row < backdrop.getRows(); row++){
                 TileStruct struct = TileRegistry.getTileStruct(ldata.getTileId(col, row));
                 Tile tile = new Tile(new Coordinate(col, row), struct.getTileName(), this);
@@ -193,6 +195,7 @@ public class Level {
     }
 
     public void addAnimatedTile(AnimatedTile tile){
+        removeAnimatedTile(tile.getLocation());
         animatedTiles.add(tile);
     }
 

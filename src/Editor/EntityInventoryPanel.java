@@ -29,14 +29,14 @@ public class EntityInventoryPanel extends JPanel {
 
         Font textFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 
-        ItemRegistry itemRegistry = new ItemRegistry();
         JComboBox<ItemStruct> newItemSelect = new JComboBox<>();
 
-        int[] mapKeys = itemRegistry.getMapKeys();
+        int[] mapKeys = ItemRegistry.getMapKeys();
         for (int key : mapKeys)
-            newItemSelect.addItem(itemRegistry.getItemStruct(key));
+            newItemSelect.addItem(ItemRegistry.getItemStruct(key));
 
         newItemSelect.setFont(textFont);
+        newItemSelect.setMaximumRowCount(20);
         selectionPanel.add(newItemSelect, BorderLayout.PAGE_START);
 
         entityInvModel = new DefaultListModel<>();

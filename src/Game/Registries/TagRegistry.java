@@ -44,6 +44,7 @@ public class TagRegistry {
     public final static int WEAPON_STRIKE = 201;
     public final static int WEAPON_THRUST = 202;
     public final static int WEAPON_SWEEP  = 203;
+    public final static int KEY           = 210;
 
     public final static int TILE_WALL     = 400;
     public final static int SAND          = 401;
@@ -55,6 +56,7 @@ public class TagRegistry {
     public final static int HEALTH_START  = 2000;
 
     static {
+        //Basic / shared properties
         registerTag(FLAMMABLE, "Flammable", FlammableTag.class);
         registerTag(ON_FIRE,   "On Fire",   OnFireTag.class);
         registerTag(BURN_SLOW, "Slow Burning", BurnSlowTag.class);
@@ -66,16 +68,21 @@ public class TagRegistry {
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);
         registerTag(WET, "Wet", WetTag.class);
 
+        //Item related
+        registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);
+        registerTag(WEAPON_STRIKE, "Striking Weapon",  StrikeWeaponTypeTag.class);
+        registerTag(WEAPON_THRUST, "Thrusting Weapon", ThrustWeaponTypeTag.class);
+        registerTag(WEAPON_SWEEP,  "Sweeping Weapon",  SweepWeaponTypeTag.class);
+        registerTag(KEY, "Key", KeyTag.class);
+
+        //Tile related
         registerTag(TILE_WALL, "Wall", WallTag.class);
         registerTag(SAND, "Sand", SandTag.class);
         registerTag(SHALLOW_WATER, "Shallow Water", ShallowWaterTag.class);
         registerTag(DEEP_WATER,    "Deep Water", DeepWaterTag.class);
         registerTag(NO_PATHING, "No Pathing!", NoPathingTag.class);
 
-        registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);
-        registerTag(WEAPON_STRIKE, "Striking Weapon",  StrikeWeaponTypeTag.class);
-        registerTag(WEAPON_THRUST, "Thrusting Weapon", ThrustWeaponTypeTag.class);
-        registerTag(WEAPON_SWEEP,  "Sweeping Weapon",  SweepWeaponTypeTag.class);
+
     }
 
     public int[] getMapKeys() {

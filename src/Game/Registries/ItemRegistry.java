@@ -42,6 +42,16 @@ public class ItemRegistry {
         registerItem(103, "Winter Lance",    TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.FROST_ENCHANT);
         registerItem(104, "Combo Sword",     TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.WEAPON_SWEEP);
         registerItem(1000, "Health Tincture", TagRegistry.HEALTH_START + 10);
+
+        registerItem(2000, "Key", TagRegistry.KEY);
+        registerItem(2001, "Copper Key",   TagRegistry.KEY);
+        registerItem(2002, "Bronze Key",   TagRegistry.KEY);
+        registerItem(2003, "Silver Key",   TagRegistry.KEY);
+        registerItem(2004, "Golden Key",   TagRegistry.KEY);
+        registerItem(2005, "Old Key",      TagRegistry.KEY);
+        registerItem(2006, "Ornate Key",   TagRegistry.KEY);
+        registerItem(2007, "Basement Key", TagRegistry.KEY);
+        registerItem(2008, "Secret Key",   TagRegistry.KEY);
     }
 
     public static int[] getMapKeys() {

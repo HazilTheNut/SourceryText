@@ -265,6 +265,14 @@ public class Entity extends TagHolder{
         return def;
     }
 
+    protected boolean readBoolArg(EntityArg arg, boolean def){
+        if (arg != null) {
+            if (arg.getArgValue().toLowerCase().equals("true")) return true;
+            if (arg.getArgValue().toLowerCase().equals("false")) return false;
+        }
+        return def;
+    }
+
     protected EntityArg searchForArg(ArrayList<EntityArg> providedArgs, String name){
         for (EntityArg arg : providedArgs){
             if (arg.getArgName().equals(name))

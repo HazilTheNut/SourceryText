@@ -155,7 +155,7 @@ public class GameInstance {
         }
 
         DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Initialize tiles...");
-        newLevel.intitializeTiles(ldata);
+        newLevel.initialize(ldata);
 
         DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Assign warp zones...");
         newLevel.setWarpZones(ldata.getWarpZones());

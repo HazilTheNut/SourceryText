@@ -30,8 +30,8 @@ public class SplashySurface extends Tag {
     @Override
     public void onTurn(TagEvent e) {
         if (splashTimer == SPLASH_START){
-            if (e.getGameInstance().getEntityAt(splashLoc) == null)
-                splashAction.onSplash(e);
+            //if (e.getGameInstance().getEntityAt(splashLoc) == null)
+            splashAction.onSplash(e);
             splashTimer = SPLASH_NO;
         } else if (splashTimer == SPLASH_READY){
             splashTimer = SPLASH_START;
