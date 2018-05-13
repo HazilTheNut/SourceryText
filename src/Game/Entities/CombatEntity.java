@@ -38,7 +38,7 @@ public class CombatEntity extends Entity{
 
     private static final int[] directions = {RIGHT, UP_RIGHT, UP, UP_LEFT, LEFT, DOWN_LEFT, DOWN, DOWN_RIGHT, RIGHT_360};
 
-    private Item weapon;
+    Item weapon;
     private Layer swooshLayer;
 
     protected void setMaxHealth(int maxHP){
@@ -57,7 +57,6 @@ public class CombatEntity extends Entity{
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
-        args.add(new EntityArg("interactText", "Having a conversation right now probably isn't a good idea."));
         args.add(new EntityArg("maxHealth", String.valueOf(defaultMaxHealth)));
         args.add(new EntityArg("strength",  String.valueOf(defaultStrength)));
         return args;

@@ -1,6 +1,8 @@
 package Game;
 
 import Game.Registries.TagRegistry;
+import Game.Tags.DamageTag;
+import Game.Tags.HealthTag;
 import Game.Tags.Tag;
 
 import java.awt.*;
@@ -52,6 +54,30 @@ public class TagHolder {
             if (tag.getId() == id) return tag;
         }
         return null;
+    }
+
+    /**
+     * A convenience function that saves you the trouble of casting the damage Tag to a DamageTag and handling null tags.
+     * @return The damage value of the Tag this TagHolder might have. Returns 0 if damage tag does not exist.
+     */
+    public int getDamageTagAmount(){
+        Tag dmgTag = getTag(TagRegistry.DAMAGE_START);
+        if (dmgTag != null && dmgTag instanceof DamageTag){
+            return ((DamageTag)dmgTag).getDamageAmount();
+        }
+        return 0;
+    }
+
+    /**
+     * A convenience function that saves you the trouble of casting the damage Tag to a HealthTag and handling null tags.
+     * @return The health value of the Tag this TagHolder might have. Returns 0 if health tag does not exist.
+     */
+    public int getHealthTagAmount(){
+        Tag healthTag = getTag(TagRegistry.HEALTH_START);
+        if (healthTag != null && healthTag instanceof HealthTag){
+            return ((HealthTag)healthTag).getHealthAmount();
+        }
+        return 0;
     }
 
     public boolean hasTag(int id){ return getTag(id) != null; }
