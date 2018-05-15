@@ -15,15 +15,9 @@ public class TextBox implements MouseInputReceiver{
 
     private Layer textBoxLayer;
     private Player player;
-    private final int height = 5;
     private int width;
 
-    private int scrollSpeed;
     private boolean isSkimming = false;
-    private final int SCROLL_SPEED_SLOW   = 250;
-    private final int SCROLL_SPEED_NORMAL = 28;
-    private final int SCROLL_SPEED_FAST   = 8;
-    private final int SCROLL_SPEED_SKIM   = 3;
 
     private final int STATE_SCROLLING = 0;
     private final int STATE_PAGE_END  = 1;
@@ -43,6 +37,7 @@ public class TextBox implements MouseInputReceiver{
 
     public TextBox(LayerManager lm, Player player){
 
+        int height = 5;
         textBoxLayer = new Layer(lm.getWindow().RESOLUTION_WIDTH, height, "text_box", 0, lm.getWindow().RESOLUTION_HEIGHT - height, LayerImportances.TEXT_BOX);
         textBoxLayer.fixedScreenPos = true;
         textBoxLayer.setVisible(false);
@@ -72,7 +67,12 @@ public class TextBox implements MouseInputReceiver{
         xpos = 1;
         int index = 0;
         isSkimming = false;
-        scrollSpeed = SCROLL_SPEED_NORMAL;
+        int SCROLL_SPEED_NORMAL = 28;
+        int SCROLL_SPEED_FAST = 8;
+        int SCROLL_SPPED_SLOW = 250;
+        int SCROLL_SPEED_SKIM = 3;
+
+        int scrollSpeed = SCROLL_SPEED_NORMAL;
         currentState = STATE_SCROLLING;
         Color textColor = txt_white;
         while (index < message.length()){
@@ -101,7 +101,7 @@ public class TextBox implements MouseInputReceiver{
                 index += 3;
             } else if (isFormattedElement(message, index, "<ss>")) { //Slow speed flag
                 if (!isSkimming) {
-                    scrollSpeed = SCROLL_SPEED_SLOW;
+                    scrollSpeed = SCROLL_SPPED_SLOW;
                 }
                 index += 3;
             } else if (isFormattedElement(message, index, "<p1>")){ //1 Second Pause Flag

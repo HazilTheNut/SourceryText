@@ -4,10 +4,7 @@ import Data.Coordinate;
 import Data.EntityArg;
 import Data.EntityStruct;
 import Engine.LayerManager;
-import Game.DebugWindow;
-import Game.GameInstance;
-import Game.Item;
-import Game.Player;
+import Game.*;
 import Game.Registries.TagRegistry;
 
 import java.util.ArrayList;
@@ -38,15 +35,25 @@ public class LockedDoor extends Entity {
 
     @Override
     public void onInteract(Player player) {
+        QuickMenu quickMenu = gi.getQuickMenu();
+        quickMenu.clearMenu();
         for (Item item : player.getItems()) {
-            if (item.hasTag(TagRegistry.KEY) && item.getItemData().getName().equals(keyName)) {
-                if (consumesKey) {
-                    item.decrementQty();
-                    player.scanInventory();
-                }
-                gi.getTextBox().showMessage("Used <cy>" + keyName);
-                selfDestruct();
+            if (item.hasTag(TagRegistry.KEY))
+                quickMenu.addMenuItem(item.getItemData().getName(), () -> testKey(player, item));
+        }
+        quickMenu.showMenu("Keys:", true);
+    }
+
+    private void testKey(Player player, Item key){
+        if (key.getItemData().getName().equals(keyName)) {
+            if (consumesKey) {
+                key.decrementQty();
+                player.scanInventory();
             }
+            gi.getTextBox().showMessage("Used <cy>" + keyName);
+            selfDestruct();
+        } else {
+            gi.getTextBox().showMessage("It didn't budge...");
         }
     }
 }

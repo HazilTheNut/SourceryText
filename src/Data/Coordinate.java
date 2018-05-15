@@ -79,6 +79,15 @@ public class Coordinate {
         return Math.abs(getX() - other.getX()) + Math.abs(getY() - other.getY());
     }
 
+    /**
+     * If a square was centered on this coordinate, how large would it have to be to include the other point into the square's interior?
+     * @param other The coordinate to include into this hypothetical square
+     * @return The "box distance"
+     */
+    public int boxDistance(Coordinate other){
+        return Math.max(Math.abs(getX() - other.getX()), Math.abs(getY() - other.getY()));
+    }
+
     @Override
     public String toString() {
         return String.format("[%1$d,%2$d]", x, y);

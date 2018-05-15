@@ -33,6 +33,7 @@ public class GameInstance {
 
     private LayerManager lm;
     private TextBox textBox;
+    private QuickMenu quickMenu;
 
     private long currentItemUID = 0;
 
@@ -73,6 +74,7 @@ public class GameInstance {
 
         textBox = new TextBox(lm, player);
 
+        quickMenu = new QuickMenu(lm, player);
     }
 
     void enterLevel(String levelFilePath, Coordinate playerPos){
@@ -195,8 +197,9 @@ public class GameInstance {
     }
 
     public void establishMouseInput(GameMouseInput mi){
-        player.assignMouseInput(mi);
         mi.addInputReceiver(textBox);
+        mi.addInputReceiver(quickMenu);
+        player.assignMouseInput(mi);
     }
 
     public void setPlayerTurn(boolean playerTurn) {
@@ -256,6 +259,10 @@ public class GameInstance {
 
     public TextBox getTextBox() {
         return textBox;
+    }
+
+    public QuickMenu getQuickMenu() {
+        return quickMenu;
     }
 
     private interface EntityOperation{
