@@ -88,6 +88,16 @@ public class Coordinate {
         return Math.max(Math.abs(getX() - other.getX()), Math.abs(getY() - other.getY()));
     }
 
+    /**
+     * The length of the hypotenuse formed by the differences in the x and y positions of this and the other coordinate
+     * Otherwise known as the traditionally-known form of distance
+     * @param other The other Coordinate to find the distance to
+     * @return The sqrt(dx^2 + dy^2) distance we all know and love
+     */
+    public int hypDistnce(Coordinate other){
+        return (int)Math.sqrt(Math.pow(getX() - other.getX(), 2) + Math.pow(getX() - other.getX(), 2));
+    }
+
     @Override
     public String toString() {
         return String.format("[%1$d,%2$d]", x, y);

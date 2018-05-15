@@ -6,8 +6,9 @@ import Engine.LayerManager;
 import Game.DebugWindow;
 import Game.GameInstance;
 import Game.Item;
-import Game.Player;
 import Game.Registries.TagRegistry;
+
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 4/3/2018.
@@ -21,18 +22,42 @@ public class BasicEnemy extends CombatEntity {
         pickNewWeapon();
     }
 
-    protected int detectRange = 2;
+    protected int detectRange = 15;
+    protected int alertRadius = 5;
+
+    public CombatEntity target;
 
     @Override
     public void onTurn() {
         if (weapon == null) pickNewWeapon();
-        Player player = getGameInstance().getPlayer();
-        if (isPlayerWithinRange(player)){
-            doWeaponAttack(player.getLocation());
-        } else if (player.getLocation().stepDistance(getLocation()) <= detectRange){
-            pathToPosition(player.getLocation(), detectRange);
+        if (target != null && gi.getCurrentLevel().getSolidEntityAt(target.getLocation()) == null) target = null;
+        if (target == null && gi.getPlayer().getLocation().stepDistance(getLocation()) <= detectRange){
+            target = gi.getPlayer();
+            alertNearbyEntities();
+        }
+
+        if (target != null) {
+            if (targetWithinAttackRange()) {
+                doWeaponAttack(target.getLocation());
+            } else {
+                pathToPosition(target.getLocation(), detectRange * 2);
+            }
         }
         super.onTurn();
+    }
+
+    private void alertNearbyEntities(){
+        ArrayList<Entity> entities = gi.getCurrentLevel().getEntities();
+        for (Entity e : entities){
+            if (e instanceof BasicEnemy) {
+                BasicEnemy basicEnemy = (BasicEnemy) e;
+                if (getLocation().hypDistnce(basicEnemy.getLocation()) <= alertRadius) basicEnemy.setTarget(target);
+            }
+        }
+    }
+
+    public void setTarget(CombatEntity target) {
+        this.target = target;
     }
 
     private void pickNewWeapon(){
@@ -64,16 +89,18 @@ public class BasicEnemy extends CombatEntity {
         }
     }
 
-    private boolean isPlayerWithinRange(Player player){
+    private boolean targetWithinAttackRange(){
         Item weapon = getWeapon();
         if (weapon.hasTag(TagRegistry.WEAPON_STRIKE)){
-            return player.getLocation().stepDistance(getLocation()) <= 1;
+            return target.getLocation().boxDistance(getLocation()) <= 1;
         } else if (weapon.hasTag(TagRegistry.WEAPON_SWEEP)){
-            return player.getLocation().boxDistance(getLocation()) <= 1;
+            return target.getLocation().boxDistance(getLocation()) <= 1;
         } else if (weapon.hasTag(TagRegistry.WEAPON_THRUST)){
-            int dx = Math.abs(player.getLocation().getX() - getLocation().getX());
-            int dy = Math.abs(player.getLocation().getY() - getLocation().getY());
-            return dx == 0 || dy == 0 || dy / dx == 1;
+            if (target.getLocation().boxDistance(getLocation()) <= 2) {
+                int dx = Math.abs(target.getLocation().getX() - getLocation().getX());
+                int dy = Math.abs(target.getLocation().getY() - getLocation().getY());
+                return dx == 0 || dy == 0 || dy / dx == 1;
+            }
         }
         return false;
     }
