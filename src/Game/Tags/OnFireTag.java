@@ -11,6 +11,7 @@ import Game.TagHolder;
 import Game.Tile;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -105,9 +106,9 @@ public class OnFireTag extends Tag {
             if (!level.getBackdrop().isLayerLocInvalid(pos)) {
                 level.getTileAt(pos).addTag(TagRegistry.ON_FIRE, source);
             }
-            Entity entity = level.getEntityAt(pos);
-            if (entity != null) {
-                entity.addTag(TagRegistry.ON_FIRE, source);
+            ArrayList<Entity> entites = level.getEntitiesAt(pos);
+            for (Entity e : entites) {
+                e.addTag(TagRegistry.ON_FIRE, source);
             }
         }
     }

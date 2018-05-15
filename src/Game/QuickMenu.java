@@ -22,7 +22,7 @@ public class QuickMenu implements MouseInputReceiver {
 
     private final int MENU_WIDTH = 17;
     private final SpecialText closeButtonDull = new SpecialText('x', new Color(224, 79, 79), new Color(55, 10, 10));
-    private final SpecialText closeButtonLit  = new SpecialText('x', new Color(232, 139, 139), new Color(77, 15, 15));
+    private final SpecialText closeButtonLit  = new SpecialText('x', new Color(217, 130, 130), new Color(102, 20, 20));
     private boolean isClosable = true;
 
     public QuickMenu(LayerManager lm, Player player){
@@ -62,7 +62,7 @@ public class QuickMenu implements MouseInputReceiver {
         int y = playerScreenPos.getY() - menuLayer.getRows() / 2;
         y = Math.max(1, Math.min(y, lm.getWindow().RESOLUTION_HEIGHT - menuLayer.getRows()));
         menuLayer.setPos(x, y);
-        menuLayer.inscribeString(title, 1, 0, new Color(220, 255, 255));
+        menuLayer.inscribeString(title, (int)Math.floor((MENU_WIDTH - (double)title.length())/2), 0, new Color(220, 255, 255));
         menuLayer.setVisible(true);
         player.freeze();
     }
@@ -80,7 +80,7 @@ public class QuickMenu implements MouseInputReceiver {
             tempLayer.editLayer(col, 0, new SpecialText('#', new Color(42, 42, 42), new Color(34, 34, 34)));
         }
         for (int i = 0; i < menuItems.size(); i++) {
-            tempLayer.inscribeString(menuItems.get(i).name, 0, i+1);
+            tempLayer.inscribeString(menuItems.get(i).name, 1, i+1);
         }
         if (isClosable) tempLayer.editLayer(MENU_WIDTH-1, 0, closeButtonDull);
         menuLayer.transpose(tempLayer);

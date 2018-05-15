@@ -26,11 +26,9 @@ public class EntityEdit extends DrawTool {
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        //ldata.getEntityLayer().editLayer(col, row, entityRegistry.getEntityStruct(id).getDisplayChar());
-        //ldata.setEntityData(col, row, id);
         EntityStruct struct = ldata.getEntityAt(col, row);
         if (struct != null){
-            EntityEditor editor = new EntityEditor(struct);
+            new EntityEditor(struct);
         }
     }
 }

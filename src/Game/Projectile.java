@@ -51,7 +51,7 @@ public class Projectile extends TagHolder {
             Coordinate newPos = new Coordinate((int)Math.round(xpos), (int)Math.round(ypos));
             iconLayer.setPos(newPos);
             DebugWindow.reportf(DebugWindow.GAME, "[Projectile.launchProjectile] pos: %1$s", newPos);
-            Entity entity = gi.getEntityAt(newPos);
+            Entity entity = gi.getCurrentLevel().getSolidEntityAt(newPos);
             if (!newPos.equals(source.getLocation())) { //Should be a nice catch-all to prevent projectiles from not firing correctly
                 if (entity != null) {
                     collide(entity, gi);

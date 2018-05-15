@@ -21,7 +21,7 @@ public class BasicEnemy extends CombatEntity {
         pickNewWeapon();
     }
 
-    protected int detectRange = 15;
+    protected int detectRange = 2;
 
     @Override
     public void onTurn() {
@@ -29,7 +29,7 @@ public class BasicEnemy extends CombatEntity {
         Player player = getGameInstance().getPlayer();
         if (isPlayerWithinRange(player)){
             doWeaponAttack(player.getLocation());
-        } else if (player.getLocation().stepDistance(getLocation()) < detectRange){
+        } else if (player.getLocation().stepDistance(getLocation()) <= detectRange){
             pathToPosition(player.getLocation(), detectRange);
         }
         super.onTurn();
@@ -38,7 +38,7 @@ public class BasicEnemy extends CombatEntity {
     private void pickNewWeapon(){
         //Biases
         final double MULT_RANGED = 3;
-        final double MULT_SWEEP = 1.25;
+        final double MULT_SWEEP = 0.75;
         final double MULT_THRUST = 1.5;
         final double MULT_FIRE = 1.5;
         final double MULT_ICE = 2.5;

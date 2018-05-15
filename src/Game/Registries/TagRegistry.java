@@ -81,8 +81,6 @@ public class TagRegistry {
         registerTag(SHALLOW_WATER, "Shallow Water", ShallowWaterTag.class);
         registerTag(DEEP_WATER,    "Deep Water", DeepWaterTag.class);
         registerTag(NO_PATHING, "No Pathing!", NoPathingTag.class);
-
-
     }
 
     public int[] getMapKeys() {

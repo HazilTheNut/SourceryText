@@ -90,22 +90,24 @@ public class HUD implements MouseInputReceiver{
             pos += player.getInv().ITEM_STRING_LENGTH + 2;
         }
 
-        pos++;
-        spellMenu.getMenuLayer().setPos(pos, 0);
-        spellMenu.drawTopBand();
-        pos += spellMenu.width;
+        if (player.getSpells().size() > 0) {
+            pos++;
+            spellMenu.getMenuLayer().setPos(pos, 0);
+            spellMenu.drawTopBand();
+            pos += spellMenu.width;
 
-        pos++;
-        int spellBeadCutoff = player.getNumberSpellBeads() - player.getCooldowns().size();
-        for (int ii = 0; ii < player.getNumberSpellBeads(); ii++){
-            if (ii < spellBeadCutoff) {
-                tempLayer.editLayer(pos, 0, new SpecialText('*', new Color(110, 65, 230), bkg)); //Draws 'enabled' spell beads
-                pos++;
-            } else {
-                tempLayer.editLayer(pos, 0, new SpecialText('_', new Color(102, 55, 85), new Color(29, 22, 38)));
-                String cdText = (player.getCooldowns().get(ii - spellBeadCutoff)).toString();
-                tempLayer.inscribeString(cdText, pos+1, 0, new Color(235, 0, 100));
-                pos += cdText.length() + 1;
+            pos++;
+            int spellBeadCutoff = player.getNumberSpellBeads() - player.getCooldowns().size();
+            for (int ii = 0; ii < player.getNumberSpellBeads(); ii++) {
+                if (ii < spellBeadCutoff) {
+                    tempLayer.editLayer(pos, 0, new SpecialText('*', new Color(110, 65, 230), bkg)); //Draws 'enabled' spell beads
+                    pos++;
+                } else {
+                    tempLayer.editLayer(pos, 0, new SpecialText('_', new Color(102, 55, 85), new Color(29, 22, 38)));
+                    String cdText = (player.getCooldowns().get(ii - spellBeadCutoff)).toString();
+                    tempLayer.inscribeString(cdText, pos + 1, 0, new Color(235, 0, 100));
+                    pos += cdText.length() + 1;
+                }
             }
         }
 
@@ -117,7 +119,7 @@ public class HUD implements MouseInputReceiver{
     private int startingRow = 0;
 
     public void updateSynopsis(Coordinate levelPos){
-        Entity e = player.getGameInstance().getEntityAt(levelPos);
+        Entity e = player.getGameInstance().getCurrentLevel().getSolidEntityAt(levelPos);
         Tile t = player.getGameInstance().getTileAt(levelPos);
         synopsisLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(40, 40, 40, 175)));
         startingRow = 0;
@@ -167,13 +169,13 @@ public class HUD implements MouseInputReceiver{
     @Override
     public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
         if (!screenPos.equals(mousePos)) {
+            mousePos = screenPos;
             if (screenPos.getY() <= 1 || (mousePos != null && mousePos.getY() <= 1)) {
                 updateHUD();
             }
             updateSynopsis(levelPos);
         }
-        mousePos = screenPos;
-        return spellMenu.onMouseMove(screenPos);
+        return player.getSpells().size() > 0 && spellMenu.onMouseMove(screenPos);
     }
 
     @Override
@@ -185,7 +187,7 @@ public class HUD implements MouseInputReceiver{
                 player.getInv().getPlayerInv().show();
             updateHUD();
         }
-        return spellMenu.onMouseClick(screenPos);
+        return player.getSpells().size() > 0 && spellMenu.onMouseClick(screenPos);
     }
 
     @Override

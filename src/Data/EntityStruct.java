@@ -97,7 +97,7 @@ public class EntityStruct implements Serializable{
     public EntityStruct copy() {
         EntityStruct struct = new EntityStruct(entityId, entityName, displayChar, tagIDs);
         for (ItemStruct item : items) struct.addItem(item);
-        struct.setArgs(getArgs());
+        for (EntityArg arg : args)    struct.addArg(arg.copy());
         return struct;
     }
 

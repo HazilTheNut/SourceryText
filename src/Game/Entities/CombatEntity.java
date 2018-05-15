@@ -7,6 +7,7 @@ import Engine.SpecialText;
 import Game.DebugWindow;
 import Game.GameInstance;
 import Game.Item;
+import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.Tags.Tag;
@@ -96,7 +97,7 @@ public class CombatEntity extends Entity{
             swooshLayer.setPos(loc);
             turnSleep(75);
             swooshLayer.setVisible(false);
-            Entity entity = getGameInstance().getEntityAt(loc);
+            Entity entity = getGameInstance().getCurrentLevel().getSolidEntityAt(loc);
             if (entity != null && entity instanceof CombatEntity) {
                 doAttackEvent((CombatEntity) entity);
             } else {
@@ -263,6 +264,41 @@ public class CombatEntity extends Entity{
         if (health > maxHealth) health = maxHealth;
     }
 
+    @Override
+    public void onLevelEnter() {
+        super.onLevelEnter();
+        lm.addLayer(swooshLayer);
+    }
+
+    @Override
+    public void onLevelExit() {
+        super.onLevelExit();
+        lm.removeLayer(swooshLayer);
+    }
+
+    @Override
+    void selfDestruct() {
+        EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot Pile", null); //EntityRegistry.getEntityStruct(EntityRegistry.LOOT_PILE).getDisplayChar()
+        for (Item item : getItems()){
+            lootPileStruct.addItem(item.getItemData());
+        }
+        Entity pile = gi.instantiateEntity(lootPileStruct, getLocation(), gi.getCurrentLevel());
+        pile.onLevelEnter();
+        super.selfDestruct();
+    }
+
+    @Override
+    public void scanInventory() {
+        super.scanInventory();
+        if (!getItems().contains(weapon)) weapon = null;
+    }
+
+    @Override
+    public void updateInventory() {
+        super.updateInventory();
+        if (!getItems().contains(weapon)) weapon = null;
+    }
+
     protected void pathToPosition(Coordinate target, int range){
         currentPoints.clear();
         futurePoints.clear();
@@ -293,30 +329,6 @@ public class CombatEntity extends Entity{
             }
         }
         doPathing(n+1, detectRange);
-    }
-
-    @Override
-    public void onLevelEnter() {
-        super.onLevelEnter();
-        lm.addLayer(swooshLayer);
-    }
-
-    @Override
-    public void onLevelExit() {
-        super.onLevelExit();
-        lm.removeLayer(swooshLayer);
-    }
-
-    @Override
-    public void scanInventory() {
-        super.scanInventory();
-        if (!getItems().contains(weapon)) weapon = null;
-    }
-
-    @Override
-    public void updateInventory() {
-        super.updateInventory();
-        if (!getItems().contains(weapon)) weapon = null;
     }
 
     private void moveFutureToPresentPoints(){

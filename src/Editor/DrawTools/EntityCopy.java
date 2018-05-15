@@ -36,12 +36,12 @@ public class EntityCopy extends DrawTool {
         toCopy = ldata.getEntityAt(col, row);
         copyFromPosX = col;
         copyFromPosY = row;
-        highlight.editLayer(col - (int)lm.getCameraPos().getX(), row - (int)lm.getCameraPos().getY(), new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
+        highlight.editLayer(col - lm.getCameraPos().getX(), row - lm.getCameraPos().getY(), new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
     }
 
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        highlight.editLayer(copyFromPosX - (int)lm.getCameraPos().getX(), copyFromPosY - (int)lm.getCameraPos().getY(), new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
+        highlight.editLayer(copyFromPosX - lm.getCameraPos().getX(), copyFromPosY - lm.getCameraPos().getY(), new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
     }
 
     @Override

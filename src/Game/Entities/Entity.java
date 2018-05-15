@@ -28,10 +28,8 @@ public class Entity extends TagHolder{
     private SpecialText icon;
 
     private String name;
-    private int id;
 
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance){
-        id = entityStruct.getEntityId();
         gi = gameInstance;
         this.lm = lm;
 
@@ -40,7 +38,8 @@ public class Entity extends TagHolder{
         name = readStrArg(searchForArg(entityStruct.getArgs(), "name"), defName); //Searches for name in args list
 
         icon = readSpecTxtArg(searchForArg(entityStruct.getArgs(), "icon"), icon);
-        sprite = new Layer(new SpecialText[1][1], createEntityLayerName(entityStruct, pos), getLocation().getX(), getLocation().getY(), LayerImportances.ENTITY);
+        int layerPriority = (isSolid()) ? LayerImportances.ENTITY_SOLID : LayerImportances.ENTITY;
+        sprite = new Layer(new SpecialText[1][1], createEntityLayerName(entityStruct, pos), getLocation().getX(), getLocation().getY(), layerPriority);
         sprite.editLayer(0, 0, icon);
 
         for (int id : entityStruct.getTagIDs()){
@@ -51,6 +50,8 @@ public class Entity extends TagHolder{
             addItem(item);
         }
     }
+
+    public boolean isSolid() { return true; }
 
     public void simpleInit(EntityStruct entityStruct, Coordinate pos){
         location = pos;

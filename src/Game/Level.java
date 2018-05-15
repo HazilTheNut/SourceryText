@@ -138,11 +138,19 @@ public class Level {
             return null;
     }
 
-    public Entity getEntityAt(Coordinate loc){
+    public Entity getSolidEntityAt(Coordinate loc){
         for (Entity e : entities){
-            if (e.getLocation().equals(loc)) return e;
+            if (e.getLocation().equals(loc) && e.isSolid()) return e;
         }
         return null;
+    }
+
+    public ArrayList<Entity> getEntitiesAt(Coordinate loc){
+        ArrayList<Entity> list = new ArrayList<>();
+        for (Entity e : entities) {
+            if (e.getLocation().equals(loc)) list.add(e);
+        }
+        return list;
     }
 
     public Tile getOverlayTileAt(Coordinate loc){

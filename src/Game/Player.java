@@ -1,6 +1,9 @@
 package Game;
 
-import Data.*;
+import Data.Coordinate;
+import Data.FileIO;
+import Data.LayerImportances;
+import Data.WarpZone;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
@@ -8,8 +11,6 @@ import Engine.ViewWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
-import Game.Spells.FireBoltSpell;
-import Game.Spells.MagicBoltSpell;
 import Game.Spells.Spell;
 
 import java.awt.*;
@@ -58,7 +59,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         window.addKeyListener(this);
 
-        Layer playerLayer = new Layer(new SpecialText[1][1], "player", 0, 0, LayerImportances.ENTITY);
+        Layer playerLayer = new Layer(new SpecialText[1][1], "player", 0, 0, LayerImportances.ENTITY_SOLID);
         playerLayer.editLayer(0, 0, playerSprite);
 
         setSprite(playerLayer);
@@ -76,11 +77,6 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         addTag(TagRegistry.FLAMMABLE, this);
         initSwwoshLayer();
-
-        MagicBoltSpell spell = new MagicBoltSpell();
-        spells.add(spell);
-        spells.add(new FireBoltSpell());
-        equippedSpell = spell;
 
         hud = new HUD(lm, this);
     }
@@ -259,14 +255,28 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 DebugWindow.reportf(DebugWindow.GAME, "[Player LOG] pos: %1$s\n", getLocation());
                 lm.printLayerStack();
             } else if (keyCode == KeyEvent.VK_Q){
-                inv.openOtherInventory(gi.getEntityAt(mouseLevelPos));
-            } else if (keyCode == KeyEvent.VK_M) {
-//                gi.getTextBox().showMessage("It wasn't a dark and stormy night, <ss>in fact,<sn> today's weather was rather fine.<nl><sf>Sourcery is pretty neat, isn't it?<nl>What if I put in another sentence?<nl><nl>Again!<nl><nl>" +
-//                        "Wow! <cr>R<co>A<cy>I<cg>N<cc>B<cb>O<cp>W<cs>S<cw>!");
-                String[] flags = {"<cr>","<cg>","<cb>","<cc>","<cp>","<cy>","<co>","<cs>"};
-                String message = "";
-                for (String flag : flags) message += flag + "Something unimportant,<nl>";
-                gi.getTextBox().showMessage(message + "Pause: <p1>1 sec ; Pause: <p3>3 sec");
+                ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(mouseLevelPos);
+                if (entities.size() == 1) inv.openOtherInventory(entities.get(0));
+                else if (entities.size() > 1){
+                    QuickMenu quickMenu = gi.getQuickMenu();
+                    quickMenu.clearMenu();
+                    for (int i = 0; i < entities.size(); i++) {
+                        int finalI = i;
+                        quickMenu.addMenuItem(entities.get(i).getName(), () -> inv.openOtherInventory(entities.get(finalI)));
+                    }
+                    quickMenu.showMenu("Inspect:", true);
+                } else {
+                    inv.openOtherInventory(null);
+                }
+            } else if (keyCode == KeyEvent.VK_ESCAPE) {
+                QuickMenu quickMenu = gi.getQuickMenu();
+                quickMenu.clearMenu();
+                quickMenu.addMenuItem("Save Game",    new Color(170, 170, 255), () -> {});
+                quickMenu.addMenuItem("Load Game",    new Color(255, 230, 170), () -> {});
+                quickMenu.addMenuItem("Options",      new Color(173, 255, 228), () -> {});
+                quickMenu.addMenuItem("Quit to Menu", new Color(255, 171, 171), () -> {});
+                quickMenu.addMenuItem("Close",        () -> {});
+                quickMenu.showMenu("Options", true);
             } else {
                 if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) movementKeyDown(EAST);
                 if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A)  movementKeyDown(WEST);
@@ -383,20 +393,33 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             terminatePathing = false;
             pathingThread = new Thread(() -> {
                 Coordinate prevPos = null;
-                Entity target = gi.getEntityAt(levelPos);
                 while ((prevPos == null || !prevPos.equals(getLocation())) && !terminatePathing) {
                     prevPos = new Coordinate(getLocation().getX(), getLocation().getY());
-                    pathToPosition(levelPos, 75);
-                    gi.doEnemyTurn();
-                    if (target != null && getLocation().stepDistance(target.getLocation()) <= 1){
-                        target.onInteract(this);
+
+                    if (getLocation().stepDistance(levelPos) <= 1){
+                        ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(levelPos);
+                        if (entities.size() == 1) entities.get(0).onInteract(this);
+                        else if (entities.size() > 1){
+                            QuickMenu quickMenu = gi.getQuickMenu();
+                            quickMenu.clearMenu();
+                            for (int i = 0; i < entities.size(); i++) {
+                                int finalI = i;
+                                quickMenu.addMenuItem(entities.get(i).getName(), () -> entities.get(finalI).onInteract(this));
+                            }
+                            quickMenu.showMenu("Interact:", true);
+                        }
                         return;
                     }
+
+                    pathToPosition(levelPos, 75);
+                    gi.doEnemyTurn();
+
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep((int)(MOVEMENT_INTERVAL * 0.9));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+
                 }
             });
             pathingThread.start();

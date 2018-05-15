@@ -3,7 +3,6 @@ package Editor.DrawTools;
 import Data.LevelData;
 import Engine.Layer;
 import Engine.SpecialText;
-import Game.Registries.EntityRegistry;
 
 import javax.swing.*;
 
@@ -14,7 +13,6 @@ public class EntityPlace extends DrawTool {
 
     private LevelData ldata;
     private int id = 0;
-    private EntityRegistry entityRegistry;
 
     @Override
     public void onActivate(JPanel panel) {
@@ -23,7 +21,6 @@ public class EntityPlace extends DrawTool {
 
     public EntityPlace(LevelData levelData){
         ldata = levelData;
-        entityRegistry = new EntityRegistry();
     }
 
     public void setEntityStruct(int id) { this.id = id; }

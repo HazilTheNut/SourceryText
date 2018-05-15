@@ -123,8 +123,7 @@ public class LevelData implements Serializable {
     }
     
     public void setEntityData(int col, int row, int id) {
-        EntityRegistry entityRegistry = new EntityRegistry();
-        setEntityData(col, row, entityRegistry.getEntityStruct(id));
+        setEntityData(col, row, EntityRegistry.getEntityStruct(id));
     }
 
     public void setEntityData(int col, int row, EntityStruct entity){

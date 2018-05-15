@@ -140,18 +140,7 @@ public class GameInstance {
         for (int col = 0; col < entityMatrix.length; col++){
             for (int row = 0; row < entityMatrix[0].length; row++){
                 if (entityMatrix[col][row] != null){
-                    EntityStruct savedStruct = entityMatrix[col][row];
-                    EntityStruct struct = EntityRegistry.getEntityStruct(savedStruct.getEntityId());
-                    struct.setArgs(savedStruct.getArgs());
-                    struct.setItems(savedStruct.getItems());
-                    Class entityClass = EntityRegistry.getEntityClass(struct.getEntityId());
-                    try {
-                        Entity e = (Entity)entityClass.newInstance();
-                        e.initialize(new Coordinate(col, row), lm, struct, this);
-                        newLevel.addEntity(e);
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
+                    instantiateEntity(entityMatrix[col][row], new Coordinate(col, row), newLevel);
                 }
             }
         }
@@ -169,8 +158,31 @@ public class GameInstance {
         return newLevel;
     }
 
+    /**
+     * Instantiates an entity into a level, running initialize() and retrieving data from EntityRegistry.
+     * @param base The base EntityStruct to build the Entity from
+     * @param pos The pos where the entity should wind up
+     * @param level The level being added to
+     * @return The new Entity
+     */
+    public Entity instantiateEntity(EntityStruct base, Coordinate pos, Level level){
+        Entity e = null;
+        EntityStruct fromRegistry = EntityRegistry.getEntityStruct(base.getEntityId());
+        fromRegistry.setArgs(base.getArgs());
+        fromRegistry.setItems(base.getItems());
+        Class entityClass = EntityRegistry.getEntityClass(fromRegistry.getEntityId());
+        try {
+            e = (Entity)entityClass.newInstance();
+            e.initialize(pos, lm, fromRegistry, this);
+            level.addEntity(e);
+        } catch (InstantiationException | IllegalAccessException er) {
+            er.printStackTrace();
+        }
+        return e;
+    }
+
     public boolean isSpaceAvailable(Coordinate loc, int wallTag){
-        return currentLevel.isLocationValid(loc) && getEntityAt(loc) == null && !getTileAt(loc).hasTag(wallTag);
+        return currentLevel.isLocationValid(loc) && currentLevel.getSolidEntityAt(loc) == null && !getTileAt(loc).hasTag(wallTag);
     }
 
     public long issueItemUID(){
@@ -225,10 +237,6 @@ public class GameInstance {
         runTimes[3] = System.nanoTime();
         reportUpdatePerformance(runTimes);
         isPlayerTurn = true;
-    }
-
-    public Entity getEntityAt(Coordinate loc){
-        return currentLevel.getEntityAt(loc);
     }
 
     public Level getCurrentLevel() {

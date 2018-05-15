@@ -32,7 +32,7 @@ public class Tile extends TagHolder {
     }
 
     public void onTurn(GameInstance gi){
-        TagEvent event = new TagEvent(0, true, this, gi.getEntityAt(location), gi);
+        TagEvent event = new TagEvent(0, true, this, gi.getCurrentLevel().getSolidEntityAt(location), gi);
         for (Tag tag : getTags()){
             tag.onTurn(event);
         }

@@ -37,4 +37,8 @@ public class EntityArg implements Serializable {
     }
 
     public void setArgValue(String value) { argValue = value; }
+
+    public EntityArg copy(){
+       return new EntityArg(argName, argValue);
+    }
 }

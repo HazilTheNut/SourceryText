@@ -39,6 +39,9 @@ public class PlayerInventory implements MouseInputReceiver{
     private final Color descFg      = new Color(201, 255, 224);
     private final Color textFg      = new Color(240, 240, 255);
 
+    private final Color selectorActive   = new Color(200, 200, 200, 100);
+    private final Color selectorInactive = new Color(200, 200, 200,  50);
+
     public static final int CONFIG_PLAYER_USE = 0;
     public static final int CONFIG_PLAYER_EXCHANGE = 1;
     public static final int CONFIG_OTHER_VIEW = 2;
@@ -167,7 +170,6 @@ public class PlayerInventory implements MouseInputReceiver{
     private int getTitleMiddleAlignment(String title, int totalWidth){
         double length = (double)title.length();
         double adjustment = (totalWidth - length)/2;
-        //DebugWindow.reportf(DebugWindow.STAGE, "[PlayerInventory] Middle alignment start x: %1$f  ", adjustment);
         return (int)Math.floor(adjustment);
     }
 
@@ -322,6 +324,10 @@ public class PlayerInventory implements MouseInputReceiver{
             Item item = getItemAtCursor(screenPos);
             if (item != null){
                 selectorLayer.setPos(loc.getX() + 1, screenPos.getY());
+                if (mode == CONFIG_OTHER_VIEW)
+                    selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, selectorInactive));
+                else
+                    selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, selectorActive));
                 selectorLayer.setVisible(true);
                 selectedItem = item;
                 updateItemDescription(selectedItem);

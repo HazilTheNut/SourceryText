@@ -14,33 +14,31 @@ public class ItemRegistry {
 
     private static TreeMap<Integer, ItemStruct> itemStructMap = new TreeMap<>();
 
-    /**
-     * Item Registry Organization:
-     *
-     * idMin idMax | Purpose
-     * ------------|----------
-     * 0     99    | Placeholder test stuff
-     * 100   999   | Weapons
-     * 1000  1999  | Consumables
-     * 2000  2999  | Quest Items
-     * 3000  3999  | Armor?
-     *
+     /*
+
+      Item Registry Organization:
+
+      idMin idMax | Purpose
+      ------------|----------
+      0     99    | Placeholder test stuff
+      100   999   | Weapons
+      1000  1999  | Consumables
+      2000  2999  | Quest Items
+      3000  3999  | Armor?
+
      */
 
     static {
-
-        registerItem(0, "Empty");
-
-        registerItem(1, "TEST heal item", TagRegistry.HEALTH_START + 5);
-        registerItem(2, "Strike weapon",  TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_STRIKE);
-        registerItem(3, "Thrust weapon",  TagRegistry.DAMAGE_START + 1, TagRegistry.WEAPON_THRUST);
-        registerItem(4, "Sweep weapon",   TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_SWEEP);
 
         registerItem(100, "Wooden Pole",     TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
         registerItem(101, "Wooden Sword",    TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_SWEEP,  TagRegistry.FLAMMABLE);
         registerItem(102, "Flaming Axe",     TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAME_ENCHANT);
         registerItem(103, "Winter Lance",    TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.FROST_ENCHANT);
         registerItem(104, "Combo Sword",     TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.WEAPON_SWEEP);
+        registerItem(105, "Iron Axe",        TagRegistry.DAMAGE_START + 6, TagRegistry.WEAPON_STRIKE);
+        registerItem(106, "Iron Sword",      TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_SWEEP);
+        registerItem(107, "Iron Spear",      TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST);
+
         registerItem(1000, "Health Tincture", TagRegistry.HEALTH_START + 10);
 
         registerItem(2000, "Key",          TagRegistry.KEY);
