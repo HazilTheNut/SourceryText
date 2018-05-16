@@ -7,7 +7,12 @@ public class LootPile extends Chest {
 
     @Override
     public boolean isSolid() {
-        //DebugWindow.reportf(DebugWindow.GAME, "[LootPile.isSolid] NO!");
         return false;
+    }
+
+    @Override
+    public void onTurn() {
+        super.onTurn();
+        if (getItems().size() == 0) selfDestruct();
     }
 }

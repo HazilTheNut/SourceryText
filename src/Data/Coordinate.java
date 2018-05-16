@@ -94,7 +94,7 @@ public class Coordinate {
      * @param other The other Coordinate to find the distance to
      * @return The sqrt(dx^2 + dy^2) distance we all know and love
      */
-    public int hypDistnce(Coordinate other){
+    public int hypDistance(Coordinate other){
         return (int)Math.sqrt(Math.pow(getX() - other.getX(), 2) + Math.pow(getX() - other.getX(), 2));
     }
 
@@ -110,5 +110,9 @@ public class Coordinate {
             return x == other.getX() && y == other.getY();
         }
         return false;
+    }
+
+    public Coordinate copy() {
+        return new Coordinate(x, y);
     }
 }

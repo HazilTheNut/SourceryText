@@ -2,7 +2,7 @@ package Game.Registries;
 
 import Game.DebugWindow;
 import Game.Tags.*;
-import Game.Tags.EnchantmentTags.*;
+import Game.Tags.MagicTags.*;
 import Game.Tags.PropertyTags.*;
 
 import java.util.Set;
@@ -45,6 +45,7 @@ public class TagRegistry {
     public final static int WEAPON_THRUST = 202;
     public final static int WEAPON_SWEEP  = 203;
     public final static int KEY           = 210;
+    public final static int LEARN_FIRE    = 390;
 
     public final static int TILE_WALL     = 400;
     public final static int SAND          = 401;
@@ -74,6 +75,7 @@ public class TagRegistry {
         registerTag(WEAPON_THRUST, "Thrusting Weapon", ThrustWeaponTypeTag.class);
         registerTag(WEAPON_SWEEP,  "Sweeping Weapon",  SweepWeaponTypeTag.class);
         registerTag(KEY, "Key", KeyTag.class);
+        registerTag(LEARN_FIRE, "Teaches Fire Bolt", LearnFireBoltTag.class);
 
         //Tile related
         registerTag(TILE_WALL, "Wall", WallTag.class);

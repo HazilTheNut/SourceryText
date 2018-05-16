@@ -100,6 +100,7 @@ public class Entity extends TagHolder{
     void selfDestruct(){
         gi.removeEntity(this);
         lm.removeLayer(sprite);
+        DebugWindow.reportf(DebugWindow.GAME, "[Entity.selfDestruct] \'%1$s\' at %2$s", getName(), getLocation());
     }
 
     void turnSleep(int time){

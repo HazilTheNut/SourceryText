@@ -1,4 +1,4 @@
-package Game.Tags.EnchantmentTags;
+package Game.Tags.MagicTags;
 
 import Game.Registries.TagRegistry;
 import Game.TagEvent;

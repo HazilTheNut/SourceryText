@@ -51,7 +51,7 @@ public class BasicEnemy extends CombatEntity {
         for (Entity e : entities){
             if (e instanceof BasicEnemy) {
                 BasicEnemy basicEnemy = (BasicEnemy) e;
-                if (getLocation().hypDistnce(basicEnemy.getLocation()) <= alertRadius) basicEnemy.setTarget(target);
+                if (getLocation().hypDistance(basicEnemy.getLocation()) <= alertRadius) basicEnemy.setTarget(target);
             }
         }
     }

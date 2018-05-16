@@ -1,6 +1,7 @@
 package Game;
 
 import Data.Coordinate;
+import Data.EntityStruct;
 import Data.ItemStruct;
 import Data.LayerImportances;
 import Engine.Layer;
@@ -8,6 +9,8 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.Entities.LootPile;
+import Game.Registries.EntityRegistry;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -338,8 +341,12 @@ public class PlayerInventory implements MouseInputReceiver{
             switch (mode){
                 case CONFIG_PLAYER_USE:
                     if (!player.isFrozen()){
-                        Thread itemUseThread = new Thread(() -> useItem(selectedItem));
-                        itemUseThread.start();
+                        if (mouseButton == MouseEvent.BUTTON1) {
+                            Thread itemUseThread = new Thread(() -> useItem(selectedItem));
+                            itemUseThread.start();
+                        } else if (mouseButton == MouseEvent.BUTTON3){
+                            dropItem(selected);
+                        }
                     }
                     return true;
                 case CONFIG_PLAYER_EXCHANGE:
@@ -369,22 +376,45 @@ public class PlayerInventory implements MouseInputReceiver{
 
         private void moveOneItem(Item selected, Entity from, Entity to){
             if (selected.isStackable()) {
-                DebugWindow.reportf(DebugWindow.GAME, "SubInventory.moveOneItem]");
+                DebugWindow.reportf(DebugWindow.GAME, "[SubInventory.moveOneItem]");
                 selected.decrementQty();
                 from.scanInventory();
                 ItemStruct struct = selected.getItemData();
                 Item singularItem = new Item(new ItemStruct(struct.getItemId(), 1, struct.getName()), player.getGameInstance());
                 singularItem.getTags().addAll(selected.getTags());
                 to.addItem(singularItem);
+                to.scanInventory();
             } else {
                 moveWholeItem(selected, from, to);
             }
         }
 
         private void moveWholeItem(Item selected, Entity from, Entity to){
-            DebugWindow.reportf(DebugWindow.GAME, "SubInventory.moveWholeItem]");
+            DebugWindow.reportf(DebugWindow.GAME, "[SubInventory.moveWholeItem]");
             to.addItem(selected);
             from.removeItem(selected);
+        }
+
+        private void dropItem(Item selected){
+            ArrayList<Entity> entities = player.getGameInstance().getCurrentLevel().getEntitiesAt(player.getLocation());
+            for (Entity e : entities){ //Search for a loot pile that already exists
+                if (e instanceof LootPile) {
+                    LootPile lootPile = (LootPile) e;
+                    moveWholeItem(selected, playerInv.getOwner(), lootPile);
+                    openOtherInventory(lootPile);
+                    playerInv.updateDisplay();
+                    otherInv.updateDisplay();
+                    return;
+                }
+            }
+            DebugWindow.reportf(DebugWindow.GAME, "[SubInventory.dropItem] Creating new loot pile");
+            EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot", null);
+            LootPile pile = (LootPile)player.getGameInstance().instantiateEntity(lootPileStruct, player.getLocation(), player.getGameInstance().getCurrentLevel());
+            pile.onLevelEnter();
+            openOtherInventory(pile);
+            moveWholeItem(selected, playerInv.getOwner(), pile);
+            playerInv.updateDisplay();
+            otherInv.updateDisplay();
         }
     }
 }

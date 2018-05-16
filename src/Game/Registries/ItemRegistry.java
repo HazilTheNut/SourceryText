@@ -41,6 +41,8 @@ public class ItemRegistry {
 
         registerItem(1000, "Health Tincture", TagRegistry.HEALTH_START + 10);
 
+        registerItem(1900, "Fire Scroll",  TagRegistry.LEARN_FIRE);
+
         registerItem(2000, "Key",          TagRegistry.KEY);
         registerItem(2001, "Rusted Key",   TagRegistry.KEY);
         registerItem(2002, "Bronze Key",   TagRegistry.KEY);

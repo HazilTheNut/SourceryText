@@ -173,7 +173,7 @@ public class GameInstance {
         Class entityClass = EntityRegistry.getEntityClass(fromRegistry.getEntityId());
         try {
             e = (Entity)entityClass.newInstance();
-            e.initialize(pos, lm, fromRegistry, this);
+            e.initialize(pos.copy(), lm, fromRegistry, this);
             level.addEntity(e);
         } catch (InstantiationException | IllegalAccessException er) {
             er.printStackTrace();
