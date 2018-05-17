@@ -22,20 +22,23 @@ public class ItemStruct implements Serializable {
      * Should be used solely by the ItemRegistry:
      *  > tags        : An array of integer ID's from the TagRegistry.
      *  > name        : The name of the Item.
+     *  > weight      : Weight amount per quantity, if the item is stackable, total weight. Since that stuff is generated upon running the game, this value should be reserved for only the ItemRegistry
      */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int itemId;
     private int qty;
+    private double weight;
     private String name;
     private int[] tags;
 
-    public ItemStruct(int id, int amount, String name, int... properties){
+    public ItemStruct(int id, int amount, String name, double weight, int... properties){
         itemId = id;
         qty = amount;
         this.name = name;
         tags = properties;
+        this.weight = weight;
     }
 
     public int getItemId() {
@@ -60,7 +63,7 @@ public class ItemStruct implements Serializable {
 
     public void setTags(int[] tags) { this.tags = tags; }
 
-    public ItemStruct copy() { return new ItemStruct(itemId, qty, name, tags); }
+    public ItemStruct copy() { return new ItemStruct(itemId, qty, name, weight, tags); }
 
     @Override
     public String toString() {
@@ -76,6 +79,10 @@ public class ItemStruct implements Serializable {
             return false;
         }
 
+    }
+
+    public double getRawWeight() {
+        return weight;
     }
 }
 

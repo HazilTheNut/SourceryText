@@ -45,6 +45,10 @@ public class PlayerInventory implements MouseInputReceiver{
     private final Color selectorActive   = new Color(200, 200, 200, 100);
     private final Color selectorInactive = new Color(200, 200, 200,  50);
 
+    private final Color weightCapNormal    = new Color(150, 150, 150);
+    private final Color weightCapAvailable = new Color(150, 150, 210);
+    private final Color weightCapFull      = new Color(210, 150, 150);
+
     public static final int CONFIG_PLAYER_USE = 0;
     public static final int CONFIG_PLAYER_EXCHANGE = 1;
     public static final int CONFIG_OTHER_VIEW = 2;
@@ -88,22 +92,35 @@ public class PlayerInventory implements MouseInputReceiver{
     void updateItemDescription(Item item){
         Layer descLayer;
         if (item != null) {
-            descLayer = new Layer(new SpecialText[21][item.getTags().size() + 1], "item_description", 0, 0, LayerImportances.MENU);
+            descLayer = new Layer(new SpecialText[21][item.getTags().size() + 2], "item_description", 0, 0, LayerImportances.MENU);
             descLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkgDark));
             for (int col = 0; col < descLayer.getCols(); col++){ //Create top border
                 descLayer.editLayer(col, 0, new SpecialText('#', Color.GRAY, borderBkg));
             }
             String itemname = item.getItemData().getName();
             descLayer.inscribeString(itemname, getTitleMiddleAlignment(itemname, 21), 0, descFg);
+            double weight = item.calculateWeight();
+            if (weight == Math.floor(weight))
+                descLayer.inscribeString(String.format("Weight: %1$.0f", item.calculateWeight()), 2, 1, Color.GRAY);
+            else
+                descLayer.inscribeString(String.format("Weight: %1$.2f", item.calculateWeight()), 2, 1, Color.GRAY);
             for (int ii = 0; ii < item.getTags().size(); ii++) {
                 Color fgColor = item.getTags().get(ii).getTagColor();
-                descLayer.inscribeString(item.getTags().get(ii).getName(), 2, ii + 1, new Color(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
-                descLayer.editLayer(0, ii + 1, new SpecialText('*', Color.GRAY, bkgDark));
+                descLayer.inscribeString(item.getTags().get(ii).getName(), 2, ii + 2, new Color(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
+                descLayer.editLayer(0, ii + 2, new SpecialText('*', Color.GRAY, bkgDark));
             }
             descriptionLayer.setVisible(true);
+            if (!player.getItems().contains(item) && otherInv.mode == CONFIG_OTHER_EXCHANGE){ //Therefore must not be in player inventory and is exchanging items
+                double newWeight = calculateTotalWeight() + item.calculateWeight();
+                Color weightColor = (newWeight <= player.getWeightCapacity()) ? weightCapAvailable : weightCapFull;
+                playerInv.inscribeWeightPercentage(playerInv.invLayer, 100 * newWeight / player.getWeightCapacity(), weightColor);
+            } else {
+                playerInv.inscribeWeightPercentage(playerInv.invLayer, 100 * calculateTotalWeight() / player.getWeightCapacity(), weightCapNormal);
+            }
         } else {
             descLayer = new Layer(new SpecialText[1][1], "item_description", 0, 0, LayerImportances.MENU);
             descriptionLayer.setVisible(false);
+            playerInv.inscribeWeightPercentage(playerInv.invLayer, 100 * calculateTotalWeight() / player.getWeightCapacity(), weightCapNormal);
         }
         descriptionLayer.transpose(descLayer);
     }
@@ -176,6 +193,14 @@ public class PlayerInventory implements MouseInputReceiver{
         return (int)Math.floor(adjustment);
     }
 
+    private double calculateTotalWeight(){
+        double sum = 0;
+        for (Item item : player.getItems()){
+            sum += item.calculateWeight();
+        }
+        return sum;
+    }
+
     public class SubInventory {
 
         private Layer invLayer;
@@ -210,7 +235,16 @@ public class PlayerInventory implements MouseInputReceiver{
             return lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1;
         }
 
-        private int getTagListHeight() { return e.getTags().size() + 1; }
+        private int getTagListHeight() {
+            int height = e.getTags().size() + 1;
+            if (getOwner() instanceof CombatEntity) {
+                height++;
+            }
+            if (getOwner() instanceof Player) {
+                height++;
+            }
+            return height;
+        }
 
         public void show(){
             updateDisplay();
@@ -232,9 +266,9 @@ public class PlayerInventory implements MouseInputReceiver{
             drawItems(tempLayer);
 
             if (mode == CONFIG_PLAYER_EXCHANGE || mode == CONFIG_PLAYER_USE)
-                drawTagList(tempLayer, 1);
+                drawTagList(tempLayer, 3);
             else
-                drawTagList(tempLayer, 0);
+                drawTagList(tempLayer, 2);
 
             invLayer.transpose(tempLayer);
             invLayer.setPos(loc);
@@ -251,6 +285,10 @@ public class PlayerInventory implements MouseInputReceiver{
             }
         }
 
+        void inscribeWeightPercentage(Layer layer, double amount, Color color){
+            layer.inscribeString(String.format("%1$3.0f%%", amount), ITEM_STRING_LENGTH, 0, color);
+        }
+
         private void drawItems(Layer tempLayer){
             //DebugWindow.reportf(DebugWindow.STAGE, "[SubInventory.drawItems]\n offset: %1$d\n invHeight: %2$d", scrollOffset, getInvHeight());
             ArrayList<Item> items = e.getItems();
@@ -263,6 +301,9 @@ public class PlayerInventory implements MouseInputReceiver{
             for (int col = 0; col < tempLayer.getCols(); col++){ //Create top border
                 tempLayer.editLayer(col, 0, new SpecialText('#', Color.GRAY, borderBkg));
             }
+            if (mode == CONFIG_PLAYER_USE || mode == CONFIG_PLAYER_EXCHANGE){
+                inscribeWeightPercentage(tempLayer, 100 * calculateTotalWeight() / player.getWeightCapacity(), weightCapNormal);
+            }
             for (int ii = 0; ii < getInvHeight()-1; ii++) { //Inscribe inv contents
                 if ((ii + scrollOffset) % 2 == 1) { //Create the alternating colors
                     for (int col = 0; col < ITEM_STRING_LENGTH + 2; col++) {
@@ -270,11 +311,11 @@ public class PlayerInventory implements MouseInputReceiver{
                     }
                 }
                 if (ii + scrollOffset < items.size()) {
-                    Item item = items.get(ii + scrollOffset);
+                    Item item = items.get(ii + scrollOffset); //Begin drawing the item
                     Color nameColor = textFg;
                     if (e instanceof CombatEntity) {
                         CombatEntity owner = (CombatEntity) getOwner();
-                        nameColor = (owner.getWeapon().equals(item)) ? descFg : nameColor;
+                        nameColor = (owner.getWeapon().equals(item)) ? descFg : nameColor; //Color green if this item is equipped as a weapon
                     }
                     tempLayer.inscribeString(item.getItemData().getName(), 1, ii + 1, nameColor);
                     Color qtyColor = (item.isStackable()) ? stackableFg : labelFg;
@@ -294,9 +335,20 @@ public class PlayerInventory implements MouseInputReceiver{
             for (int col = 0; col < tempLayer.getCols(); col++) { //Draw top border
                 tempLayer.editLayer(col, top, new SpecialText('#', Color.GRAY, bkgMedium));
             }
-            tempLayer.inscribeString(e.getName(), getTitleMiddleAlignment(e.getName(), ITEM_STRING_LENGTH + 4 - xstart) + xstart, top, descFg); //Inscribe entity name
-            for (int i = 0; i < e.getTags().size(); i++) {
-                tempLayer.inscribeString("* " + e.getTags().get(i).getName(), xstart, top + i + 1);
+            tempLayer.inscribeString(e.getName(), getTitleMiddleAlignment(e.getName(), ITEM_STRING_LENGTH + 4 - xstart) + xstart - 1, top, descFg); //Inscribe entity name
+            int i;
+            for (i = 0; i < e.getTags().size(); i++) {
+                tempLayer.inscribeString(e.getTags().get(i).getName(), xstart, top + i + 1);
+                tempLayer.editLayer(xstart-2, top + i + 1, new SpecialText('*', Color.GRAY, bkgDark));
+            }
+            if (getOwner() instanceof CombatEntity) {
+                CombatEntity owner = (CombatEntity) getOwner();
+                tempLayer.inscribeString(String.format("Vit: %1$d", owner.getMaxHealth()), xstart - 2, top + i + 1, TextBox.txt_green.brighter());
+                tempLayer.inscribeString(String.format("Str: %1$d", owner.getStrength()),  xstart + 7, top + i + 1, TextBox.txt_red.brighter());
+            }
+            if (getOwner() instanceof Player) {
+                tempLayer.inscribeString(String.format("Mag: %1$d",   player.getMagicPower()),      xstart - 2, top + i + 2, TextBox.txt_blue.brighter());
+                tempLayer.inscribeString(String.format("Cap: %1$.0f", player.getWeightCapacity()),  xstart + 7, top + i + 2, TextBox.txt_yellow.brighter());
             }
         }
 
@@ -323,9 +375,11 @@ public class PlayerInventory implements MouseInputReceiver{
             return null;
         }
 
+        Item previousItem = null;
+
         private void onMouseMove(Coordinate screenPos){
             Item item = getItemAtCursor(screenPos);
-            if (item != null){
+            if (item != null) {
                 selectorLayer.setPos(loc.getX() + 1, screenPos.getY());
                 if (mode == CONFIG_OTHER_VIEW)
                     selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, selectorInactive));
@@ -333,8 +387,15 @@ public class PlayerInventory implements MouseInputReceiver{
                     selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, selectorActive));
                 selectorLayer.setVisible(true);
                 selectedItem = item;
-                updateItemDescription(selectedItem);
             }
+            // Three cases are checked:
+            // 1) The selected item changes
+            // 2) The mouse enters onto an item
+            // 3) The mouse leaves from an item
+            if (previousItem != null && item != null && !previousItem.equals(item)) updateItemDescription(item);
+            if (previousItem == null && item != null)                               updateItemDescription(item);
+            if (previousItem != null && item == null)                               updateItemDescription(item);
+            previousItem = item;
         }
 
         private boolean onItemClick(Item selected, int mouseButton){
@@ -376,11 +437,14 @@ public class PlayerInventory implements MouseInputReceiver{
 
         private void moveOneItem(Item selected, Entity from, Entity to){
             if (selected.isStackable()) {
+                if (to instanceof Player){
+                    if (calculateTotalWeight() + selected.getItemData().getRawWeight() > player.getWeightCapacity()) return;
+                }
                 DebugWindow.reportf(DebugWindow.GAME, "[SubInventory.moveOneItem]");
                 selected.decrementQty();
                 from.scanInventory();
                 ItemStruct struct = selected.getItemData();
-                Item singularItem = new Item(new ItemStruct(struct.getItemId(), 1, struct.getName()), player.getGameInstance());
+                Item singularItem = new Item(new ItemStruct(struct.getItemId(), 1, struct.getName(), struct.getRawWeight()), player.getGameInstance());
                 singularItem.getTags().addAll(selected.getTags());
                 to.addItem(singularItem);
                 to.scanInventory();
@@ -390,6 +454,9 @@ public class PlayerInventory implements MouseInputReceiver{
         }
 
         private void moveWholeItem(Item selected, Entity from, Entity to){
+            if (to instanceof Player){
+                if (calculateTotalWeight() + selected.calculateWeight() > player.getWeightCapacity()) return;
+            }
             DebugWindow.reportf(DebugWindow.GAME, "[SubInventory.moveWholeItem]");
             to.addItem(selected);
             from.removeItem(selected);
@@ -401,7 +468,8 @@ public class PlayerInventory implements MouseInputReceiver{
                 if (e instanceof LootPile) {
                     LootPile lootPile = (LootPile) e;
                     moveWholeItem(selected, playerInv.getOwner(), lootPile);
-                    openOtherInventory(lootPile);
+                    otherInv.configure(PLACEMENT_TOP_RIGHT, name, lootPile, CONFIG_OTHER_EXCHANGE);
+                    otherInv.show();
                     playerInv.updateDisplay();
                     otherInv.updateDisplay();
                     return;
@@ -411,7 +479,8 @@ public class PlayerInventory implements MouseInputReceiver{
             EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot", null);
             LootPile pile = (LootPile)player.getGameInstance().instantiateEntity(lootPileStruct, player.getLocation(), player.getGameInstance().getCurrentLevel());
             pile.onLevelEnter();
-            openOtherInventory(pile);
+            otherInv.configure(PLACEMENT_TOP_RIGHT, name, pile, CONFIG_OTHER_EXCHANGE);
+            otherInv.show();
             moveWholeItem(selected, playerInv.getOwner(), pile);
             playerInv.updateDisplay();
             otherInv.updateDisplay();

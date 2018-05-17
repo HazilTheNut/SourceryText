@@ -30,28 +30,28 @@ public class ItemRegistry {
 
     static {
 
-        registerItem(100, "Wooden Pole",     TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
-        registerItem(101, "Wooden Sword",    TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_SWEEP,  TagRegistry.FLAMMABLE);
-        registerItem(102, "Flaming Axe",     TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAME_ENCHANT);
-        registerItem(103, "Winter Lance",    TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.FROST_ENCHANT);
-        registerItem(104, "Combo Sword",     TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.WEAPON_SWEEP);
-        registerItem(105, "Iron Axe",        TagRegistry.DAMAGE_START + 6, TagRegistry.WEAPON_STRIKE);
-        registerItem(106, "Iron Sword",      TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_SWEEP);
-        registerItem(107, "Iron Spear",      TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST);
+        registerItem(100, "Wooden Pole",     1, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
+        registerItem(101, "Wooden Sword",    2, TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_SWEEP,  TagRegistry.FLAMMABLE);
+        registerItem(102, "Flaming Axe",     5, TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAME_ENCHANT);
+        registerItem(103, "Winter Lance",    5, TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.FROST_ENCHANT);
+        registerItem(104, "Combo Sword",     8, TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.WEAPON_SWEEP);
+        registerItem(105, "Iron Axe",        6, TagRegistry.DAMAGE_START + 6, TagRegistry.WEAPON_STRIKE);
+        registerItem(106, "Iron Sword",      4, TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_SWEEP);
+        registerItem(107, "Iron Spear",      5, TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST);
 
-        registerItem(1000, "Health Tincture", TagRegistry.HEALTH_START + 10);
+        registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10);
 
-        registerItem(1900, "Fire Scroll",  TagRegistry.LEARN_FIRE);
+        registerItem(1900, "Fire Scroll",  0, TagRegistry.LEARN_FIRE);
 
-        registerItem(2000, "Key",          TagRegistry.KEY);
-        registerItem(2001, "Rusted Key",   TagRegistry.KEY);
-        registerItem(2002, "Bronze Key",   TagRegistry.KEY);
-        registerItem(2003, "Silver Key",   TagRegistry.KEY);
-        registerItem(2004, "Golden Key",   TagRegistry.KEY);
-        registerItem(2005, "Old Key",      TagRegistry.KEY);
-        registerItem(2006, "Ornate Key",   TagRegistry.KEY);
-        registerItem(2007, "Basement Key", TagRegistry.KEY);
-        registerItem(2008, "Secret Key",   TagRegistry.KEY);
+        registerItem(2000, "Key",          0, TagRegistry.KEY);
+        registerItem(2001, "Rusted Key",   0, TagRegistry.KEY);
+        registerItem(2002, "Bronze Key",   0, TagRegistry.KEY);
+        registerItem(2003, "Silver Key",   0, TagRegistry.KEY);
+        registerItem(2004, "Golden Key",   0, TagRegistry.KEY);
+        registerItem(2005, "Old Key",      0, TagRegistry.KEY);
+        registerItem(2006, "Ornate Key",   0, TagRegistry.KEY);
+        registerItem(2007, "Basement Key", 0, TagRegistry.KEY);
+        registerItem(2008, "Secret Key",   0, TagRegistry.KEY);
     }
 
     public static int[] getMapKeys() {
@@ -76,7 +76,7 @@ public class ItemRegistry {
         return item;
     }
 
-    private static void registerItem(int id, String name, int... tags){
-        itemStructMap.put(id, new ItemStruct(id, 1, name, tags));
+    private static void registerItem(int id, String name, double weight, int... tags){
+        itemStructMap.put(id, new ItemStruct(id, 1, name, weight, tags));
     }
 }

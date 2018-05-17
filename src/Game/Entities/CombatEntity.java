@@ -251,7 +251,7 @@ public class CombatEntity extends Entity{
 
     public Item getWeapon() {
         if (weapon == null){
-            Item item = new Item(new ItemStruct(-1, 1, "no_weapon"), gi);
+            Item item = new Item(new ItemStruct(-1, 1, "no_weapon", 0), gi);
             item.addTag(TagRegistry.WEAPON_STRIKE, item);
             return item;
         }

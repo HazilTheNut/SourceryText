@@ -33,6 +33,13 @@ public class Item extends TagHolder{
         return this;
     }
 
+    public double calculateWeight(){
+        if (isStackable)
+            return itemData.getRawWeight() * itemData.getQty();
+        else
+            return itemData.getRawWeight();
+    }
+
     TagEvent onItemUse(TagHolder target){
         DebugWindow.reportf(DebugWindow.GAME, "[Item.onItemUse] \'%1$s\' Tags:\n", itemData.getName());
         TagEvent useEvent;

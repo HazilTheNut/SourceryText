@@ -39,6 +39,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     private int numberSpellBeads = 2;
     private ArrayList<Integer> cooldowns = new ArrayList<>();
 
+    private int magicPower = 0;
+    private double weightCapacity = 20;
+
     private int noEnterWarpZoneTimer = 0;
 
     private Coordinate movementVector = new Coordinate(0, 0);
@@ -435,4 +438,12 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     void unfreeze() {gi.setPlayerTurn(true);}
 
     boolean isFrozen() {return !gi.isPlayerTurn(); }
+
+    public int getMagicPower() {
+        return magicPower;
+    }
+
+    public double getWeightCapacity() {
+        return weightCapacity;
+    }
 }
