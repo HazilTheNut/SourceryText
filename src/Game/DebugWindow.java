@@ -100,6 +100,7 @@ public class DebugWindow{
 
     private static void moveScrollBarToBottom(JScrollPane scrollPane){
         scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+        scrollPane.repaint();
     }
 
     public static void reportf(int screen, String value, Object... args){

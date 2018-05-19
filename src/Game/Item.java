@@ -21,7 +21,7 @@ public class Item extends TagHolder{
 
     public Item(ItemStruct itemData, GameInstance gi){
         this.itemData = itemData;
-        uniqueID = gi.issueItemUID();
+        uniqueID = gi.issueUID();
     }
 
     public void decrementQty(){

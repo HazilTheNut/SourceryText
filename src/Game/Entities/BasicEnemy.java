@@ -40,7 +40,7 @@ public class BasicEnemy extends CombatEntity {
             if (targetWithinAttackRange()) {
                 doWeaponAttack(target.getLocation());
             } else {
-                pathToPosition(target.getLocation(), detectRange * 2);
+                pathToPlayer();
             }
         }
         super.onTurn();
@@ -103,5 +103,28 @@ public class BasicEnemy extends CombatEntity {
             }
         }
         return false;
+    }
+
+    @Override
+    public int getPathingSize() {
+        DebugWindow.reportf(DebugWindow.STAGE, "[Entity.getPathingSize] \'%1$s\' : %2$d", getName(), detectRange);
+        return detectRange;
+    }
+
+    void pathToPlayer(){
+        int dist = gi.getEntityPlayerDistance(this);
+        DebugWindow.reportf(DebugWindow.GAME, "[BasicEnemy.pathToPlayer] Step dist: %1$d", dist);
+        if (dist > 0) {
+            ArrayList pointList = gi.getPathPoints(dist - 1);
+            for (Object obj : pointList) {
+                if (obj instanceof GameInstance.PathPoint) {
+                    GameInstance.PathPoint pathPoint = (GameInstance.PathPoint) obj;
+                    if (pathPoint.getLoc().stepDistance(getLocation()) == 1) {
+                        teleport(pathPoint.getLoc());
+                        return;
+                    }
+                }
+            }
+        }
     }
 }

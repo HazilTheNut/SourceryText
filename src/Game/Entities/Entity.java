@@ -28,6 +28,7 @@ public class Entity extends TagHolder{
     private SpecialText icon;
 
     private String name;
+    private long uniqueID;
 
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance){
         gi = gameInstance;
@@ -49,6 +50,7 @@ public class Entity extends TagHolder{
             Item item = ItemRegistry.generateItem(struct.getItemId(), gameInstance).setQty(struct.getQty());
             addItem(item);
         }
+        uniqueID = gi.issueUID();
     }
 
     public boolean isSolid() { return true; }
@@ -219,9 +221,17 @@ public class Entity extends TagHolder{
     public boolean equals(Object obj) {
         if (obj instanceof Entity) {
             Entity entity = (Entity) obj;
-            return entity.getSprite().getName().equals(getSprite().getName());
+            return entity.getUniqueID() == uniqueID;
         }
         return false;
+    }
+
+    public long getUniqueID() {
+        return uniqueID;
+    }
+
+    public int getPathingSize(){
+        return 0;
     }
 
     /**
