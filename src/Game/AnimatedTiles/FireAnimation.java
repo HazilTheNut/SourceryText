@@ -4,6 +4,7 @@ import Data.Coordinate;
 import Engine.SpecialText;
 
 import java.awt.*;
+import java.util.Random;
 
 /**
  * Created by Jared on 4/23/2018.
@@ -12,7 +13,8 @@ public class FireAnimation extends AnimatedTile {
 
     public FireAnimation(Coordinate loc) {
         super(loc);
-        currentFrame = (loc.getX() * loc.getY()) % 23;
+        Random rand = new Random();
+        currentFrame = (int)(rand.nextFloat() * 59);
     }
 
     private final Color[] fireColors = {

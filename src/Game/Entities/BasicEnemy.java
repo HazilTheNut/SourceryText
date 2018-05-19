@@ -111,7 +111,7 @@ public class BasicEnemy extends CombatEntity {
         return detectRange;
     }
 
-    void pathToPlayer(){
+    private void pathToPlayer(){
         int dist = gi.getEntityPlayerDistance(this);
         DebugWindow.reportf(DebugWindow.GAME, "[BasicEnemy.pathToPlayer] Step dist: %1$d", dist);
         if (dist > 0) {

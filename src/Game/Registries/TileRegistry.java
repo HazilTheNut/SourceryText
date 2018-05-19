@@ -26,7 +26,8 @@ public class TileRegistry {
         registerTile(7, "Metallic Wall", new SpecialText('x', new Color(255, 255, 220), new Color(110, 110, 110)), TagRegistry.TILE_WALL, TagRegistry.NO_PATHING);
         registerTile(8, "Carpet",        new SpecialText(' ', Color.WHITE,              new Color(110, 35, 25)),   TagRegistry.FLAMMABLE);
         registerTile(9, "Sand",          new SpecialText(' ', Color.WHITE,              new Color(189, 182, 153)), TagRegistry.SAND);
-        registerTile(10,"Wood Floor",    new SpecialText(' ', Color.WHITE,              new Color(75, 35, 0)),     TagRegistry.FLAMMABLE, TagRegistry.BURN_SLOW);
+        registerTile(10,"Wood Floor",    new SpecialText(' ', Color.WHITE,              new Color(61, 28, 0)),     TagRegistry.FLAMMABLE, TagRegistry.BURN_SLOW);
+        registerTile(11,"Fire",          new SpecialText(' ', Color.WHITE,              new Color(170, 60, 15)),   TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER, TagRegistry.ON_FIRE);
     }
 
     public static int[] getMapKeys() {
