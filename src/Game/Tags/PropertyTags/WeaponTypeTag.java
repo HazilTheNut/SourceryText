@@ -2,9 +2,7 @@ package Game.Tags.PropertyTags;
 
 import Game.Entities.CombatEntity;
 import Game.Item;
-import Game.Player;
 import Game.TagEvent;
-import Game.TagHolder;
 import Game.Tags.Tag;
 
 /**
@@ -27,7 +25,7 @@ public class WeaponTypeTag extends Tag {
     public void onAddThis(TagEvent e) {
         if (e.getSource() instanceof Item) {
             Item source = (Item) e.getSource();
-            source.setStackable(false);
+            source.setStackable(Item.NON_STACKABLE);
         }
     }
 }

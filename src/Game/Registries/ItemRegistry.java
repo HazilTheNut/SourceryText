@@ -30,16 +30,20 @@ public class ItemRegistry {
 
     static {
 
-        registerItem(100, "Wooden Pole",     1, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
-        registerItem(101, "Wooden Sword",    2, TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_SWEEP,  TagRegistry.FLAMMABLE);
-        registerItem(102, "Flaming Axe",     5, TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAME_ENCHANT);
-        registerItem(103, "Winter Lance",    5, TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.FROST_ENCHANT);
-        registerItem(104, "Combo Sword",     8, TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.WEAPON_SWEEP);
-        registerItem(105, "Iron Axe",        6, TagRegistry.DAMAGE_START + 6, TagRegistry.WEAPON_STRIKE);
-        registerItem(106, "Iron Sword",      4, TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_SWEEP);
-        registerItem(107, "Iron Spear",      5, TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST);
+        registerItem(100, "Wooden Pole",     1,   TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_THRUST,  TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
+        registerItem(101, "Wooden Sword",    2,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_SWEEP,   TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
+        registerItem(102, "Flaming Axe",     5,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAME_ENCHANT);
+        registerItem(103, "Winter Lance",    5,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST,  TagRegistry.FROST_ENCHANT);
+        registerItem(104, "Combo Sword",     8,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST,  TagRegistry.WEAPON_SWEEP);
+        registerItem(105, "Iron Axe",        6,   TagRegistry.DAMAGE_START + 6, TagRegistry.WEAPON_STRIKE);
+        registerItem(106, "Iron Sword",      4,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_SWEEP);
+        registerItem(107, "Iron Spear",      5,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST);
+        registerItem(108, "Wooden Club",     2.5, TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAMMABLE);
 
         registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10);
+        registerItem(1001, "Health Potion",   0.10, TagRegistry.HEALTH_START + 25);
+        registerItem(1002, "Health Flask",    0.25, TagRegistry.HEALTH_START + 40);
+        registerItem(1003, "Health Jar",      0.60, TagRegistry.HEALTH_START + 65);
 
         registerItem(1900, "Fire Scroll",  0, TagRegistry.LEARN_FIRE);
 
@@ -52,6 +56,8 @@ public class ItemRegistry {
         registerItem(2006, "Ornate Key",   0, TagRegistry.KEY);
         registerItem(2007, "Basement Key", 0, TagRegistry.KEY);
         registerItem(2008, "Secret Key",   0, TagRegistry.KEY);
+
+        registerItem(2500, "Shovel",       1, TagRegistry.IMPORTANT);
     }
 
     public static int[] getMapKeys() {

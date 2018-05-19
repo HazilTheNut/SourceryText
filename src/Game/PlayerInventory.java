@@ -319,7 +319,7 @@ public class PlayerInventory implements MouseInputReceiver{
                     }
                     tempLayer.inscribeString(item.getItemData().getName(), 1, ii + 1, nameColor);
                     Color qtyColor = (item.isStackable()) ? stackableFg : labelFg;
-                    tempLayer.inscribeString(String.format("%1$02d", item.getItemData().getQty()), ITEM_STRING_LENGTH + 1, ii + 1, qtyColor);
+                    if (item.getStackability() != Item.NO_QUANTITY) tempLayer.inscribeString(String.format("%1$02d", item.getItemData().getQty()), ITEM_STRING_LENGTH + 1, ii + 1, qtyColor);
                 }
             }
             tempLayer.inscribeString(name, 2, 0, labelFg);

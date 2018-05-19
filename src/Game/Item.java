@@ -11,7 +11,11 @@ public class Item extends TagHolder{
 
     private ItemStruct itemData;
     private long uniqueID;
-    private boolean isStackable = true;
+
+    public int stackability;
+    public final static int STACKABLE     = 0;
+    public final static int NON_STACKABLE = 1;
+    public final static int NO_QUANTITY   = 2;
 
     public ItemStruct getItemData() { return itemData; }
 
@@ -21,7 +25,7 @@ public class Item extends TagHolder{
     }
 
     public void decrementQty(){
-        itemData.setQty(itemData.getQty()-1);
+        if (stackability != NO_QUANTITY) itemData.setQty(itemData.getQty()-1);
     }
 
     public void incrementQty(){
@@ -34,7 +38,7 @@ public class Item extends TagHolder{
     }
 
     public double calculateWeight(){
-        if (isStackable)
+        if (stackability == STACKABLE)
             return itemData.getRawWeight() * itemData.getQty();
         else
             return itemData.getRawWeight();
@@ -56,12 +60,16 @@ public class Item extends TagHolder{
         return useEvent;
     }
 
-    public void setStackable(boolean stackable) {
-        isStackable = stackable;
+    public void setStackable(int stackability) {
+        this.stackability = stackability;
     }
 
     public boolean isStackable() {
-        return isStackable;
+        return stackability == STACKABLE;
+    }
+
+    public int getStackability() {
+        return stackability;
     }
 
     @Override
