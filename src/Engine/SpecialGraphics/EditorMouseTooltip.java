@@ -3,6 +3,7 @@ package Engine.SpecialGraphics;
 import Data.EntityStruct;
 import Data.LevelData;
 import Data.WarpZone;
+import Engine.SpecialText;
 import Engine.ViewWindow;
 
 import java.awt.*;
@@ -21,6 +22,7 @@ public class EditorMouseTooltip implements SpecialGraphics {
     private int dataY;
 
     public boolean showCoordinate = false;
+    public boolean showAdvanced = false;
 
     public EditorMouseTooltip(LevelData levelData, ViewWindow viewWindow) {
         ldata = levelData;
@@ -65,11 +67,18 @@ public class EditorMouseTooltip implements SpecialGraphics {
             output.add(e.getEntityName());
         }
         WarpZone wz = ldata.getSelectedWarpZone();
-        if (wz != null && ldata.getTileDataLayer().getVisible()){
+        if (wz != null && ldata.getTileDataLayer().getVisible() && !wz.getRoomFilePath().equals("")){
             output.add(wz.getRoomFilePath());
         }
-        if (showCoordinate)
+        if (showCoordinate || showAdvanced)
             output.add(String.format("[ %1$d, %2$d ]", dataX, dataY));
+        if (showAdvanced && !ldata.getBackdrop().isLayerLocInvalid(dataX, dataY)){
+            SpecialText backdropText = ldata.getBackdrop().getSpecialText(dataX, dataY);
+            if (backdropText != null) {
+                output.add(backdropText.toString());
+            }
+            output.add(String.format("Tile id: %1$d", ldata.getTileId(dataX, dataY)));
+        }
         return output;
     }
 

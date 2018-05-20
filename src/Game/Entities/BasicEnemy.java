@@ -29,8 +29,8 @@ public class BasicEnemy extends CombatEntity {
 
     @Override
     public void onTurn() {
-        if (weapon == null) pickNewWeapon();
-        if (target != null && gi.getCurrentLevel().getSolidEntityAt(target.getLocation()) == null) target = null;
+        if (weapon == null && getItems().size() > 0) pickNewWeapon();
+        //if (target != null && gi.getCurrentLevel().getSolidEntityAt(target.getLocation()) == null) target = null;
         if (target == null && gi.getPlayer().getLocation().stepDistance(getLocation()) <= detectRange){
             target = gi.getPlayer();
             alertNearbyEntities();
@@ -39,7 +39,7 @@ public class BasicEnemy extends CombatEntity {
         if (target != null) {
             if (targetWithinAttackRange()) {
                 doWeaponAttack(target.getLocation());
-            } else {
+            } else if (target.getLocation().stepDistance(getLocation()) <= detectRange * 2){
                 pathToPlayer();
             }
         }

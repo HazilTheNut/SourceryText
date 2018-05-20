@@ -144,6 +144,10 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
         cursorTooltip.showCoordinate = !cursorTooltip.showCoordinate;
     }
 
+    public void toggleAdvancedDisplay(){
+        cursorTooltip.showAdvanced = !cursorTooltip.showAdvanced;
+    }
+
     private int originalResolutionWidth = 0;
     private int originalResolutionHeight = 0;
     int zoomAmount = 100;

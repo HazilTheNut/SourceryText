@@ -192,6 +192,17 @@ public class EditorToolPanel extends JPanel {
         toggleLocDisplayItem.setAccelerator(keyStroke);
         levelMenu.add(toggleLocDisplayItem);
 
+        JCheckBoxMenuItem toggleAdvDisplayItem = new JCheckBoxMenuItem("Toggle Advanced Display");
+        toggleAdvDisplayItem.addActionListener(e -> mi.toggleAdvancedDisplay());
+        keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "toggle adv display");
+        rootPane.getActionMap().put("toggle adv display", new MenuAction(() -> {
+            mi.toggleAdvancedDisplay();
+            toggleAdvDisplayItem.setState(!toggleAdvDisplayItem.getState());
+        }));
+        toggleAdvDisplayItem.setAccelerator(keyStroke);
+        levelMenu.add(toggleAdvDisplayItem);
+
         levelMenu.addSeparator();
 
         JMenuItem findAndReplaceItem = new JMenuItem("Find and Replace....");

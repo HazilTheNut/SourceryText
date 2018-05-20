@@ -62,16 +62,17 @@ public class EntityArgsPanel extends JPanel {
     private class ArgEditor extends JPanel{
 
         JLabel argNameLabel;
-        JTextField argValueField;
+        JTextArea argValueField;
 
         private ArgEditor(EntityArg arg){
             setLayout(new BorderLayout());
 
             argNameLabel = new JLabel(arg.getArgName() + ": ", SwingConstants.TRAILING);
-            argNameLabel.setPreferredSize(new Dimension(80, 30));
+            argNameLabel.setPreferredSize(new Dimension(80, 25));
             argNameLabel.setBorder(BorderFactory.createEtchedBorder());
 
-            argValueField = new JTextField(arg.getArgValue());
+            argValueField = new JTextArea(arg.getArgValue());
+            argValueField.setEditable(true);
             argValueField.setMinimumSize(new Dimension(200, 30));
             argValueField.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
