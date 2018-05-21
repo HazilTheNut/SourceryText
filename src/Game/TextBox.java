@@ -5,6 +5,7 @@ import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.Debug.DebugWindow;
 
 import java.awt.*;
 
@@ -53,7 +54,7 @@ public class TextBox implements MouseInputReceiver{
             textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
             textBoxLayer.setVisible(true);
             player.freeze();
-            DebugWindow.reportf(DebugWindow.MISC, "[TextBox.showMessage] First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
+            DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
             Thread writeThread = new Thread(() -> writeMessage(message));
             writeThread.start();
         }
@@ -78,7 +79,7 @@ public class TextBox implements MouseInputReceiver{
         while (index < message.length()){
             if (message.charAt(index) == ' ') { //End of a word
                 int nextIndex = getIndexOfNextSpace(message, index + 1);
-                DebugWindow.reportf(DebugWindow.MISC, "[TextBox.showMessage] Next Word: \"%1$s\"", message.substring(index, nextIndex));
+                DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","Next Word: \"%1$s\"", message.substring(index, nextIndex));
                 if (xpos + nextIndex - index > width - 1) { //If word needs to wrap
                     shiftRow();
                 } else

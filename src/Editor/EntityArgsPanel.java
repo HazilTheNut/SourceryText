@@ -43,7 +43,7 @@ public class EntityArgsPanel extends JPanel {
             argEditorPanel.add(new ArgEditor(arg));
         }
 
-        JScrollPane scrollPane = new JScrollPane(argEditorPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scrollPane = new JScrollPane(argEditorPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         add(scrollPane, BorderLayout.CENTER);
 
@@ -62,7 +62,7 @@ public class EntityArgsPanel extends JPanel {
     private class ArgEditor extends JPanel{
 
         JLabel argNameLabel;
-        JTextArea argValueField;
+        JTextField argValueField;
 
         private ArgEditor(EntityArg arg){
             setLayout(new BorderLayout());
@@ -71,7 +71,7 @@ public class EntityArgsPanel extends JPanel {
             argNameLabel.setPreferredSize(new Dimension(80, 25));
             argNameLabel.setBorder(BorderFactory.createEtchedBorder());
 
-            argValueField = new JTextArea(arg.getArgValue());
+            argValueField = new JTextField(arg.getArgValue());
             argValueField.setEditable(true);
             argValueField.setMinimumSize(new Dimension(200, 30));
             argValueField.getDocument().addDocumentListener(new DocumentListener() {

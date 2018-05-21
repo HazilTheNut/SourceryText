@@ -5,6 +5,7 @@ import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.*;
+import Game.Debug.DebugWindow;
 import Game.Registries.EntityRegistry;
 import Game.Registries.ItemRegistry;
 import Game.Registries.TagRegistry;
@@ -59,7 +60,7 @@ public class Entity extends TagHolder{
         location = pos;
         name = entityStruct.getEntityName();
         icon = entityStruct.getDisplayChar();
-        DebugWindow.reportf(DebugWindow.MISC, "[Entity.simpleInit]\n Original: %1$s\n After conversions: %2$s", icon, SpecialText.fromString(icon.toString()));
+        DebugWindow.reportf(DebugWindow.MISC, "Entity.simpleInit"," Original: %1$s After conversions: %2$s", icon, SpecialText.fromString(icon.toString()));
     }
 
     public void onLevelEnter(){
@@ -102,7 +103,7 @@ public class Entity extends TagHolder{
     void selfDestruct(){
         gi.removeEntity(this);
         lm.removeLayer(sprite);
-        DebugWindow.reportf(DebugWindow.GAME, "[Entity.selfDestruct] \'%1$s\' at %2$s", getName(), getLocation());
+        DebugWindow.reportf(DebugWindow.GAME, "Entity.selfDestruct","\'%1$s\' at %2$s", getName(), getLocation());
     }
 
     void turnSleep(int time){
@@ -211,7 +212,7 @@ public class Entity extends TagHolder{
 
     protected void updateSprite(){
         SpecialText originalSprite = icon;
-        DebugWindow.reportf(DebugWindow.MISC, "[Entity.updateSprite] Original sprite for %1$s: %2$s", getClass().getSimpleName(), originalSprite);
+        DebugWindow.reportf(DebugWindow.MISC, "Entity.updateSprite","Original sprite for %1$s: %2$s", getClass().getSimpleName(), originalSprite);
         sprite.editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), colorateWithTags(originalSprite.getFgColor()), originalSprite.getBkgColor()));
     }
 

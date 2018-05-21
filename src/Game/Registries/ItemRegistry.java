@@ -46,6 +46,7 @@ public class ItemRegistry {
         registerItem(1003, "Health Jar",      0.60, TagRegistry.HEALTH_START + 65);
 
         registerItem(1900, "Fire Scroll",  0, TagRegistry.LEARN_FIRE);
+        registerItem(1901, "Ice Scroll",   0, TagRegistry.LEARN_ICE);
 
         registerItem(2000, "Key",          0, TagRegistry.KEY);
         registerItem(2001, "Rusted Key",   0, TagRegistry.KEY);

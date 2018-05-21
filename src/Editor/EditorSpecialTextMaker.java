@@ -36,7 +36,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         setTitle("SpecialText Creator");
 
-        setMinimumSize(new Dimension(410, 285));
+        setMinimumSize(new Dimension(500, 350));
 
         //Buttons and text box on left
         charField = new JTextField(3);
@@ -105,7 +105,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         //Right side panel with color and opacity ui
         JPanel colorPickerPanel = new JPanel();
         colorPicker = new ColorPicker();
-        colorPicker.setPreferredSize(new Dimension(215, 200));
+        colorPicker.setPreferredSize(new Dimension(315, 300));
         colorPickerPanel.addMouseListener(colorPicker);
         colorPickerPanel.addMouseMotionListener(colorPicker);
         colorPickerPanel.add(colorPicker, BorderLayout.CENTER);

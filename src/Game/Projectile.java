@@ -5,6 +5,7 @@ import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.Tags.Tag;
@@ -31,7 +32,7 @@ public class Projectile extends TagHolder {
         xpos = creator.getLocation().getX();
         ypos = creator.getLocation().getY();
         double angle = Math.atan2(target.getY() - Math.round(ypos), target.getX() - Math.round(xpos));
-        DebugWindow.reportf(DebugWindow.GAME, "[Projectile.init] Start pos: %1$s; Angle: %2$f", creator.getLocation(), angle * (180 / Math.PI));
+        DebugWindow.reportf(DebugWindow.GAME, "Projectile.init","Start pos: %1$s; Angle: %2$f", creator.getLocation(), angle * (180 / Math.PI));
         xvelocity = UNITS_PER_CYCLE * Math.cos(angle);
         yvelocity = UNITS_PER_CYCLE * Math.sin(angle);
         iconLayer = new Layer(1, 1, creator.getLocation().toString() + target.toString() + icon.toString(), (int)xpos, (int)ypos, LayerImportances.ANIMATION);
@@ -44,13 +45,13 @@ public class Projectile extends TagHolder {
     public void launchProjectile(int range, GameInstance gi){
         int totalCycles = (int)(range / UNITS_PER_CYCLE);
         iconLayer.setVisible(true);
-        DebugWindow.reportf(DebugWindow.GAME, "[Projectile.launchProjectile] xv: %1$f yv: %2$f", xvelocity, yvelocity);
+        DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile"," xv: %1$f yv: %2$f", xvelocity, yvelocity);
         for (int i = 0; i < totalCycles; i++) {
             xpos += xvelocity;
             ypos += yvelocity;
             Coordinate newPos = new Coordinate((int)Math.round(xpos), (int)Math.round(ypos));
             iconLayer.setPos(newPos);
-            DebugWindow.reportf(DebugWindow.GAME, "[Projectile.launchProjectile] pos: %1$s", newPos);
+            DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile:"+i,"pos: %1$s", newPos);
             Entity entity = gi.getCurrentLevel().getSolidEntityAt(newPos);
             if (!newPos.equals(source.getLocation())) { //Should be a nice catch-all to prevent projectiles from not firing correctly
                 if (entity != null) {
@@ -116,7 +117,7 @@ public class Projectile extends TagHolder {
             Thread.sleep(millis);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            DebugWindow.reportf(DebugWindow.GAME, "[Projectile.sleep] Error caught: \n" + e.getMessage());
+            DebugWindow.reportf(DebugWindow.GAME, "Projectile.sleep","Error caught: " + e.getMessage());
         }
     }
 }

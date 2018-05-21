@@ -4,7 +4,7 @@ import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
-import Game.DebugWindow;
+import Game.Debug.DebugWindow;
 import Game.GameInstance;
 import Game.Item;
 import Game.Registries.EntityRegistry;
@@ -76,6 +76,7 @@ public class CombatEntity extends Entity{
     protected void initSwwoshLayer(){
         swooshLayer = new Layer(new SpecialText[1][1], getSprite().getName().concat("_attack"), 0, 0, LayerImportances.ANIMATION);
         swooshLayer.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 150)));
+        swooshLayer.setVisible(false);
     }
 
     @Override
@@ -134,7 +135,7 @@ public class CombatEntity extends Entity{
         int dx =  target.getX() - getLocation().getX();
         double angle = (180 / Math.PI) * Math.atan2(dy, dx);
         if (angle < 0) angle += 360;
-        DebugWindow.reportf(DebugWindow.GAME, "[CombatEntity.calculateMeleeDirection] Angle: %1$f dx: %2$d dy: %3$d", angle, dx, dy);
+        DebugWindow.reportf(DebugWindow.GAME, "CombatEntity.calculateMeleeDirection","Angle: %1$f dx: %2$d dy: %3$d", angle, dx, dy);
         for (int dir : directions){
             if (Math.abs(angle - dir) <= 22.5)
                 return dir;

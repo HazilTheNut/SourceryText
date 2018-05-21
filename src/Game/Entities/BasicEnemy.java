@@ -3,7 +3,7 @@ package Game.Entities;
 import Data.Coordinate;
 import Data.EntityStruct;
 import Engine.LayerManager;
-import Game.DebugWindow;
+import Game.Debug.DebugWindow;
 import Game.GameInstance;
 import Game.Item;
 import Game.Registries.TagRegistry;
@@ -70,7 +70,7 @@ public class BasicEnemy extends CombatEntity {
         //Calculation
         double topScore = 0;
         Item bestItem = null;
-        DebugWindow.reportf(DebugWindow.GAME, "[BasicEnemy.pickNewWeapon] Evaluating...");
+        DebugWindow.reportf(DebugWindow.GAME, "BasicEnemy.pickNewWeapon", "Evaluating...");
         for (Item item : getItems()){
             double value = item.getDamageTagAmount();
             if (item.hasTag(TagRegistry.WEAPON_SWEEP))  value *= MULT_SWEEP;
@@ -82,7 +82,7 @@ public class BasicEnemy extends CombatEntity {
                 topScore = value;
                 bestItem = item;
             }
-            DebugWindow.reportf(DebugWindow.GAME, " > item: %1$-17s value: %2$f", item.getItemData().getName(), value);
+            DebugWindow.reportf(DebugWindow.GAME, "","> item: %1$-17s value: %2$f", item.getItemData().getName(), value);
         }
         if (bestItem != null) {
             setWeapon(bestItem);
@@ -107,13 +107,13 @@ public class BasicEnemy extends CombatEntity {
 
     @Override
     public int getPathingSize() {
-        DebugWindow.reportf(DebugWindow.STAGE, "[Entity.getPathingSize] \'%1$s\' : %2$d", getName(), detectRange);
+        DebugWindow.reportf(DebugWindow.STAGE, "Entity.getPathingSize", "\'%1$s\' : %2$d", getName(), detectRange);
         return detectRange;
     }
 
     private void pathToPlayer(){
         int dist = gi.getEntityPlayerDistance(this);
-        DebugWindow.reportf(DebugWindow.GAME, "[BasicEnemy.pathToPlayer] Step dist: %1$d", dist);
+        DebugWindow.reportf(DebugWindow.GAME, "BasicEnemy.pathToPlayer", "Step dist: %1$d", dist);
         if (dist > 0) {
             ArrayList pointList = gi.getPathPoints(dist - 1);
             for (Object obj : pointList) {

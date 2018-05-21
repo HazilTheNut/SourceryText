@@ -5,6 +5,7 @@ import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.AnimatedTiles.AnimatedTile;
+import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.Registries.TileRegistry;
@@ -38,10 +39,15 @@ public class Level {
     }
 
     void initialize(LevelData ldata){
+
+        backdrop = new Layer(ldata.getBackdrop().getCols(), ldata.getBackdrop().getCols(), "backdrop (" + getName() + ")", 0, 0, LayerImportances.BACKDROP);
+        backdrop.transpose(ldata.getBackdrop());
+        overlayTileLayer = new Layer(new SpecialText[backdrop.getCols()][backdrop.getRows()], "tile_overlay (" + getName() + ")", 0, 0, LayerImportances.TILE_OVERLAY);
+
         baseTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
         overlayTiles = new ArrayList<>();
         ArrayList<Tag> generatedTags = new ArrayList<>();
-        DebugWindow.reportf(DebugWindow.STAGE, "[Level.initialize] Columns: %1$d", backdrop.getCols());
+        DebugWindow.reportf(DebugWindow.STAGE, "Level.initialize","Columns: %1$d", backdrop.getCols());
         for (int col = 0; col < backdrop.getCols(); col++){
             //DebugWindow.reportf(DebugWindow.STAGE, "[Level.initialize] Col %1$d ; Tags generated: %2$d", col, generatedTags.size());
             for (int row = 0; row < backdrop.getRows(); row++){
@@ -65,7 +71,7 @@ public class Level {
             }
         }
 
-        animatedTileLayer = new Layer(backdrop.getCols(), backdrop.getRows(), "animated_tiles", 0, 0, LayerImportances.TILE_ANIM);
+        animatedTileLayer = new Layer(backdrop.getCols(), backdrop.getRows(), "animated_tiles (" + getName() + ")", 0, 0, LayerImportances.TILE_ANIM);
     }
 
     public void addEntity(Entity e){ entities.add(e); }
@@ -106,11 +112,6 @@ public class Level {
 
     public String getFilePath() {
         return filePath;
-    }
-
-    void setBackdrop(Layer backdrop) {
-        this.backdrop = backdrop;
-        overlayTileLayer = new Layer(new SpecialText[backdrop.getCols()][backdrop.getRows()], "tile_overlay", 0, 0, LayerImportances.TILE_OVERLAY);
     }
 
     void onEnter(LayerManager lm){
@@ -178,13 +179,11 @@ public class Level {
         return overlayTiles;
     }
 
-    String getName(){
-        String name = filePath.substring(filePath.lastIndexOf('/')+1);
-        name = name.substring(0, name.length()-4);
-        return name;
+    public String getName(){
+        return convertFromCamelCase(filePath.substring(filePath.lastIndexOf('/')+1, filePath.length()-4));
     }
 
-    static String convertFromCamelCase(String str){
+    private String convertFromCamelCase(String str){
         String output = "";
         int startLoc = 0;
         for (int i = 1; i < str.length(); i++){
@@ -210,7 +209,7 @@ public class Level {
     public void removeAnimatedTile(Coordinate loc){
         for (int i = 0; i < animatedTiles.size(); i++){
             if (animatedTiles.get(i).getLocation().equals(loc)){
-                DebugWindow.reportf(DebugWindow.MISC, "[Level.removeAnimatedTile] Removed tile at %1$s", loc);
+                DebugWindow.reportf(DebugWindow.MISC, "Level.removeAnimatedTile","Removed tile at %1$s", loc);
                 animatedTileLayer.editLayer(animatedTiles.get(i).getLocation().getX(),animatedTiles.get(i).getLocation().getY(), null);
                 animatedTiles.remove(i);
                 i--;

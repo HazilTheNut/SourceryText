@@ -8,6 +8,7 @@ import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Engine.ViewWindow;
+import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
@@ -87,7 +88,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     @Override
     protected void updateSprite() {
         getSprite().editLayer(0,0, new SpecialText(playerSprite.getCharacter(), colorateWithTags(playerSprite.getFgColor()), playerSprite.getBkgColor()));
-        DebugWindow.reportf(DebugWindow.MISC, "[Player.updateSprite] Original sprite %1$s ; Calculated: %2$s", getSprite().getSpecialText(0,0), playerSprite);
+        DebugWindow.reportf(DebugWindow.MISC, "Player.updateSprite","Original sprite %1$s ; Calculated: %2$s", getSprite().getSpecialText(0,0), playerSprite);
     }
 
     public void updateCameraPos(){
@@ -114,7 +115,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                     FileIO io = new FileIO();
                     String path = io.getRootFilePath() + wz.getRoomFilePath();
                     Coordinate wzNewPos = new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY());
-                    DebugWindow.reportf(DebugWindow.GAME, "[Player.checkForWarpZones] Attempting level file path: %1$s \n* wz pos: %2$s\n", path, wzNewPos);
+                    DebugWindow.reportf(DebugWindow.GAME, "Player.checkForWarpZones","Attempting level file path: %1$s \n* wz pos: %2$s\n", path, wzNewPos);
                     gi.enterLevel(path, wzNewPos.add(getLocation()).subtract(new Coordinate(wz.getXpos(), wz.getYpos())));
                 }
             }
@@ -243,7 +244,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W)    movementKeyUp(NORTH);
         downKeyCodes.remove(new Integer(e.getExtendedKeyCode()));
         if (downKeyCodes.size() == 0) movementVector = new Coordinate(0, 0);
-        DebugWindow.reportf(DebugWindow.STAGE, "[Player] movementVector: %1$s", movementVector);
+        DebugWindow.reportf(DebugWindow.STAGE, "Player movementVector","%1$s", movementVector);
     }
 
     //Holding down a key on the keyboard fires keyPressed() a gajillion times. This method is ONLY ran when a key is pressed down.
@@ -255,8 +256,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 spellMode = true;
                 updateHUD();
             } else if (keyCode == KeyEvent.VK_L) {
-                DebugWindow.reportf(DebugWindow.GAME, "[Player LOG] pos: %1$s\n", getLocation());
+                DebugWindow.reportf(DebugWindow.GAME, "Player LOG"," pos: %1$s", getLocation());
                 lm.printLayerStack();
+            } else if (keyCode == KeyEvent.VK_O) {
+                gi.togglePathTestLayer();
             } else if (keyCode == KeyEvent.VK_Q){
                 ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(mouseLevelPos);
                 if (entities.size() == 1) inv.openOtherInventory(entities.get(0));
@@ -288,7 +291,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             }
             terminatePathing = true;
         }
-        DebugWindow.reportf(DebugWindow.STAGE, "[Player] movementVector: %1$s", movementVector);
+        DebugWindow.reportf(DebugWindow.STAGE, "Player movementVector","%1$s", movementVector);
     }
 
     private void movementKeyDown(Coordinate vector){
@@ -321,7 +324,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             Thread.sleep(time);
         } catch (InterruptedException e) {
             e.printStackTrace();
-            DebugWindow.reportf(DebugWindow.STAGE, e.getMessage());
+            DebugWindow.reportf(DebugWindow.STAGE, "ERROR", e.getMessage());
         }
     }
 
@@ -340,10 +343,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton) {
         if (mouseButton == MouseEvent.BUTTON1){
-            DebugWindow.reportf(DebugWindow.STAGE, "[Player.onMouseClick] Left click event! l:%1$s s:%2$s", levelPos, screenPos);
+            DebugWindow.reportf(DebugWindow.STAGE, "Player.onMouseClick","Left click event! l:%1$s s:%2$s", levelPos, screenPos);
             doLeftClick(levelPos);
         } else if (mouseButton == MouseEvent.BUTTON3){
-            DebugWindow.reportf(DebugWindow.STAGE, "[Player.onMouseClick] Right click event! l:%1$s s:%2$s", levelPos, screenPos);
+            DebugWindow.reportf(DebugWindow.STAGE, "Player.onMouseClick","Right click event! l:%1$s s:%2$s", levelPos, screenPos);
             doRightClick(levelPos);
         }
         return false;
@@ -376,7 +379,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 });
                 attackThread.start();
             } else {
-                DebugWindow.reportf(DebugWindow.GAME, "[Player.onMouseClick] Spell casted! %1$s", levelPos);
+                DebugWindow.reportf(DebugWindow.GAME, "Player.onMouseClick","Spell casted! %1$s", levelPos);
                 Thread spellThread = new Thread(() -> {
                     if (isSpellReady()) {
                         freeze();

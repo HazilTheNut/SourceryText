@@ -5,6 +5,7 @@ import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Spells.Spell;
@@ -144,7 +145,7 @@ public class HUD implements MouseInputReceiver{
 
     private void drawEntitySynopsis(Entity e){
         boxHeight++;
-        DebugWindow.reportf(DebugWindow.MISC, "[HUD.drawEntitySynopsis] Entity name: \"%1$s\"", e.getName());
+        DebugWindow.reportf(DebugWindow.MISC, "HUD.drawEntitySynopsis","Entity name: \"%1$s\"", e.getName());
         boxLength = Math.max(boxLength, e.getName().length() + 2);
         synopsisLayer.inscribeString(e.getName(), 1, startingRow);
         if (e instanceof CombatEntity){
@@ -226,10 +227,10 @@ public class HUD implements MouseInputReceiver{
             menuLayer.clearLayer();
             drawTopBand();
             listLength = player.getSpells().size();
-            DebugWindow.reportf(DebugWindow.STAGE, "[HUD.SpellMenu.show] player spell stack size: %1$d", listLength);
+            DebugWindow.reportf(DebugWindow.STAGE, "HUD.SpellMenu.show","player spell stack size: %1$d", listLength);
             for (int i = 0; i < listLength; i++) {
                 drawBand(new Color(11, 10, 15), i+1);
-                DebugWindow.reportf(DebugWindow.STAGE, "[HUD.SpellMenu.show] Player spell: %1$s", player.getSpells().get(i).getName());
+                DebugWindow.reportf(DebugWindow.STAGE, "HUD.SpellMenu.show:"+i,"Player spell: %1$s", player.getSpells().get(i).getName());
                 menuLayer.inscribeString(player.getSpells().get(i).getName(), 0, i+1);
             }
         }

@@ -6,6 +6,7 @@ import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Engine.ViewWindow;
+import Game.Debug.DebugWindow;
 
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
@@ -62,7 +63,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener{
     public void mousePressed(MouseEvent e) {
         Coordinate mousePos = new Coordinate(e.getX(), e.getY());
         for (MouseInputReceiver receiver : inputReceivers){
-            DebugWindow.reportf(DebugWindow.STAGE, "[GameMouseInput] Mouse button \'%1$d\' fired for class \'%2$s\'", e.getButton(), receiver.getClass().getSimpleName());
+            DebugWindow.reportf(DebugWindow.STAGE, "GameMouseInput.mousePressed","Mouse button \'%1$d\' fired for class \'%2$s\'", e.getButton(), receiver.getClass().getSimpleName());
             if (receiver.onMouseClick(getTiledMousePos(mousePos), getScreenPos(mousePos), e.getButton())){
                 return;
             }

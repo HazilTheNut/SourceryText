@@ -1,7 +1,7 @@
 package Engine;
 
 import Data.SerializationVersion;
-import Game.DebugWindow;
+import Game.Debug.DebugWindow;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -88,7 +88,7 @@ public class SpecialText implements Serializable{
             int ba = readInt(text.substring(34, 37));
             return new SpecialText(c, new Color(fr, fg, fb, fa), new Color(br, bg, bb, ba));
         } catch ( NoSuchElementException | IllegalStateException e){
-            DebugWindow.reportf(DebugWindow.MISC, "[SpecialText.fromString] Error: \n" + e.getMessage());
+            DebugWindow.reportf(DebugWindow.MISC, "SpecialText.fromString", "Error: %1$s", e.getMessage());
             return null;
         }
     }

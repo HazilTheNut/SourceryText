@@ -6,10 +6,12 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Engine.ViewWindow;
 import Game.AnimatedTiles.AnimatedTile;
+import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
 
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -78,8 +80,8 @@ public class GameInstance {
 
         quickMenu = new QuickMenu(lm, player);
 
-        /*pathTestLayer = new Layer(currentLevel.getBackdrop().getCols(), currentLevel.getBackdrop().getRows(), "pathtest", 0, 0, LayerImportances.VFX);
-        lm.addLayer(pathTestLayer);*/
+        pathTestLayer = new Layer(currentLevel.getBackdrop().getCols(), currentLevel.getBackdrop().getRows(), "pathtest", 0, 0, LayerImportances.VFX);
+        lm.addLayer(pathTestLayer);
     }
 
     void enterLevel(String levelFilePath, Coordinate playerPos){
@@ -95,7 +97,7 @@ public class GameInstance {
         }
         for (Level level : levels){
             if (level.getFilePath().equals(levelFilePath)){
-                DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.enterLevel] Level already found loaded at %1$s", levelFilePath);
+                DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.enterLevel","Level already found loaded at %1$s", levelFilePath);
                 currentLevel = level;
                 startLevel(currentLevel, playerPos);
                 return;
@@ -109,7 +111,7 @@ public class GameInstance {
         int strEndLoc   = path.lastIndexOf('/');
         int strStartLoc = path.substring(0, strEndLoc-1).lastIndexOf('/');
         String output = path.substring(strStartLoc+1, strEndLoc);
-        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance] Level folder name: %1$s memory: %2$d", output, levels.size());
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.getFilePathParentFolder","Level folder name: %1$s memory: %2$d", output, levels.size());
         return output;
     }
 
@@ -127,20 +129,16 @@ public class GameInstance {
      * @return returns the loaded level
      */
     private Level loadLevel(String levelFilePath){
-        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Begin level load to memory from %1$s", levelFilePath);
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Begin level load to memory from %1$s", levelFilePath);
         Level newLevel = new Level(levelFilePath);
 
         FileIO io = new FileIO();
 
-        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] I/O Deserialization...");
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "I/O Deserialization...");
         File levelFile = new File(levelFilePath);
         LevelData ldata = io.openLevel(levelFile);
 
-        Layer backdrop = ldata.getBackdrop();
-        backdrop.setImportance(LayerImportances.BACKDROP);
-        newLevel.setBackdrop(backdrop);
-
-        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Process entity data...");
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Process entity data...");
         EntityStruct[][] entityMatrix = ldata.getEntityData();
         for (int col = 0; col < entityMatrix.length; col++){
             for (int row = 0; row < entityMatrix[0].length; row++){
@@ -150,15 +148,15 @@ public class GameInstance {
             }
         }
 
-        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Initialize tiles...");
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Initialize tiles...");
         newLevel.initialize(ldata);
 
-        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Assign warp zones...");
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Assign warp zones...");
         newLevel.setWarpZones(ldata.getWarpZones());
 
         levels.add(newLevel);
 
-        DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.loadLevel] Loading of level \'%1$s\' complete!", newLevel.getName());
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Loading of level \'%1$s\' complete!", newLevel.getName());
 
         return newLevel;
     }
@@ -258,19 +256,17 @@ public class GameInstance {
             double entityturn = (double)(times[2] - times[1]) / 1000000;
             double tileupdate = (double)(times[3] - times[2]) / 1000000;
             double total      = (double)(times[3] - times[0]) / 1000000;
-            DebugWindow.clear(DebugWindow.PERFORMANCE);
-            DebugWindow.reportf(DebugWindow.PERFORMANCE, "[GameInstance] Turn Update Results:\n>  entityop:   %1$fms\n>  entityturn: %2$fms\n>  tileupdate: %3$fms\n\n>   TOTAL: %4$fms", entityop, entityturn, tileupdate, total);
-            DebugWindow.reportf(DebugWindow.PERFORMANCE, "\n[GameInstance] Previous Draw Time:\n>  %1$fms", (double)lm.getPreviousCompileTime() / 1000000);
-            DebugWindow.reportf(DebugWindow.PERFORMANCE, "\nLevel \"%6$s\":\n\n > Size : %1$d x %2$d\n > Overlay Tiles : %3$d\n > Total Entities : %4$d\n > Animated Tiles : %5$d",
-                    currentLevel.getBaseTiles().length, currentLevel.getBaseTiles()[0].length, currentLevel.getOverlayTiles().size(), currentLevel.getEntities().size(), currentLevel.getAnimatedTiles().size(), currentLevel.getName());
-//            ArrayList<Layer> layerStack = lm.getLayerStack();
-//            DebugWindow.reportf(DebugWindow.PERFORMANCE, "\nLayers: %1$d\n-------------------\n POS : PRI | NAME", layerStack.size());
-//            for (int i = 0; i < layerStack.size(); i++) {
-//                if (layerStack.get(i).getVisible())
-//                    DebugWindow.reportf(DebugWindow.PERFORMANCE, " %1$3d : %2$3d | %3$s", i, layerStack.get(i).getImportance(), layerStack.get(i).getName());
-//                else
-//                    DebugWindow.reportf(DebugWindow.PERFORMANCE, " %1$3d : %2$3d | (-) %3$s", i, layerStack.get(i).getImportance(), layerStack.get(i).getName());
-//            }
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "GameInstance.reportUpdatePerformance","Results:");
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "enityop","    %1$fms", entityop);
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "enityturn","  %1$fms", entityturn);
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "tileupdate"," %1$fms", tileupdate);
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "TOTAL","      %1$fms", total);
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "","");
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "LEVEL", " \'%1$s\':", currentLevel.getName());
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "Level Dimensions"," %1$d x %2$d", currentLevel.getBaseTiles().length, currentLevel.getBaseTiles()[0].length);
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "Overlay Tiles","    %1$d", currentLevel.getOverlayTiles().size());
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "Total Entities","   %1$d", currentLevel.getEntities().size());
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "Animated Tiles","   %1$d", currentLevel.getAnimatedTiles().size());
         }
     }
 
@@ -290,11 +286,11 @@ public class GameInstance {
     private ArrayList<PathPoint> pointLog = new ArrayList<>(); //A more raw list of points used during path-finding algorithm
     private HashMap<Long, Integer> entityPathMap = new HashMap<>(); //A map that matches entity UIDs to distances (# of steps required) from the player. Makes things super convenient for entities to check the path points
 
-    //private Layer pathTestLayer;
+    private Layer pathTestLayer;
 
     private void calculatePathing(){
         entityPathMap.clear();
-        //pathTestLayer.transpose(new Layer(currentLevel.getBackdrop().getCols(), currentLevel.getBackdrop().getRows(), "", 0, 0, 0));
+        pathTestLayer.transpose(new Layer(currentLevel.getBackdrop().getCols(), currentLevel.getBackdrop().getRows(), "", 0, 0, 0));
         int max = 0;
         for (Entity entity : currentLevel.getEntities()){ //Figure out how large to spread out to.
             max = Math.max(max, entity.getPathingSize());
@@ -306,7 +302,7 @@ public class GameInstance {
             initialSet.add(new PathPoint(player.getLocation(), 0));
             points[0] = initialSet; //A single point is needed to begin spreading out new ones
             for (int n = 1; n < max - 2; n++) {
-                DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.calculatePathing] n:%1$d points:%2$d", n, pointLog.size());
+                DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.calculatePathing","n:%1$d points:%2$d", n, pointLog.size());
                 points[n] = new ArrayList<>();
                 for (Object obj : points[n - 1]) { //Fill in points at points[n], origin of checking for those new points at points[n-1]
                     if (obj instanceof PathPoint) {
@@ -322,8 +318,8 @@ public class GameInstance {
         }
     }
 
-   /*
-    Color[] testColors = {
+
+    private Color[] testColors = {
             new Color(100, 50, 50, 50),
             new Color(99, 80, 50, 50),
             new Color(87, 97, 49, 50),
@@ -333,7 +329,7 @@ public class GameInstance {
             new Color(49, 68, 97, 50),
             new Color(60, 49, 97, 50),
             new Color(87, 49, 97, 50)
-    };*/
+    };
 
     /**
      * Attempts to place a point at a location
@@ -342,11 +338,11 @@ public class GameInstance {
      */
     @SuppressWarnings("unchecked")
     private void attemptPoint(Coordinate loc, int n){
-        if (points[n-1] == null) DebugWindow.reportf(DebugWindow.STAGE, "[GameInstance.attemptPoint] List n=%1$d is null!", n);
+        if (points[n-1] == null) DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.attemptPoint","List n=%1$d is null!", n);
         if (isSpaceAvailable(loc, TagRegistry.NO_PATHING) && !pointLog.contains(new PathPoint(loc, -1))) {
             points[n].add(new PathPoint(loc, n));
             pointLog.add(new PathPoint(loc, n));
-            //pathTestLayer.editLayer(loc.getX(), loc.getY(), new SpecialText(' ', Color.WHITE, testColors[n % testColors.length]));
+            pathTestLayer.editLayer(loc.getX(), loc.getY(), new SpecialText(' ', Color.WHITE, testColors[n % testColors.length]));
         }
         for (Entity e : currentLevel.getEntitiesAt(loc)){
             if (!entityPathMap.containsKey(e.getUniqueID())) entityPathMap.put(e.getUniqueID(), n);
@@ -363,16 +359,23 @@ public class GameInstance {
         }
     }
 
+    void togglePathTestLayer(){
+        pathTestLayer.setVisible(!pathTestLayer.getVisible());
+        if (pathTestLayer.getVisible()){
+            pathTestLayer.clearLayer();
+            for (PathPoint pt : pointLog) {
+                pathTestLayer.editLayer(pt.loc.getX(), pt.loc.getY(), new SpecialText(' ', Color.WHITE, testColors[pt.g % testColors.length]));
+            }
+        }
+    }
+
     /**
      * Returns the 'generation' of points to check for a specific Entity
      * @param e The entity to match to
      * @return Where to look in the path points matrix. Returns -1 if the entity is not in the map, and therefore is not close enough to path to the player.
      */
     public int getEntityPlayerDistance(Entity e){
-        if (entityPathMap.containsKey(e.getUniqueID()))
-            return entityPathMap.get(e.getUniqueID());
-        else
-            return -1;
+        return entityPathMap.getOrDefault(e.getUniqueID(), -1);
     }
 
     /**

@@ -1,5 +1,6 @@
 package Game;
 
+import Game.Debug.DebugWindow;
 import Game.Registries.TagRegistry;
 import Game.Tags.DamageTag;
 import Game.Tags.HealthTag;
@@ -91,9 +92,9 @@ public class TagHolder {
     public void onContact(TagHolder other, GameInstance gi){
         contactEvent(this, other, gi);
         contactEvent(other, this, gi);
-        DebugWindow.reportf(DebugWindow.TAGS, "[TagHolder.onContact] TagHolder \'" + this.getClass().getSimpleName() + "\'");
-        DebugWindow.reportf(DebugWindow.TAGS, "[TagHolder.onContact] Tags of me: " + getTagList());
-        DebugWindow.reportf(DebugWindow.TAGS, "[TagHolder.onContact] Tags of other: " + other.getTagList());
+        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact", "TagHolder \'" + this.getClass().getSimpleName() + "\'");
+        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact", "Tags of me: " + getTagList());
+        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact", "Tags of other: " + other.getTagList());
     }
 
     private void contactEvent(TagHolder source, TagHolder target, GameInstance gi){

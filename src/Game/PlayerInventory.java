@@ -7,6 +7,7 @@ import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Entities.LootPile;
@@ -280,7 +281,7 @@ public class PlayerInventory implements MouseInputReceiver{
                 int maxScrollValue = e.getItems().size() - getInvHeight() + 1;
                 scrollOffset = Math.min(scrollOffset, maxScrollValue); //Sets upper limit of scrollOffset
                 scrollOffset = Math.max(scrollOffset, 0); //Sets lower limit. Note even if maxScrollValue is negative, scrollOffset will set to zero because this method is ran second.
-                DebugWindow.reportf(DebugWindow.STAGE, "[SubInventory.doScrolling]\n offset: %1$d\n Entity: \'%2$s\'", scrollOffset, e.getName());
+                DebugWindow.reportf(DebugWindow.STAGE, "SubInventory.doScrolling","offset: %1$d Entity: \'%2$s\'", scrollOffset, e.getName());
                 updateDisplay();
             }
         }
@@ -440,7 +441,7 @@ public class PlayerInventory implements MouseInputReceiver{
                 if (to instanceof Player){
                     if (calculateTotalWeight() + selected.getItemData().getRawWeight() > player.getWeightCapacity()) return;
                 }
-                DebugWindow.reportf(DebugWindow.GAME, "[SubInventory.moveOneItem]");
+                DebugWindow.reportf(DebugWindow.GAME, "SubInventory.moveOneItem","");
                 selected.decrementQty();
                 from.scanInventory();
                 ItemStruct struct = selected.getItemData();
@@ -457,7 +458,7 @@ public class PlayerInventory implements MouseInputReceiver{
             if (to instanceof Player){
                 if (calculateTotalWeight() + selected.calculateWeight() > player.getWeightCapacity()) return;
             }
-            DebugWindow.reportf(DebugWindow.GAME, "[SubInventory.moveWholeItem]");
+            DebugWindow.reportf(DebugWindow.GAME, "SubInventory.moveWholeItem","");
             to.addItem(selected);
             from.removeItem(selected);
         }
@@ -475,7 +476,7 @@ public class PlayerInventory implements MouseInputReceiver{
                     return;
                 }
             }
-            DebugWindow.reportf(DebugWindow.GAME, "[SubInventory.dropItem] Creating new loot pile");
+            DebugWindow.reportf(DebugWindow.GAME, "SubInventory.dropItem","Creating new loot pile");
             EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot", null);
             LootPile pile = (LootPile)player.getGameInstance().instantiateEntity(lootPileStruct, player.getLocation(), player.getGameInstance().getCurrentLevel());
             pile.onLevelEnter();

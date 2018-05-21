@@ -1,6 +1,6 @@
 package Game.Registries;
 
-import Game.DebugWindow;
+import Game.Debug.DebugWindow;
 import Game.Tags.*;
 import Game.Tags.MagicTags.*;
 import Game.Tags.PropertyTags.*;
@@ -46,7 +46,9 @@ public class TagRegistry {
     public final static int WEAPON_SWEEP  = 203;
     public final static int KEY           = 210;
     public final static int IMPORTANT     = 211;
+
     public final static int LEARN_FIRE    = 390;
+    public final static int LEARN_ICE     = 391;
 
     public final static int TILE_WALL     = 400;
     public final static int SAND          = 401;
@@ -78,6 +80,7 @@ public class TagRegistry {
         registerTag(KEY, "Key", KeyTag.class);
         registerTag(IMPORTANT, "Important", ImportantTag.class);
         registerTag(LEARN_FIRE, "Teaches Fire Bolt", LearnFireBoltTag.class);
+        registerTag(LEARN_ICE, "Teaches Ice Bolt", LearnIceBoltTag.class);
 
         //Tile related
         registerTag(TILE_WALL, "Wall", WallTag.class);
@@ -130,7 +133,7 @@ public class TagRegistry {
     private static Tag generateTag(int id){
         Class tagClass = tagMap.get(id).getTagClass();
         if (tagClass != null){
-            DebugWindow.reportf(DebugWindow.TAGS, "[TagRegistry.generateTag] ID: %1$d Name: %2$s", id, tagClass.getName());
+            DebugWindow.reportf(DebugWindow.TAGS, "TagRegistry.generateTag","ID: %1$d Name: %2$s", id, tagClass.getName());
             Object obj;
             try {
                 obj = tagClass.newInstance();

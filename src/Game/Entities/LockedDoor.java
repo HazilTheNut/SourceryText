@@ -5,6 +5,7 @@ import Data.EntityArg;
 import Data.EntityStruct;
 import Engine.LayerManager;
 import Game.*;
+import Game.Debug.DebugWindow;
 import Game.Registries.TagRegistry;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class LockedDoor extends Entity {
         super.initialize(pos, lm, entityStruct, gameInstance);
         keyName = readStrArg(searchForArg(entityStruct.getArgs(), "keyName"), "Key");
         consumesKey = readBoolArg(searchForArg(entityStruct.getArgs(), "consumesKey"), true);
-        DebugWindow.reportf(DebugWindow.GAME, "[LockedDoor.initialize] Pos: %1$s keyName: %2$s consumes key? %3$b", pos, keyName, consumesKey);
+        DebugWindow.reportf(DebugWindow.GAME, "LockedDoor.initialize","Pos: %1$s keyName: %2$s consumes key? %3$b", pos, keyName, consumesKey);
     }
 
     @Override

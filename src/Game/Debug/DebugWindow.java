@@ -1,4 +1,4 @@
-package Game;
+package Game.Debug;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +10,11 @@ import java.util.ArrayList;
 public class DebugWindow{
 
     private static JFrame frame;
-    private static JTextArea performance;
-    private static JTextArea stage;
-    private static JTextArea tags;
-    private static JTextArea game;
-    private static JTextArea misc;
+    private static DebugLogPane performance;
+    private static DebugLogPane stage;
+    private static DebugLogPane tags;
+    private static DebugLogPane game;
+    private static DebugLogPane misc;
 
     private static ArrayList<TextDispenseUpdate> dispenseUpdates;
 
@@ -34,20 +34,11 @@ public class DebugWindow{
         frame.setTitle("Debug Log");
         frame.setMinimumSize(new Dimension(300, 300));
 
-        performance = new JTextArea();
-        formatTextArea(performance);
-
-        stage = new JTextArea();
-        formatTextArea(stage);
-
-        tags = new JTextArea();
-        formatTextArea(tags);
-
-        game = new JTextArea();
-        formatTextArea(game);
-
-        misc = new JTextArea();
-        formatTextArea(misc);
+        performance = new DebugLogPane(true);
+        stage = new DebugLogPane(true);
+        tags = new DebugLogPane(true);
+        game = new DebugLogPane(false);
+        misc = new DebugLogPane(false);
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Perf",   createScrollPane(tabbedPane, performance));
@@ -66,9 +57,9 @@ public class DebugWindow{
             Component c = tabbedPane.getComponentAt(tabbedPane.getSelectedIndex());
             if (c instanceof JScrollPane) {
                 JScrollPane jScrollPane = (JScrollPane)c;
-                if (jScrollPane.getViewport().getView() instanceof JTextArea) {
-                    JTextArea view = (JTextArea) jScrollPane.getViewport().getView();
-                    view.setText("");
+                if (jScrollPane.getViewport().getView() instanceof DebugLogPane) {
+                    DebugLogPane logPane = (DebugLogPane)jScrollPane.getViewport().getView();
+                    logPane.clear();
                 }
             }
         });
@@ -81,52 +72,38 @@ public class DebugWindow{
 
     }
 
-    static void open(){
+    public static void open(){
         frame.setVisible(true);
     }
 
-    private static void formatTextArea(JTextArea area){
-        area.setForeground(Color.WHITE);
-        area.setBackground(Color.BLACK);
-        area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-    }
-
-    private static JScrollPane createScrollPane(JTabbedPane tabbedPane, JTextArea area){
-        JScrollPane scrollPane =  new JScrollPane(area, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        tabbedPane.addChangeListener(e -> moveScrollBarToBottom(scrollPane));
-        dispenseUpdates.add(() -> moveScrollBarToBottom(scrollPane));
+    private static JScrollPane createScrollPane(JTabbedPane tabbedPane, JComponent screen){
+        JScrollPane scrollPane =  new JScrollPane(screen, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        tabbedPane.addChangeListener(e -> moveScrollBarToBottom(scrollPane, screen));
+        dispenseUpdates.add(() -> moveScrollBarToBottom(scrollPane, screen));
         return scrollPane;
     }
 
-    private static void moveScrollBarToBottom(JScrollPane scrollPane){
+    private static void moveScrollBarToBottom(JScrollPane scrollPane, JComponent client){
+        scrollPane.getViewport().revalidate();
+        client.revalidate();
         scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
         scrollPane.repaint();
     }
 
-    public static void reportf(int screen, String value, Object... args){
-        JTextArea area = getTextArea(screen);
-        if (area != null) {
-            area.append(String.format(value, args) + "\n");
-            checkTextArea(area);
-        }
-    }
-
-    public static void clear(int screen){
-        JTextArea area = getTextArea(screen);
-        if (area != null) {
-            area.setText("");
-            checkTextArea(area);
-        }
-    }
-
-    private static void checkTextArea(JTextArea area){
-        if (area.getText().length() > OUTPUT_MAX_LENGTH){
-            area.setText(area.getText().substring(area.getText().length() - OUTPUT_MAX_LENGTH));
-        }
+    public static void reportf(int screen, String caption, String value, Object... args){
+        DebugLogPane logPane = getDebugLog(screen);
+        assert logPane != null;
+        logPane.addEntry(caption, String.format(value, args));
         for (TextDispenseUpdate update : dispenseUpdates) update.update();
     }
 
-    private static JTextArea getTextArea(int screen){
+    public static void clear(int screen){
+        DebugLogPane logPane = getDebugLog(screen);
+        assert logPane != null;
+        logPane.clear();
+    }
+
+    private static DebugLogPane getDebugLog(int screen){
         switch (screen){
             case PERFORMANCE:
                 return performance;
