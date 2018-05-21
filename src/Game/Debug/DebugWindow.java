@@ -1,5 +1,7 @@
 package Game.Debug;
 
+import Engine.Layer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ public class DebugWindow{
     private static DebugLogPane tags;
     private static DebugLogPane game;
     private static DebugLogPane misc;
+    private static DebugLayerPanel layers;
 
     private static ArrayList<TextDispenseUpdate> dispenseUpdates;
 
@@ -24,7 +27,7 @@ public class DebugWindow{
     public static final int GAME        = 3; //The main game stuff that is surrounded by the 'stage'
     public static final int MISC        = 4; //Everything else
 
-    private static final int OUTPUT_MAX_LENGTH = 1000000;
+    static final Color textColor = new Color(191, 244, 255);
 
     static {
         dispenseUpdates = new ArrayList<>();
@@ -33,12 +36,14 @@ public class DebugWindow{
 
         frame.setTitle("Debug Log");
         frame.setMinimumSize(new Dimension(300, 300));
+        frame.setLayout(new BorderLayout());
 
         performance = new DebugLogPane(true);
         stage = new DebugLogPane(true);
-        tags = new DebugLogPane(true);
+        tags = new DebugLogPane(false);
         game = new DebugLogPane(false);
         misc = new DebugLogPane(false);
+        layers = new DebugLayerPanel();
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Perf",   createScrollPane(tabbedPane, performance));
@@ -46,6 +51,7 @@ public class DebugWindow{
         tabbedPane.addTab("Tags",   createScrollPane(tabbedPane, tags));
         tabbedPane.addTab("Game",   createScrollPane(tabbedPane, game));
         tabbedPane.addTab("Misc",   createScrollPane(tabbedPane, misc));
+        tabbedPane.addTab("Layers", layers);
 
         frame.add(tabbedPane, BorderLayout.CENTER);
 
@@ -91,16 +97,25 @@ public class DebugWindow{
     }
 
     public static void reportf(int screen, String caption, String value, Object... args){
-        DebugLogPane logPane = getDebugLog(screen);
-        assert logPane != null;
-        logPane.addEntry(caption, String.format(value, args));
-        for (TextDispenseUpdate update : dispenseUpdates) update.update();
+        Thread addEntryThread = new Thread(() -> {
+            DebugLogPane logPane = getDebugLog(screen);
+            assert logPane != null;
+            logPane.addEntry(caption, String.format(value, args));
+            for (TextDispenseUpdate update : dispenseUpdates) update.update();
+        });
+        addEntryThread.start();
     }
 
-    public static void clear(int screen){
-        DebugLogPane logPane = getDebugLog(screen);
-        assert logPane != null;
-        logPane.clear();
+    public static void addLayerView(Layer toView, int pos) {
+        layers.addLayerView(toView, pos);
+    }
+
+    public static void removeLayerView(Layer toView) {
+        layers.removeLayerView(toView);
+    }
+
+    public static void updateLayerInfo(){
+        layers.updateLayerCheckBoxes();
     }
 
     private static DebugLogPane getDebugLog(int screen){

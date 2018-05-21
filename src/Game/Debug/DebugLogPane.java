@@ -51,7 +51,7 @@ public class DebugLogPane extends JComponent {
     public void paint(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, getWidth(), getHeight());
-        g.setColor(new Color(191, 244, 255));
+        g.setColor(DebugWindow.textColor);
         for (int i = 0 ; i < debugEntries.size(); i++) {
             DebugEntry entry = debugEntries.get(i);
             String entryText = String.format("[%1$s] %2$s", entry.caption, entry.text);

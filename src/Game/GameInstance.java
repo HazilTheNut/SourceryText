@@ -267,6 +267,7 @@ public class GameInstance {
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "Overlay Tiles","    %1$d", currentLevel.getOverlayTiles().size());
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "Total Entities","   %1$d", currentLevel.getEntities().size());
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "Animated Tiles","   %1$d", currentLevel.getAnimatedTiles().size());
+            DebugWindow.updateLayerInfo();
         }
     }
 

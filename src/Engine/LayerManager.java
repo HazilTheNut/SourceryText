@@ -1,6 +1,7 @@
 package Engine;
 
 import Data.Coordinate;
+import Game.Debug.DebugWindow;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -60,12 +61,14 @@ public class LayerManager {
         for (int ii = layerStack.size()-1; ii >= 0; ii--){
             if (layerStack.get(ii).getImportance() <= toAdd.getImportance()){
                 layerStack.add(ii+1, toAdd);
+                DebugWindow.addLayerView(toAdd, ii+1);
                 System.out.printf("[LayerManager] Added layer \'%1$s\' at position %2$d\n", toAdd.getName(), ii+1);
                 return;
             }
         }
         layerStack.add(0, toAdd);
         System.out.printf("[LayerManager] Added layer \'%1$s\' at position 0\n", toAdd.getName());
+        DebugWindow.addLayerView(toAdd, 0);
     }
 
     public void removeLayer(String toRemove){
@@ -87,6 +90,7 @@ public class LayerManager {
             Layer layer = layerStack.get(i);
             if (layer.getName().equals(toRemove)) {
                 layerStack.remove(layer);
+                DebugWindow.removeLayerView(layer);
                 System.out.printf("[LayerManager] Successful removal of layer \"%1$s\"\n", toRemove);
             } else {
                 i++;

@@ -300,7 +300,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         if (movementThread == null || !movementThread.isAlive()) {
             movementThread = new Thread(() -> {
                 while (!movementVector.equals(new Coordinate(0, 0))){
-                    /**/
+                    long loopStartTime = System.nanoTime();
                     if (!isFrozen()) {
                         if (movementVector.getX() != 0) {
                             move(movementVector.getX(), 0);
@@ -310,9 +310,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                             move(0, movementVector.getY());
                             gi.doEnemyTurn();
                         }
-                    /**/
                     }
-                    sleepMoveThread(MOVEMENT_INTERVAL);
+                    int runTime = (int)((System.nanoTime() - loopStartTime) / 1000000);
+                    sleepMoveThread(Math.max(MOVEMENT_INTERVAL - runTime, 0));
                 }
             });
             movementThread.start();
@@ -401,6 +401,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 Coordinate prevPos = null;
                 while ((prevPos == null || !prevPos.equals(getLocation())) && !terminatePathing) {
                     prevPos = new Coordinate(getLocation().getX(), getLocation().getY());
+                    long loopStartTime = System.nanoTime();
 
                     if (getLocation().stepDistance(levelPos) <= 1){
                         ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(levelPos);
@@ -420,8 +421,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                     pathToPosition(levelPos, 75);
                     gi.doEnemyTurn();
 
+                    int runTime = (int)((System.nanoTime() - loopStartTime) / 1000000);
                     try {
-                        Thread.sleep((int)(MOVEMENT_INTERVAL * 0.9));
+                        Thread.sleep(Math.max((int)(MOVEMENT_INTERVAL * 0.9) - runTime, 0));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
