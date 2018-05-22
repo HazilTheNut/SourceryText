@@ -80,7 +80,7 @@ public class QuickMenu implements MouseInputReceiver {
             tempLayer.editLayer(col, 0, new SpecialText('#', new Color(42, 42, 42), new Color(34, 34, 34)));
         }
         for (int i = 0; i < menuItems.size(); i++) {
-            tempLayer.inscribeString(menuItems.get(i).name, 1, i+1);
+            tempLayer.inscribeString(menuItems.get(i).name, 1, i+1, menuItems.get(i).color);
         }
         if (isClosable) tempLayer.editLayer(MENU_WIDTH-1, 0, closeButtonDull);
         menuLayer.transpose(tempLayer);

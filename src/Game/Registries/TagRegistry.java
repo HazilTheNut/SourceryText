@@ -1,10 +1,12 @@
 package Game.Registries;
 
+import Data.Coordinate;
 import Game.Debug.DebugWindow;
 import Game.Tags.*;
 import Game.Tags.MagicTags.*;
 import Game.Tags.PropertyTags.*;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -14,6 +16,8 @@ import java.util.TreeMap;
 public class TagRegistry {
 
     private static TreeMap<Integer, TagStruct> tagMap = new TreeMap<>();
+
+    private static ArrayList<Coordinate> tagGenerationMetrics = new ArrayList<>();
 
     /**
      * Tag Organization:
@@ -47,6 +51,7 @@ public class TagRegistry {
     public final static int KEY           = 210;
     public final static int IMPORTANT     = 211;
 
+    public final static int LEVEL_UP      = 388;
     public final static int LEARN_FIRE    = 390;
     public final static int LEARN_ICE     = 391;
 
@@ -79,6 +84,7 @@ public class TagRegistry {
         registerTag(WEAPON_SWEEP,  "Sweeping Weapon",  SweepWeaponTypeTag.class);
         registerTag(KEY, "Key", KeyTag.class);
         registerTag(IMPORTANT, "Important", ImportantTag.class);
+        registerTag(LEVEL_UP, "Level up!", LevelUpTag.class);
         registerTag(LEARN_FIRE, "Teaches Fire Bolt", LearnFireBoltTag.class);
         registerTag(LEARN_ICE, "Teaches Ice Bolt", LearnIceBoltTag.class);
 
@@ -133,7 +139,7 @@ public class TagRegistry {
     private static Tag generateTag(int id){
         Class tagClass = tagMap.get(id).getTagClass();
         if (tagClass != null){
-            DebugWindow.reportf(DebugWindow.TAGS, "TagRegistry.generateTag","ID: %1$d Name: %2$s", id, tagClass.getName());
+            recordTagGenerationData(id, tagClass.getSimpleName());
             Object obj;
             try {
                 obj = tagClass.newInstance();
@@ -152,6 +158,18 @@ public class TagRegistry {
         } else {
             return null;
         }
+    }
+
+    private static void recordTagGenerationData(int id, String tagClassName){
+        for (Coordinate coordinate : tagGenerationMetrics){
+            if (coordinate.getX() == id){
+                coordinate.setPos(coordinate.getX(), coordinate.getY()+1);
+                DebugWindow.reportf(DebugWindow.TAGS, String.format("TagRegistry.generateTag id:%1$-3d", id),"Name: '%1$-30s' x%2$d", tagClassName, coordinate.getY());
+                return;
+            }
+        }
+        tagGenerationMetrics.add(new Coordinate(id, 1));
+        DebugWindow.reportf(DebugWindow.TAGS, String.format("TagRegistry.generateTag id:%1$-3d", id), "Name: '%1$-30s' x%2$d", tagClassName, 1);
     }
 
     private static void registerTag(int id, String name, Class tagClass){

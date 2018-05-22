@@ -25,16 +25,16 @@ public class TextBox implements MouseInputReceiver{
     private final int STATE_END       = 2;
     private int currentState;
 
-    static private final Color bkg        = new Color(26, 26, 26);
-    static private final Color txt_white  = new Color(225, 225, 225);
-            static final Color txt_red    = new Color(255, 128, 128);
-            static final Color txt_green  = new Color(130, 255, 130);
-            static final Color txt_blue   = new Color(140, 140, 255);
-    static private final Color txt_cyan   = new Color(130, 255, 224);
-            static final Color txt_yellow = new Color(230, 230, 130);
-    static private final Color txt_orange = new Color(255, 191, 128);
-    static private final Color txt_silver = new Color(119, 119, 128);
-    static private final Color txt_purple = new Color(191, 128, 255);
+    public static final Color bkg        = new Color(26, 26, 26);
+    public static final Color txt_white  = new Color(225, 225, 225);
+    public static final Color txt_red    = new Color(255, 128, 128);
+    public static final Color txt_green  = new Color(130, 255, 130);
+    public static final Color txt_blue   = new Color(140, 140, 255);
+    public static final Color txt_cyan   = new Color(130, 255, 224);
+    public static final Color txt_yellow = new Color(230, 230, 130);
+    public static final Color txt_orange = new Color(255, 191, 128);
+    public static final Color txt_silver = new Color(119, 119, 128);
+    public static final Color txt_purple = new Color(191, 128, 255);
 
     public TextBox(LayerManager lm, Player player){
 

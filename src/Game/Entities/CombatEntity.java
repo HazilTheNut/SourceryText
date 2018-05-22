@@ -39,10 +39,12 @@ public class CombatEntity extends Entity{
 
     private static final int[] directions = {RIGHT, UP_RIGHT, UP, UP_LEFT, LEFT, DOWN_LEFT, DOWN, DOWN_RIGHT, RIGHT_360};
 
+    private Item noWeapon;
+
     Item weapon;
     private Layer swooshLayer;
 
-    protected void setMaxHealth(int maxHP){
+    public void setMaxHealth(int maxHP){
         maxHealth = maxHP;
         health = maxHP;
     }
@@ -70,13 +72,19 @@ public class CombatEntity extends Entity{
         setMaxHealth(readIntArg(hpArg, defaultMaxHealth));
         EntityArg strArg = searchForArg(entityStruct.getArgs(), "strength");
         setStrength(readIntArg(strArg, defaultStrength));
-        initSwwoshLayer();
+        initSwooshLayer();
+        initNoWeapon();
     }
 
-    protected void initSwwoshLayer(){
-        swooshLayer = new Layer(new SpecialText[1][1], getSprite().getName().concat("_attack"), 0, 0, LayerImportances.ANIMATION);
+    protected void initSwooshLayer(){
+        swooshLayer = new Layer(new SpecialText[1][1], getSprite().getName().concat("_attack"), -1, -1, LayerImportances.ANIMATION);
         swooshLayer.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 150)));
         swooshLayer.setVisible(false);
+    }
+
+    protected void initNoWeapon(){
+        noWeapon = new Item(new ItemStruct(-1, 1, "no_weapon", 0), gi);
+        noWeapon.addTag(TagRegistry.WEAPON_STRIKE, noWeapon);
     }
 
     @Override
@@ -252,9 +260,7 @@ public class CombatEntity extends Entity{
 
     public Item getWeapon() {
         if (weapon == null){
-            Item item = new Item(new ItemStruct(-1, 1, "no_weapon", 0), gi);
-            item.addTag(TagRegistry.WEAPON_STRIKE, item);
-            return item;
+            return noWeapon;
         }
         return weapon;
     }

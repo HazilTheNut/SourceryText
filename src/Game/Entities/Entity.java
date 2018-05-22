@@ -91,7 +91,6 @@ public class Entity extends TagHolder{
         if (moveEvent.eventPassed() && shouldDoAction() && getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)), TagRegistry.NO_PATHING)) {
             location.movePos(relativeX, relativeY);
             sprite.movePos(relativeX, relativeY);
-            //DebugWindow.reportf(DebugWindow.GAME, "[Entity.move] \'%1$s\'", getName());
             onContact(gi.getTileAt(location), gi);
         }
     }
@@ -184,6 +183,7 @@ public class Entity extends TagHolder{
             turnEvent.enactEvent();
         }
         updateInventory();
+        DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' Pos: %2$s", getName(), location);
     }
 
     @Override

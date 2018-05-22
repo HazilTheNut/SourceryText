@@ -93,8 +93,8 @@ public class TagHolder {
         contactEvent(this, other, gi);
         contactEvent(other, this, gi);
         DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact", "TagHolder \'" + this.getClass().getSimpleName() + "\'");
-        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact", "Tags of me: " + getTagList());
-        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact", "Tags of other: " + other.getTagList());
+        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact  SELF", "Tags: " + getTagList());
+        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact OTHER", "Tags: " + other.getTagList());
     }
 
     private void contactEvent(TagHolder source, TagHolder target, GameInstance gi){
@@ -108,11 +108,12 @@ public class TagHolder {
     }
 
     protected String getTagList(){
-        String output = "";
-        for (Tag tag : getTags()){
-            output += "\n> " + tag.getName();
+        StringBuilder output = new StringBuilder();
+        for (int i = 0; i < tags.size(); i++) {
+            output.append(tags.get(i).getName());
+            if (i < tags.size() - 1) output.append(", ");
         }
-        return output;
+        return output.toString();
     }
 
     public Color colorateWithTags(Color baseColor){

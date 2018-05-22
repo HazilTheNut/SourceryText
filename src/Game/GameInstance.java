@@ -39,7 +39,7 @@ public class GameInstance {
     private TextBox textBox;
     private QuickMenu quickMenu;
 
-    private long currentItemUID = 0;
+    private long currentUID = 1;
 
     public GameInstance(LayerManager manager, ViewWindow window){
 
@@ -81,6 +81,7 @@ public class GameInstance {
         quickMenu = new QuickMenu(lm, player);
 
         pathTestLayer = new Layer(currentLevel.getBackdrop().getCols(), currentLevel.getBackdrop().getRows(), "pathtest", 0, 0, LayerImportances.VFX);
+        pathTestLayer.setVisible(false);
         lm.addLayer(pathTestLayer);
     }
 
@@ -189,8 +190,9 @@ public class GameInstance {
     }
 
     public long issueUID(){
-        currentItemUID++;
-        return currentItemUID;
+        currentUID++;
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.issueUID","Current UID: %1$d", currentUID);
+        return currentUID;
     }
 
     public Tile getTileAt(Coordinate loc){

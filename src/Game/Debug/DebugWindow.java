@@ -5,6 +5,8 @@ import Engine.Layer;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Jared on 4/17/2018.
@@ -16,18 +18,22 @@ public class DebugWindow{
     private static DebugLogPane stage;
     private static DebugLogPane tags;
     private static DebugLogPane game;
+    private static DebugLogPane entity;
     private static DebugLogPane misc;
     private static DebugLayerPanel layers;
 
     private static ArrayList<TextDispenseUpdate> dispenseUpdates;
 
     public static final int PERFORMANCE = 0; //For performance data
-    public static final int STAGE       = 1; //'Stage' refers to systems that surround the main game stuff (like simulation, AI, etc.)
+    public static final int STAGE       = 1; //'Stage' refers to systems that surround the main game stuff (like simulation, UI, etc.)
     public static final int TAGS        = 2; //For all events and things related to tags
     public static final int GAME        = 3; //The main game stuff that is surrounded by the 'stage'
-    public static final int MISC        = 4; //Everything else
+    public static final int ENTITY      = 4; //Mainly a spam folder for entity info
+    public static final int MISC        = 5; //Everything else
 
     static final Color textColor = new Color(191, 244, 255);
+
+    private static ArrayList<Runnable> entryActions = new ArrayList<>();
 
     static {
         dispenseUpdates = new ArrayList<>();
@@ -40,8 +46,9 @@ public class DebugWindow{
 
         performance = new DebugLogPane(true);
         stage = new DebugLogPane(true);
-        tags = new DebugLogPane(false);
+        tags = new DebugLogPane(true);
         game = new DebugLogPane(false);
+        entity = new DebugLogPane(true);
         misc = new DebugLogPane(false);
         layers = new DebugLayerPanel();
 
@@ -50,6 +57,7 @@ public class DebugWindow{
         tabbedPane.addTab("Stage",  createScrollPane(tabbedPane, stage));
         tabbedPane.addTab("Tags",   createScrollPane(tabbedPane, tags));
         tabbedPane.addTab("Game",   createScrollPane(tabbedPane, game));
+        tabbedPane.addTab("Entity", createScrollPane(tabbedPane, entity));
         tabbedPane.addTab("Misc",   createScrollPane(tabbedPane, misc));
         tabbedPane.addTab("Layers", layers);
 
@@ -76,6 +84,18 @@ public class DebugWindow{
 
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                for (int i = 0; i < entryActions.size();) {
+                    if (entryActions.get(i) != null) {
+                        entryActions.get(i).run();
+                        entryActions.remove(i);
+                    }
+                }
+            }
+        }, 10, 100);
     }
 
     public static void open(){
@@ -97,13 +117,12 @@ public class DebugWindow{
     }
 
     public static void reportf(int screen, String caption, String value, Object... args){
-        Thread addEntryThread = new Thread(() -> {
+        entryActions.add(() -> {
             DebugLogPane logPane = getDebugLog(screen);
             assert logPane != null;
             logPane.addEntry(caption, String.format(value, args));
             for (TextDispenseUpdate update : dispenseUpdates) update.update();
         });
-        addEntryThread.start();
     }
 
     public static void addLayerView(Layer toView, int pos) {
@@ -128,6 +147,8 @@ public class DebugWindow{
                 return tags;
             case GAME:
                 return game;
+            case ENTITY:
+                return entity;
             case MISC:
                 return misc;
             default:

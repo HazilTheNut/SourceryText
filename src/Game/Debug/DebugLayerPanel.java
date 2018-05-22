@@ -70,7 +70,7 @@ public class DebugLayerPanel extends JPanel{
             add(visibleCheckBox, BorderLayout.LINE_START);
             add(layerLabel, BorderLayout.CENTER);
 
-            setMaximumSize(new Dimension(1500, 25));
+            setMaximumSize(new Dimension(1500, 20));
             setBorder(BorderFactory.createEtchedBorder());
 
             setBackground(Color.BLACK);

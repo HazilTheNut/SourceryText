@@ -80,7 +80,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         setName("Player");
 
         addTag(TagRegistry.FLAMMABLE, this);
-        initSwwoshLayer();
+        initSwooshLayer();
+        initNoWeapon();
 
         hud = new HUD(lm, this);
     }
@@ -186,6 +187,11 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         if (noEnterWarpZoneTimer > 0) noEnterWarpZoneTimer--;
     }
 
+    @Override
+    public long getUniqueID() {
+        return 0;
+    }
+
     public PlayerInventory getInv() { return inv; }
 
     public Spell getEquippedSpell() {
@@ -255,11 +261,6 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             } else if (keyCode == KeyEvent.VK_SHIFT){
                 spellMode = true;
                 updateHUD();
-            } else if (keyCode == KeyEvent.VK_L) {
-                DebugWindow.reportf(DebugWindow.GAME, "Player LOG"," pos: %1$s", getLocation());
-                lm.printLayerStack();
-            } else if (keyCode == KeyEvent.VK_O) {
-                gi.togglePathTestLayer();
             } else if (keyCode == KeyEvent.VK_Q){
                 ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(mouseLevelPos);
                 if (entities.size() == 1) inv.openOtherInventory(entities.get(0));
@@ -448,8 +449,16 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         return magicPower;
     }
 
+    public void setMagicPower(int magicPower) {
+        this.magicPower = magicPower;
+    }
+
     public double getWeightCapacity() {
         return weightCapacity;
+    }
+
+    public void setWeightCapacity(double weightCapacity) {
+        this.weightCapacity = weightCapacity;
     }
 
     protected void pathToPosition(Coordinate target, int range){
