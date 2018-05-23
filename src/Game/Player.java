@@ -37,7 +37,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     private ArrayList<Spell> spells = new ArrayList<>();
     private Spell equippedSpell;
-    private int numberSpellBeads = 2;
+    private int numberSpellBeads = 1;
     private ArrayList<Integer> cooldowns = new ArrayList<>();
 
     private int magicPower = 0;
@@ -106,6 +106,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     public void updateHUD() {hud.updateHUD();}
 
+    public void updateSynopsis() {hud.updateSynopsis(mouseLevelPos);}
+
     private void checkForWarpZones(){
         ArrayList<WarpZone> warpZones = gi.getCurrentLevel().getWarpZones();
         for (WarpZone wz : warpZones){
@@ -142,6 +144,16 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     @Override
     protected void move(int relativeX, int relativeY) {
         super.move(relativeX, relativeY);
+        postMovementCheck();
+    }
+
+    @Override
+    public void setPos(Coordinate pos) {
+        super.setPos(pos);
+        postMovementCheck();
+    }
+
+    private void postMovementCheck(){
         checkForWarpZones();
         updateCameraPos();
         if (inv.getOtherInv().getMode() == PlayerInventory.CONFIG_OTHER_EXCHANGE && inv.getOtherInv().isShowing()){
@@ -384,7 +396,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 Thread spellThread = new Thread(() -> {
                     if (isSpellReady()) {
                         freeze();
-                        cooldowns.add(equippedSpell.castSpell(levelPos, this, getGameInstance()));
+                        cooldowns.add(equippedSpell.castSpell(levelPos, this, getGameInstance(), magicPower));
                         gi.doEnemyTurn();
                     }
                 });

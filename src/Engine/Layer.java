@@ -271,6 +271,8 @@ public class Layer implements Serializable{
             if (isLayerLocInvalid(col + index, row)) return;
             if (getSpecialText(col + index, row) != null)
                 editLayer(col + index, row, new SpecialText(str.charAt(index), fontColor, getSpecialText(col + index, row).getBkgColor()));
+            else
+                editLayer(col + index, row, new SpecialText(str.charAt(index), fontColor));
         }
     }
 

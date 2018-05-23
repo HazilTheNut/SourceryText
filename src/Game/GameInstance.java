@@ -119,7 +119,7 @@ public class GameInstance {
     private void startLevel(Level level, Coordinate loc){
         level.addEntity(player);
         level.onEnter(lm);
-        player.teleport(loc);
+        player.setPos(loc);
         player.updateCameraPos();
         player.unfreeze();
     }
@@ -243,6 +243,8 @@ public class GameInstance {
             }
             runTimes[3] = System.nanoTime();
             reportUpdatePerformance(runTimes);
+            player.updateHUD();
+            player.updateSynopsis();
             isPlayerTurn = true;
         //});
         //enemyTurnThread.start();

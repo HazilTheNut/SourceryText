@@ -64,7 +64,8 @@ public class LevelUpTag extends Tag{
     }
 
     protected void afterUpgrade(Player player, Item toRemove){
-        player.removeItem(toRemove);
+        toRemove.decrementQty();
+        player.scanInventory();
         player.updateHUD();
         player.updateInventory();
     }

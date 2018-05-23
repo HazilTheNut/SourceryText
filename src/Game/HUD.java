@@ -117,25 +117,38 @@ public class HUD implements MouseInputReceiver{
 
     private int boxLength = 0;
     private int boxHeight = 0;
-    private int startingRow = 0;
+    private int startRow = 0;
+
+    private final Color txt_entity = new Color(209, 209, 255);
+    private final Color txt_weapon = new Color(209, 255, 209);
 
     public void updateSynopsis(Coordinate levelPos){
         Entity e = player.getGameInstance().getCurrentLevel().getSolidEntityAt(levelPos);
         Tile t = player.getGameInstance().getTileAt(levelPos);
         synopsisLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(40, 40, 40, 175)));
-        startingRow = 0;
+        startRow = 0;
         boxHeight = 0;
         boxLength = 0;
+        //Calculate box width
+        if (t != null) {
+            boxLength = Math.max(boxLength, t.getName().length() + 2);
+            boxHeight++;
+        }
+        if (e != null) {
+            boxLength = Math.max(boxLength, e.getName().length() + 2);
+            boxHeight++;
+            if (e instanceof CombatEntity) {
+                boxHeight++;
+                if (((CombatEntity)e).getWeapon().getItemData().getItemId() > 0) boxHeight++;
+            }
+        }
+        //Begin drawing
         if (e != null){
             drawEntitySynopsis(e);
         }
         if (t != null){
-            boxHeight++;
-            boxLength = Math.max(boxLength, t.getName().length() + 2);
-            synopsisLayer.inscribeString(t.getName(), 1, startingRow);
-            startingRow++;
+            synopsisLayer.inscribeString(t.getName(), 1, startRow);
         }
-        if (boxLength < 9) boxLength = 9;
         synopsisLayer.setPos(59 - boxLength, 31 - boxHeight);
     }
 
@@ -144,27 +157,34 @@ public class HUD implements MouseInputReceiver{
     }
 
     private void drawEntitySynopsis(Entity e){
-        boxHeight++;
         DebugWindow.reportf(DebugWindow.MISC, "HUD.drawEntitySynopsis","Entity name: \"%1$s\"", e.getName());
         boxLength = Math.max(boxLength, e.getName().length() + 2);
-        synopsisLayer.inscribeString(e.getName(), 1, startingRow);
+        synopsisLayer.inscribeString(e.getName(), 1, startRow, txt_entity);
         if (e instanceof CombatEntity){
-            boxHeight++;
+            startRow++;
             CombatEntity ce = (CombatEntity)e;
+            //Draw equipped weapon
+            if (ce.getWeapon().getItemData().getItemId() > 0){
+                boxLength = Math.max(boxLength, ce.getWeapon().getItemData().getName().length() + 3);
+                synopsisLayer.inscribeString(ce.getWeapon().getItemData().getName(), 2, startRow, txt_weapon);
+                synopsisLayer.inscribeString(">", 1, startRow, Color.GRAY);
+                startRow++;
+            }
+            //Draw Health Bar
+            boxLength = Math.max(boxLength, 11);
             double percent = (double)ce.getHealth() / ce.getMaxHealth();
             float dv = 1f/(boxLength - 2);
             for (int ii = 0; ii < boxLength - 2; ii++){
                 if (percent >= ii * dv){
-                    synopsisLayer.editLayer(ii + 1, startingRow + 1, new SpecialText(' ', Color.WHITE, new Color(215, 75, 75, 200)));
+                    synopsisLayer.editLayer(ii + 1, startRow, new SpecialText(' ', Color.WHITE, new Color(215, 75, 75, 200)));
                 } else {
-                    synopsisLayer.editLayer(ii + 1, startingRow + 1, new SpecialText(' ', Color.WHITE, new Color(55, 25, 25, 150)));
+                    synopsisLayer.editLayer(ii + 1, startRow, new SpecialText(' ', Color.WHITE, new Color(55, 25, 25, 150)));
                 }
             }
             String hpDisplay = String.format("%1$d/%2$d", ce.getHealth(), ce.getMaxHealth());
-            synopsisLayer.inscribeString(hpDisplay, (boxLength - hpDisplay.length()) / 2, startingRow + 1);
-            startingRow++;
+            synopsisLayer.inscribeString(hpDisplay, (int)Math.floor(((double)boxLength - hpDisplay.length()) / 2), startRow);
         }
-        startingRow++;
+        startRow++;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package Game.Tags;
 
 import Engine.SpecialText;
+import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
@@ -31,11 +32,14 @@ public class FrozenTag extends Tag {
                     iceTile.addTag(TagRegistry.FROZEN, e.getSource());
                     iceTile.removeTag(TagRegistry.WET);
                     SpecialText iceText;
+                    int hash = (int)(100 / Math.abs(1 - ((float)iceTile.getLocation().getY() / iceTile.getLocation().getX())));
+                    DebugWindow.reportf(DebugWindow.MISC, "FrozenTag","Ice Hash: %1$d ratio: %2$f", hash, 1 / Math.abs(1 - ((float)iceTile.getLocation().getY() / iceTile.getLocation().getX())));
+                    char tileChar = (hash % 3 == 0) ? '/' : ' ';
                     if (e.getTarget().hasTag(TagRegistry.TILE_WALL)) {
                         iceTile.addTag(TagRegistry.TILE_WALL, e.getSource());
-                        iceText = new SpecialText(' ', Color.WHITE, new Color(147, 166, 199));
+                        iceText = new SpecialText(tileChar, Color.WHITE, new Color(147, 166, 199));
                     } else {
-                        iceText = new SpecialText(' ', Color.WHITE, new Color(109, 133, 166));
+                        iceText = new SpecialText(tileChar, Color.WHITE, new Color(109, 133, 166));
                     }
                     target.getLevel().getOverlayTileLayer().editLayer(iceTile.getLocation(), iceText);
                 }

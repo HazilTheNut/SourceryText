@@ -33,7 +33,7 @@ public class TextBox implements MouseInputReceiver{
     public static final Color txt_cyan   = new Color(130, 255, 224);
     public static final Color txt_yellow = new Color(230, 230, 130);
     public static final Color txt_orange = new Color(255, 191, 128);
-    public static final Color txt_silver = new Color(119, 119, 128);
+    public static final Color txt_silver = new Color(121, 121, 128);
     public static final Color txt_purple = new Color(191, 128, 255);
 
     public TextBox(LayerManager lm, Player player){
@@ -90,6 +90,10 @@ public class TextBox implements MouseInputReceiver{
             } else if (isFormattedElement(message, index, "<nl>")){ //New line flag
                 shiftRow();
                 index += 3;
+            } else if (isFormattedElement(message, index, "<np>")){ //New page flag
+                row = 3;
+                shiftRow();
+                index += 3;
             } else if (isFormattedElement(message, index, "<sf>")){ //Fast speed flag
                 if (!isSkimming){
                     scrollSpeed = SCROLL_SPEED_FAST;
@@ -140,7 +144,7 @@ public class TextBox implements MouseInputReceiver{
     private int getIndexOfNextSpace(String message, int index){
         int min = message.length() + 1;
         min = Math.min(getCleanedIndexOf(message, index, " "), min);
-        String[] flags = {"<nl>","<sf>","<sn>","<ss>","<cw>","<cr>","<cg>","<cb>","<cc>","<cp>","<cy>","<co>","<cs>","<p1>","<p3>"};
+        String[] flags = {"<nl>","<np","<sf>","<sn>","<ss>","<cw>","<cr>","<cg>","<cb>","<cc>","<cp>","<cy>","<co>","<cs>","<p1>","<p3>"};
         for (String flag : flags) {
             min = Math.min(getCleanedIndexOf(message, index, flag), min);
         }

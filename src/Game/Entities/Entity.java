@@ -95,8 +95,22 @@ public class Entity extends TagHolder{
         }
     }
 
+    /**
+     * Basically runs move(), but does the subtractive math for you so you can't get it wrong.
+     * @param pos
+     */
     public void teleport(Coordinate pos){
         move(pos.getX() - location.getX(), pos.getY() - location.getY());
+    }
+
+    /**
+     * A stronger version of teleport, which does not run any checks before placing the Entity at a location, regardless of any solid objects or tiles that exist at the new location.
+     * @param pos
+     */
+    public void setPos(Coordinate pos){
+        location.setPos(pos.getX(), pos.getY());
+        sprite.setPos(pos.getX(), pos.getY());
+        onContact(gi.getTileAt(location), gi);
     }
 
     void selfDestruct(){
