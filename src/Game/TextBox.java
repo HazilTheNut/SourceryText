@@ -49,6 +49,10 @@ public class TextBox implements MouseInputReceiver{
         width = lm.getWindow().RESOLUTION_WIDTH;
     }
 
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
     public void showMessage(String message){
         if (!textBoxLayer.getVisible()) {
             textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));

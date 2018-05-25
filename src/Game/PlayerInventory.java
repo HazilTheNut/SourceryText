@@ -1,9 +1,6 @@
 package Game;
 
-import Data.Coordinate;
-import Data.EntityStruct;
-import Data.ItemStruct;
-import Data.LayerImportances;
+import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
@@ -15,19 +12,20 @@ import Game.Registries.EntityRegistry;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Jared on 3/29/2018.
  */
-public class PlayerInventory implements MouseInputReceiver{
+public class PlayerInventory implements MouseInputReceiver, Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Player player;
 
     private Layer selectorLayer;
     private Layer descriptionLayer;
-
-    private LayerManager lm;
 
     private Item selectedItem;
 
@@ -58,15 +56,11 @@ public class PlayerInventory implements MouseInputReceiver{
     public static final Coordinate PLACEMENT_TOP_LEFT   = new Coordinate(-1, 1);
     public static final Coordinate PLACEMENT_TOP_RIGHT  = new Coordinate(40, 1);
 
-    private SubInventory playerInv;
-    private SubInventory otherInv;
+    private transient SubInventory playerInv;
+    private transient SubInventory otherInv;
 
     PlayerInventory(LayerManager lm, Player player){
-        playerInv = new SubInventory(lm, "inv_player");
-        playerInv.configure(PLACEMENT_TOP_LEFT, "Inventory", player, CONFIG_PLAYER_USE);
-
-        otherInv = new SubInventory(lm, "inv_other");
-        otherInv.configure(PLACEMENT_TOP_RIGHT, "Other", null, CONFIG_OTHER_VIEW);
+        initSubInventory(player);
 
         selectorLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 2][1],   "inventory_selector", 0, 1, LayerImportances.MENU_CURSOR);
         selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(200, 200, 200, 100)));
@@ -79,7 +73,21 @@ public class PlayerInventory implements MouseInputReceiver{
         lm.addLayer(selectorLayer);
         lm.addLayer(descriptionLayer);
         this.player = player;
-        this.lm = lm;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+        playerInv.e = player;
+    }
+
+    private LayerManager getLM() { return player.getGameInstance().getLayerManager(); }
+
+    void initSubInventory(Player player){
+        playerInv = new SubInventory(player.getGameInstance().getLayerManager(), "inv_player");
+        playerInv.configure(PLACEMENT_TOP_LEFT, "Inventory", player, CONFIG_PLAYER_USE);
+
+        otherInv = new SubInventory(player.getGameInstance().getLayerManager(), "inv_other");
+        otherInv.configure(PLACEMENT_TOP_RIGHT, "Other", null, CONFIG_OTHER_VIEW);
     }
 
     public SubInventory getPlayerInv(){
@@ -233,7 +241,7 @@ public class PlayerInventory implements MouseInputReceiver{
 
         private int getInvHeight() {
             //return Math.min(e.getItems().size() + 1, lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1);
-            return lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1;
+            return getLM().getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1;
         }
 
         private int getTagListHeight() {
@@ -262,7 +270,7 @@ public class PlayerInventory implements MouseInputReceiver{
         }
 
         void updateDisplay(){
-            Layer tempLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 4][lm.getWindow().RESOLUTION_HEIGHT], "temp", 0, 0);
+            Layer tempLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 4][getLM().getWindow().RESOLUTION_HEIGHT], "temp", 0, 0);
 
             drawItems(tempLayer);
 
@@ -327,7 +335,7 @@ public class PlayerInventory implements MouseInputReceiver{
         }
 
         private void drawTagList(Layer tempLayer, int xstart){
-            int top = lm.getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1;
+            int top = getLM().getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1;
             for (int row = top; row < top + getTagListHeight(); row++) { //Fill tag list panel background
                 for (int col = 0; col < tempLayer.getCols(); col++) {
                     tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, bkgDark));

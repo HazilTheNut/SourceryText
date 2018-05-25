@@ -32,8 +32,8 @@ public class FrozenTag extends Tag {
                     iceTile.addTag(TagRegistry.FROZEN, e.getSource());
                     iceTile.removeTag(TagRegistry.WET);
                     SpecialText iceText;
-                    int hash = (int)(100 / Math.abs(1 - ((float)iceTile.getLocation().getY() / iceTile.getLocation().getX())));
-                    DebugWindow.reportf(DebugWindow.MISC, "FrozenTag","Ice Hash: %1$d ratio: %2$f", hash, 1 / Math.abs(1 - ((float)iceTile.getLocation().getY() / iceTile.getLocation().getX())));
+                    int hash = 23 * 113 * iceTile.getLocation().getX() + iceTile.getLocation().getY();
+                    DebugWindow.reportf(DebugWindow.MISC, "FrozenTag","Ice Hash: %1$d", hash);
                     char tileChar = (hash % 3 == 0) ? '/' : ' ';
                     if (e.getTarget().hasTag(TagRegistry.TILE_WALL)) {
                         iceTile.addTag(TagRegistry.TILE_WALL, e.getSource());

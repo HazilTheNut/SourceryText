@@ -1,9 +1,6 @@
 package Game;
 
-import Data.Coordinate;
-import Data.FileIO;
-import Data.LayerImportances;
-import Data.WarpZone;
+import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
@@ -25,10 +22,12 @@ import java.util.ArrayList;
  */
 public class Player extends CombatEntity implements MouseInputReceiver, KeyListener{
 
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
+
     private HUD hud;
     private PlayerInventory inv;
 
-    private Thread pathingThread;
+    private transient Thread pathingThread;
     private boolean terminatePathing;
 
     private Coordinate mouseLevelPos;
@@ -50,7 +49,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     private final Coordinate EAST     = new Coordinate(1, 0);
     private final Coordinate SOUTH    = new Coordinate(0, 1);
     private final Coordinate WEST     = new Coordinate(-1, 0);
-    private Thread movementThread;
+    private transient Thread movementThread;
     private final int MOVEMENT_INTERVAL = 125;
 
     private final SpecialText playerSprite = new SpecialText('@', new Color(223, 255, 214));
@@ -58,8 +57,6 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     private ArrayList<Integer> downKeyCodes = new ArrayList<>(); //KeyCodes of keys currently pressed down on the keyboard
 
     Player(ViewWindow window, LayerManager lm, GameInstance gameInstance){
-
-        super.lm = lm;
 
         window.addKeyListener(this);
 
@@ -93,14 +90,14 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     }
 
     public void updateCameraPos(){
-        int cameraOffsetX = (lm.getWindow().RESOLUTION_WIDTH / -2) - 1;
-        int cameraOffsetY = (lm.getWindow().RESOLUTION_HEIGHT / -2);
+        int cameraOffsetX = (gi.getLayerManager().getWindow().RESOLUTION_WIDTH / -2) - 1;
+        int cameraOffsetY = (gi.getLayerManager().getWindow().RESOLUTION_HEIGHT / -2);
         int camNewX = getLocation().getX() + cameraOffsetX;
         int camNewY = getLocation().getY() + cameraOffsetY;
         if (gi != null)
-            lm.setCameraPos(Math.max(Math.min(camNewX, gi.getBackdrop().getCols() - lm.getWindow().RESOLUTION_WIDTH), 0), Math.max(Math.min(camNewY, gi.getBackdrop().getRows() - lm.getWindow().RESOLUTION_HEIGHT), -1));
+            gi.getLayerManager().setCameraPos(Math.max(Math.min(camNewX, gi.getBackdrop().getCols() - gi.getLayerManager().getWindow().RESOLUTION_WIDTH), 0), Math.max(Math.min(camNewY, gi.getBackdrop().getRows() - gi.getLayerManager().getWindow().RESOLUTION_HEIGHT), -1));
         else
-            lm.setCameraPos(camNewX, camNewY);
+            gi.getLayerManager().setCameraPos(camNewX, camNewY);
         getSprite().setPos(getLocation());
     }
 
@@ -199,6 +196,12 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         if (noEnterWarpZoneTimer > 0) noEnterWarpZoneTimer--;
     }
 
+    public void cleanup(){
+        hud.setPlayer(null);
+        inv.setPlayer(null);
+        gi = null;
+    }
+
     @Override
     public long getUniqueID() {
         return 0;
@@ -290,10 +293,14 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
             } else if (keyCode == KeyEvent.VK_ESCAPE) {
                 QuickMenu quickMenu = gi.getQuickMenu();
                 quickMenu.clearMenu();
-                quickMenu.addMenuItem("Save Game",    new Color(170, 170, 255), () -> {});
-                quickMenu.addMenuItem("Load Game",    new Color(255, 230, 170), () -> {});
+                quickMenu.addMenuItem("Load Game",    new Color(255, 230, 170), () -> {
+                    FileIO io = new FileIO();
+                    gi.getGameMaster().loadGame(io.chooseSavedGame());
+                });
                 quickMenu.addMenuItem("Options",      new Color(173, 255, 228), () -> {});
-                quickMenu.addMenuItem("Quit to Menu", new Color(255, 171, 171), () -> {});
+                quickMenu.addMenuItem("Quit to Menu", new Color(255, 171, 171), () -> {
+                    gi.getGameMaster().exitGame();
+                });
                 quickMenu.addMenuItem("Close",        () -> {});
                 quickMenu.showMenu("Options", true);
             } else {
@@ -453,7 +460,11 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     void freeze() {gi.setPlayerTurn(false);}
 
-    void unfreeze() {gi.setPlayerTurn(true);}
+    void unfreeze() {
+        if (gi != null) {
+            gi.setPlayerTurn(true);
+        }
+    }
 
     boolean isFrozen() {return !gi.isPlayerTurn(); }
 
@@ -474,14 +485,14 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     }
 
     protected void pathToPosition(Coordinate target, int range){
-        currentPoints.clear();
-        futurePoints.clear();
+        currentPoints = new ArrayList<>();
+        futurePoints = new ArrayList<>();
         futurePoints.add(new SpreadPoint(target.getX(), target.getY(), 0));
         doPathing(1, range);
     }
 
-    private ArrayList<SpreadPoint> currentPoints = new ArrayList<>();
-    private ArrayList<SpreadPoint> futurePoints = new ArrayList<>();
+    private transient ArrayList<SpreadPoint> currentPoints;
+    private transient ArrayList<SpreadPoint> futurePoints;
 
     private void doPathing(int n, int detectRange){
         if (n > detectRange) return;

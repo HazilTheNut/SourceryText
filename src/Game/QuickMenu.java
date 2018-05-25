@@ -41,6 +41,10 @@ public class QuickMenu implements MouseInputReceiver {
         this.lm = lm;
     }
 
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
     public void clearMenu(){
         menuItems.clear();
     }

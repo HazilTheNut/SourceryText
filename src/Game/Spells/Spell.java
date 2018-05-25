@@ -1,14 +1,19 @@
 package Game.Spells;
 
 import Data.Coordinate;
+import Data.SerializationVersion;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.GameInstance;
 
+import java.io.Serializable;
+
 /**
  * Created by Jared on 4/19/2018.
  */
-public class Spell {
+public class Spell implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     /**
      * Perfroms spell cast

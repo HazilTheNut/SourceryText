@@ -98,15 +98,22 @@ public class LayerManager {
         }
     }
 
+    private void clearLayersOperation(){
+        for (int i = 0; i < layerStack.size();) {
+            DebugWindow.removeLayerView(layerStack.get(i));
+            layerStack.remove(i);
+        }
+    }
+
     public void clearLayers(){
         if (bufferOneOpen)
             operationBufferOne.add(() -> {
-                layerStack.clear();
+                clearLayersOperation();
                 System.out.println("[LayerManager] Cleared Layer stack");
             });
         else
             operationBufferTwo.add(() -> {
-                layerStack.clear();
+                clearLayersOperation();
                 System.out.println("[LayerManager] Cleared Layer stack");
             });
     }

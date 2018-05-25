@@ -7,17 +7,21 @@ import Engine.SpecialText;
 import Game.AnimatedTiles.AnimatedTile;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
+import Game.LevelScripts.LevelScript;
 import Game.Registries.TagRegistry;
 import Game.Registries.TileRegistry;
 import Game.Tags.Tag;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * Created by Jared on 4/7/2018.
  */
-public class Level {
+public class Level implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private String filePath;
 
@@ -27,15 +31,22 @@ public class Level {
     private ArrayList<Tile> overlayTiles;
     private Layer overlayTileLayer;
 
-    private ArrayList<WarpZone> warpZones = new ArrayList<>();
+    private ArrayList<WarpZone> warpZones;
 
-    private ArrayList<Entity> entities = new ArrayList<>();
+    private ArrayList<Entity> entities;
 
     private Layer animatedTileLayer;
-    private ArrayList<AnimatedTile> animatedTiles = new ArrayList<>();
+    private ArrayList<AnimatedTile> animatedTiles;
+
+    private ArrayList<LevelScript> levelScripts;
 
     public Level(String path){
+
         filePath = path;
+
+        animatedTiles = new ArrayList<>();
+        entities = new ArrayList<>();
+        warpZones = new ArrayList<>();
     }
 
     void initialize(LevelData ldata){
@@ -72,6 +83,17 @@ public class Level {
         }
 
         animatedTileLayer = new Layer(backdrop.getCols(), backdrop.getRows(), "animated_tiles (" + getName() + ")", 0, 0, LayerImportances.TILE_ANIM);
+
+        levelScripts = new ArrayList<>();
+    }
+
+    void destroy(){
+        baseTiles = new Tile[0][0];
+        overlayTiles.clear();
+        warpZones.clear();
+        entities.clear();
+        animatedTiles.clear();
+        levelScripts.clear();
     }
 
     public void addEntity(Entity e){ entities.add(e); }
@@ -129,7 +151,7 @@ public class Level {
     }
 
     public Tile getTileAt(Coordinate loc){
-        if (isLocationValid(loc)) {
+        if (loc != null && isLocationValid(loc)) {
             Tile overlay = getOverlayTileAt(loc);
             if (overlay == null)
                 return baseTiles[loc.getX()][loc.getY()];

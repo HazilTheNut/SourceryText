@@ -1,14 +1,19 @@
 package Game;
 
 import Data.ItemStruct;
+import Data.SerializationVersion;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.Tags.Tag;
 
+import java.io.Serializable;
+
 /**
  * Created by Jared on 3/31/2018.
  */
-public class Item extends TagHolder{
+public class Item extends TagHolder implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private ItemStruct itemData;
     private long uniqueID;

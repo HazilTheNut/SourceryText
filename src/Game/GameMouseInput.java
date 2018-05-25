@@ -23,16 +23,13 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener{
     private ViewWindow window;
     private LayerManager lm;
 
-    private GameInstance gi;
-
     private Layer mouseHighlight;
 
     private ArrayList<MouseInputReceiver> inputReceivers = new ArrayList<>();
 
-    public GameMouseInput (ViewWindow viewWindow, LayerManager layerManager, GameInstance gameInstance){
+    public GameMouseInput(ViewWindow viewWindow, LayerManager layerManager){
         window = viewWindow;
         lm = layerManager;
-        gi = gameInstance;
 
         mouseHighlight = new Layer(new SpecialText[1][1], "mouse", 0, 0, LayerImportances.GAME_CURSOR);
         mouseHighlight.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(200, 200, 200, 75)));
@@ -52,7 +49,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener{
 
     public void addInputReceiver(MouseInputReceiver receiver)    { inputReceivers.add(receiver); }
 
-    public void removeInputReceiver(MouseInputReceiver receiver) { inputReceivers.remove(receiver); }
+    public void clearInputReceivers(){ inputReceivers.clear(); }
 
     @Override
     public void mouseClicked(MouseEvent e) {

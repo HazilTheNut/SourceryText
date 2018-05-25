@@ -11,16 +11,18 @@ import Game.Registries.ItemRegistry;
 import Game.Registries.TagRegistry;
 import Game.Tags.Tag;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Created by Jared on 3/27/2018.
  */
-public class Entity extends TagHolder{
+public class Entity extends TagHolder implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     protected GameInstance gi;
-    protected LayerManager lm;
 
     private ArrayList<Item> items = new ArrayList<>();
 
@@ -33,7 +35,6 @@ public class Entity extends TagHolder{
 
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance){
         gi = gameInstance;
-        this.lm = lm;
 
         simpleInit(entityStruct, pos);
         String defName = EntityRegistry.getEntityStruct(entityStruct.getEntityId()).getEntityName(); //Default name
@@ -63,12 +64,16 @@ public class Entity extends TagHolder{
         DebugWindow.reportf(DebugWindow.MISC, "Entity.simpleInit"," Original: %1$s After conversions: %2$s", icon, SpecialText.fromString(icon.toString()));
     }
 
+    public void assignGameInstance(GameInstance gi){
+        this.gi = gi;
+    }
+
     public void onLevelEnter(){
-        lm.addLayer(sprite);
+        gi.getLayerManager().addLayer(sprite);
     }
 
     public void onLevelExit(){
-        lm.removeLayer(sprite);
+        gi.getLayerManager().removeLayer(sprite);
     }
 
     protected String createEntityLayerName(EntityStruct struct, Coordinate coordinate){
@@ -115,7 +120,7 @@ public class Entity extends TagHolder{
 
     void selfDestruct(){
         gi.removeEntity(this);
-        lm.removeLayer(sprite);
+        gi.getLayerManager().removeLayer(sprite);
         DebugWindow.reportf(DebugWindow.GAME, "Entity.selfDestruct","\'%1$s\' at %2$s", getName(), getLocation());
     }
 

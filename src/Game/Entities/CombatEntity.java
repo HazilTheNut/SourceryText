@@ -20,6 +20,8 @@ import java.util.ArrayList;
  */
 public class CombatEntity extends Entity{
 
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
+
     private int health;
     private int maxHealth = 10;
     private int strength = 0;
@@ -42,11 +44,15 @@ public class CombatEntity extends Entity{
     private Item noWeapon;
 
     Item weapon;
-    private Layer swooshLayer;
+    protected Layer swooshLayer;
 
     public void setMaxHealth(int maxHP){
         maxHealth = maxHP;
         health = maxHP;
+    }
+
+    public void setHealth(int health){
+        this.health = health;
     }
 
     public void setStrength(int strength) {
@@ -274,13 +280,13 @@ public class CombatEntity extends Entity{
     @Override
     public void onLevelEnter() {
         super.onLevelEnter();
-        lm.addLayer(swooshLayer);
+        gi.getLayerManager().addLayer(swooshLayer);
     }
 
     @Override
     public void onLevelExit() {
         super.onLevelExit();
-        lm.removeLayer(swooshLayer);
+        gi.getLayerManager().removeLayer(swooshLayer);
     }
 
     @Override

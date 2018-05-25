@@ -2,8 +2,7 @@ package Start;
 
 import Engine.LayerManager;
 import Engine.ViewWindow;
-import Game.GameInstance;
-import Game.GameMouseInput;
+import Game.GameMaster;
 
 import javax.swing.*;
 
@@ -37,14 +36,8 @@ public class GameStart {
 
         LayerManager lm = new LayerManager(window);
 
-        GameInstance gi = new GameInstance(lm, window);
-
-        GameMouseInput mi = new GameMouseInput(window, lm, gi);
-        window.addMouseListener(mi);
-        window.addMouseMotionListener(mi);
-        window.addMouseWheelListener(mi);
-
-        gi.establishMouseInput(mi);
+        GameMaster master = new GameMaster(lm);
+        master.newGame();
     }
 
 }

@@ -524,9 +524,9 @@ public class EditorToolPanel extends JPanel {
         FileIO io = new FileIO();
         File levelFile;
         if (previousFilePath.equals(""))
-            levelFile = io.chooseLevel();
+            levelFile = io.chooseLevelData();
         else
-            levelFile = io.chooseLevel(previousFilePath);
+            levelFile = io.chooseLevelData(previousFilePath);
         if (levelFile != null) {
             LevelData levelData = io.openLevel(levelFile);
             EditorFrame nf = new EditorFrame(levelData, watcher);

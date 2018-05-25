@@ -1,6 +1,7 @@
 package Data;
 
 import Editor.EditorToolPanel;
+import Game.GameInstance;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -17,7 +18,7 @@ public class FileIO {
      /*
       FileIO:
 
-      A catch-all utility class for saving and loading LevelData's (and hopefully game saves soon!)
+      A catch-all utility class for saving and loading LevelData's and GameInstance's
      */
 
     /**
@@ -27,7 +28,7 @@ public class FileIO {
      * Maybe a couple others too....
      *
      * Getting the root file path is handy because that means SourceryText requires no Installation Wizards to correctly configure.
-     * This is also why you can't just run SourceryText out of the IDE, because the root path is now in src instead of CompiledGame
+     * This is also why you can't just run SourceryText out of the IDE, because the root path would be in src instead of CompiledGame
      *
      * You gotta configure for outputting a .jar and then run it from there.
      *
@@ -88,35 +89,61 @@ public class FileIO {
      * This method lazily starts the FileChooser beginning location at the root file path
      * @return The selected File
      */
-    public File chooseLevel(){
+    public File chooseLevelData(){
         String path = "";
         try {
             path = decodeFilePath(EditorToolPanel.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            return chooseLevel(path);
+            return chooseFile(path, "lda", "Sourcery Text Level Data");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        return chooseLevel(path);
+        return chooseFile(path, "lda", "Sourcery Text Level Data");
     }
 
     /**
      * Runs the FileChooser to pick a .lda file.
      *
+     * @param path : The path you want to start with for the file chooser
+     * @return The selected File
+     */
+    public File chooseLevelData(String path){
+        return chooseFile(path, "lda", "Sourcery Text Level Data");
+    }
+
+    /**
+     * Runs the FileChooser to pick a .sts file.
+     *
+     * This method lazily starts the FileChooser beginning location at the root file path
+     * @return The selected File
+     */
+    public File chooseSavedGame(){
+        String path = "";
+        try {
+            path = decodeFilePath(EditorToolPanel.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            return chooseFile(path, "sts", "Sourcery Text Save");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return chooseFile(path, "sts", "Sourcery Text Save");
+    }
+
+    /**
+     * Runs the FileChooser to pick a file of an input file extension
+     *
      * @param startingPath The beginning location of FileChooser
      * @return The selected File
      */
-    public File chooseLevel(String startingPath){
-        System.out.printf("[FileIO.chooseLevel] Starting path: %1$s\n", startingPath);
+    public File chooseFile(String startingPath, String ext, String extDesc){
+        System.out.printf("[FileIO.chooseLevelData] Starting path: %1$s\n", startingPath);
         JFileChooser chooser = new JFileChooser(startingPath);
         System.out.println(startingPath);
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                "Sourcery Text Level Data", "lda");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(extDesc, ext);
         chooser.setFileFilter(filter);
         int returnVal = chooser.showOpenDialog(new Component() {
         });
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File chosenFile = chooser.getSelectedFile();
-            System.out.println("[FileIO.chooseLevel] Opening file: " +
+            System.out.println("[FileIO.chooseLevelData] Opening file: " +
                     chosenFile.getName() + " at " + chosenFile.getPath());
             return chosenFile;
         } else return null;
@@ -128,7 +155,7 @@ public class FileIO {
      * @param savedLevel The LevelData file being opened.
      * @return The now-usable LevelData.
      */
-    public LevelData openLevel(File savedLevel ){
+    public LevelData openLevel(File savedLevel){
         try {
             FileInputStream fileIn = new FileInputStream(savedLevel);
             ObjectInputStream objIn = new ObjectInputStream(fileIn);
@@ -152,7 +179,7 @@ public class FileIO {
         int fileChooseOption = fileChooser.showSaveDialog(new Component(){});
         if (fileChooseOption == JFileChooser.APPROVE_OPTION){
             path = decodeFilePath(fileChooser.getSelectedFile().getPath());
-            if (!path.endsWith(".lda")) { // Add .sav to file if user didn't.
+            if (!path.endsWith(".lda")) { // Add '.lda' to file if user didn't.
                 path += ".lda";
             }
             quickSerializeLevelData(ldata, path);
@@ -181,4 +208,36 @@ public class FileIO {
     }
 
     public String serializeLevelData(LevelData ldata) {return serializeLevelData(ldata, getRootFilePath()); }
+
+    public GameInstance openGameInstance(File gameFile){
+        try {
+            FileInputStream fileIn = new FileInputStream(gameFile);
+            ObjectInputStream objIn = new ObjectInputStream(fileIn);
+            return (GameInstance)objIn.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            JOptionPane.showMessageDialog(new JFrame(), "ERROR: File being accessed is out of date / improper!", "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void serializeGameInstance(GameInstance gi, String startingPath){
+        String path;
+        JFileChooser fileChooser = new JFileChooser(startingPath);
+        int fileChooseOption = fileChooser.showSaveDialog(new Component(){});
+        if (fileChooseOption == JFileChooser.APPROVE_OPTION){
+            path = decodeFilePath(fileChooser.getSelectedFile().getPath());
+            if (!path.endsWith(".sts")) { // Add '.sav' to file if user didn't.
+                path += ".sts";
+            }
+            try {
+                FileOutputStream out = new FileOutputStream(path);
+                ObjectOutputStream objOut = new ObjectOutputStream(out);
+                objOut.writeObject(gi);
+                System.out.println("[FileIO.serializeGameInstance] Saved level to: " + path);
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

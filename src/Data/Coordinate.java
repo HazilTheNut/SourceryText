@@ -1,9 +1,14 @@
 package Data;
 
+import java.io.Serializable;
+
 /**
  * Created by Jared on 3/27/2018.
  */
-public class Coordinate {
+public class Coordinate implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
+
     /**
      * Coordinate:
      *

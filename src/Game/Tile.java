@@ -1,12 +1,17 @@
 package Game;
 
 import Data.Coordinate;
+import Data.SerializationVersion;
 import Game.Tags.Tag;
+
+import java.io.Serializable;
 
 /**
  * Created by Jared on 4/7/2018.
  */
-public class Tile extends TagHolder {
+public class Tile extends TagHolder implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Coordinate location;
     private String name;

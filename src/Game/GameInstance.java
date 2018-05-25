@@ -4,7 +4,6 @@ import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
-import Engine.ViewWindow;
 import Game.AnimatedTiles.AnimatedTile;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
@@ -15,6 +14,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
@@ -23,35 +23,58 @@ import java.util.TimerTask;
 /**
  * Created by Jared on 3/27/2018.
  */
-public class GameInstance {
+public class GameInstance implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private boolean isPlayerTurn = true;
 
+    private ArrayList<EntityOperation> entityOperations;
+
     private Player player;
-    private ArrayList<EntityOperation> entityOperations = new ArrayList<>();
+
+    private transient GameMouseInput mi;
+    private transient GameMaster gameMaster;
 
     private Level currentLevel;
-    private ArrayList<Level> levels = new ArrayList<>();
+    private ArrayList<Level> levels;
 
     private String currentZoneName;
 
-    private LayerManager lm;
-    private TextBox textBox;
-    private QuickMenu quickMenu;
+    private transient LayerManager lm;
+    private transient TextBox textBox;
+    private transient QuickMenu quickMenu;
+
+    private transient Timer tileAnimationTimer;
 
     private long currentUID = 1;
 
-    public GameInstance(LayerManager manager, ViewWindow window){
+    public GameInstance(){
+        levels = new ArrayList<>();
+        entityOperations = new ArrayList<>();
+    }
 
-        lm = manager;
+    void assignLayerManager(LayerManager lm){
+        this.lm = lm;
+    }
 
-        FileIO io = new FileIO();
+    void assignMouseInput(GameMouseInput gmi){
+        mi = gmi;
+    }
 
-        player = new Player(window, manager, this);
+    void assignGameMaster(GameMaster master) {
+        gameMaster = master;
+    }
 
-        enterLevel(io.getRootFilePath() + "LevelData/gameStart.lda", new Coordinate(0, 0));
+    public void initialize(LayerManager lm){
+        this.lm = lm;
+        entityOperations = new ArrayList<>();
 
-        window.addKeyListener(new KeyAdapter() {
+        if (player == null) {
+            player = new Player(lm.getWindow(), lm, this);
+        }
+
+        lm.getWindow().addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_F8)
@@ -59,37 +82,57 @@ public class GameInstance {
             }
         });
 
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+        tileAnimationTimer = new Timer();
+        tileAnimationTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                ArrayList<AnimatedTile> animatedTiles = currentLevel.getAnimatedTiles();
-                for (int i = 0; i < animatedTiles.size(); i++){
-                    AnimatedTile animatedTile = animatedTiles.get(i);
-                    SpecialText text = animatedTile.onDisplayUpdate();
-                    currentLevel.getAnimatedTileLayer().editLayer(animatedTile.getLocation().getX(), animatedTile.getLocation().getY(), text);
-                    if (text == null) {
-                        currentLevel.removeAnimatedTile(animatedTile.getLocation());
-                        i--;
+                if (currentLevel != null) {
+                    ArrayList<AnimatedTile> animatedTiles = currentLevel.getAnimatedTiles();
+                    for (int i = 0; i < animatedTiles.size(); i++){
+                        AnimatedTile animatedTile = animatedTiles.get(i);
+                        SpecialText text = animatedTile.onDisplayUpdate();
+                        currentLevel.getAnimatedTileLayer().editLayer(animatedTile.getLocation().getX(), animatedTile.getLocation().getY(), text);
+                        if (text == null) {
+                            currentLevel.removeAnimatedTile(animatedTile.getLocation());
+                            i--;
+                        }
                     }
                 }
             }
         }, 50, 50);
 
-        textBox = new TextBox(lm, player);
+        textBox = new TextBox(lm, getPlayer());
+        quickMenu = new QuickMenu(lm, getPlayer());
 
-        quickMenu = new QuickMenu(lm, player);
-
-        pathTestLayer = new Layer(currentLevel.getBackdrop().getCols(), currentLevel.getBackdrop().getRows(), "pathtest", 0, 0, LayerImportances.VFX);
+        pathTestLayer = new Layer(0, 0, "pathtest", 0, 0, LayerImportances.VFX);
         pathTestLayer.setVisible(false);
         lm.addLayer(pathTestLayer);
     }
 
-    void enterLevel(String levelFilePath, Coordinate playerPos){
-        player.freeze();
+    public void dispose(){
+        tileAnimationTimer.cancel();
         if (currentLevel != null) {
             currentLevel.onExit(lm);
-            currentLevel.removeEntity(player);
+            currentLevel.removeEntity(getPlayer());
+            currentLevel.destroy();
+        }
+        currentLevel = null;
+        player.cleanup();
+        player = null;
+        textBox.setPlayer(null);
+        quickMenu.setPlayer(null);
+        quickMenu.clearMenu();
+    }
+
+    public void loadGame(File gameFile){
+        gameMaster.loadGame(gameFile);
+    }
+
+    public void enterLevel(String levelFilePath, Coordinate playerPos){
+        getPlayer().freeze();
+        if (currentLevel != null) {
+            currentLevel.onExit(lm);
+            currentLevel.removeEntity(getPlayer());
         }
         String zoneName = getFilePathParentFolder(levelFilePath);
         if (currentZoneName == null || !currentZoneName.equals(zoneName)){
@@ -117,11 +160,11 @@ public class GameInstance {
     }
 
     private void startLevel(Level level, Coordinate loc){
-        level.addEntity(player);
+        level.addEntity(getPlayer());
         level.onEnter(lm);
-        player.setPos(loc);
-        player.updateCameraPos();
-        player.unfreeze();
+        getPlayer().setPos(loc);
+        getPlayer().updateCameraPos();
+        getPlayer().unfreeze();
     }
 
     /**
@@ -139,6 +182,9 @@ public class GameInstance {
         File levelFile = new File(levelFilePath);
         LevelData ldata = io.openLevel(levelFile);
 
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Initialize level...");
+        newLevel.initialize(ldata);
+
         DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Process entity data...");
         EntityStruct[][] entityMatrix = ldata.getEntityData();
         for (int col = 0; col < entityMatrix.length; col++){
@@ -148,9 +194,6 @@ public class GameInstance {
                 }
             }
         }
-
-        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Initialize tiles...");
-        newLevel.initialize(ldata);
 
         DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Assign warp zones...");
         newLevel.setWarpZones(ldata.getWarpZones());
@@ -203,6 +246,10 @@ public class GameInstance {
 
     public Player getPlayer() { return player; }
 
+    public GameMaster getGameMaster() {
+        return gameMaster;
+    }
+
     boolean isPlayerTurn() { return isPlayerTurn; }
 
     public Layer getBackdrop() {
@@ -213,10 +260,10 @@ public class GameInstance {
         entityOperations.add(() -> currentLevel.removeEntity(e));
     }
 
-    public void establishMouseInput(GameMouseInput mi){
+    public void establishMouseInput(){
         mi.addInputReceiver(textBox);
         mi.addInputReceiver(quickMenu);
-        player.assignMouseInput(mi);
+        getPlayer().assignMouseInput(mi);
     }
 
     public void setPlayerTurn(boolean playerTurn) {
@@ -243,8 +290,8 @@ public class GameInstance {
             }
             runTimes[3] = System.nanoTime();
             reportUpdatePerformance(runTimes);
-            player.updateHUD();
-            player.updateSynopsis();
+            getPlayer().updateHUD();
+            getPlayer().updateSynopsis();
             isPlayerTurn = true;
         //});
         //enemyTurnThread.start();
@@ -304,7 +351,7 @@ public class GameInstance {
         if (max > 0) {
             points = new ArrayList[max];
             ArrayList<PathPoint> initialSet = new ArrayList<>();
-            initialSet.add(new PathPoint(player.getLocation(), 0));
+            initialSet.add(new PathPoint(getPlayer().getLocation(), 0));
             points[0] = initialSet; //A single point is needed to begin spreading out new ones
             for (int n = 1; n < max - 2; n++) {
                 DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.calculatePathing","n:%1$d points:%2$d", n, pointLog.size());
