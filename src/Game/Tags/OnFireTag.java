@@ -53,7 +53,7 @@ public class OnFireTag extends Tag {
     public void onLevelEnter(TagEvent e) {
         if (e.getSource() instanceof Tile) {
             Tile source = (Tile) e.getSource();
-            e.getGameInstance().getCurrentLevel().addAnimatedTile(new FireAnimation(source.getLocation()));
+            source.getLevel().addAnimatedTile(new FireAnimation(source.getLocation()));
         }
     }
 

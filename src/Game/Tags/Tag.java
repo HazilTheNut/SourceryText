@@ -35,7 +35,7 @@ public class Tag implements Serializable {
 
     // E V E N T S
 
-    //Ran when the player enters a level. Cancellation does nothing.
+    //Ran when the player enters a level. Cancellation does nothing. GameInstance is null for Tiles.
     public void onLevelEnter(TagEvent e){}
 
     //Upon when the TagHolder Item is 'used'

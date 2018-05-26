@@ -49,7 +49,7 @@ public class Projectile extends TagHolder {
         for (int i = 0; i < totalCycles; i++) {
             xpos += xvelocity;
             ypos += yvelocity;
-            Coordinate newPos = new Coordinate((int)Math.round(xpos), (int)Math.round(ypos));
+            Coordinate newPos = getRoundedPos();
             iconLayer.setPos(newPos);
             DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile:"+i,"pos: %1$s", newPos);
             Entity entity = gi.getCurrentLevel().getSolidEntityAt(newPos);
@@ -71,6 +71,10 @@ public class Projectile extends TagHolder {
         collideWithTerrain(gi);
     }
 
+    private Coordinate getRoundedPos(){
+        return new Coordinate((int)Math.round(xpos), (int)Math.round(ypos));
+    }
+
     private void collide(TagHolder other, GameInstance gi){
         TagEvent dmgEvent = new TagEvent(0, true, this, other, gi);
         for (Tag tag : getTags()) tag.onDealDamage(dmgEvent);
@@ -82,7 +86,7 @@ public class Projectile extends TagHolder {
     }
 
     private void collideWithTerrain(GameInstance gi){
-        Tile landingTile = gi.getTileAt(new Coordinate((int)xpos, (int)ypos));
+        Tile landingTile = gi.getTileAt(getRoundedPos());
         if (landingTile != null) {
             collide(landingTile, gi);
         }

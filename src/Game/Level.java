@@ -141,6 +141,7 @@ public class Level implements Serializable {
             animatedTiles = new ArrayList<>();
         }
         for (Entity e : entities) e.onLevelEnter();
+        for (Tile t : getAllTiles()) t.onLevelEnter(null);
         lm.addLayer(backdrop);
         lm.addLayer(overlayTileLayer);
         lm.addLayer(animatedTileLayer);
