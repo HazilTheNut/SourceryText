@@ -12,6 +12,7 @@ import Game.Entities.Entity;
 
 import java.awt.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 01-Apr-18.
@@ -131,7 +132,7 @@ public class HUD implements MouseInputReceiver, Serializable {
     private final Color txt_weapon = new Color(209, 255, 209);
 
     public void updateSynopsis(Coordinate levelPos){
-        Entity e = player.getGameInstance().getCurrentLevel().getSolidEntityAt(levelPos);
+        ArrayList<Entity> entities = player.getGameInstance().getCurrentLevel().getEntitiesAt(levelPos);
         Tile t = null;
         try {
             t = player.getGameInstance().getTileAt(levelPos);
@@ -149,7 +150,7 @@ public class HUD implements MouseInputReceiver, Serializable {
             boxLength = Math.max(boxLength, t.getName().length() + 2);
             boxHeight++;
         }
-        if (e != null) {
+        for (Entity e : entities){
             boxLength = Math.max(boxLength, e.getName().length() + 2);
             boxHeight++;
             if (e instanceof CombatEntity) {
@@ -158,7 +159,7 @@ public class HUD implements MouseInputReceiver, Serializable {
             }
         }
         //Begin drawing
-        if (e != null){
+        for (Entity e : entities){
             drawEntitySynopsis(e);
         }
         if (t != null){

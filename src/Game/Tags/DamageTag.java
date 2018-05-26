@@ -1,11 +1,14 @@
 package Game.Tags;
 
+import Data.SerializationVersion;
 import Game.TagEvent;
 
 /**
  * Created by Jared on 4/1/2018.
  */
 public class DamageTag extends Tag{
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     public int damageAmount;
 

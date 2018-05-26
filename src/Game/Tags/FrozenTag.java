@@ -1,5 +1,6 @@
 package Game.Tags;
 
+import Data.SerializationVersion;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
@@ -13,6 +14,8 @@ import java.awt.*;
  * Created by Jared on 4/25/2018.
  */
 public class FrozenTag extends Tag {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int duration = 4;
 

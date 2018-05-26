@@ -114,7 +114,6 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         validate();
 
-        colorPicker.setSize(new Dimension(215, 200));
         System.out.println("Initial HSB Value: \n" + fgHSB[0] + "\n" + fgHSB[1] + "\n" + fgHSB[2]);
         System.out.println("Color Picker sizing: " + colorPicker.getWidth() + " x " + colorPicker.getHeight());
         colorPicker.setColorData(fgHSB);

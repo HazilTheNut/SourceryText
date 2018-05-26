@@ -70,6 +70,7 @@ public class Entity extends TagHolder implements Serializable {
 
     public void onLevelEnter(){
         gi.getLayerManager().addLayer(sprite);
+        onLevelEnter(gi);
     }
 
     public void onLevelExit(){

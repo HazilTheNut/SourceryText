@@ -1,11 +1,14 @@
 package Game.Tags;
 
+import Data.SerializationVersion;
 import Game.TagEvent;
 
 /**
  * Created by Jared on 3/31/2018.
  */
 public class HealthTag extends Tag{
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     public int healthAmount;
 

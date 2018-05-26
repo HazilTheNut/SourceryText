@@ -1,8 +1,11 @@
 package Game.Tags;
 
+import Data.SerializationVersion;
 import Game.*;
 
 public class LevelUpTag extends Tag{
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     /*
     The LevelUpTag should be used only by the 'Magic Potato' Item and it will only apply to the player

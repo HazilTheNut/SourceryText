@@ -2,9 +2,7 @@ package Game;
 
 import Data.*;
 import Engine.Layer;
-import Engine.LayerManager;
 import Engine.SpecialText;
-import Engine.ViewWindow;
 import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
@@ -56,9 +54,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     
     private ArrayList<Integer> downKeyCodes = new ArrayList<>(); //KeyCodes of keys currently pressed down on the keyboard
 
-    Player(ViewWindow window, LayerManager lm, GameInstance gameInstance){
-
-        window.addKeyListener(this);
+    Player(GameInstance gameInstance){
 
         Layer playerLayer = new Layer(new SpecialText[1][1], "player", 0, 0, LayerImportances.ENTITY_SOLID);
         playerLayer.editLayer(0, 0, playerSprite);
@@ -69,18 +65,20 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
         setLocation(new Coordinate(0, 0));
 
-        inv = new PlayerInventory(lm, this);
-
         setMaxHealth(20);
         setStrength(1);
 
         setName("Player");
 
         addTag(TagRegistry.FLAMMABLE, this);
-        initSwooshLayer();
         initNoWeapon();
+    }
 
-        hud = new HUD(lm, this);
+    void playerInit(){
+        inv = new PlayerInventory(gi.getLayerManager(), this);
+        hud = new HUD(gi.getLayerManager(), this);
+        gi.getLayerManager().getWindow().addKeyListener(this);
+        initSwooshLayer();
     }
 
     @Override

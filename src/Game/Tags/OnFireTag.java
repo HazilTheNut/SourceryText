@@ -1,6 +1,7 @@
 package Game.Tags;
 
 import Data.Coordinate;
+import Data.SerializationVersion;
 import Engine.SpecialText;
 import Game.AnimatedTiles.FireAnimation;
 import Game.Entities.Entity;
@@ -18,6 +19,8 @@ import java.util.Random;
  * Created by Jared on 4/10/2018.
  */
 public class OnFireTag extends Tag {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Random random = new Random();
     private int lifetime = 6;
@@ -43,6 +46,14 @@ public class OnFireTag extends Tag {
         } else if (e.getTarget().hasTag(TagRegistry.BURN_SLOW)){
             lifetime = 12;
             spreadLikelihood = 0.2;
+        }
+    }
+
+    @Override
+    public void onLevelEnter(TagEvent e) {
+        if (e.getSource() instanceof Tile) {
+            Tile source = (Tile) e.getSource();
+            e.getGameInstance().getCurrentLevel().addAnimatedTile(new FireAnimation(source.getLocation()));
         }
     }
 

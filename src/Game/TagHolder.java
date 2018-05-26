@@ -1,5 +1,6 @@
 package Game;
 
+import Data.SerializationVersion;
 import Game.Debug.DebugWindow;
 import Game.Registries.TagRegistry;
 import Game.Tags.DamageTag;
@@ -7,12 +8,15 @@ import Game.Tags.HealthTag;
 import Game.Tags.Tag;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Jared on 3/31/2018.
  */
-public class TagHolder {
+public class TagHolder implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private ArrayList<Tag> tags = new ArrayList<>();
 
@@ -55,6 +59,13 @@ public class TagHolder {
             if (tag.getId() == id) return tag;
         }
         return null;
+    }
+
+    public void onLevelEnter(GameInstance gi){
+        TagEvent event = new TagEvent(0, true, this, this, gi);
+        for (Tag tag : tags) {
+            tag.onLevelEnter(event);
+        }
     }
 
     /**

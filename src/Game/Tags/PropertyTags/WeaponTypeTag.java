@@ -1,5 +1,6 @@
 package Game.Tags.PropertyTags;
 
+import Data.SerializationVersion;
 import Game.Entities.CombatEntity;
 import Game.Item;
 import Game.TagEvent;
@@ -9,6 +10,8 @@ import Game.Tags.Tag;
  * Created by Jared on 4/2/2018.
  */
 public class WeaponTypeTag extends Tag {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
     public void onItemUse(TagEvent e) {

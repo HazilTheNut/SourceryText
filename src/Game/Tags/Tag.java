@@ -1,13 +1,17 @@
 package Game.Tags;
 
+import Data.SerializationVersion;
 import Game.TagEvent;
 
 import java.awt.*;
+import java.io.Serializable;
 
 /**
  * Created by Jared on 3/26/2018.
  */
-public class Tag {
+public class Tag implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private String name;
     private int id;
@@ -30,6 +34,9 @@ public class Tag {
     }
 
     // E V E N T S
+
+    //Ran when the player enters a level. Cancellation does nothing.
+    public void onLevelEnter(TagEvent e){}
 
     //Upon when the TagHolder Item is 'used'
     public void onItemUse(TagEvent e) {}

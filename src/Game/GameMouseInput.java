@@ -38,6 +38,10 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener{
         lm.addLayer(mouseHighlight);
     }
 
+    public Layer getMouseHighlight() {
+        return mouseHighlight;
+    }
+
     private Coordinate getTiledMousePos(Coordinate mousePos){
         Coordinate tiledPos = getScreenPos(mousePos);
         return tiledPos.add(lm.getCameraPos());

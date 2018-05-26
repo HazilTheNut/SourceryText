@@ -36,7 +36,7 @@ public class Level implements Serializable {
     private ArrayList<Entity> entities;
 
     private Layer animatedTileLayer;
-    private ArrayList<AnimatedTile> animatedTiles;
+    private transient ArrayList<AnimatedTile> animatedTiles;
 
     private ArrayList<LevelScript> levelScripts;
 
@@ -137,6 +137,9 @@ public class Level implements Serializable {
     }
 
     void onEnter(LayerManager lm){
+        if (animatedTiles == null) {
+            animatedTiles = new ArrayList<>();
+        }
         for (Entity e : entities) e.onLevelEnter();
         lm.addLayer(backdrop);
         lm.addLayer(overlayTileLayer);

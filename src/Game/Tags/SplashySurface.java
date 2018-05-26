@@ -1,44 +1,38 @@
 package Game.Tags;
 
 import Data.Coordinate;
+import Data.SerializationVersion;
+import Game.GameInstance;
 import Game.TagEvent;
 import Game.Tile;
+
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 4/23/2018.
  */
 public class SplashySurface extends Tag {
 
-    private final int SPLASH_NO    = -1;
-    private final int SPLASH_READY = 0;
-    private final int SPLASH_START = 1;
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    private int splashTimer = -1;
-    Coordinate splashLoc;
-
-    SplashAction splashAction;
-
-    @Override
-    public void onContact(TagEvent e) {
-        if (e.getSource() instanceof Tile) {
-            Tile source = (Tile) e.getSource();
-            splashLoc = source.getLocation();
-            splashTimer = SPLASH_READY;
-        }
-    }
+    ArrayList<Coordinate> splashLocs = new ArrayList<>();
 
     @Override
     public void onTurn(TagEvent e) {
-        if (splashTimer == SPLASH_START){
-            //if (e.getGameInstance().getSolidEntityAt(splashLoc) == null)
-            splashAction.onSplash(e);
-            splashTimer = SPLASH_NO;
-        } else if (splashTimer == SPLASH_READY){
-            splashTimer = SPLASH_START;
+        if (e.getSource() instanceof Tile) {
+            Tile source = (Tile) e.getSource();
+            if (splashLocs.contains(source.getLocation())){ //Checking for places where entities have already been
+                if (e.getGameInstance().getCurrentLevel().getSolidEntityAt(source.getLocation()) == null) { //No entity here, so it's now time to play the animation
+                    playSplash(source.getLocation(), e.getGameInstance());
+                }
+                splashLocs.remove(source.getLocation());
+            } else if (e.getGameInstance().getCurrentLevel().getSolidEntityAt(source.getLocation()) != null){ //Entities have not been here, there is one now. Better record that to track when they move
+                splashLocs.add(source.getLocation());
+            }
         }
     }
 
-    protected interface SplashAction{
-        void onSplash(TagEvent e);
+    protected void playSplash(Coordinate loc, GameInstance gi){
+        //Override this
     }
 }

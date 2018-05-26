@@ -32,7 +32,7 @@ public class Projectile extends TagHolder {
         xpos = creator.getLocation().getX();
         ypos = creator.getLocation().getY();
         double angle = Math.atan2(target.getY() - Math.round(ypos), target.getX() - Math.round(xpos));
-        DebugWindow.reportf(DebugWindow.GAME, "Projectile.init","Start pos: %1$s; Angle: %2$f", creator.getLocation(), angle * (180 / Math.PI));
+        DebugWindow.reportf(DebugWindow.GAME, "Projectile.playerInit","Start pos: %1$s; Angle: %2$f", creator.getLocation(), angle * (180 / Math.PI));
         xvelocity = UNITS_PER_CYCLE * Math.cos(angle);
         yvelocity = UNITS_PER_CYCLE * Math.sin(angle);
         iconLayer = new Layer(1, 1, creator.getLocation().toString() + target.toString() + icon.toString(), (int)xpos, (int)ypos, LayerImportances.ANIMATION);
