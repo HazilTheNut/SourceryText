@@ -123,10 +123,6 @@ public class GameInstance implements Serializable {
         quickMenu.clearMenu();
     }
 
-    public void loadGame(File gameFile){
-        gameMaster.loadGame(gameFile);
-    }
-
     public void enterLevel(String levelFilePath, Coordinate playerPos){
         getPlayer().freeze();
         if (currentLevel != null) {
@@ -299,6 +295,10 @@ public class GameInstance implements Serializable {
 
     public Level getCurrentLevel() {
         return currentLevel;
+    }
+
+    public String getCurrentZoneName() {
+        return currentZoneName;
     }
 
     private void reportUpdatePerformance(long[] times){

@@ -17,21 +17,24 @@ public class LayerImportances {
 
      */
 
-    public static final int BACKDROP         = 0;
-    public static final int TILE_OVERLAY     = 10;
-    public static final int TILE_ANIM        = 15;
-    public static final int ENTITY           = 20;
-    public static final int ENTITY_SOLID     = 25;
-    public static final int ANIMATION        = 30;
-    public static final int VFX              = 35;
-    public static final int GAME_CURSOR      = 40;
-    public static final int HUD_SYNOPSIS     = 45;
-    public static final int MENU             = 50;
-    public static final int MENU_CURSOR      = 55;
-    public static final int QUICKMENU        = 57;
-    public static final int QUICKMENU_CURSOR = 58;
-    public static final int HUD              = 60;
-    public static final int HUD_SPELL_MENU   = 65;
-    public static final int HUD_SPELL_CURSOR = 67;
-    public static final int TEXT_BOX         = 70;
+    public static final int BACKDROP          = 0;
+    public static final int TILE_OVERLAY      = 10;
+    public static final int TILE_ANIM         = 15;
+    public static final int ENTITY            = 20;
+    public static final int ENTITY_SOLID      = 25;
+    public static final int ANIMATION         = 30;
+    public static final int VFX               = 35;
+    public static final int GAME_CURSOR       = 40;
+    public static final int HUD_SYNOPSIS      = 45;
+    public static final int MENU              = 50;
+    public static final int MENU_CURSOR       = 55;
+    public static final int QUICKMENU         = 57;
+    public static final int QUICKMENU_CURSOR  = 58;
+    public static final int HUD               = 60;
+    public static final int HUD_SPELL_MENU    = 65;
+    public static final int HUD_SPELL_CURSOR  = 67;
+    public static final int TEXT_BOX          = 70;
+    public static final int MAIN_MENU         = 80;
+    public static final int MENU_SUPER        = 90;
+    public static final int MENU_SUPER_CURSOR = 95;
 }

@@ -145,8 +145,8 @@ public class EditorToolPanel extends JPanel {
         openLevelItem.addActionListener(e -> openLevel(watcher));
         keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK);
         openLevelItem.setAccelerator(keyStroke);
-        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "open");
-        rootPane.getActionMap().put("open", new MenuAction(() -> openLevel(watcher)));
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "openLoadDialog");
+        rootPane.getActionMap().put("openLoadDialog", new MenuAction(() -> openLevel(watcher)));
         levelMenu.add(openLevelItem);
 
         JMenuItem newLevelItem = new JMenuItem("New Level");

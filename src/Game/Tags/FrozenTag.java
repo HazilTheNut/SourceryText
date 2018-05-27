@@ -37,7 +37,7 @@ public class FrozenTag extends Tag {
                     SpecialText iceText;
                     int hash = 23 * 113 * iceTile.getLocation().getX() + iceTile.getLocation().getY();
                     DebugWindow.reportf(DebugWindow.MISC, "FrozenTag","Ice Hash: %1$d", hash);
-                    char tileChar = (hash % 3 == 0) ? '/' : ' ';
+                    char tileChar = (hash % 7 == 0) ? '/' : ' ';
                     if (e.getTarget().hasTag(TagRegistry.TILE_WALL)) {
                         iceTile.addTag(TagRegistry.TILE_WALL, e.getSource());
                         iceText = new SpecialText(tileChar, Color.WHITE, new Color(147, 166, 199));

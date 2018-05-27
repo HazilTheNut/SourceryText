@@ -63,7 +63,7 @@ public class Projectile extends TagHolder {
                     collideWithTerrain(gi);
                     return;
                 } else {
-                    applyFlyover(new Coordinate((int)xpos, (int)ypos), gi);
+                    applyFlyover(newPos, gi);
                 }
             }
             sleep(50);

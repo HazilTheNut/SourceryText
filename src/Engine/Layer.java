@@ -112,7 +112,7 @@ public class Layer implements Serializable{
     public void convertNullToOpaque(){
         for (int col = 0; col < textMatrix.length; col++){
             for (int row = 0; row < textMatrix[0].length; row++){
-                if (textMatrix[col][row] == null) textMatrix[col][row] = new SpecialText(' ');
+                if (textMatrix[col][row] == null) textMatrix[col][row] = new SpecialText(' ', Color.WHITE, Color.BLACK);
             }
         }
     }
@@ -135,6 +135,33 @@ public class Layer implements Serializable{
         for (int col = 0; col < textMatrix.length; col++){
             for (int row = 0; row < textMatrix[0].length; row++){
                 textMatrix[col][row] = text;
+            }
+        }
+    }
+
+    /**
+     * Fills layer with an input SpecialText, but in a smaller rectangle defined by two corners
+     * @param text The SpecialText to fill with
+     * @param topLeft The top-left corner of the rectangle
+     * @param bottomRight The bottom-right corner of the rectangle
+     */
+    public void fillLayer(SpecialText text, Coordinate topLeft, Coordinate bottomRight){
+        for (int col = topLeft.getX(); col <= bottomRight.getX(); col++){
+            for (int row = topLeft.getY(); row <= bottomRight.getY(); row++){
+                editLayer(col, row, text);
+            }
+        }
+    }
+
+    /**
+     * Inserts the SpecialText contents of one layer into this Layer
+     * @param other The layer the insert into this one
+     * @param start The starting coordinate for insertion
+     */
+    public void insert(Layer other, Coordinate start){
+        for (int col = 0; col < other.getCols(); col++){
+            for (int row = 0; row < other.getRows(); row++){
+                editLayer(col + start.getX(), row + start.getY(), other.getSpecialText(col, row));
             }
         }
     }

@@ -292,8 +292,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 QuickMenu quickMenu = gi.getQuickMenu();
                 quickMenu.clearMenu();
                 quickMenu.addMenuItem("Load Game",    new Color(255, 230, 170), () -> {
-                    FileIO io = new FileIO();
-                    gi.getGameMaster().loadGame(io.chooseSavedGame());
+                    gi.getGameMaster().openGameLoadMenu();
                 });
                 quickMenu.addMenuItem("Options",      new Color(173, 255, 228), () -> {});
                 quickMenu.addMenuItem("Quit to Menu", new Color(255, 171, 171), () -> {

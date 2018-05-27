@@ -84,6 +84,20 @@ public class FileIO {
     }
 
     /**
+     * Gets the file extension of a file.
+     * @param file The File you want to find the extension of
+     * @return The file extension, including the '.'
+     */
+    public String getFileExtension(File file) {
+        String name = file.getName();
+        try {
+            return name.substring(name.lastIndexOf(".") + 1);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /**
      * Runs the FileChooser to pick a .lda file.
      *
      * This method lazily starts the FileChooser beginning location at the root file path
@@ -221,23 +235,18 @@ public class FileIO {
         return null;
     }
 
-    public void serializeGameInstance(GameInstance gi, String startingPath){
-        String path;
-        JFileChooser fileChooser = new JFileChooser(startingPath);
-        int fileChooseOption = fileChooser.showSaveDialog(new Component(){});
-        if (fileChooseOption == JFileChooser.APPROVE_OPTION){
-            path = decodeFilePath(fileChooser.getSelectedFile().getPath());
-            if (!path.endsWith(".sts")) { // Add '.sav' to file if user didn't.
-                path += ".sts";
-            }
-            try {
-                FileOutputStream out = new FileOutputStream(path);
-                ObjectOutputStream objOut = new ObjectOutputStream(out);
-                objOut.writeObject(gi);
-                System.out.println("[FileIO.serializeGameInstance] Saved level to: " + path);
-            } catch (java.io.IOException e) {
-                e.printStackTrace();
-            }
+    public void serializeGameInstance(GameInstance gi, String path){
+        if (!path.endsWith(".sts")) { // Add '.sav' to file if user didn't.
+            path += ".sts";
         }
+        try {
+            FileOutputStream out = new FileOutputStream(path);
+            ObjectOutputStream objOut = new ObjectOutputStream(out);
+            objOut.writeObject(gi);
+            System.out.println("[FileIO.serializeGameInstance] Saved game to: " + path);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

@@ -9,7 +9,7 @@ public class SavePoint extends Entity {
 
     @Override
     public void onInteract(Player player) {
-        gi.getGameMaster().saveGame();
+        gi.getGameMaster().openGameSaveMenu();
     }
 
     @Override
