@@ -22,21 +22,26 @@ public class FrozenTag extends Tag {
 
     @Override
     public void onAddThis(TagEvent e) {
-        if (e.getTarget() instanceof Tile && e.getTarget().hasTag(TagRegistry.WET)) {
-            Tile target = (Tile) e.getTarget();
-            Tile overlay = target.getLevel().getOverlayTileAt(target.getLocation());
-            if (overlay == null) {
+        if (e.getTarget() instanceof Tile) {
+            if (e.getTarget().hasTag(TagRegistry.WET)) {
+                Tile target = (Tile) e.getTarget();
+                Tile overlay = target.getLevel().getOverlayTileAt(target.getLocation());
+                if (overlay == null) {
+                    e.cancel();
+                    createIceOverlayTile(target, e.getSource());
+                    e.addFutureAction(event -> target.removeTag(TagRegistry.FROZEN));
+                }
+            } else
                 e.cancel();
-                createIceOverlayTile(target, e.getSource());
-                e.addFutureAction(event -> target.removeTag(TagRegistry.FROZEN));
-            }
         }
     }
 
     private void createIceOverlayTile(Tile target, TagHolder source){
         Tile iceTile = new Tile(target.getLocation(), "Ice", target.getLevel());
         target.getLevel().addOverlayTile(iceTile);
+        iceTile.addTag(TagRegistry.WET, source);
         iceTile.addTag(TagRegistry.FROZEN, source);
+        iceTile.removeTag(TagRegistry.WET);
         iceTile.addTag(TagRegistry.FLAMMABLE, source);
         SpecialText iceText;
         int hash = 23 * 113 * iceTile.getLocation().getX() + iceTile.getLocation().getY();
@@ -65,7 +70,11 @@ public class FrozenTag extends Tag {
 
     @Override
     public void onAdd(TagEvent e) {
-        if (e.getTarget().hasTag(TagRegistry.ON_FIRE)) e.addFutureAction(event -> e.getTarget().removeTag(getId()));
+        if (e.getTarget().hasTag(TagRegistry.ON_FIRE)) e.addFutureAction(event -> {
+            e.getTarget().removeTag(getId());
+            e.getTarget().addTag(TagRegistry.WET, e.getTarget());
+            e.getTarget().addTag(TagRegistry.NO_REFREEZE, e.getTarget());
+        });
     }
 
     @Override

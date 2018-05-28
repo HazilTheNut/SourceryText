@@ -5,6 +5,7 @@ import Engine.SpecialText;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
+import Game.TagHolder;
 import Game.Tags.Tag;
 import Game.Tile;
 
@@ -28,26 +29,29 @@ public class WetTag extends Tag {
             lifetime = LIFETIME_START;
         } else if (e.getTarget() instanceof Tile){
             Tile tile = (Tile)e.getTarget();
-            if (!e.getTarget().hasTag(TagRegistry.SHALLOW_WATER) && !e.getTarget().hasTag(TagRegistry.DEEP_WATER) && !tile.getLevel().getOverlayTiles().contains(tile)){
-                createOverlayTile(tile);
-                e.cancel();
+            Tile baseTile = tile.getLevel().getBaseTileAt(tile.getLocation());
+            if (baseTile != null) {
+                if (!baseTile.hasTag(TagRegistry.SHALLOW_WATER) && !baseTile.hasTag(TagRegistry.DEEP_WATER)) {
+                    tile.getLevel().getOverlayTileLayer().editLayer(tile.getLocation(), new SpecialText(' ', Color.WHITE, new Color(15, 15, 30, 30)));
+                }
             }
         }
-    }
-
-    private void createOverlayTile(Tile tile){
-        Tile waterTile = new Tile(tile.getLocation(), "Water", tile.getLevel());
-        tile.getLevel().addOverlayTile(waterTile);
-        waterTile.addTag(TagRegistry.SHALLOW_WATER, tile);
-        waterTile.addTag(TagRegistry.WET, tile);
-        waterTile.addTag(TagRegistry.NO_REFREEZE, tile);
-        tile.getLevel().getOverlayTileLayer().editLayer(tile.getLocation().getX(), tile.getLocation().getY(), new SpecialText(' ', Color.WHITE, new Color(50, 50, 255, 50)));
     }
 
     @Override
     public void onTurn(TagEvent e) {
         if (drying) lifetime--;
-        if (lifetime == 0) e.addCancelableAction(event -> e.getSource().removeTag(TagRegistry.WET));
+        if (lifetime == 0) e.addFutureAction(event -> e.getSource().removeTag(TagRegistry.WET));
+    }
+
+    @Override
+    public void onRemove(TagHolder owner) {
+        if (owner instanceof Tile) {
+            Tile tile = (Tile) owner;
+            if (tile.getLevel().getOverlayTileAt(tile.getLocation()) == null){
+                tile.getLevel().getOverlayTileLayer().editLayer(tile.getLocation(), null);
+            }
+        }
     }
 
     @Override

@@ -168,6 +168,12 @@ public class Level implements Serializable {
             return null;
     }
 
+    public Tile getBaseTileAt(Coordinate loc){
+        if (loc != null && isLocationValid(loc))
+            return baseTiles[loc.getX()][loc.getY()];
+        return null;
+    }
+
     public Entity getSolidEntityAt(Coordinate loc){
         for (Entity e : entities){
             if (e.getLocation().equals(loc) && e.isSolid()) return e;

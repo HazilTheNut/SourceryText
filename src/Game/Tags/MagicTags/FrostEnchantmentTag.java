@@ -16,11 +16,16 @@ public class FrostEnchantmentTag extends Tag {
 
     @Override
     public void onFlyOver(TagEvent e) {
-        e.addCancelableAction(event -> e.getTarget().addTag(TagRegistry.FROZEN, e.getSource()));
+        e.addCancelableAction(event -> transmit(e));
     }
 
     public void onContact(TagEvent e){
-        e.addCancelableAction(event -> e.getTarget().addTag(TagRegistry.FROZEN, e.getSource()));
+        e.addCancelableAction(event -> transmit(e));
+    }
+
+    private void transmit(TagEvent e){
+        if (!e.getTarget().hasTag(TagRegistry.NO_REFREEZE))
+            e.getTarget().addTag(TagRegistry.FROZEN, e.getSource());
     }
 
     @Override

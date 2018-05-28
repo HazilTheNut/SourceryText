@@ -33,7 +33,7 @@ public class OnFireTag extends Tag {
 
     @Override
     public void onAddThis(TagEvent e) {
-        if (!e.getTarget().hasTag(TagRegistry.FLAMMABLE)) e.cancel();
+        if (!e.getTarget().hasTag(TagRegistry.FLAMMABLE) || e.getTarget().hasTag(TagRegistry.WET)) e.cancel();
         e.addCancelableAction(event -> {
             if (e.getTarget() instanceof Tile) {
                 Tile target = (Tile) e.getTarget();
