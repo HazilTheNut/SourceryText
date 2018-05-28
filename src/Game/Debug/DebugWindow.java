@@ -5,6 +5,7 @@ import Engine.Layer;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,6 +21,7 @@ public class DebugWindow{
     private static DebugLogPane game;
     private static DebugLogPane entity;
     private static DebugLogPane misc;
+    private static DebugLogPane cursor;
     private static DebugLayerPanel layers;
 
     private static ArrayList<TextDispenseUpdate> dispenseUpdates;
@@ -30,6 +32,7 @@ public class DebugWindow{
     public static final int GAME        = 3; //The main game stuff that is surrounded by the 'stage'
     public static final int ENTITY      = 4; //Mainly a spam folder for entity info
     public static final int MISC        = 5; //Everything else
+    public static final int CURSOR      = 6; //For display about stuff under the cursor
 
     static final Color textColor = new Color(191, 244, 255);
 
@@ -41,7 +44,7 @@ public class DebugWindow{
         frame = new JFrame();
 
         frame.setTitle("Debug Log");
-        frame.setMinimumSize(new Dimension(300, 300));
+        frame.setMinimumSize(new Dimension(400, 400));
         frame.setLayout(new BorderLayout());
 
         performance = new DebugLogPane(true);
@@ -50,6 +53,7 @@ public class DebugWindow{
         game = new DebugLogPane(false);
         entity = new DebugLogPane(true);
         misc = new DebugLogPane(false);
+        cursor = new DebugLogPane(true);
         layers = new DebugLayerPanel();
 
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -59,6 +63,7 @@ public class DebugWindow{
         tabbedPane.addTab("Game",   createScrollPane(tabbedPane, game));
         tabbedPane.addTab("Entity", createScrollPane(tabbedPane, entity));
         tabbedPane.addTab("Misc",   createScrollPane(tabbedPane, misc));
+        tabbedPane.addTab("Cursor", createScrollPane(tabbedPane, cursor));
         tabbedPane.addTab("Layers", layers);
 
         frame.add(tabbedPane, BorderLayout.CENTER);
@@ -88,12 +93,17 @@ public class DebugWindow{
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                for (int i = 0; i < entryActions.size();) {
-                    if (entryActions.get(i) != null) {
-                        entryActions.get(i).run();
-                        entryActions.remove(i);
+                try {
+                    for (int i = 0; i < entryActions.size();) {
+                        if (entryActions.get(i) != null) {
+                            entryActions.get(i).run();
+                            entryActions.remove(i);
+                        }
                     }
+                } catch (NullPointerException | ConcurrentModificationException e){
+                    e.printStackTrace();
                 }
+
             }
         }, 10, 100);
     }
@@ -151,6 +161,8 @@ public class DebugWindow{
                 return entity;
             case MISC:
                 return misc;
+            case CURSOR:
+                return cursor;
             default:
                 return null;
         }

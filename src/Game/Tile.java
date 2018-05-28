@@ -42,7 +42,7 @@ public class Tile extends TagHolder implements Serializable {
             tag.onTurn(event);
         }
         if (event.eventPassed()){
-            event.enactEvent();
+            event.doCancelableActions();
         }
     }
 

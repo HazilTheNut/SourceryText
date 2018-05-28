@@ -130,7 +130,7 @@ public class CombatEntity extends Entity{
             for (Tag tag : getWeapon().getTags())
                 tag.onDealDamage(event);
             if (event.eventPassed()) {
-                event.enactEvent();
+                event.doCancelableActions();
                 ce.receiveDamage(event.getAmount());
                 getWeapon().decrementQty();
                 if (getWeapon().getItemData().getQty() <= 0) {

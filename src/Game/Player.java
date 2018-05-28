@@ -354,6 +354,19 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     @Override
     public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
         mouseLevelPos = levelPos;
+        if (gi.getCurrentLevel().isLocationValid(levelPos)) {
+            DebugWindow.reportf(DebugWindow.CURSOR, "BASE TILE", "Tags: %1$s", gi.getCurrentLevel().getBaseTiles()[levelPos.getX()][levelPos.getY()].getTagList());
+            Tile overlay = gi.getCurrentLevel().getOverlayTileAt(levelPos);
+            if (overlay != null) {
+                DebugWindow.reportf(DebugWindow.CURSOR, "OVERLAY TILE", "Tags: %1$s", overlay.getTagList());
+            } else {
+                DebugWindow.reportf(DebugWindow.CURSOR, "OVERLAY TILE", " - -");
+            }
+            ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(levelPos);
+            for (int i = 0; i < entities.size(); i++) {
+                DebugWindow.reportf(DebugWindow.CURSOR, "ENTTIY " + (i+1), "Tags: %1$s", entities.get(i).getTagList());
+            }
+        }
         return false;
     }
 

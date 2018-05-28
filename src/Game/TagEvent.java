@@ -16,7 +16,8 @@ public class TagEvent {
 
     private GameInstance gi;
 
-    private ArrayList<EventAction> eventActions = new ArrayList<>();
+    private ArrayList<EventAction> cancelableActions = new ArrayList<>(); //Useful for when you want do something when the event doe'nst get cancelled
+    private ArrayList<EventAction> futureActions     = new ArrayList<>(); //Useful for when you wnt to do things after all the tags are processed
 
     public TagEvent(int startingAmount, boolean successful, TagHolder source, TagHolder target, GameInstance gameInstance){
         amount = startingAmount;
@@ -61,10 +62,16 @@ public class TagEvent {
 
     public boolean eventPassed() { return isSuccessful() && !isCanceled(); }
 
-    public void addCancelableAction(EventAction e){ eventActions.add(e); }
+    public void addCancelableAction(EventAction e){ cancelableActions.add(e); }
 
-    public void enactEvent(){
-        for (EventAction action : eventActions) action.doAction(this);
+    public void addFutureAction(EventAction e){ futureActions.add(e); }
+
+    public void doFutureActions(){
+        for (EventAction action : futureActions) action.doAction(this);
+    }
+
+    public void doCancelableActions(){
+        for (EventAction action : cancelableActions) action.doAction(this);
     }
 
     public interface EventAction{

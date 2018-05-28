@@ -185,7 +185,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         player.freeze();
         TagEvent e = selectedItem.onItemUse(player);
         if (!e.isCanceled()){
-            e.enactEvent();
+            e.doCancelableActions();
             if (e.isSuccessful())
                 selectedItem.decrementQty();
             playerInv.updateDisplay();

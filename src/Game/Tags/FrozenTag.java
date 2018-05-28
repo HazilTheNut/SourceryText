@@ -19,27 +19,25 @@ public class FrozenTag extends Tag {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int duration = 4;
-    private Tile iceTile;
 
     @Override
     public void onAddThis(TagEvent e) {
-        if (e.getTarget().hasTag(TagRegistry.ON_FIRE)){
-            e.getTarget().removeTag(TagRegistry.ON_FIRE);
-            e.getTarget().addTag(TagRegistry.WET, e.getTarget());
-            e.cancel();
-        }
-        e.addCancelableAction(event -> {
-            if (e.getTarget() instanceof Tile && e.getTarget().hasTag(TagRegistry.WET)) {
-                Tile target = (Tile) e.getTarget();
+        if (e.getTarget() instanceof Tile && e.getTarget().hasTag(TagRegistry.WET)) {
+            Tile target = (Tile) e.getTarget();
+            Tile overlay = target.getLevel().getOverlayTileAt(target.getLocation());
+            if (overlay == null) {
+                e.cancel();
                 createIceOverlayTile(target, e.getSource());
+                e.addFutureAction(event -> target.removeTag(TagRegistry.FROZEN));
             }
-        });
+        }
     }
-    
+
     private void createIceOverlayTile(Tile target, TagHolder source){
-        iceTile = new Tile(target.getLocation(), "Ice", target.getLevel());
+        Tile iceTile = new Tile(target.getLocation(), "Ice", target.getLevel());
         target.getLevel().addOverlayTile(iceTile);
         iceTile.addTag(TagRegistry.FROZEN, source);
+        iceTile.addTag(TagRegistry.FLAMMABLE, source);
         SpecialText iceText;
         int hash = 23 * 113 * iceTile.getLocation().getX() + iceTile.getLocation().getY();
         DebugWindow.reportf(DebugWindow.MISC, "FrozenTag","Ice Hash: %1$d", hash);
@@ -56,14 +54,23 @@ public class FrozenTag extends Tag {
 
     @Override
     public void onRemove(TagHolder owner) {
-        if (iceTile != null) {
-            iceTile.getLevel().removeOverlayTile(iceTile);
+        if (owner instanceof Tile) {
+            Tile tile = (Tile) owner;
+            Tile overlay = tile.getLevel().getOverlayTileAt(tile.getLocation());
+            if (tile.equals(overlay)){
+                tile.getLevel().removeOverlayTile(overlay);
+            }
         }
     }
 
     @Override
+    public void onAdd(TagEvent e) {
+        if (e.getTarget().hasTag(TagRegistry.ON_FIRE)) e.addFutureAction(event -> e.getTarget().removeTag(getId()));
+    }
+
+    @Override
     public Color getTagColor() {
-        return new Color(145, 150, 199);
+        return new Color(184, 188, 230);
     }
 
     @Override
