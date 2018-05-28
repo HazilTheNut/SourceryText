@@ -63,6 +63,6 @@ public class WetTag extends Tag {
 
     @Override
     public Color getTagColor() {
-        return new Color(22, 22, 140, 50);
+        return new Color(50, 50, 166, 50);
     }
 }
