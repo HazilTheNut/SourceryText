@@ -1,5 +1,7 @@
 package Game.Tags.PropertyTags;
 
+import Data.SerializationVersion;
+
 public class ThrustWeaponTypeTag extends WeaponTypeTag {
-    public ThrustWeaponTypeTag(){}
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 }

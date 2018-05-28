@@ -117,7 +117,10 @@ public class Level implements Serializable {
     }
 
     public void removeOverlayTile (Tile tile ) {
-        overlayTiles.remove(tile);
+        if (overlayTiles.contains(tile)) {
+            overlayTiles.remove(tile);
+            overlayTileLayer.editLayer(tile.getLocation().getX(), tile.getLocation().getY(), null);
+        }
     }
 
     public boolean isLocationValid(Coordinate loc){

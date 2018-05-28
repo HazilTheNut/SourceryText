@@ -31,16 +31,15 @@ public class TagHolder implements Serializable {
 
     public void addTag(Tag tag, TagHolder source) {
         if (!hasTag(tag.getId())) {
-            tags.add(tag);
             TagEvent e = new TagEvent(0, true, source, this, null);
-            for (Tag currentTag : tags){
-                currentTag.onAdd(e);
+            for (int i = 0; i < tags.size(); i++){
+                tags.get(i).onAdd(e);
             }
             tag.onAddThis(e);
             if (e.eventPassed()){
                 e.enactEvent();
             } else {
-                tags.remove(tag);
+                tags.add(tag);
             }
         }
     }
@@ -48,6 +47,7 @@ public class TagHolder implements Serializable {
     public void removeTag (int id) {
         for (Tag tag : tags){
             if (tag.getId() == id) {
+                tag.onRemove(this);
                 tags.remove(tag);
                 return;
             }

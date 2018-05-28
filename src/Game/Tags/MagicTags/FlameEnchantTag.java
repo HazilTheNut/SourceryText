@@ -1,6 +1,7 @@
 package Game.Tags.MagicTags;
 
 import Data.SerializationVersion;
+import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.Tags.OnFireTag;
 
@@ -14,5 +15,10 @@ public class FlameEnchantTag extends OnFireTag {
     @Override
     public void onAddThis(TagEvent e) {
         burnForever = true;
+    }
+
+    @Override
+    public void onAdd(TagEvent e) {
+        if (e.getTarget().hasTag(TagRegistry.WET) || e.getTarget().hasTag(TagRegistry.FROZEN)) e.cancel();
     }
 }

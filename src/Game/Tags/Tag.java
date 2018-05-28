@@ -2,6 +2,7 @@ package Game.Tags;
 
 import Data.SerializationVersion;
 import Game.TagEvent;
+import Game.TagHolder;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -59,11 +60,14 @@ public class Tag implements Serializable {
     //Ran when en Entity tries do an action that 'takes up a turn'. Target is null
     public void onEntityAction(TagEvent e){}
 
-    //Ran when the tag holder containing this tag receives a new tag. GameInstance is null
+    //Ran when the tag holder containing this tag receives another tag. GameInstance is null
     public void onAdd(TagEvent e){}
 
     //Ran when this tag is being added to a tag holder. GameInstance is null
     public void onAddThis(TagEvent e){}
+
+    //Ran when this tag is removed.
+    public void onRemove(TagHolder owner){}
 
     //Useful for coloring things that are frozen, on fire, etc.
     public Color getTagColor(){ return new Color(255, 255, 255, 0); }

@@ -45,4 +45,9 @@ public class Tile extends TagHolder implements Serializable {
             event.enactEvent();
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Tile && ((Tile) obj).location.equals(location) && ((Tile)obj).getTagList().equals(getTagList()));
+    }
 }

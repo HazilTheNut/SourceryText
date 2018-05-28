@@ -26,16 +26,24 @@ public class OnFireTag extends Tag {
     private int lifetime = 6;
     protected boolean burnForever = false;
 
+    private transient FireAnimation fireAnimation;
+
     private double spreadLikelihood = 0.4;
     private boolean shouldSpread = false;
 
     @Override
     public void onAddThis(TagEvent e) {
-        if (!e.getTarget().hasTag(TagRegistry.FLAMMABLE)) e.cancel();
+        if (!e.getTarget().hasTag(TagRegistry.FLAMMABLE) || e.getTarget().hasTag(TagRegistry.WET)) e.cancel();
+        if (e.getTarget().hasTag(TagRegistry.FROZEN)){
+            e.getTarget().removeTag(TagRegistry.FROZEN);
+            e.getTarget().addTag(TagRegistry.WET, e.getTarget());
+            e.cancel();
+        }
         e.addCancelableAction(event -> {
             if (e.getTarget() instanceof Tile) {
                 Tile target = (Tile) e.getTarget();
-                target.getLevel().addAnimatedTile(new FireAnimation(target.getLocation()));
+                fireAnimation = new FireAnimation(target.getLocation());
+                target.getLevel().addAnimatedTile(fireAnimation);
             }
         });
         if (e.getTarget().hasTag(TagRegistry.BURN_FOREVER)){
@@ -58,13 +66,6 @@ public class OnFireTag extends Tag {
     }
 
     @Override
-    public void onAdd(TagEvent e) {
-        if (e.getTarget().hasTag(TagRegistry.FROZEN)){
-            e.addCancelableAction(event -> e.getTarget().removeTag(getId()));
-        }
-    }
-
-    @Override
     public void onTurn(TagEvent e) {
         e.addCancelableAction(event -> {
             if (shouldSpread) {
@@ -78,7 +79,6 @@ public class OnFireTag extends Tag {
                     if (!burnForever) lifetime--;
                     if (lifetime <= 0) {
                         e.getSource().removeTag(TagRegistry.ON_FIRE);
-                        e.getGameInstance().getCurrentLevel().removeAnimatedTile(source.getLocation());
                         e.getGameInstance().getCurrentLevel().addOverlayTile(createAshTile(source.getLocation(), level));
                     }
                 } else {
@@ -95,6 +95,16 @@ public class OnFireTag extends Tag {
                 shouldSpread = true;
             }
         });
+    }
+
+    @Override
+    public void onRemove(TagHolder owner) {
+        if (owner instanceof Tile) {
+            Tile tile = (Tile) owner;
+            if (fireAnimation != null) {
+                tile.getLevel().removeAnimatedTile(fireAnimation.getLocation());
+            }
+        }
     }
 
     @Override

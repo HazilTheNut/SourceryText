@@ -73,6 +73,7 @@ public class GameSaveMenu implements MouseInputReceiver{
         mi.addInputReceiver(this, 0);
         selectedSaveFile = null;
         selectorLayer.setVisible(false);
+        scrollPos = 0;
         updateDisplay();
         generateSaveOptions();
         menuLayer.setVisible(true);
@@ -87,9 +88,11 @@ public class GameSaveMenu implements MouseInputReceiver{
 
     private void updateDisplay(){
         menuLayer.convertNullToOpaque();
+        selectorLayer.setVisible(false);
         for (int i = 0; i < Math.min(saveOptions.size(), MAX_VISISLE_OPTIONS); i++) {
-            menuLayer.insert(saveOptions.get(i + scrollPos).layer, new Coordinate(0, 2 * i + 1));
-            if (saveOptions.get(i).equals(selectedSaveFile)){
+            SaveFile saveFile = saveOptions.get(i + scrollPos);
+            menuLayer.insert(saveFile.layer, new Coordinate(0, 2 * i + 1));
+            if (saveFile.equals(selectedSaveFile)){
                 selectorLayer.setVisible(true);
                 selectorLayer.setPos(0, 2 * i + 1);
             }
@@ -171,7 +174,7 @@ public class GameSaveMenu implements MouseInputReceiver{
                 descValues[i] = desc.substring(startIndex);
             startIndex = slashLoc + 1;
         }
-        System.out.printf("Desc values: %1$s", (Object[])descValues); //Make sure nothing fell apart in the process
+        System.out.printf("Desc values: %1$s\n", (Object)descValues); //Make sure nothing fell apart in the process
         int col = 2;
         Color[] cols = {TextBox.txt_green.brighter(), TextBox.txt_red.brighter(), TextBox.txt_blue.brighter(), TextBox.txt_yellow.brighter()};
         for (int i = 0; i < 4; i++) { //Begin drawing the player stats
@@ -212,7 +215,7 @@ public class GameSaveMenu implements MouseInputReceiver{
     }
 
     private void doListClick(Coordinate screenPos){
-        int listPos = (screenPos.getY() - 1) / 2; //Gets the index of the save file in the list
+        int listPos = scrollPos + (screenPos.getY() - 1) / 2; //Gets the index of the save file in the list
         if (listPos < saveOptions.size()) {
             if (saveOptions.get(listPos).equals(selectedSaveFile)) { //Load game when clicking on already selected save file. Effectively a double-click
                 Thread closeThread = new Thread(() -> {

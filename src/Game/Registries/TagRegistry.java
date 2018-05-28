@@ -43,6 +43,7 @@ public class TagRegistry {
     public final static int FROZEN        = 10;
     public final static int FROST_ENCHANT = 11;
     public final static int WET           = 12;
+    public final static int NO_REFREEZE   = 13;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -76,6 +77,7 @@ public class TagRegistry {
         registerTag(FROZEN, "Frozen", FrozenTag.class);
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);
         registerTag(WET, "Wet", WetTag.class);
+        registerTag(NO_REFREEZE, "No Refreeze", NoRefreezeTag.class);
 
         //Item related
         registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);
