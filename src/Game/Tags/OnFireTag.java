@@ -33,12 +33,7 @@ public class OnFireTag extends Tag {
 
     @Override
     public void onAddThis(TagEvent e) {
-        if (!e.getTarget().hasTag(TagRegistry.FLAMMABLE) || e.getTarget().hasTag(TagRegistry.WET)) e.cancel();
-        if (e.getTarget().hasTag(TagRegistry.FROZEN)){
-            e.getTarget().removeTag(TagRegistry.FROZEN);
-            e.getTarget().addTag(TagRegistry.WET, e.getTarget());
-            e.cancel();
-        }
+        if (!e.getTarget().hasTag(TagRegistry.FLAMMABLE)) e.cancel();
         e.addCancelableAction(event -> {
             if (e.getTarget() instanceof Tile) {
                 Tile target = (Tile) e.getTarget();
@@ -95,6 +90,11 @@ public class OnFireTag extends Tag {
                 shouldSpread = true;
             }
         });
+    }
+
+    @Override
+    public void onAdd(TagEvent e) {
+        if (e.getTarget().hasTag(TagRegistry.FROZEN)) e.addFutureAction(event -> e.getTarget().removeTag(getId()));
     }
 
     @Override

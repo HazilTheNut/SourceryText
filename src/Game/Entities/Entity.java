@@ -170,7 +170,7 @@ public class Entity extends TagHolder implements Serializable {
             } else {
                 TagEvent updateEvent = new TagEvent(0, true, items.get(ii), items.get(ii), getGameInstance());
                 for (Tag tag : items.get(ii).getTags()) tag.onTurn(updateEvent);
-                if (updateEvent.eventPassed()) updateEvent.enactEvent();
+                if (updateEvent.eventPassed()) updateEvent.doCancelableActions();
                 ii++;
             }
         }
@@ -200,7 +200,7 @@ public class Entity extends TagHolder implements Serializable {
             tag.onTurn(turnEvent);
         }
         if (turnEvent.eventPassed()){
-            turnEvent.enactEvent();
+            turnEvent.doCancelableActions();
         }
         updateInventory();
         DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' Pos: %2$s", getName(), location);
@@ -224,7 +224,7 @@ public class Entity extends TagHolder implements Serializable {
             tag.onEntityAction(actionEvent);
         }
         if (actionEvent.eventPassed()){
-            actionEvent.enactEvent();
+            actionEvent.doCancelableActions();
             return true;
         }
         return false;
