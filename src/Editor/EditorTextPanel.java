@@ -146,9 +146,9 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     private void createNewButton(JButton btn){
         EditorSpecialTextMaker textMaker;
         if (selectedTextButton == null || selectedTextButton.getIcon() == null)
-            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, new SpecialText(' ', Color.WHITE, Color.BLACK), buttonManifest);
+            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, new SpecialText(' ', Color.WHITE, Color.BLACK), buttonManifest, true);
         else
-            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, ((SingleTextRenderer)selectedTextButton.getIcon()).specText, buttonManifest);
+            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, ((SingleTextRenderer)selectedTextButton.getIcon()).specText, buttonManifest, false);
         textMaker.setVisible(true);
     }
 

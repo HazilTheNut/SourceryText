@@ -10,8 +10,13 @@ import javax.swing.*;
  */
 public abstract class DrawTool {
 
+    /**
+     * The basic tool for anything that has to do with editing the LevelData at a certain position.
+     * So the backdrop, tile data, entities, and warp zones.
+     */
+
     public int TOOL_TYPE = 0;
-    public static final int TYPE_ART = 1;
+    public static final int TYPE_ART = 1;    //Used to mark which camera view to switch to.
     public static final int TYPE_TILE = 2;
     public static final int TYPE_ENTITY = 3;
 

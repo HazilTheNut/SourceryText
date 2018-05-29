@@ -14,8 +14,14 @@ import java.awt.*;
  */
 public class EntityCopy extends DrawTool {
 
+    /**
+     * EntityCopy
+     *
+     * The Tool that copies entities. Wow.
+     */
+
     private LevelData ldata;
-    private EntityStruct toCopy;
+    private EntityStruct toCopy; //Gotta store the selected entity in memory to copy when you release the mouse button
     private int copyFromPosX = 0;
     private int copyFromPosY = 0;
 
@@ -33,8 +39,8 @@ public class EntityCopy extends DrawTool {
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        toCopy = ldata.getEntityAt(col, row);
-        copyFromPosX = col;
+        toCopy = ldata.getEntityAt(col, row); //Get the entity
+        copyFromPosX = col; //Also needs to remember where the copying entity is so that it the highlight can be consistently displayed
         copyFromPosY = row;
         highlight.editLayer(col - lm.getCameraPos().getX(), row - lm.getCameraPos().getY(), new SpecialText(' ', Color.WHITE, new Color(255, 125, 0, 50)));
     }
@@ -46,7 +52,7 @@ public class EntityCopy extends DrawTool {
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        ldata.setEntityData(col, row, toCopy.copy());
+        ldata.setEntityData(col, row, toCopy.copy()); //It...copies an entity? Huh. And I thought this tool was supposed to generate bars of digital ivory soap.
         highlight.clearLayer();
     }
 

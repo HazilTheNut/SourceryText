@@ -11,6 +11,14 @@ import java.awt.event.ActionListener;
  */
 public class CameraManager implements ActionListener {
 
+    /**
+     * CameraManager:
+     *
+     * The Level Editor Camera is represented by the top panel of the Level Editor.
+     *
+     * It has to both handle zooming the view and switching between the three views (Art, Tile, and Entity)
+     */
+
     Layer artLayer;
     JButton artButton;
     Layer tileLayer;
@@ -22,7 +30,7 @@ public class CameraManager implements ActionListener {
 
     JLabel zoomAmountLabel;
 
-    private EditorMouseInput mi;
+    private EditorMouseInput mi; //Jokes on you! Zooming is actually handled by the EditorMouseInput object.
 
     private JButton prevViewModeBtn;
 
@@ -51,7 +59,7 @@ public class CameraManager implements ActionListener {
                 updateLabel();
                 break;
             case "-":
-                mi.zoomAmount -= 10f;
+                mi.zoomAmount -= 10;
                 mi.updateZoom();
                 updateLabel();
                 break;
@@ -66,26 +74,29 @@ public class CameraManager implements ActionListener {
         prevViewModeBtn = newBtn;
     }
 
+    //Sets the view to the 'Art' view
     void artViewMode() {
-        artLayer.setVisible(true);
+        artLayer.setVisible(true); //The backdrop is all you get to see.
         tileLayer.setVisible(false);
         entityLayer.setVisible(false);
         warpZoneLayer.setVisible(false);
         updateButtons(artButton);
     }
 
+    //Sets the view to the 'Tile' view
     void tileViewMode() {
         artLayer.setVisible(false);
-        tileLayer.setVisible(true);
+        tileLayer.setVisible(true); //See the tiles layer
         entityLayer.setVisible(false);
-        warpZoneLayer.setVisible(true);
+        warpZoneLayer.setVisible(true); //...and the Warp Zones, because that's where it is the most appropriate.
         updateButtons(tileButton);
     }
 
+    //Sets the view to the 'Entity' view, as seen in the game (at 100% zoom)
     void entityViewMode() {
-        artLayer.setVisible(true);
+        artLayer.setVisible(true); //So obviously, the backdrop is visible.
         tileLayer.setVisible(false);
-        entityLayer.setVisible(true);
+        entityLayer.setVisible(true); //As well as the entities in the level too. Hence, the "Entity" view.
         warpZoneLayer.setVisible(false);
         updateButtons(entityButton);
     }

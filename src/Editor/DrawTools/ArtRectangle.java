@@ -12,6 +12,12 @@ import java.awt.*;
  */
 public class ArtRectangle extends DrawTool {
 
+    /**
+     * ArtRectangle:
+     *
+     * A Tool that draws / fills a rectangle based on two corner points
+     */
+
     private int startX;
     private int startY;
 
@@ -27,8 +33,8 @@ public class ArtRectangle extends DrawTool {
 
     @Override
     public void onActivate(JPanel panel) {
-        fillBox = new JCheckBox("Filled", false);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        fillBox = new JCheckBox("Filled", false); //Allow input for switching between filled and empty rectangles
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS)); //BoxLayout does not pack down like BorderLayout, ensuring consistent panel sizes between tools.
         panel.add(fillBox);
         panel.setBorder(BorderFactory.createTitledBorder("Rectangle"));
         panel.setVisible(true);
@@ -45,10 +51,10 @@ public class ArtRectangle extends DrawTool {
 
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        int xOffset = -(int)lm.getCameraPos().getX() + layer.getX();
-        int yOffset = -(int)lm.getCameraPos().getY() + layer.getY();
-        drawRect(highlight, startX + xOffset, startY + yOffset, previousX + xOffset, previousY + yOffset, null, fillBox.isSelected());
-        drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, startHighlight, fillBox.isSelected());
+        int xOffset = -lm.getCameraPos().getX() + layer.getX(); //Mentioned in ArtLine, but the backdrop doesn't change its position, but JUST IN CASE.....
+        int yOffset = -lm.getCameraPos().getY() + layer.getY();
+        drawRect(highlight, startX + xOffset, startY + yOffset, previousX + xOffset, previousY + yOffset, null, fillBox.isSelected()); //Clear the previous rectangle
+        drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, startHighlight, fillBox.isSelected()); //Make a new one
         previousX = col;
         previousY = row;
         //System.out.println("[ArtLine] onDraw");
@@ -66,15 +72,15 @@ public class ArtRectangle extends DrawTool {
     }
 
     void drawRect(Layer layer, int x1, int y1, int x2, int y2, SpecialText text, boolean isFilled){
-        int colSign = (x2 > x1) ? 1 : -1;
+        int colSign = (x2 > x1) ? 1 : -1; //The two corners can be in any position in relation to each other, so that better be accounted for.
         int rowSign = (y2 > y1) ? 1 : -1;
-        if (isFilled){
+        if (isFilled){ //Do the filled rectangle
             for (int col = x1; col*colSign <= x2*colSign; col+=colSign){
                 for (int row = y1; row*rowSign <= y2*rowSign; row+=rowSign){
                     layer.editLayer(col, row, text);
                 }
             }
-        } else {
+        } else { //Do the not filled rectangle
             for (int col = x1; col*colSign <= x2*colSign; col+=colSign) {
                 layer.editLayer(col, y1, text);
                 layer.editLayer(col, y2, text);

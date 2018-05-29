@@ -4,13 +4,18 @@ import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
  * Created by Jared on 2/25/2018.
  */
 public class ArtLine extends ArtBrush {
+
+    /**
+     * ArtLine:
+     *
+     * A Tool that runs the Brush Tool in a line
+     */
 
     private int startX;
     private int startY;
@@ -35,19 +40,17 @@ public class ArtLine extends ArtBrush {
 
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        //highlight.editLayer(startX, startY, startHighlight);
-        int xOffset = -(int)lm.getCameraPos().getX() + layer.getX();
-        int yOffset = -(int)lm.getCameraPos().getY() + layer.getY();
-        drawLine(highlight, startX + xOffset, startY + yOffset, previousX + xOffset, previousY + yOffset, null);
-        drawLine(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, startHighlight);
+        int xOffset = -lm.getCameraPos().getX() + layer.getX(); //Corrections need to be made for the camera.
+        int yOffset = -lm.getCameraPos().getY() + layer.getY(); //It does also do corrections for the backdrop layer moving around, but the Level's backdrop does ever move.
+        drawLine(highlight, startX + xOffset, startY + yOffset, previousX + xOffset, previousY + yOffset, null); //Draw a line of null characters over the previous line
+        drawLine(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, startHighlight); //Draw the new line
         previousX = col;
         previousY = row;
-        //System.out.println("[ArtLine] onDraw");
     }
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        highlight.clearLayer();
+        highlight.clearLayer(); //Get rid of preview highlight
         drawLine(layer, startX, startY, col, row, text);
     }
 
@@ -56,6 +59,11 @@ public class ArtLine extends ArtBrush {
         highlight.clearLayer();
     }
 
+    /*
+    * There are many line algorithms out there. This is probably one of them.
+    * I'm just lazily using Math.atan2() to find the angle between point 1 and 2, and then drawing a line.
+    * The iterator gets the hypotenuse-distance between the two points to figure out how many iterations to go for.
+    */
     private void drawLine(Layer layer, int x1, int y1, int x2, int y2, SpecialText text){
         double angle = Math.atan2(y2 - y1, x2 - x1);
         int distance = (int)Math.round(Math.sqrt(Math.pow((x2 - x1),2) + Math.pow((y2 - y1),2)));

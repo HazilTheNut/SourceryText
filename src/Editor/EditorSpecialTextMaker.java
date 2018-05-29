@@ -18,6 +18,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     private JButton openedButton; //The button this SpecialTextMaker is editing
     private ArrayList<JButton> btnManifest;
     private Container buttonContainer;
+    private boolean isNewButton = true;
 
     private JTextField charField;
 
@@ -26,13 +27,14 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     private boolean settingForeground = true;
 
     private ColorPicker colorPicker;
-    private float[] fgHSB = new float[3];
-    private float[] bgHSB = new float[3];
+    private float[] fgHSB;
+    private float[] bgHSB;
 
-    EditorSpecialTextMaker(Container c, JButton button, SpecialText startingText, ArrayList<JButton> manifest){
+    EditorSpecialTextMaker(Container c, JButton button, SpecialText startingText, ArrayList<JButton> manifest, boolean isNewButton){
         openedButton = button;
         buttonContainer = c;
         btnManifest = manifest;
+        this.isNewButton = isNewButton;
 
         setTitle("SpecialText Creator");
 
@@ -49,46 +51,42 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         charField.setBackground(startingText.getBkgColor());
         charField.setText(startingText.getStr());
 
+        //Now for the Fg and Bg buttons
         Color fg = startingText.getFgColor();
         fgHSB = Color.RGBtoHSB(fg.getRed(), fg.getGreen(), fg.getBlue(), new float[3]);
         Color bg = startingText.getBkgColor();
         bgHSB = Color.RGBtoHSB(bg.getRed(), bg.getGreen(), bg.getBlue(), new float[3]);
-
+        //The 'foreground' button
         fgButton = new JButton("Fg");
         fgButton.setMaximumSize(new Dimension(70, 30));
         fgButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         fgButton.setEnabled(false);
         fgButton.addActionListener(this);
         fgButton.setActionCommand("fg");
-
+        //The 'background' button
         bgButton = new JButton("Bg");
         bgButton.setMaximumSize(new Dimension(70, 30));
         bgButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         bgButton.setEnabled(true);
         bgButton.addActionListener(this);
         bgButton.setActionCommand("bg");
-
+        //The finish button
         JButton finishButton = new JButton("Finish");
         finishButton.setMaximumSize(new Dimension(80, 30));
         finishButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         finishButton.addActionListener(e -> finish());
+        //The cancel button
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setMaximumSize(new Dimension(80, 30));
         cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         cancelButton.addActionListener(e -> cancel());
-
+        //Create JPanel for the left-side stuff
         JPanel selectorPanel = new JPanel();
         selectorPanel.setPreferredSize(new Dimension(150, 200));
         selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.PAGE_AXIS));
 
         selectorPanel.add(Box.createRigidArea(new Dimension(1, 20)));
         selectorPanel.add(charField);
-
-        //JPanel colorSwitchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-
-        //colorSwitchPanel.add(fgButton, BorderLayout.CENTER);
-        //colorSwitchPanel.add(bgButton, BorderLayout.CENTER);
-        //selectorPanel.add(colorSwitchPanel, BorderLayout.CENTER);
 
         selectorPanel.add(Box.createRigidArea(new Dimension(1, 20)));
         selectorPanel.add(fgButton);
@@ -104,11 +102,17 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         //Right side panel with color and opacity ui
         JPanel colorPickerPanel = new JPanel();
+        GridLayout gridLayout = new GridLayout(1, 1);
+        gridLayout.setHgap(5);
+        gridLayout.setVgap(5);
+        colorPickerPanel.setLayout(gridLayout);
+        colorPickerPanel.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+        //Add in the color picker
         colorPicker = new ColorPicker();
         colorPicker.setPreferredSize(new Dimension(315, 300));
         colorPickerPanel.addMouseListener(colorPicker);
         colorPickerPanel.addMouseMotionListener(colorPicker);
-        colorPickerPanel.add(colorPicker, BorderLayout.CENTER);
+        colorPickerPanel.add(colorPicker);
 
         add(colorPickerPanel, BorderLayout.CENTER);
 
@@ -188,10 +192,14 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     }
 
     private void cancel(){
-        buttonContainer.remove(openedButton);
-        btnManifest.remove(openedButton);
-        buttonContainer.validate();
-        buttonContainer.repaint();
+        if (isNewButton) {
+            buttonContainer.remove(openedButton);
+            btnManifest.remove(openedButton);
+            buttonContainer.validate();
+            buttonContainer.repaint();
+        } else {
+            openedButton.doClick();
+        }
         dispose();
     }
 
@@ -203,7 +211,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         int satBriPointX = 0;
         int satBriPointY = 0;
 
-        float[] colorData = new float[3];
+        float[] colorData;
 
         void setColorData(float[] data) {
             colorData = data;
@@ -223,18 +231,20 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             int boxWidth = getBoxWidth();
 
             for (int y = 1; y < getHeight()-1; y++){
-                for (int x = 1; x < boxWidth; x++){
+                for (int x = 1; x < boxWidth; x++) {
                     //Color col = clipColor(new Color(x * (255 / getWidth()), y * (255 / getHeight()), 50));
-                    Color col = Color.getHSBColor(colorData[0], (float)(x-1)/(boxWidth), (float)(y-1)/(getHeight()-1));
+                    Color col = Color.getHSBColor(colorData[0], (float) (x - 1) / (boxWidth), (float) (y - 1) / (getHeight() - 1));
                     g.setColor(col);
                     g.fillRect(x, y, 1, 1);
                 }
-                if (Math.abs( ((float)y)/getHeight() - colorData[0]) < 0.005)
-                    g.setColor(Color.WHITE);
-                else
-                    g.setColor(Color.getHSBColor(((float)y)/getHeight(), 0.9f, 0.9f));
+                g.setColor(Color.getHSBColor(((float)y)/getHeight(), 0.9f, 0.9f));
                 g.drawLine(boxWidth + 2, y, getWidth(), y);
             }
+
+            System.out.printf("Hue: %1$f\n", colorData[0]);
+            int lineY = (int)(getHeight() * colorData[0]);
+            g.setColor(Color.WHITE);
+            g.fillRect(boxWidth, lineY - 2, getWidth() - boxWidth, 4);
 
             g.setColor(Color.black);
             g.drawRect(0,0,boxWidth,getHeight()-1);

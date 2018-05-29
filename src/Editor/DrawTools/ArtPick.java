@@ -12,7 +12,13 @@ import java.awt.*;
  */
 public class ArtPick extends DrawTool {
 
-    EditorTextPanel textPanel;
+    /**
+     * ArtPick:
+     *
+     * A Tool that gets the SpecialText under the cursor and adds it to the Text Panel
+     */
+
+    private EditorTextPanel textPanel;
 
     public ArtPick(EditorTextPanel panel) { textPanel = panel; }
 
@@ -25,9 +31,9 @@ public class ArtPick extends DrawTool {
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         SpecialText pickedText = layer.getSpecialText(col, row);
         if (pickedText != null) {
-            if (pickedText.getBkgColor().getAlpha() != 255) pickedText = new SpecialText(pickedText.getCharacter(), pickedText.getFgColor(), new Color(pickedText.getBkgColor().getRGB()));
+            if (pickedText.getBkgColor().getAlpha() != 255) pickedText = new SpecialText(pickedText.getCharacter(), pickedText.getFgColor(), new Color(pickedText.getBkgColor().getRGB())); //Ensures there are no transparency issues
             JButton btn = textPanel.generateNewButton(pickedText);
-            btn.doClick();
+            btn.doClick(); //Set the new text to be drawn with
         }
     }
 }

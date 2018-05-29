@@ -12,13 +12,20 @@ import javax.swing.*;
  */
 public class TilePencil extends DrawTool {
 
-    private Layer tilesLayer;
+    /**
+     * TilePencil:
+     *
+     * Ever wanted to make a tiny change without bothering to use the 'Scan" button?
+     * Have no fear, TilePencil is here!
+     */
+
+    private Layer tilesLayer; //We're not editing the backdrop anymore, so a workaround must be done.
     private TileStruct tileData;
     private LevelData ldata;
 
     public TilePencil(Layer dataLayer, LevelData levelData){
         tilesLayer = dataLayer;
-        ldata = levelData;
+        ldata = levelData; //Done!
     }
 
     @Override

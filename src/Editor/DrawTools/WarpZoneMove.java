@@ -8,13 +8,18 @@ import Engine.SpecialText;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 /**
  * Created by Jared on 3/5/2018.
  */
 public class WarpZoneMove extends ArtRectangle {
+
+    /**
+     * WarpZoneMove:
+     *
+     * The Tool that relocates Warp Zones if they happen to be in the wrong spot.
+     * For example, if the room gets resized, the Warp Zone may become out of position.
+     */
 
     private LevelData ldata;
     private WarpZone toMove;
@@ -38,6 +43,12 @@ public class WarpZoneMove extends ArtRectangle {
         ldata = levelData;
     }
 
+    /*
+    I'm going to be honest; I don't know exactly how this works.
+
+    All I know is that it has to account for the fact that the user can click anywhere on the Warp Zone to initiate moving it.
+     */
+
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         toMove = ldata.getSelectedWarpZone();
@@ -46,8 +57,8 @@ public class WarpZoneMove extends ArtRectangle {
             moveFromPosY = row;
             prevX = col;
             prevY = row;
-            displayXOffset = toMove.getXpos() - col - (int) lm.getCameraPos().getX();
-            displayYOffset = toMove.getYpos() - row - (int) lm.getCameraPos().getY();
+            displayXOffset = toMove.getXpos() - col - lm.getCameraPos().getX();
+            displayYOffset = toMove.getYpos() - row - lm.getCameraPos().getY();
             highlightDraggedRect(highlight, col, row, new SpecialText(' ', Color.WHITE, new Color(125, 125, 250, 75)));
             movingZone = true;
         }

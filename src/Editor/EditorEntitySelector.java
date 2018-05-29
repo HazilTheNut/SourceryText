@@ -14,22 +14,30 @@ import java.awt.event.MouseEvent;
  */
 public class EditorEntitySelector extends JFrame {
 
+    /**
+     * EditorEntitySelector:
+     *
+     * The Window that pops up when you want to pick as entity to place.
+     * Could have been a dropdown menu, like the tiles are, but here you get a bigger list.
+     *
+     * Plus, filters can be added later if the list gets super big.
+     */
+
     @SuppressWarnings("unchecked")
     EditorEntitySelector(EditorToolPanel editorToolPanel){
 
         setTitle("Entity Selector");
         setSize(new Dimension(400, 300));
 
-        JList<EntityStruct> structList = new JList<>();
+        JList<EntityStruct> structList = new JList<>(); //A JList is used to create the list of options.
         DefaultListModel<EntityStruct> entityStructModel = new DefaultListModel<>();
-        EntityRegistry entityRegistry = new EntityRegistry();
-        for (int id : entityRegistry.getMapKeys()){
-            EntityStruct struct = entityRegistry.getEntityStruct(id);
+        for (int id : EntityRegistry.getMapKeys()){
+            EntityStruct struct = EntityRegistry.getEntityStruct(id); //Gets everything the EntityRegistry has in its registry.
             entityStructModel.addElement(struct);
         }
         structList.setModel(entityStructModel);
         structList.setLayoutOrientation(JList.VERTICAL);
-        EntityListRenderer renderer = new EntityListRenderer();
+        EntityListRenderer renderer = new EntityListRenderer(); //I really wanted to show the icon of the entity next to its name.
         structList.setCellRenderer(renderer);
 
         JScrollPane listPane = new JScrollPane(structList, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -37,7 +45,7 @@ public class EditorEntitySelector extends JFrame {
         structList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2){
+                if (e.getClickCount() == 2){ //Handles double-clicking to select the entity
                     editorToolPanel.assignEntityPlaceStruct(structList.getSelectedValue());
                     dispose();
                 }
@@ -46,6 +54,7 @@ public class EditorEntitySelector extends JFrame {
 
         add(listPane, BorderLayout.CENTER);
 
+        //And of course, the panel at the bottom.
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.LINE_AXIS));
 

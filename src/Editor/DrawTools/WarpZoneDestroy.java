@@ -6,20 +6,17 @@ import Engine.Layer;
 import Engine.SpecialText;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Created by Jared on 2/25/2018.
  */
 public class WarpZoneDestroy extends DrawTool {
 
-    private int startX;
-    private int startY;
-
-    private int previousX;
-    private int previousY;
-
-    private SpecialText previewHighlight = new SpecialText(' ', Color.WHITE, new Color(255, 0, 155, 120));
+    /**
+     * WarpZoneDestroy:
+     *
+     * The Tool that deletes Warp Zones
+     */
 
     private LevelData ldata;
 

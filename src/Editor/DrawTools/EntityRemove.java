@@ -11,6 +11,12 @@ import javax.swing.*;
  */
 public class EntityRemove extends DrawTool {
 
+    /**
+     * EntityRemove:
+     *
+     * Removes the entity under the mouse cursor
+     */
+
     private LevelData ldata;
 
     @Override

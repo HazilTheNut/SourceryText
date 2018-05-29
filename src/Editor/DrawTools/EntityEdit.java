@@ -13,6 +13,12 @@ import javax.swing.*;
  */
 public class EntityEdit extends DrawTool {
 
+    /**
+     * EntityEdit:
+     *
+     * The Tool that opens the EntityEditor Window.
+     */
+
     private LevelData ldata;
 
     @Override

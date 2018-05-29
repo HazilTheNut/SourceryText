@@ -11,6 +11,13 @@ import java.awt.*;
  */
 public class EditorFindAndReplace extends JFrame {
 
+    /**
+     * EditorFindAndReplace:
+     *
+     * The Editor Window that allows the user to find and replace SpecialText in the Level backdrop.
+     * Also has a randomize feature, so randomized, textured environments aren't too hard to generate.
+     */
+
     private SpecialText findText;
     private SpecialText replaceText;
 
@@ -27,13 +34,13 @@ public class EditorFindAndReplace extends JFrame {
         setMinimumSize(new Dimension(400, 300));
         setTitle("Find and Replace (Level Backdrop)");
 
-        JPanel findButtonPanel = new JPanel();
+        JPanel findButtonPanel = new JPanel(); //The JPanel containing the contents of the Text Panel designated for selecting the SpecialText to look for.
         findButtonPanel.setLayout(new ModifiedFlowLayout(FlowLayout.LEFT));
         JScrollPane findButtonScrollPane = new JScrollPane(findButtonPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        findButtonScrollPane.setPreferredSize(new Dimension(180, 200));
+        findButtonScrollPane.setMinimumSize(new Dimension(180, 200));
         findButtonScrollPane.setBorder(BorderFactory.createTitledBorder("Find"));
         
-        JPanel replaceButtonPanel = new JPanel();
+        JPanel replaceButtonPanel = new JPanel(); //The corresponding JPanel for selecting the SpecialText to replace with
         replaceButtonPanel.setLayout(new ModifiedFlowLayout(FlowLayout.LEFT));
         JScrollPane replaceButtonScrollPane = new JScrollPane(replaceButtonPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         replaceButtonScrollPane.setPreferredSize(new Dimension(180, 200));
@@ -81,19 +88,30 @@ public class EditorFindAndReplace extends JFrame {
             }
         }
 
-        add(findButtonScrollPane,  BorderLayout.LINE_START);
-        add(replaceButtonScrollPane, BorderLayout.LINE_END);
+        JPanel topPanel = new JPanel(new GridLayout(1, 2));
 
+        topPanel.add(findButtonScrollPane,  BorderLayout.LINE_START);
+        topPanel.add(replaceButtonScrollPane, BorderLayout.LINE_END);
+
+        add(topPanel, BorderLayout.CENTER);
+
+        //Now for the bottom panel
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout());
 
+        //Create the 'preview' panel that summarizes the action you are about to take
         JPanel replacePreviewPanel = new JPanel();
         replacePreviewPanel.setLayout(new BoxLayout(replacePreviewPanel, BoxLayout.LINE_AXIS));
 
+        //Create the icon for what SpecialText is being looked for
         SingleTextRenderer findTextIcon = new SingleTextRenderer(findText);
         findTextLabel = new JLabel(findTextIcon);
         replacePreviewPanel.add(findTextLabel);
+
+        //Create the little arrow
         replacePreviewPanel.add(new JLabel(" --> "));
+
+        //Create the icon for what SpecialText is being replaced with
         SingleTextRenderer replaceTextIcon = new SingleTextRenderer(replaceText);
         replaceTextLabel = new JLabel(replaceTextIcon);
 
@@ -102,7 +120,7 @@ public class EditorFindAndReplace extends JFrame {
 
         bottomPanel.setBorder(BorderFactory.createEtchedBorder());
         bottomPanel.add(replacePreviewPanel);
-
+        //The word 'random' in this context in fact does not mean 'purposeless and silly'
         JPanel randomPanel = new JPanel();
         randomPanel.setBorder(BorderFactory.createEtchedBorder());
         randomPanel.setLayout(new BoxLayout(randomPanel, BoxLayout.LINE_AXIS));

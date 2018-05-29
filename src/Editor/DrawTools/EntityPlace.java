@@ -11,6 +11,12 @@ import javax.swing.*;
  */
 public class EntityPlace extends DrawTool {
 
+    /**
+     * EntityPlace:
+     *
+     * Creates a new EntityStruct under the mouse cursor.
+     */
+
     private LevelData ldata;
     private int id = 0;
 

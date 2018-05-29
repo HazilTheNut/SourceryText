@@ -14,6 +14,13 @@ import java.awt.*;
  */
 public class WarpZoneCreate extends ArtRectangle {
 
+    /**
+     * WarpZoneCreate:
+     *
+     * Inheritor of ArtRectangle, because code re-use is beautiful. The rectangle fill function is too useful to not use.
+     * Lo and behold, WarpZoneCreate... creates Warp Zones.
+     */
+
     private int startX;
     private int startY;
 
@@ -42,10 +49,10 @@ public class WarpZoneCreate extends ArtRectangle {
 
     @Override
     public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        int xOffset = -(int)lm.getCameraPos().getX() + layer.getX();
-        int yOffset = -(int)lm.getCameraPos().getY() + layer.getY();
-        drawRect(highlight, startX + xOffset, startY + yOffset, previousX + xOffset, previousY + yOffset, null, true);
-        drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, previewHighlight, true);
+        int xOffset = -lm.getCameraPos().getX() + layer.getX();
+        int yOffset = -lm.getCameraPos().getY() + layer.getY();
+        drawRect(highlight, startX + xOffset, startY + yOffset, previousX + xOffset, previousY + yOffset, null, true); //I usually try to make code fixed width to make it easier to read.
+        drawRect(highlight, startX + xOffset, startY + yOffset, col + xOffset, row + yOffset, previewHighlight, true); //In most cases, I just add more spaces. But I dn't have to here. It gives me a warm, fuzzy feeling inside.
         previousX = col;
         previousY = row;
     }
@@ -53,7 +60,7 @@ public class WarpZoneCreate extends ArtRectangle {
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
         highlight.clearLayer();
-        int cornerX = Math.min(startX, col);
+        int cornerX = Math.min(startX, col); //Much like ArtRectangle, we don't know if the ending point is ahead or behind the start point.
         int cornerY = Math.min(startY, row);
         int width   = Math.max(col - startX + 1, startX - col + 1);
         int height  = Math.max(row - startY + 1, startY - row + 1);

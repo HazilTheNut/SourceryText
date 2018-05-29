@@ -19,6 +19,14 @@ import java.util.ArrayList;
  */
 public class EditorFrame extends JFrame {
 
+    /**
+     * EditorFrame:
+     *
+     * The master object behind the Sourcery Text Level Editor
+     *
+     * Each EditorFrame is dedicated to a singular LevelData object.
+     */
+
     private EditorToolPanel toolPanel;
     private EditorTextPanel textPanel;
 
