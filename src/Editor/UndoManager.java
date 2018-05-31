@@ -10,12 +10,21 @@ import java.util.ArrayList;
  */
 class UndoManager {
 
+    /**
+     * UndoManager:
+     *
+     * Stores a list of previous LevelData's and substitutes them into the current LevelData when called upon to do so.
+     *
+     * Calling 'undo' moves a pointer backwards through its list of LevelData's
+     * Calling 'redo' moves that pointer forwards.
+     */
+
     private ArrayList<LevelData> pastLevelData = new ArrayList<>();
     private LevelData currentLevelData;
 
-    JFrame editorFrame;
+    private JFrame editorFrame;
 
-    private final int MAX_UNDO_LENGTH = 200;
+    private static final int MAX_UNDO_HISTORY = 200;
     private int historyPointer;
 
     UndoManager(LevelData ldata, JFrame editorFrame){
@@ -26,19 +35,16 @@ class UndoManager {
     }
 
     void recordLevelData(){
-        /**/
-        for (int ii = pastLevelData.size()-1; ii > historyPointer; ii--){
+        for (int ii = pastLevelData.size()-1; ii > historyPointer; ii--){ //Get rid of the history ahead of the pointer, now on an older branch of the timeline.
             pastLevelData.remove(ii);
         }
         pastLevelData.add(currentLevelData.copy());
-        if (pastLevelData.size() > MAX_UNDO_LENGTH)
-            pastLevelData.remove(0);
+        if (pastLevelData.size() > MAX_UNDO_HISTORY)
+            pastLevelData.remove(0); //Undo history housekeeping
         historyPointer = pastLevelData.size()-1;
         System.out.printf("[UndoManager.recordLevelData] Level history size: %1$d\n", pastLevelData.size());
         System.out.printf("[UndoManager.recordLevelData] Level history pointer: %1$d\n", historyPointer);
         addFrameAsterisk();
-        /**/
-        //previousLevelData = currentLevelData.copy();
     }
 
     void doUndo(){

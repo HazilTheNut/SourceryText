@@ -10,20 +10,24 @@ import java.awt.*;
  */
 public class EntityEditor extends JFrame {
 
-    private EntityStruct entity;
+    /**
+     * EntityEditor:
+     *
+     * A JFrame that establishes a JTabbedPane and then fills it with
+     * 1) An EntityInventoryPanel
+     * 2) An EntityArgsPanel
+     */
 
     public EntityEditor (EntityStruct struct){
 
-        entity = struct;
-
-        setTitle(entity.getEntityName());
+        setTitle(struct.getEntityName());
         setMinimumSize(new Dimension(350, 350));
 
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        tabbedPane.addTab("Items", new EntityInventoryPanel(this, entity));
+        tabbedPane.addTab("Items", new EntityInventoryPanel(this, struct));
 
-        tabbedPane.addTab("Attributes", new EntityArgsPanel(this, entity));
+        tabbedPane.addTab("Attributes", new EntityArgsPanel(this, struct));
 
         add(tabbedPane);
 

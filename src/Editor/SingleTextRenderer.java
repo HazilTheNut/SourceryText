@@ -10,6 +10,12 @@ import java.awt.*;
  */
 class SingleTextRenderer implements Icon {
 
+    /**
+     * SingleTextRenderer:
+     *
+     * An Icon that draws a singular SpecialText, complete with font and highlight color.
+     */
+
     SpecialText specText;
 
     SingleTextRenderer(SpecialText text) {

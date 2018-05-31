@@ -20,6 +20,14 @@ import java.awt.event.MouseEvent;
  */
 public class WarpZoneEditor extends JFrame{
 
+    /**
+     * WarpZoneEditor:
+     *
+     * Opens another level and allows for the alignment of the output of WarpZones.
+     *
+     * KNOWN BUG: Sometimes, the level backdrop will fail to load.
+     */
+
     private ViewWindow window;
     private LayerManager lm;
     private WarpZone wz;
@@ -35,11 +43,13 @@ public class WarpZoneEditor extends JFrame{
 
         lm = new LayerManager(window);
 
+        //Fits window to the warp zone's size.
         window.RESOLUTION_WIDTH = Math.max(8 + wz.getWidth(), 30);
         window.RESOLUTION_HEIGHT = Math.max(8 + wz.getHeight(), 20);
 
         lm.addLayer(ldata.getBackdrop());
 
+        //Creates layer for the warp currently being edited.
         warpZoneLayer = new Layer(new SpecialText[wz.getWidth()][wz.getHeight()], "previewZone", wz.getNewRoomStartX(), wz.getNewRoomStartY());
         System.out.printf("[WarpZoneEditor] New Room Pos: %1$s", new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY()));
         warpZoneLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(50, 175, 0, 75)));
@@ -55,6 +65,7 @@ public class WarpZoneEditor extends JFrame{
         setLayout(new BorderLayout());
         add(window, BorderLayout.CENTER);
 
+        //Obligatory bottom panel.
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.LINE_AXIS));
 
@@ -95,6 +106,7 @@ public class WarpZoneEditor extends JFrame{
     private void confirm(){
         wz.setTranslation(warpZoneLayer.getX(), warpZoneLayer.getY());
         System.out.printf("[WarpZoneEditor.confirm] New Room Pos: %1$s", new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY()));
+        lm.clearLayers();
         dispose();
     }
 

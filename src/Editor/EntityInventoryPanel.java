@@ -16,6 +16,12 @@ import java.util.Scanner;
  */
 public class EntityInventoryPanel extends JPanel {
 
+    /**
+     * EntityInventoryPanel:
+     *
+     * The 'Items' panel of the Entity Editor.
+     */
+
     private DefaultListModel<ItemStruct> entityInvModel;
     private EntityStruct entity;
 
@@ -29,6 +35,7 @@ public class EntityInventoryPanel extends JPanel {
 
         Font textFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 
+        //Create combo box for selecting a new item
         JComboBox<ItemStruct> newItemSelect = new JComboBox<>();
 
         int[] mapKeys = ItemRegistry.getMapKeys();
@@ -39,6 +46,7 @@ public class EntityInventoryPanel extends JPanel {
         newItemSelect.setMaximumRowCount(20);
         selectionPanel.add(newItemSelect, BorderLayout.PAGE_START);
 
+        //Create the list beneath the combo box of current items in the inventory.
         entityInvModel = new DefaultListModel<>();
         updateEntityInventory();
         JList<ItemStruct> invSelectionList = new JList<>();
@@ -53,8 +61,10 @@ public class EntityInventoryPanel extends JPanel {
 
         add(selectionPanel);
 
+        //Create the side panel
         JPanel editPanel = new JPanel();
 
+        //Create the item quantity box
         JTextField itemQtySetter = new JTextField(2);
         itemQtySetter.setFont(textFont);
         itemQtySetter.getDocument().addDocumentListener(new DocumentListener() {
@@ -76,6 +86,7 @@ public class EntityInventoryPanel extends JPanel {
                 itemQtySetter.setText(String.valueOf(item.getQty()));
         });
 
+        //Create the 'add item' button
         JButton addItemButton = new JButton("+");
         addItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         addItemButton.addActionListener(e -> {
@@ -86,6 +97,7 @@ public class EntityInventoryPanel extends JPanel {
             }
         });
 
+        //Create the 'remove item' button
         JButton removeItemButton = new JButton("-");
         removeItemButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         removeItemButton.addActionListener(e -> {
@@ -96,6 +108,7 @@ public class EntityInventoryPanel extends JPanel {
             }
         });
 
+        //Putting them all together.
         editPanel.add(addItemButton);
         editPanel.add(removeItemButton);
         editPanel.add(itemQtySetter);
@@ -104,8 +117,9 @@ public class EntityInventoryPanel extends JPanel {
         editPanel.setLayout(new GridLayout(count, 1, 3, 2));
         editPanel.setMaximumSize(new Dimension(50, count * 28));
 
+        //But of course, we gotta nest some JPanels into each other.
         JPanel encapsulatingPanel = new JPanel();
-        encapsulatingPanel.setLayout(new BoxLayout(encapsulatingPanel, BoxLayout.PAGE_AXIS));
+        encapsulatingPanel.setLayout(new BoxLayout(encapsulatingPanel, BoxLayout.PAGE_AXIS)); //I really just wanted to have multiple layouts...
         encapsulatingPanel.add(editPanel);
 
         encapsulatingPanel.add(Box.createVerticalGlue());
@@ -119,12 +133,14 @@ public class EntityInventoryPanel extends JPanel {
         add(encapsulatingPanel, BorderLayout.LINE_END);
     }
 
+    /**
+     * Clears the contents of the current items list and refills it with more current data.
+     */
     private void updateEntityInventory(){
         ArrayList<ItemStruct> items = entity.getItems();
         entityInvModel.clear();
-        ItemRegistry registry = new ItemRegistry();
         for (ItemStruct i : items) {
-            ItemStruct struct = registry.getItemStruct(i.getItemId());
+            ItemStruct struct = ItemRegistry.getItemStruct(i.getItemId());
             struct.setQty(i.getQty());
             entityInvModel.addElement(struct);
         }

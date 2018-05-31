@@ -11,24 +11,33 @@ import java.awt.*;
  */
 public class LevelScriptEditor extends JFrame {
 
+    /**
+     * LevelScriptEditor:
+     *
+     * The Editor for enabling and disabling LevelScripts for a Level.
+     */
+
     public LevelScriptEditor(LevelData ldata){
         setTitle("Level Scripts");
         setMinimumSize(new Dimension(350, 300));
 
+        //Create JPanel for the enabled scripts
         JPanel enabledScriptsPanel = new JPanel();
         enabledScriptsPanel.setLayout(new BoxLayout(enabledScriptsPanel, BoxLayout.PAGE_AXIS));
         enabledScriptsPanel.setBorder(BorderFactory.createEtchedBorder());
 
+        //Create JPanel for the disabled scripts
         JPanel disabledScriptsPanel = new JPanel();
         disabledScriptsPanel.setLayout(new BoxLayout(disabledScriptsPanel, BoxLayout.PAGE_AXIS));
         disabledScriptsPanel.setBorder(BorderFactory.createEtchedBorder());
 
+        //Create the JPanel that binds them together
         JPanel scriptsMasterPanel = new JPanel();
         LevelScriptRegistry lsr = new LevelScriptRegistry();
         for (int id : lsr.getMapKeys()) {
             Class scriptClass = lsr.getLevelScriptClass(id);
             if (scriptClass != null) {
-                new LevelButtonPanel(scriptClass, enabledScriptsPanel, disabledScriptsPanel, scriptsMasterPanel, ldata, id);
+                new LevelScriptButtonPanel(scriptClass, enabledScriptsPanel, disabledScriptsPanel, scriptsMasterPanel, ldata, id);
             }
         }
 
@@ -38,10 +47,12 @@ public class LevelScriptEditor extends JFrame {
         disabledScriptsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         scriptsMasterPanel.add(disabledScriptsPanel, BorderLayout.CENTER);
 
+        //Add a scroll pane for good measure
         JScrollPane scrollPane = new JScrollPane(scriptsMasterPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         add(scrollPane, BorderLayout.CENTER);
 
+        //Add of course, obligatory bottom panel
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.LINE_AXIS));
 
@@ -58,7 +69,14 @@ public class LevelScriptEditor extends JFrame {
         setVisible(true);
     }
 
-    private class LevelButtonPanel extends JPanel {
+    private class LevelScriptButtonPanel extends JPanel {
+
+        /**
+         * LevelScriptButtonPanel:
+         *
+         * Who knew a pair of a JLabel and a JButton could be so complicated?
+         */
+
         JButton button;
         JLabel scriptLabel;
 
@@ -70,17 +88,21 @@ public class LevelScriptEditor extends JFrame {
         LevelData ldata;
         int id;
 
-        private LevelButtonPanel(Class scriptClass, JPanel enabledScriptsPanel, JPanel disabledScriptsPanel, JPanel masterPanel, LevelData ldata, int scriptId){
+        private LevelScriptButtonPanel(Class scriptClass, JPanel enabledScriptsPanel, JPanel disabledScriptsPanel, JPanel masterPanel, LevelData ldata, int scriptId){
             this.enabledScriptsPanel = enabledScriptsPanel;
             this.disabledScriptsPanel = disabledScriptsPanel;
             this.masterPanel = masterPanel;
             setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+
+            //Make the button
             button = new JButton("+");
             button.setMargin(new Insets(1, 1, 1, 1));
             button.setMaximumSize(new Dimension(20, 20));
             button.setMinimumSize(new Dimension(20, 20));
             button.addActionListener(e -> toggleEnable());
+            //Make the label
             scriptLabel = new JLabel(scriptClass.getSimpleName());
+            //Put them together, with a spacer
             add(button);
             add(Box.createRigidArea(new Dimension(5, 5)));
             add(scriptLabel);
@@ -128,6 +150,9 @@ public class LevelScriptEditor extends JFrame {
             updatePanels();
         }
 
+        /**
+         * Calls enough methods to update everything. It kinda shoots into the dark, but at least it hits its mark.
+         */
         private void updatePanels(){
             enabledScriptsPanel.validate();
             enabledScriptsPanel.repaint();

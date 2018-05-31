@@ -17,20 +17,28 @@ import java.util.ArrayList;
  */
 public class EntityArgsPanel extends JPanel {
 
+    /**
+     * EntityArgsPanel:
+     *
+     * In the code, Entity Attributes are named EntityArgs. Due to compatibility issues, EntityArg will not be renamed.
+     * And thus, the naming follows for EntityArgsPanel too.
+     */
+
     public EntityArgsPanel(JFrame frame, EntityStruct entityStruct){
         setLayout(new BorderLayout());
 
         JPanel argEditorPanel = new JPanel();
         argEditorPanel.setLayout(new BoxLayout(argEditorPanel, BoxLayout.PAGE_AXIS));
 
+        //In order to get what EntityArgs to fill into the list, an actual Entity must be instantiated to generate the necessary EntityArgs.
         Entity generated = null;
         try {
             generated = (Entity) EntityRegistry.getEntityClass(entityStruct.getEntityId()).newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        if (generated != null) {
-            generated.simpleInit(entityStruct, new Coordinate(0, 0));
+        if (generated != null) { //If Java's reflection stuff worked, we can now get down to business
+            generated.simpleInit(entityStruct, new Coordinate(0, 0)); //SimpleInit covers exactly enough to get what we need, without any nasty side effects.
             ArrayList<EntityArg> args = generated.generateArgs();
             if (args != null) {
                 for (EntityArg arg : args) {
@@ -50,7 +58,7 @@ public class EntityArgsPanel extends JPanel {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.LINE_AXIS));
 
-        bottomPanel.add(Box.createHorizontalGlue());
+        bottomPanel.add(Box.createHorizontalGlue()); //We want the bottom buttons to be right-justified, consistent with all the other UI's
 
         JButton finishButton = new JButton("Done");
         finishButton.addActionListener(e -> frame.dispose());
@@ -61,11 +69,17 @@ public class EntityArgsPanel extends JPanel {
 
     private class ArgEditor extends JPanel{
 
+        /**
+         * ArgEditor:
+         *
+         * Represents each 'cell' in the Attributes pane.
+         */
+
         JLabel argNameLabel;
         JTextField argValueField;
 
         private ArgEditor(EntityArg arg){
-            setLayout(new BorderLayout());
+            setLayout(new BorderLayout()); //BorderLayout used because it does pack things.
 
             argNameLabel = new JLabel(arg.getArgName() + ": ", SwingConstants.TRAILING);
             argNameLabel.setPreferredSize(new Dimension(80, 25));
@@ -89,7 +103,7 @@ public class EntityArgsPanel extends JPanel {
                 }
             });
 
-            setMaximumSize(new Dimension(9001, 30));
+            setMaximumSize(new Dimension(9001, 30)); //Supports most screen resolutions!
             add(argNameLabel, BorderLayout.LINE_START);
             add(argValueField, BorderLayout.CENTER);
             setBorder(BorderFactory.createEtchedBorder());

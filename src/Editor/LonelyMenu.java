@@ -10,6 +10,15 @@ import java.awt.event.MouseEvent;
  */
 public class LonelyMenu extends JComponent implements MouseInputListener {
 
+    /**
+     * LonelyMenu:
+     *
+     * JMenu's require being placed in a JMenuBar, which wastes a bunch of space.
+     * So therefore, custom component!
+     *
+     * Basically, it's a menu button without needing to be in a menu bar.
+     */
+
     private boolean mouseHovering = false;
     private JPopupMenu menu;
 
@@ -28,16 +37,16 @@ public class LonelyMenu extends JComponent implements MouseInputListener {
         FontMetrics fontMetrics = g.getFontMetrics();
         int nameLength = fontMetrics.stringWidth(menu.getLabel());
         g.setColor(Color.BLACK);
+        //Keeps the text centered.
         g.drawString(menu.getLabel(), (getWidth() - nameLength)/2, getHeight()-3);
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        //menu.show(this, -129, -2);
         if (menu.isShowing())
             menu.setVisible(false);
         else
-            menu.show(this, -1 * (int)menu.getPreferredSize().getWidth() - 2, -2);
+            menu.show(this, -1 * (int)menu.getPreferredSize().getWidth() - 2, -2); //JPopupMenu has the origin of its list at the top-left corner, so things have to be shifted around.
     }
 
     @Override

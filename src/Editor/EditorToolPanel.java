@@ -314,6 +314,7 @@ public class EditorToolPanel extends JPanel {
         toolsPanel.add(toolOptionsPanel);
     }
 
+    //Create tile data panel
     private void createTileDataPanel(LevelData ldata){
         //Tile data panel
         CollapsiblePanel tileDataPanel = new CollapsiblePanel();
@@ -321,15 +322,14 @@ public class EditorToolPanel extends JPanel {
 
         //Tile select combo box
         JComboBox<TileStruct> tileSelectBox = new JComboBox<>();
-        TileRegistry tileRegistry = new TileRegistry();
-
-        int[] mapKeys = tileRegistry.getMapKeys();
+        int[] mapKeys = TileRegistry.getMapKeys();
         for (int i : mapKeys){
-            tileSelectBox.addItem(tileRegistry.getTileStruct(i));
+            tileSelectBox.addItem(TileRegistry.getTileStruct(i));
         }
 
         tileSelectBox.setMaximumSize(new Dimension(100, 25));
 
+        //Tile Pencil Tool
         TilePencil tilePencil = new TilePencil(ldata.getTileDataLayer(), ldata);
         tilePencil.setTileData((TileStruct)tileSelectBox.getSelectedItem());
         tileSelectBox.addActionListener(e -> {
@@ -343,6 +343,7 @@ public class EditorToolPanel extends JPanel {
         searchForIcon = new JLabel(new SingleTextRenderer(new SpecialText(' ')));
         placeTileIcon = new JLabel(new SingleTextRenderer(((TileStruct)tileSelectBox.getSelectedItem()).getDisplayChar()));
 
+        //Scan button & associated panel
         JButton scanButton = new JButton("Scan");
         scanButton.setMargin(new Insets(0, 2, 0, 3));
         scanButton.addActionListener(e -> scanForTileData(ldata, ldata.getTileDataLayer()));
@@ -352,10 +353,10 @@ public class EditorToolPanel extends JPanel {
         tileScanPanel.add(scanButton, BorderLayout.CENTER);
         tileScanPanel.add(placeTileIcon, BorderLayout.LINE_END);
 
+        //Putting it all together
         tileDataPanel.add(tileSelectBox);
         tileDataPanel.add(createDrawToolButton("Tile Pencil", tilePencil, KeyEvent.VK_T));
         tileDataPanel.add(tileScanPanel);
-        //tileDataPanel.add(Box.createRigidArea(new Dimension(1, 1)));
 
         tileDataPanel.setLayout(new GridLayout(tileDataPanel.getComponentCount(), 1, 2, 2));
         sizeToolsPanel(tileDataPanel);
@@ -367,6 +368,7 @@ public class EditorToolPanel extends JPanel {
     private JLabel entityPreview;
     private JButton selectEntityButton;
 
+    //Create entity data panel
     private void createEntityDataPanel(LevelData ldata){
 
         CollapsiblePanel entityDataPanel = new CollapsiblePanel();
@@ -374,6 +376,7 @@ public class EditorToolPanel extends JPanel {
 
         entityPlaceTool = new EntityPlace(ldata);
 
+        //Entity selection and preview icon
         JPanel entitySelectPanel = new JPanel(new BorderLayout());
 
         entityPreview = new JLabel(new SingleTextRenderer(null));
@@ -387,6 +390,7 @@ public class EditorToolPanel extends JPanel {
 
         entityDataPanel.add(entitySelectPanel);
 
+        //Now for the Tools
         JButton placeEntityButton = createDrawToolButton("Place Entity", entityPlaceTool, KeyEvent.VK_P);
         placeEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(placeEntityButton);
@@ -403,12 +407,17 @@ public class EditorToolPanel extends JPanel {
         copyEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(copyEntityButton);
 
+        //Putting it all together
         entityDataPanel.setLayout(new GridLayout(entityDataPanel.getComponentCount(), 1, 2, 2));
         sizeToolsPanel(entityDataPanel);
         entityDataPanel.validate();
         toolsPanel.add(entityDataPanel);
     }
 
+    /**
+     * Assigns EntityStruct to place by the EntityPlace tool. It also does the math for the background transparency so that it rests atop a black background.
+     * @param struct The EntityStruct to assign to the EntityPlace tool
+     */
     void assignEntityPlaceStruct(EntityStruct struct){
         entityPlaceTool.setEntityStruct(struct.getEntityId());
         Color bkg = struct.getDisplayChar().getBkgColor();
@@ -420,16 +429,19 @@ public class EditorToolPanel extends JPanel {
         selectEntityButton.setText(struct.getEntityName());
     }
 
+    //Create Warp Zone panel
     private void createWarpZonePanel(LevelData ldata){
 
         CollapsiblePanel warpZonePanel = new CollapsiblePanel();
         warpZonePanel.setBorder(BorderFactory.createTitledBorder("Warp Zones"));
 
+        //The tools
         warpZonePanel.add(createDrawToolButton("Create Zone", new WarpZoneCreate(lm, ldata), KeyEvent.VK_Z));
         warpZonePanel.add(createDrawToolButton("Define Zone", new WarpZoneDefine(ldata),     KeyEvent.VK_I));
         warpZonePanel.add(createDrawToolButton("Move Zone",   new WarpZoneMove(lm, ldata),   KeyEvent.VK_M));
         warpZonePanel.add(createDrawToolButton("Destroy Zone",new WarpZoneDestroy(ldata),    KeyEvent.VK_Y));
 
+        //Putting it all together
         warpZonePanel.setLayout(new GridLayout(warpZonePanel.getComponentCount(), 1, 2, 2));
         sizeToolsPanel(warpZonePanel);
         warpZonePanel.validate();
@@ -447,6 +459,7 @@ public class EditorToolPanel extends JPanel {
         searchForIcon.repaint();
     }
 
+    //Does the 'Scan' function of the Scan button
     private void scanForTileData(LevelData ldata, Layer tileDataLayer){
         SpecialText searchFor = ((SingleTextRenderer)searchForIcon.getIcon()).specText;
         if (searchFor == null || selectedTileStruct == null) return;
