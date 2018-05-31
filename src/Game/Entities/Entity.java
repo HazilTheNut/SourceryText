@@ -94,6 +94,7 @@ public class Entity extends TagHolder implements Serializable {
     protected void move(int relativeX, int relativeY){
         TagEvent moveEvent = new TagEvent(0, true, this, gi.getTileAt(getLocation().add(new Coordinate(relativeX, relativeY))), gi);
         for (Tag tag : getTags()) tag.onMove(moveEvent);
+        moveEvent.doFutureActions();
         if (moveEvent.eventPassed() && shouldDoAction() && getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)), TagRegistry.NO_PATHING)) {
             location.movePos(relativeX, relativeY);
             sprite.movePos(relativeX, relativeY);
@@ -170,6 +171,7 @@ public class Entity extends TagHolder implements Serializable {
             } else {
                 TagEvent updateEvent = new TagEvent(0, true, items.get(ii), items.get(ii), getGameInstance());
                 for (Tag tag : items.get(ii).getTags()) tag.onTurn(updateEvent);
+                updateEvent.doFutureActions();
                 if (updateEvent.eventPassed()) updateEvent.doCancelableActions();
                 ii++;
             }
@@ -199,6 +201,7 @@ public class Entity extends TagHolder implements Serializable {
         for (Tag tag : getTags()){
             tag.onTurn(turnEvent);
         }
+        turnEvent.doFutureActions();
         if (turnEvent.eventPassed()){
             turnEvent.doCancelableActions();
         }
@@ -223,6 +226,7 @@ public class Entity extends TagHolder implements Serializable {
         for (Tag tag : getTags()){
             tag.onEntityAction(actionEvent);
         }
+        actionEvent.doFutureActions();
         if (actionEvent.eventPassed()){
             actionEvent.doCancelableActions();
             return true;

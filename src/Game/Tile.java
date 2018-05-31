@@ -41,6 +41,7 @@ public class Tile extends TagHolder implements Serializable {
         for (Tag tag : getTags()){
             tag.onTurn(event);
         }
+        event.doFutureActions();
         if (event.eventPassed()){
             event.doCancelableActions();
         }

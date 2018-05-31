@@ -2,6 +2,7 @@ package Game.Tags.PropertyTags;
 
 import Data.SerializationVersion;
 import Engine.SpecialText;
+import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
@@ -40,7 +41,10 @@ public class WetTag extends Tag {
 
     @Override
     public void onTurn(TagEvent e) {
-        if (drying) lifetime--;
+        if (drying) {
+            DebugWindow.reportf(DebugWindow.TAGS, "WetTag.onTurn", "lifetime: %1$d", lifetime);
+            lifetime--;
+        }
         if (lifetime == 0) e.addFutureAction(event -> e.getSource().removeTag(TagRegistry.WET));
     }
 

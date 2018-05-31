@@ -78,6 +78,7 @@ public class Projectile extends TagHolder {
     private void collide(TagHolder other, GameInstance gi){
         TagEvent dmgEvent = new TagEvent(0, true, this, other, gi);
         for (Tag tag : getTags()) tag.onDealDamage(dmgEvent);
+        dmgEvent.doFutureActions();
         if (dmgEvent.eventPassed()){
             dmgEvent.doCancelableActions();
             other.receiveDamage(dmgEvent.getAmount());
@@ -108,6 +109,7 @@ public class Projectile extends TagHolder {
             for (Tag tag : getTags()){
                 tag.onFlyOver(e);
             }
+            e.doFutureActions();
             if (e.eventPassed()) e.doCancelableActions();
         }
     }

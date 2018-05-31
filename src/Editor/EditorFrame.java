@@ -40,30 +40,32 @@ public class EditorFrame extends JFrame {
         c.addComponentListener(window);
         c.addKeyListener(window);
 
+        //Create layers
         Layer mouseHighlight = new Layer(new SpecialText[window.RESOLUTION_WIDTH*4][window.RESOLUTION_HEIGHT*4], "mouse", 0, 0, LayerImportances.GAME_CURSOR);
         mouseHighlight.fixedScreenPos = true;
 
         Layer tileDataLayer = ldata.getTileDataLayer();
         tileDataLayer.setVisible(false);
 
+        //Send layers to LayerManager, which also needs to be instantiated.
         LayerManager manager = new LayerManager(window);
         manager.addLayer(ldata.getBackdrop());
         manager.addLayer(ldata.getTileDataLayer());
         manager.addLayer(ldata.getEntityLayer());
         manager.addLayer(ldata.getWarpZoneLayer());
         manager.addLayer(mouseHighlight);
-
+        //Just to make sure....
         manager.printLayerStack();
 
         window.addSpecialGraphics(new EditorLevelBoundGraphics(window, manager, ldata));
 
         c.add(window, BorderLayout.CENTER);
-
+        //Create Text Panel
         textPanel = new EditorTextPanel();
         c.add(textPanel, BorderLayout.LINE_START);
 
         UndoManager undoManager = new UndoManager(ldata, this);
-
+        //Establish mouse input
         EditorMouseInput mi = new EditorMouseInput(window, manager, mouseHighlight, textPanel, ldata.getBackdrop(), ldata, undoManager);
         window.addMouseListener(mi);
         window.addMouseMotionListener(mi);

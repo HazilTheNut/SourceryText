@@ -19,6 +19,14 @@ import java.awt.event.MouseWheelListener;
  */
 public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
+    /**
+     * EditorMouseInput:
+     *
+     * The object responsible for handling input for the Level Editor.
+     *
+     * The input functionality is not as refined as GameMouseInput, but instead trades that out for a more specialized application to the LevelEditor
+     */
+
     private ViewWindow window;
     private LayerManager manager;
     private Layer highlightLayer;
@@ -63,17 +71,17 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON3) {
-            if (drawing){
+        if (e.getButton() == MouseEvent.BUTTON3) { //If right-click
+            if (drawing){ //Cancels drawing if that was what was going on.
                 drawTool.onCancel(highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()));
                 drawing = false;
-            } else {
+            } else { //Otherwise, move the camera
                 previousCharXPos = window.getSnappedMouseX(e.getX());
                 previousCharYPos = window.getSnappedMouseY(e.getY());
                 movingCamera = true;
                 highlightLayer.editLayer(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()), null);
             }
-        } else if (e.getButton() == MouseEvent.BUTTON1 && !movingCamera && drawTool != null){
+        } else if (e.getButton() == MouseEvent.BUTTON1 && !movingCamera && drawTool != null){ //Left-click starts drawing
             drawTool.onDrawStart(backdropLayer, highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()), textPanel.selectedSpecialText);
             drawing = true;
         }
@@ -81,9 +89,9 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (drawing && e.getButton() == MouseEvent.BUTTON1 && drawTool != null) {
+        if (drawing && e.getButton() == MouseEvent.BUTTON1 && drawTool != null) { //Should tell the DrawTool to end
             drawTool.onDrawEnd(backdropLayer, highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()), textPanel.selectedSpecialText);
-            undoManager.recordLevelData();
+            undoManager.recordLevelData(); //That must have done something, so better get the UndoManager to record that.
         }
         movingCamera = false;
         drawing = false;
@@ -104,11 +112,11 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (movingCamera) {
+        if (movingCamera) { //Do some moving camera business, if in camera-moving-mode
             manager.moveCameraPos(previousCharXPos - window.getSnappedMouseX(e.getX()), previousCharYPos - window.getSnappedMouseY(e.getY()));
             previousCharXPos = window.getSnappedMouseX(e.getX());
             previousCharYPos = window.getSnappedMouseY(e.getY());
-        } else if (drawing){
+        } else if (drawing){ //If drawing, tell the DrawTool that you are drawing.
             updateMouseCursorPos(e.getX(), e.getY());
             drawTool.onDraw(backdropLayer, highlightLayer, getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()), textPanel.selectedSpecialText);
         } else {
@@ -118,12 +126,14 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        //The mouse moved, so it's probably good to update the visuals on a couple of things to stay consistent with the mouse position.
         if (window.getSnappedMouseX(e.getX()) != previousCharXPos || window.getSnappedMouseY(e.getY()) != previousCharYPos)
             ldata.updateWarpZoneLayer(window.getSnappedMouseX(e.getX()) + manager.getCameraPos().getX(), window.getSnappedMouseY(e.getY()) + manager.getCameraPos().getY());
         updateMouseCursorPos(e.getX(), e.getY());
         cursorTooltip.updateMousePosition(e.getX(), e.getY(), getLayerMousePosX(e.getX()), getLayerMousePosY(e.getY()));
     }
 
+    //Relocates the position of the mouse cursor and changes color depended on whether the cursor was out of bounds.
     private void updateMouseCursorPos(int rawX, int rawY){
         highlightLayer.editLayer(previousCharXPos, previousCharYPos, null);
         if (!backdropLayer.isLayerLocInvalid(window.getSnappedMouseX(rawX) + manager.getCameraPos().getX() - backdropLayer.getX(), window.getSnappedMouseY(rawY) + manager.getCameraPos().getY() - backdropLayer.getY()))
@@ -148,8 +158,8 @@ public class EditorMouseInput implements MouseInputListener, MouseWheelListener{
         cursorTooltip.showAdvanced = !cursorTooltip.showAdvanced;
     }
 
-    private int originalResolutionWidth = 0;
-    private int originalResolutionHeight = 0;
+    private int originalResolutionWidth;
+    private int originalResolutionHeight;
     int zoomAmount = 100;
     CameraManager cm;
 

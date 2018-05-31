@@ -7,7 +7,6 @@ import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Timer;
 import java.util.TimerTask;
 
 /**
@@ -18,7 +17,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     private JButton openedButton; //The button this SpecialTextMaker is editing
     private ArrayList<JButton> btnManifest;
     private Container buttonContainer;
-    private boolean isNewButton = true;
+    private boolean isNewButton;
 
     private JTextField charField;
 
@@ -141,7 +140,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             public void windowDeactivated(WindowEvent e) {}
         });
 
-        java.util.Timer timer = new Timer();
+        java.util.Timer timer = new java.util.Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -152,13 +151,13 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("fg")){
+        if (e.getActionCommand().equals("fg")){ //Pushed 'Fg' button
             bgHSB = colorPicker.getColorData();
             colorPicker.setColorData(fgHSB);
             fgButton.setEnabled(false);
             bgButton.setEnabled(true);
             settingForeground = true;
-        } else if (e.getActionCommand().equals("bg")){
+        } else if (e.getActionCommand().equals("bg")){ //Pushed 'Bg' button
             fgHSB = colorPicker.getColorData();
             colorPicker.setColorData(bgHSB);
             fgButton.setEnabled(true);
@@ -166,8 +165,6 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             settingForeground = false;
         }
     }
-
-
 
     private void updateElements() {
         String charText = charField.getText();
@@ -205,11 +202,21 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
     class ColorPicker extends JComponent implements MouseInputListener {
 
+        /**
+         * ColorPicker:
+         *
+         * A custom JComponent that generates colors, using an HSB-based user interface.
+         *
+         * NOMENCLATURE:
+         *
+         * Main Box: The large square that allows for modifying Saturation and Brightness
+         * Hue Slider: The slider on the right that modifies Hue.
+         */
         int mousePointX = 0;
         int mousePointY = 0;
         
-        int satBriPointX = 0;
-        int satBriPointY = 0;
+        int satBriPointX = 0; //This point has to be remembered so that it stays put while changing hue
+        int satBriPointY = 0; //Could be a Coordinate, but it's old code.
 
         float[] colorData;
 
@@ -221,40 +228,39 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         float[] getColorData() { return colorData; }
 
+        //Gets the width of the main box of the color picker, without the hue slider on the side.
         private int getBoxWidth() { return getWidth() - 15; }
 
         ColorPicker() { colorData = new float[]{0, 0, 0}; }
 
         @Override
         public void paintComponent(Graphics g) {
-
             int boxWidth = getBoxWidth();
 
+            //Draw the main box and hue slider
             for (int y = 1; y < getHeight()-1; y++){
-                for (int x = 1; x < boxWidth; x++) {
-                    //Color col = clipColor(new Color(x * (255 / getWidth()), y * (255 / getHeight()), 50));
+                for (int x = 1; x < boxWidth; x++) { //Draw stuff in the main box
                     Color col = Color.getHSBColor(colorData[0], (float) (x - 1) / (boxWidth), (float) (y - 1) / (getHeight() - 1));
                     g.setColor(col);
                     g.fillRect(x, y, 1, 1);
                 }
+                //Then draw the hue slider, using the same y value for compactness.
                 g.setColor(Color.getHSBColor(((float)y)/getHeight(), 0.9f, 0.9f));
                 g.drawLine(boxWidth + 2, y, getWidth(), y);
             }
 
+            //Draw white line on the hue slider
             System.out.printf("Hue: %1$f\n", colorData[0]);
             int lineY = (int)(getHeight() * colorData[0]);
             g.setColor(Color.WHITE);
             g.fillRect(boxWidth, lineY - 2, getWidth() - boxWidth, 4);
 
+            //Draw black line boundary
             g.setColor(Color.black);
             g.drawRect(0,0,boxWidth,getHeight()-1);
             g.drawRect(boxWidth + 2,0,getWidth()-boxWidth-3,getHeight()-1);
 
-            if (mousePointX < boxWidth + 2) {
-                satBriPointX = mousePointX;
-                satBriPointY = mousePointY;
-            }
-
+            //Draw the little cross-hair on the main box
             g.setColor(Color.WHITE);
             g.drawLine(satBriPointX-1, satBriPointY, satBriPointX-2, satBriPointY);
             g.drawLine(satBriPointX+1, satBriPointY, satBriPointX+2, satBriPointY);
@@ -275,6 +281,10 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         private void onMouseInput(MouseEvent e){
             mousePointX = e.getX() - getX();
             mousePointY = e.getY() - getY();
+            if (mousePointX < getBoxWidth() + 2) { //Don't move Sat-Bri point if hue is changing.
+                satBriPointX = mousePointX;
+                satBriPointY = mousePointY;
+            }
             if (mousePointX >= getWidth() - 13){ //Selecting hue
                 colorData[0] = (float)mousePointY / getHeight();
             } else {

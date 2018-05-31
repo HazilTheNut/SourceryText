@@ -70,6 +70,7 @@ public class TagHolder implements Serializable {
         for (Tag tag : tags) {
             tag.onLevelEnter(event);
         }
+        event.doFutureActions();
     }
 
     /**

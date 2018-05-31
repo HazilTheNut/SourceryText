@@ -129,6 +129,7 @@ public class CombatEntity extends Entity{
             TagEvent event = new TagEvent(strength, true, this, ce, getGameInstance());
             for (Tag tag : getWeapon().getTags())
                 tag.onDealDamage(event);
+            event.doFutureActions();
             if (event.eventPassed()) {
                 event.doCancelableActions();
                 ce.receiveDamage(event.getAmount());

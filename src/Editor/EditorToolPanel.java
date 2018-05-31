@@ -32,6 +32,8 @@ import java.io.File;
  * F1            Art View
  * F2            Terrain View
  * F3            Entity View
+ * -             Zoom Out
+ * =             Zoom In
  *
  * X            Expand Room
  *
@@ -61,6 +63,15 @@ import java.io.File;
  */
 public class EditorToolPanel extends JPanel {
 
+    /**
+     * EditorToolPanel:
+     *
+     * The EditorToolPanel, to be completely honest, does a little bit too much.
+     * Clocking in at around 430 lines of source code, it really could be much simpler.
+     *
+     * Essentially, it governs all the stuff on the right side of the Level Editor.
+     * Given how busy that other side is, the bulkiness of this class is somewhat warranted.
+     */
     private UndoManager undoManager;
 
     private EditorMouseInput mi;
@@ -117,6 +128,7 @@ public class EditorToolPanel extends JPanel {
         validate();
     }
 
+    //Creates the menu at the very top of the panel
     private void createTopMenu(LevelData ldata, WindowWatcher watcher, JRootPane rootPane){
         JPanel menuPanel = new JPanel();
         menuPanel.setLayout(new BorderLayout(0, 2));
@@ -132,8 +144,8 @@ public class EditorToolPanel extends JPanel {
         rootPane.getActionMap().put("save", new MenuAction(() -> saveLevel(ldata))); //Register key input action
         saveLevelItem.setAccelerator(keyStroke); //For display reasons
         levelMenu.add(saveLevelItem);
-
-        JMenuItem saveLevelAsItem = new JMenuItem("Save Level as...");
+        //Everything else below follow the format above for the most part
+        JMenuItem saveLevelAsItem = new JMenuItem("Save Level as..."); //Save As option
         saveLevelAsItem.addActionListener(e -> saveLevelAs(ldata));
         keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
         rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "save as");
@@ -141,7 +153,7 @@ public class EditorToolPanel extends JPanel {
         saveLevelAsItem.setAccelerator(keyStroke);
         levelMenu.add(saveLevelAsItem);
 
-        JMenuItem openLevelItem = new JMenuItem("Open Level");
+        JMenuItem openLevelItem = new JMenuItem("Open Level"); //Open option
         openLevelItem.addActionListener(e -> openLevel(watcher));
         keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK);
         openLevelItem.setAccelerator(keyStroke);
@@ -149,7 +161,7 @@ public class EditorToolPanel extends JPanel {
         rootPane.getActionMap().put("openLoadDialog", new MenuAction(() -> openLevel(watcher)));
         levelMenu.add(openLevelItem);
 
-        JMenuItem newLevelItem = new JMenuItem("New Level");
+        JMenuItem newLevelItem = new JMenuItem("New Level"); //New option
         newLevelItem.addActionListener(e -> newLevel(watcher));
         keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK);
         rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "new");
@@ -159,7 +171,7 @@ public class EditorToolPanel extends JPanel {
 
         levelMenu.addSeparator();
 
-        JMenuItem undoMenuItem = new JMenuItem("Undo");
+        JMenuItem undoMenuItem = new JMenuItem("Undo"); //Undo option
         undoMenuItem.addActionListener(e -> undoManager.doUndo());
         keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK);
         rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "undo");
@@ -167,7 +179,7 @@ public class EditorToolPanel extends JPanel {
         undoMenuItem.setAccelerator(keyStroke);
         levelMenu.add(undoMenuItem);
 
-        JMenuItem redoMenuItem = new JMenuItem("Redo");
+        JMenuItem redoMenuItem = new JMenuItem("Redo"); //Redo option
         redoMenuItem.addActionListener(e -> undoManager.doRedo());
         keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK | InputEvent.SHIFT_MASK);
         rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "redo");
@@ -177,7 +189,7 @@ public class EditorToolPanel extends JPanel {
 
         levelMenu.addSeparator();
 
-        JMenuItem syncTileDataItem = new JMenuItem("Sync Data Display");
+        JMenuItem syncTileDataItem = new JMenuItem("Sync Data Display"); //Sync option
         syncTileDataItem.addActionListener(e -> ldata.syncDisplayWithData());
         levelMenu.add(syncTileDataItem);
 
@@ -220,12 +232,14 @@ public class EditorToolPanel extends JPanel {
         add(menuPanel, BorderLayout.PAGE_START);
     }
 
+    //Creates the camera panel
     private void createCameraPanel(LevelData ldata){
         JPanel cameraPanel = new JPanel();
         cameraPanel.setBorder(BorderFactory.createTitledBorder("Camera"));
         cameraPanel.setLayout(new GridLayout(2, 3, 0, 5));
         cameraPanel.setMaximumSize(new Dimension(100, 65));
 
+        //Tells CameraManager what layers it should be working with
         cm.artLayer = ldata.getBackdrop();
         cm.tileLayer = ldata.getTileDataLayer();
         cm.entityLayer = ldata.getEntityLayer();
@@ -241,7 +255,7 @@ public class EditorToolPanel extends JPanel {
             switch (str){
                 case "A":
                     cm.artButton = btn;
-                    btn.doClick();
+                    btn.doClick(); //Start off in the 'Art' view
                     setButtonMnemonic(btn, KeyEvent.VK_F1);
                     break;
                 case "T":
@@ -253,7 +267,7 @@ public class EditorToolPanel extends JPanel {
                     setButtonMnemonic(btn, KeyEvent.VK_F3);
                     break;
                 case "+":
-                    setButtonMnemonic(btn, KeyEvent.VK_EQUALS);
+                    setButtonMnemonic(btn, KeyEvent.VK_EQUALS); //Really the '+', but without the shift key
                     break;
                 case "-":
                     setButtonMnemonic(btn, KeyEvent.VK_MINUS);
@@ -270,6 +284,7 @@ public class EditorToolPanel extends JPanel {
         toolsPanel.add(cameraPanel);
     }
 
+    //Create art tools panel
     private void createArtToolsPanel(){
         //Art tools panel
         CollapsiblePanel artToolsPanel = new CollapsiblePanel();

@@ -14,6 +14,13 @@ import java.util.ArrayList;
  */
 public class EditorTextPanel extends JPanel implements ActionListener{
 
+    /**
+     * EditorTextPanel:
+     *
+     * The panel on the left of the Level Editor that handles creating, selecting, editing, and deleting SpecialText.
+     * Thus the name, 'Text Panel'
+     */
+
     private JPanel textBtnPanel;
 
     SpecialText selectedSpecialText = new SpecialText(' ');
@@ -21,7 +28,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     private JLabel selectionLabel;
     private JButton selectedTextButton;
 
-    private ArrayList<JButton> buttonManifest = new ArrayList<>();
+    private ArrayList<JButton> buttonManifest = new ArrayList<>(); //Useful when importing buttons into another EditorWindow
 
     private EditorToolPanel toolPanel;
 
@@ -33,6 +40,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BorderLayout(0, 0));
 
+        //Create the very large 'Add New SpecialText' button.
         JButton addNewTextButton = new JButton("+");
         addNewTextButton.setFont(new Font("Monospaced", Font.BOLD, 20));
         addNewTextButton.setSelected(false);
@@ -51,14 +59,14 @@ public class EditorTextPanel extends JPanel implements ActionListener{
 
         add(topPanel, BorderLayout.PAGE_START);
 
+        //Create the middle panel for the SpecialText buttons.
         textBtnPanel = new JPanel();
         textBtnPanel.setLayout(new BoxLayout(textBtnPanel, BoxLayout.PAGE_AXIS));
         JScrollPane textBtnScrollPane = new JScrollPane(textBtnPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         textBtnScrollPane.getVerticalScrollBar().setUnitIncrement(13);
         add(textBtnScrollPane, BorderLayout.CENTER);
 
-        //add(new JButton("Test"), BorderLayout.PAGE_END);
-
+        //Create the panel on the bottom with the preview and extra buttons.
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayout(3, 1, 1, 3));
 
@@ -67,9 +75,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         selectionLabel.setMaximumSize(new Dimension(20, 20));
         selectionLabel.setAlignmentX(CENTER_ALIGNMENT);
 
-        //bottomPanel.add(Box.createRigidArea(new Dimension(1, 5)));
         bottomPanel.add(selectionLabel);
-        //bottomPanel.add(Box.createRigidArea(new Dimension(1, 5)));
 
         JButton editButton = new JButton("Edit");
         editButton.setAlignmentX(CENTER_ALIGNMENT);
@@ -99,7 +105,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         System.out.printf("[EditorTextPanel.actionPerformed] Button cmd: %1$s\n", e.getActionCommand());
         if (e.getActionCommand().equals("Add New Btn")) { //Adds new button
             createNewButton(createBaseButton());
-        } else if (e.getActionCommand().equals("Remove Btn")){
+        } else if (e.getActionCommand().equals("Remove Btn")){ //Removes selected button
             if (selectedTextButton != null){
                 textBtnPanel.remove(selectedTextButton);
                 buttonManifest.remove(selectedTextButton);
@@ -107,11 +113,11 @@ public class EditorTextPanel extends JPanel implements ActionListener{
                 textBtnPanel.validate();
                 textBtnPanel.repaint();
             }
-        } else if (e.getActionCommand().equals("nulltext")){
+        } else if (e.getActionCommand().equals("nulltext")){ //The 'null' button
             selectedSpecialText = null;
             selectionRender.specText = null;
             selectionLabel.repaint();
-        } else if (e.getActionCommand().equals("settext")){
+        } else if (e.getActionCommand().equals("settext")){ //Any button in the middle panel.
             if (e.getSource() instanceof JButton) {
                 JButton btn = (JButton) e.getSource();
                 selectedSpecialText = ((SingleTextRenderer)btn.getIcon()).specText;
