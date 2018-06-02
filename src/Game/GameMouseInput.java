@@ -20,6 +20,16 @@ import java.util.ArrayList;
  */
 public class GameMouseInput implements MouseInputListener, MouseWheelListener{
 
+    /**
+     * GameMouseInput:
+     *
+     * The centralized mouse input system for SourceryText.
+     *
+     * All MouseInputReceivers are placed into an ArrayList, and are ran in the opposite order of their addition to the list.
+     * As input passes through each MouseInputReceiver, each has the choice to stop the input short by returning true to any of the mouse input methods (onMouseLick, onMouseMove, etc.).
+     * This acts as MouseInputReceivers layering on top of each other and preventing input to receivers beneath it.
+     */
+
     private ViewWindow window;
     private LayerManager lm;
 

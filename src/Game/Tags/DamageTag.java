@@ -8,6 +8,12 @@ import Game.TagEvent;
  */
 public class DamageTag extends Tag{
 
+    /**
+     * DamageTag:
+     *
+     * Amplifies damage dealt by an incremental amount.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     public int damageAmount;
@@ -15,14 +21,6 @@ public class DamageTag extends Tag{
     public DamageTag(int dmg){
         damageAmount = dmg;
     }
-
-    /*
-    @Override
-    public void onItemUse(TagEvent e) {
-        e.addCancelableAction(event -> e.getTarget().receiveDamage(damageAmount));
-        e.setSuccess(true);
-    }
-    */
 
     @Override
     public void onDealDamage(TagEvent e) {

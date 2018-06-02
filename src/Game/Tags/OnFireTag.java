@@ -20,6 +20,22 @@ import java.util.Random;
  */
 public class OnFireTag extends Tag {
 
+    /**
+     * OnFireTag:
+     *
+     * The Tag that simulates fire.
+     *
+     * For All TagHolders:
+     *  > Spreads on contact
+     *  > Dissipates over time. Adjustable through BurnSlowTag, BurnFastTag, etc.
+     *
+     * For Tile:
+     *  > Create animated tile
+     *  > Spread to nearby tiles randomly
+     *  > Spreading speed adjustable through BurnSlowTag, BurnFastTag, etc.
+     *  > Create ash tiles when fire dissipates
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Random random = new Random();
@@ -94,7 +110,7 @@ public class OnFireTag extends Tag {
 
     @Override
     public void onAdd(TagEvent e) {
-        if (e.getTarget().hasTag(TagRegistry.FROZEN)) e.addFutureAction(event -> e.getTarget().removeTag(getId()));
+        if (e.getTarget().hasTag(TagRegistry.FROZEN) || e.getTarget().hasTag(TagRegistry.WET)) e.addFutureAction(event -> e.getTarget().removeTag(getId()));
     }
 
     @Override

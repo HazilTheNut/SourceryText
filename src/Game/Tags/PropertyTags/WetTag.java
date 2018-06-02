@@ -17,6 +17,19 @@ import java.awt.*;
  */
 public class WetTag extends Tag {
 
+    /**
+     * WetTag:
+     *
+     * The Tag responsible for the wetness property of TagHolders.
+     *
+     * For Tiles:
+     *  > Draws onto the tile overlay layer when it is added or removed
+     *
+     * For Entities:
+     *  > Dries off after a certain number of turns.
+     *  > Timer starts and refreshes when the Entity steps through wet Tiles.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int LIFETIME_START = 10;

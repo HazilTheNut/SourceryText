@@ -7,14 +7,27 @@ public class LevelUpTag extends Tag{
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    /*
-    The LevelUpTag should be used only by the 'Magic Potato' Item and it will only apply to the player
+    /**
+     * LevelUpTag:
+     *
+     * The LevelUpTag should be used only by the 'Magic Potato' Item and it will only apply to the player.
+     *
+     * The Player's stats could be have a more abstracted numerical representation, but I chose not to do that.
+     * Calculating what a stat is worth is much easier when part of the calculation is done for you.
+     *
+     * For example, the Magic Power (Mag) stat does the following (per 1 Mag):
+     *  > +3% magic damage
+     *  > -1% cooldown times
+     *
+     * By getting 2 Mag per level-up, the cooldown -% (-2% per level) amount is easier to calculate because now it is proportional to the amount of Magic Power.
+     *
+     * The only disadvantage of this is that it is more difficult to compare the amount of level-ups where spent on each stat.
      */
 
     private final int VIT_PER_LEVEL = 5;
     private final int STR_PER_LEVEL = 1;
     private final int MAG_PER_LEVEL = 2;
-    private final int CAP_PER_LEVEL = 6;
+    private final int CAP_PER_LEVEL = 5;
 
     private final int VIT_MAX       = 250;
     private final int STR_MAX       = 50;
@@ -29,13 +42,13 @@ public class LevelUpTag extends Tag{
         player.getInv().getOtherInv().close();
         QuickMenu quickMenu = e.getGameInstance().getQuickMenu();
         quickMenu.clearMenu();
-        if (player.getMaxHealth() < VIT_MAX) {
-            quickMenu.addMenuItem(String.format("Vit +%1$-3d-> %2$-3d", VIT_PER_LEVEL, player.getMaxHealth() + VIT_PER_LEVEL), TextBox.txt_green, () -> {
-                player.setMaxHealth(player.getMaxHealth() + VIT_PER_LEVEL);
+        if (player.getMaxHealth() < VIT_MAX) { //The stuff below roughly matches the code behind this menu option
+            quickMenu.addMenuItem(String.format("Vit +%1$-3d-> %2$-3d", VIT_PER_LEVEL, player.getMaxHealth() + VIT_PER_LEVEL), TextBox.txt_green, () -> { //If you can upgrade Vir further, create menu option to do so.
+                player.setMaxHealth(player.getMaxHealth() + VIT_PER_LEVEL); //Increment Vit
                 if (player.getMaxHealth() >= VIT_MAX) e.getGameInstance().getTextBox().showMessage("You've reached the maximum amount of <cg>Vitality!");
                 afterUpgrade(player, (Item)e.getSource());
             });
-        } else {
+        } else { //Vit already maxed out? Then make a menu option that does nothing.
             quickMenu.addMenuItem(String.format("Vit MAX (%1$d)", VIT_MAX), TextBox.txt_silver, () -> {});
         }
         if (player.getStrength() < STR_MAX) {

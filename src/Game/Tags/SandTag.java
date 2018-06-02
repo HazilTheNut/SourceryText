@@ -10,6 +10,15 @@ import Game.GameInstance;
  */
 public class SandTag extends SplashySurface {
 
+    /**
+     * SandTag:
+     *
+     * The Tag that makes Tiles sandy.
+     *
+     * For Tiles:
+     *  > Creates footprint animation when Entities step off of the Tile.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override

@@ -23,21 +23,28 @@ import java.util.TimerTask;
  */
 public class GameInstance implements Serializable {
 
+    /**
+     * GameInstance:
+     *
+     * Manages a running game of SourceryText, containing all the necessary fields to operate it.
+     * It's also serializable, so it doubles as a saved game too.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private boolean isPlayerTurn = true;
 
     private ArrayList<EntityOperation> entityOperations;
 
-    private Player player;
+    private Player player; //Makes the game interactive
 
-    private transient GameMouseInput mi;
+    private transient GameMouseInput mi; //Makes interaction happen
     private transient GameMaster gameMaster;
 
     private Level currentLevel;
     private ArrayList<Level> levels;
 
-    private String currentZoneName;
+    private String currentZoneName; //Name of the Zone. Used to check if a Level being loaded is still in the same Zone or not.
 
     private transient LayerManager lm;
     private transient TextBox textBox;
@@ -64,8 +71,10 @@ public class GameInstance implements Serializable {
         gameMaster = master;
     }
 
-    public void initialize(LayerManager lm){
-        this.lm = lm;
+    /**
+     * Sets up the GameInstance
+     */
+    void initialize(){
         entityOperations = new ArrayList<>();
 
         if (player == null) {
@@ -87,6 +96,9 @@ public class GameInstance implements Serializable {
         tileAnimationTimer.cancel();
     }
 
+    /**
+     * Starts the timer that updates the AnimatedTiles.
+     */
     void startAnimations(){
         tileAnimationTimer = new Timer();
         tileAnimationTimer.scheduleAtFixedRate(new TimerTask() {
@@ -108,7 +120,10 @@ public class GameInstance implements Serializable {
         }, 50, 50);
     }
 
-    public void dispose(){
+    /**
+     * Closes the GameInstance, preparing everything to be garbage-collected.
+     */
+    void dispose(){
         tileAnimationTimer.cancel();
         if (currentLevel != null) {
             currentLevel.onExit(lm);
@@ -123,7 +138,13 @@ public class GameInstance implements Serializable {
         quickMenu.clearMenu();
     }
 
-    public void enterLevel(String levelFilePath, Coordinate playerPos){
+    /**
+     * Switches to a new Level, and loads one into memory if it doesn't exist in the list of loaded levels yet.
+     *
+     * @param levelFilePath The full (non-relative) file path to the .lda file being entered into.
+     * @param playerPos The player's new position to be in.
+     */
+    void enterLevel(String levelFilePath, Coordinate playerPos){
         getPlayer().freeze();
         if (currentLevel != null) {
             currentLevel.onExit(lm);
@@ -146,6 +167,12 @@ public class GameInstance implements Serializable {
         startLevel(currentLevel, playerPos);
     }
 
+    /**
+     * Gets the name of the containing folder of a file.
+     *
+     * @param path The file path of the file
+     * @return Name of containing folder
+     */
     private String getFilePathParentFolder(String path){
         int strEndLoc   = path.lastIndexOf('/');
         int strStartLoc = path.substring(0, strEndLoc-1).lastIndexOf('/');
@@ -164,6 +191,7 @@ public class GameInstance implements Serializable {
 
     /**
      * Unpacks a level from storage, but doesn't set the current room to the newly unpacked one automatically.
+     *
      * @param levelFilePath The non-relative file path to the level's file
      * @return returns the loaded level
      */
@@ -202,6 +230,7 @@ public class GameInstance implements Serializable {
 
     /**
      * Instantiates an entity into a level, running initialize() and retrieving data from EntityRegistry.
+     *
      * @param base The base EntityStruct to build the Entity from
      * @param pos The pos where the entity should wind up
      * @param level The level being added to
@@ -267,6 +296,10 @@ public class GameInstance implements Serializable {
 
     public void addAnimatedTile(AnimatedTile animatedTile) { currentLevel.addAnimatedTile(animatedTile); }
 
+    /**
+     * Operates the turn for the enemies.
+     * Updates Tiles afterwards too.
+     */
     void doEnemyTurn(){
         //Thread enemyTurnThread = new Thread(() -> {
             long[] runTimes = new long[4];

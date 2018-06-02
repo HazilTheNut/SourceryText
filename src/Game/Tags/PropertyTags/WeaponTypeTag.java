@@ -11,6 +11,15 @@ import Game.Tags.Tag;
  */
 public class WeaponTypeTag extends Tag {
 
+    /**
+     * WeaponTypeTag:
+     *
+     * The master Tag class that defines the behavior of all weapons.
+     * Specifically, it does the following:
+     * > Assigns weapon upon usage
+     * > Makes the item non-stacking
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override

@@ -60,7 +60,7 @@ public class ItemRegistry {
         registerItem(2007, "Basement Key", 0, TagRegistry.KEY);
         registerItem(2008, "Secret Key",   0, TagRegistry.KEY);
 
-        registerItem(2500, "Shovel",       1, TagRegistry.IMPORTANT);
+        registerItem(2500, "Shovel",       1, TagRegistry.SPECIAL_ITEM);
 
         //Registering stuff ends here
     }

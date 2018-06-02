@@ -11,11 +11,20 @@ import Game.Registries.TagRegistry;
  */
 public class ShallowWaterTag extends SplashySurface {
 
+    /**
+     * ShallowWaterTag:
+     *
+     * The Tag that makes Tiles splashy.
+     *
+     * For Tiles:
+     *  > Creates splash animation when Entities step off of the Tile.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
     protected void playSplash(Coordinate loc, GameInstance gi) {
-        if (!gi.getCurrentLevel().getTileAt(loc).hasTag(TagRegistry.FROZEN))
+        if (!gi.getCurrentLevel().getTileAt(loc).hasTag(TagRegistry.FROZEN)) //There should not be any case where a ShallowWater and Frozen are in the same TagHolder, but just in case...
             gi.addAnimatedTile(new ShallowWaterAnimation(loc, gi.getCurrentLevel().getBackdrop().getSpecialText(loc.getX(), loc.getY())));
     }
 }

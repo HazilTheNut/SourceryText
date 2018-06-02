@@ -13,6 +13,13 @@ import java.util.ArrayList;
  */
 public class SplashySurface extends Tag {
 
+    /**
+     * SplashySurface:
+     *
+     * Overridden by ShallowWaterTag and SandTag.
+     * It detects when an Entity steps off of this Tile (if the owner of this tag is a Tile) and runs the method playSplash().
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     ArrayList<Coordinate> splashLocs = new ArrayList<>();

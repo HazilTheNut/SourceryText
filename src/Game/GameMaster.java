@@ -38,7 +38,7 @@ public class GameMaster {
         currentGameInstance.assignGameMaster(this);
         for (KeyListener listener : layerManager.getWindow().getKeyListeners()) layerManager.getWindow().removeKeyListener(listener);
         layerManager.getWindow().addKeyListener(new DebugWindowOpener());
-        currentGameInstance.initialize(layerManager);
+        currentGameInstance.initialize();
         mouseInput.clearInputReceivers();
         currentGameInstance.establishMouseInput();
         FileIO io = new FileIO();
@@ -85,7 +85,7 @@ public class GameMaster {
             currentGameInstance.assignLayerManager(layerManager);
             currentGameInstance.assignMouseInput(mouseInput);
             currentGameInstance.assignGameMaster(this);
-            currentGameInstance.initialize(layerManager);
+            currentGameInstance.initialize();
             currentGameInstance.establishMouseInput();
             currentGameInstance.enterLevel(currentGameInstance.getCurrentLevel().getFilePath(), currentGameInstance.getPlayer().getLocation());
             layerManager.addLayer(mouseInput.getMouseHighlight());
