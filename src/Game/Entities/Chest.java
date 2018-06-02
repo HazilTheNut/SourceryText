@@ -8,6 +8,12 @@ import Game.PlayerInventory;
  */
 public class Chest extends Entity {
 
+    /**
+     * Chest:
+     *
+     * An entity that opens an inventory dialog upon being interacted with. This entity does not self-destruct if its inventory is empty.
+     */
+
     @Override
     public void onInteract(Player player) {
         player.getInv().getPlayerInv().changeMode(PlayerInventory.CONFIG_PLAYER_EXCHANGE);

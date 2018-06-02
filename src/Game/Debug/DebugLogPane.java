@@ -6,6 +6,15 @@ import java.util.ArrayList;
 
 public class DebugLogPane extends JComponent {
 
+    /**
+     * DebugLogPane:
+     *
+     * The standard component for the DebugWindow.
+     *
+     * All text being sent to this component must be associated with a caption.
+     * The DebugLogPane is capable of replacing text that have matching captions, keeping the DebugWindow more tidy.
+     */
+
     private ArrayList<DebugEntry> debugEntries = new ArrayList<>();
     private final int VERT_SEP = 18;
 
@@ -27,7 +36,7 @@ public class DebugLogPane extends JComponent {
             }
         }
         debugEntries.add(new DebugEntry(caption, text));
-        if (debugEntries.size() > 10000) debugEntries.remove(0);
+        if (debugEntries.size() > 10000) debugEntries.remove(0); //Prevents memory leaks!
         setPreferredSize(new Dimension(calculatePreferredWidth(), VERT_SEP * debugEntries.size()));
         repaint();
     }

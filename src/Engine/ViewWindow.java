@@ -13,6 +13,15 @@ import java.util.ArrayList;
  */
 public class ViewWindow extends JComponent implements ComponentListener, MouseInputListener, KeyListener{
 
+    /**
+     * ViewWindow:
+     *
+     * The central JComponent behind the display of SourceryText.
+     *
+     * It takes in a Layer as input and dumps out its contents onto the screen.
+     * It is generally recommended to pair a ViewWindow with a LayerManager for a more organized approach to display.
+     */
+
     private Layer drawnImage;
 
     public int HOR_SEPARATION = 9;

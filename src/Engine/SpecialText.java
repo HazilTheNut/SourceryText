@@ -11,11 +11,25 @@ import java.util.Scanner;
 /**
  * Created by Jared on 2/18/2018.
  */
-public class SpecialText implements Serializable{
+public class SpecialText implements Serializable {
+
+    /**
+     * SpecialText:
+     *
+     * The basic unit of display for SourceryText.
+     * It contains the following:
+     *
+     * character: The text character
+     * fgColor:   The font color
+     * bkgColor:  The highlight color
+     *
+     * In most application, the basic unit is a pixel.
+     * The SpecialText is very similar to that, although much bigger [citation needed].
+     */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    private char character = ' ';
+    private char character;
     private Color fgColor =  new Color(255, 255, 255, 255);
     private Color bkgColor = new Color(0,   0,   0,   0);
 
@@ -58,7 +72,12 @@ public class SpecialText implements Serializable{
         return false;
     }
 
-    // A lot like equals(), except the comparison ignores alpha
+    /**
+     * Can be treated like equals(), except the comparison does not care for color alpha.
+     *
+     * @param text The other SpecialText to compare to.
+     * @return Whether or not the two SpecialText's are 'similar'
+     */
     public boolean similar(SpecialText text) {
         return text != null && text.getCharacter() == character && text.getFgColor().getRed() == fgColor.getRed()   && text.getFgColor().getGreen() == fgColor.getGreen()   && text.getFgColor().getBlue() == fgColor.getBlue()
                                                                 && text.getBkgColor().getRed() == bkgColor.getRed() && text.getBkgColor().getGreen() == bkgColor.getGreen() && text.getBkgColor().getBlue() == bkgColor.getBlue();
@@ -75,6 +94,18 @@ public class SpecialText implements Serializable{
         bkgColor = text.getBkgColor();
     }
 
+    /**
+     * Generates a SpecialText from the output of SpecialText.toString()
+     *
+     * Here is the format:
+     * |C|[000,000,000,000],[000,000,000,000]
+     *
+     * where 'C' is a char
+     * and a set of zeroes is an integer. There must the exactly as many digits in the number as there are zeroes.
+     *
+     * @param text The String to convert into a SpecialText
+     * @return The now-converted SpecialText. Returns null if input string is malformed
+     */
     public static SpecialText fromString(String text){
         char c = text.charAt(1);
         try {

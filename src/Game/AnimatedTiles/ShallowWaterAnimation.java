@@ -10,6 +10,12 @@ import java.awt.*;
  */
 public class ShallowWaterAnimation extends AnimatedTile {
 
+    /**
+     * ShallowWaterAnimation:
+     *
+     * The AnimatedTile that represents splashes in water as entities move through watery tiles.
+     */
+
     public ShallowWaterAnimation(Coordinate loc, SpecialText seed) {
         super(loc);
         Color bg = seed.getBkgColor();

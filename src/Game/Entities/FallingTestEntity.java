@@ -5,6 +5,14 @@ package Game.Entities;
  */
 public class FallingTestEntity extends Entity {
 
+    /**
+     * FallingTestEntity:
+     *
+     * Every turn it moves downwards.
+     *
+     * TODO: Delete this class
+     */
+
     public FallingTestEntity() {
         System.out.println("Falling object!");
     }

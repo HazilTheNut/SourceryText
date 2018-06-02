@@ -8,6 +8,15 @@ import Engine.SpecialText;
  */
 public class AnimatedTile {
 
+    /**
+     * AnimatedTile:
+     *
+     * The name is a bit of a misnomer:
+     * AnimatedTiles are not Tiles.
+     *
+     * AnimatedTiles are instead little bits of display that should change with every frame drawn of the LayerManager.
+     */
+
     private Coordinate location;
 
     public AnimatedTile(Coordinate loc){ location = loc; }

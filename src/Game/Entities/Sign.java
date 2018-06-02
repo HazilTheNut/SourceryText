@@ -14,6 +14,12 @@ import java.util.ArrayList;
  */
 public class Sign extends Entity {
 
+    /**
+     * Sign:
+     *
+     * Upon interaction, it sends a message to the GameInstance's TextBox, which of course then displays it to the player.
+     */
+
     private String text;
 
     @Override

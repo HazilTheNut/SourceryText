@@ -5,6 +5,12 @@ package Game.Entities;
  */
 public class LootPile extends Chest {
 
+    /**
+     * LootPile:
+     *
+     * A subclass of Chest; the only difference is that LootPiles will self-destruct if it finds its inventory to be empty.
+     */
+
     @Override
     public boolean isSolid() {
         return false;

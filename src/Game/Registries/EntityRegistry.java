@@ -19,6 +19,8 @@ public class EntityRegistry {
     public static final int LOOT_PILE = 7;
 
     static {
+        //Registering stuff starts here
+
         registerEntity(1,  "Save Point",   new SpecialText('S', new Color(40, 225, 115), new Color(20, 100, 80, 40)),    SavePoint.class);
         registerEntity(2,  "Basic Enemy",  new SpecialText('E', new Color(255, 130, 130), new Color(255, 180, 180, 15)), BasicEnemy.class, TagRegistry.FLAMMABLE);
         registerEntity(3,  "Sign",         new SpecialText('S', new Color(110, 100, 250), new Color(55, 50, 125, 30)),   Sign.class);
@@ -26,7 +28,9 @@ public class EntityRegistry {
         registerEntity(5,  "Door",         new SpecialText('-', new Color(143, 74, 17),   new Color(75, 45, 10, 50)),    Door.class);
         registerEntity(6,  "Locked Door",  new SpecialText('-', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    LockedDoor.class);
         registerEntity(LOOT_PILE, "Loot",  new SpecialText('%', new Color(191, 191, 75),  new Color(155, 155, 60, 15)),  LootPile.class);
-        registerEntity(8,  "One-Way Door", new SpecialText('}', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    OneWayDoor.class);
+        registerEntity(8,  "One-Way Door", new SpecialText('x', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    OneWayDoor.class);
+
+        //Registering stuff ends here
     }
 
     public static int[] getMapKeys() {

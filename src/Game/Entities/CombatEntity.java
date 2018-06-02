@@ -18,7 +18,14 @@ import java.util.ArrayList;
 /**
  * Created by Jared on 3/28/2018.
  */
-public class CombatEntity extends Entity{
+public class CombatEntity extends Entity {
+
+    /**
+     * CombatEntity:
+     *
+     * An entity that properly receives damage, attacks other things, and has health, among other things.
+     * Anything pertinent to combat is handled in this class
+     */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
@@ -66,7 +73,7 @@ public class CombatEntity extends Entity{
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
-        args.add(new EntityArg("maxHealth", String.valueOf(defaultMaxHealth)));
+        args.add(new EntityArg("maxHealth", String.valueOf(defaultMaxHealth))); //Health and Strength should be adjustable
         args.add(new EntityArg("strength",  String.valueOf(defaultStrength)));
         return args;
     }
@@ -78,7 +85,7 @@ public class CombatEntity extends Entity{
         setMaxHealth(readIntArg(hpArg, defaultMaxHealth));
         EntityArg strArg = searchForArg(entityStruct.getArgs(), "strength");
         setStrength(readIntArg(strArg, defaultStrength));
-        initSwooshLayer();
+        initSwooshLayer(); //The 'swooshLayer' is the white flash that happens during attack animations.
         initNoWeapon();
     }
 
@@ -99,13 +106,21 @@ public class CombatEntity extends Entity{
             health -= amount;
             double percentage = Math.sqrt(Math.max(Math.min((double) amount / maxHealth, 1), 0.1));
             SpecialText originalSprite = getSprite().getSpecialText(0, 0);
+            //Flash is more red if attack deals a larger portion of maximum health
             getSprite().editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), originalSprite.getFgColor(), new Color(255, 0, 0, (int) (255 * percentage))));
-            turnSleep(100 + (int) (500 * percentage));
+            turnSleep(100 + (int) (500 * percentage)); //Also waits a little longer for more painful attacks, in order to sell the hit even more.
             getSprite().editLayer(0, 0, originalSprite);
             if (health <= 0) selfDestruct();
         }
     }
 
+    /**
+     * Since there are numerous 'attack' methods, things can a little confusing.
+     *
+     * This method plays the attack animation and runs doAttackEvent() if an enemy happens to be at the attack location.
+     *
+     * @param loc The location to attack
+     */
     private void attack(Coordinate loc){
         if (shouldDoAction()){
             swooshLayer.setVisible(true);
@@ -113,7 +128,7 @@ public class CombatEntity extends Entity{
             turnSleep(75);
             swooshLayer.setVisible(false);
             Entity entity = getGameInstance().getCurrentLevel().getSolidEntityAt(loc);
-            if (entity != null && entity instanceof CombatEntity) {
+            if (entity instanceof CombatEntity) {
                 doAttackEvent((CombatEntity) entity);
             } else {
                 if (getWeapon() != null)
@@ -124,6 +139,13 @@ public class CombatEntity extends Entity{
         }
     }
 
+    /**
+     * Operates the whole TagEvent regarding attacking something.
+     *
+     * If successful, runs receiveDamage() on the CombatEntity being attacked
+     *
+     * @param ce CombatEntity to attack
+     */
     protected void doAttackEvent(CombatEntity ce){
         if (getWeapon() != null) {
             TagEvent event = new TagEvent(strength, true, this, ce, getGameInstance());
@@ -145,8 +167,14 @@ public class CombatEntity extends Entity{
         }
     }
 
+    /**
+     * Takes a target position and figures out which of eight direction is points closest to the point.
+     *
+     * @param target The non-relative location to aim to
+     * @return The integer direction (deg) to attack to. Value is -1 if something went wrong.
+     */
     protected int calculateMeleeDirection(Coordinate target){
-        int dy = getLocation().getY() - target.getY();
+        int dy = getLocation().getY() - target.getY(); //Need y coordinate to be in terms of a mathematical xy-plane, so its value is reversed.
         int dx =  target.getX() - getLocation().getX();
         double angle = (180 / Math.PI) * Math.atan2(dy, dx);
         if (angle < 0) angle += 360;
@@ -158,6 +186,11 @@ public class CombatEntity extends Entity{
         return -1;
     }
 
+    /**
+     * Acts as a wrapper for attack() [The animation one], allowing for weapon attack patterns.
+     *
+     * @param loc The location to attack
+     */
     protected void doWeaponAttack(Coordinate loc){
         for (int i = 0; i < getWeapon().getTags().size(); i++) {
             Tag tag = getWeapon().getTags().get(i);
@@ -175,6 +208,7 @@ public class CombatEntity extends Entity{
         }
     }
 
+    //Preforms 'Strike' weapon pattern
     private void doStrikeWeaponAttack(int direction){
         switch (direction){
             case UP:
@@ -205,6 +239,7 @@ public class CombatEntity extends Entity{
         }
     }
 
+    //Performs 'Thrust' weapon pattern
     private void doThrustWeaponAttack(int direction){
         switch (direction){
             case UP:
@@ -243,6 +278,7 @@ public class CombatEntity extends Entity{
         }
     }
 
+    //Performs 'Sweep' weapon pattern
     private void doSweepWeaponAttack(int direction){
         int dir = direction - 45;
         if (dir < 0 ) dir = 315;
@@ -292,7 +328,7 @@ public class CombatEntity extends Entity{
 
     @Override
     void selfDestruct() {
-        EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot Pile", null); //EntityRegistry.getEntityStruct(EntityRegistry.LOOT_PILE).getDisplayChar()
+        EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot Pile", null);
         for (Item item : getItems()){
             lootPileStruct.addItem(item.getItemData());
         }

@@ -14,6 +14,17 @@ import java.util.TimerTask;
  */
 public class DebugWindow{
 
+    /**
+     * DebugWindow:
+     *
+     * The master object that controls the debug output of SourceryText.
+     *
+     * You can send debug info to any of several tabs, allowing for everything to be nicely sorted.
+     *
+     * The DebugWindow also has a roster of the Layers currently active while playing SourceryText.
+     * You can set each layer in the roster to be visible or invisible individually.
+     */
+
     private static JFrame frame;
     private static DebugLogPane performance;
     private static DebugLogPane stage;
@@ -39,7 +50,7 @@ public class DebugWindow{
     private static ArrayList<Runnable> entryActions = new ArrayList<>();
 
     static {
-        dispenseUpdates = new ArrayList<>();
+        dispenseUpdates = new ArrayList<>(); //Holds a list of actions that moves every scroll bar to its bottom whenever new text is added.
 
         frame = new JFrame();
 
@@ -47,8 +58,8 @@ public class DebugWindow{
         frame.setMinimumSize(new Dimension(400, 400));
         frame.setLayout(new BorderLayout());
 
-        performance = new DebugLogPane(true);
-        stage = new DebugLogPane(true);
+        performance = new DebugLogPane(true); //'true' marks a DebugLogPane to replace text of matching captions
+        stage = new DebugLogPane(true); //The term 'caption sensitive' refers to whether or not it cares about it.
         tags = new DebugLogPane(true);
         game = new DebugLogPane(false);
         entity = new DebugLogPane(true);
@@ -56,6 +67,7 @@ public class DebugWindow{
         cursor = new DebugLogPane(true);
         layers = new DebugLayerPanel();
 
+        //Create UI
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Perf",   createScrollPane(tabbedPane, performance));
         tabbedPane.addTab("Stage",  createScrollPane(tabbedPane, stage));
@@ -90,7 +102,7 @@ public class DebugWindow{
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+        timer.scheduleAtFixedRate(new TimerTask() { //Keeping things happy with no co-modification errors.
             @Override
             public void run() {
                 try {
@@ -126,6 +138,18 @@ public class DebugWindow{
         scrollPane.repaint();
     }
 
+    /**
+     * Reports to a DebugLogPane with text and a caption.
+     * reportf() uses String.format to make reporting data a lot easier.
+     * However, most IDEs will not recognize the usage of String.format when calling this function, and will throw errors about malformed strings without warning you about it.
+     *
+     * The 'f' in 'reportf' stands for "formatted"
+     *
+     * @param screen The integer ID of the screen you are sending info to. Use the static constants above for your convenience.
+     * @param caption The String caption for the text. IF the caption matches one of the entries already in there, the text of that entry will be replaced
+     * @param value The formatted String being sent as an entry to a DebugLogPane
+     * @param args The objects being substituting into the value, according to Java String formatting.
+     */
     public static void reportf(int screen, String caption, String value, Object... args){
         entryActions.add(() -> {
             DebugLogPane logPane = getDebugLog(screen);
@@ -135,14 +159,17 @@ public class DebugWindow{
         });
     }
 
+    //Adds a Layer to the Layers pane
     public static void addLayerView(Layer toView, int pos) {
         layers.addLayerView(toView, pos);
     }
 
+    //Removes a Layer from the Layers pane
     public static void removeLayerView(Layer toView) {
         layers.removeLayerView(toView);
     }
 
+    //Update the Layers in the Layers pane to keep the check box states consistent with the Layers they are tracking.
     public static void updateLayerInfo(){
         layers.updateLayerCheckBoxes();
     }

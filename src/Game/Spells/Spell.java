@@ -16,7 +16,8 @@ public class Spell implements Serializable {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     /**
-     * Perfroms spell cast
+     * Performs spell cast
+     *
      * @param targetLoc Target location for spell (aiming, etc.)
      * @param spellCaster The one doing the spell casting
      * @param gi The Game Instance

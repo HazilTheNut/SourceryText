@@ -15,6 +15,19 @@ import java.util.ArrayList;
  */
 public class BasicEnemy extends CombatEntity {
 
+    /**
+     * BasicEnemy:
+     *
+     * An Entity with an AI built it to operate enemies.
+     * It can:
+     * > Leverage the GameInstance's pathfinding results to move towards the Player
+     * > Attack the player if within range of attack
+     * > Switch weapons when they break
+     * > Alert nearby entities if they spot the Player
+     *
+     * TODO: Operate Ranged Weapons
+     */
+
 
     @Override
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
@@ -23,24 +36,23 @@ public class BasicEnemy extends CombatEntity {
     }
 
     protected int detectRange = 15;
-    protected int alertRadius = 5;
+    protected int alertRadius = 25;
 
     public CombatEntity target;
 
     @Override
     public void onTurn() {
-        if (weapon == null && getItems().size() > 0) pickNewWeapon();
-        //if (target != null && gi.getCurrentLevel().getSolidEntityAt(target.getLocation()) == null) target = null;
-        if (target == null && gi.getPlayer().getLocation().stepDistance(getLocation()) <= detectRange){
+        if (weapon == null && getItems().size() > 0) pickNewWeapon(); //No Weapon? Try picking new ones if there's something in the inventory
+        if (target == null && gi.getPlayer().getLocation().stepDistance(getLocation()) <= detectRange){ //Target player if nearby and not already targeting something
             target = gi.getPlayer();
-            alertNearbyEntities();
+            alertNearbyEntities(); //Let everyone know
         }
 
         if (target != null) {
-            if (targetWithinAttackRange()) {
-                doWeaponAttack(target.getLocation());
-            } else if (target.getLocation().stepDistance(getLocation()) <= detectRange * 2){
-                pathToPlayer();
+            if (targetWithinAttackRange()) { //Can I attack?
+                doWeaponAttack(target.getLocation()); //Attack!
+            } else if (target.getLocation().stepDistance(getLocation()) <= detectRange * 2){ //Is it close?
+                pathToPlayer(); //Get to it!
             }
         }
         super.onTurn();
@@ -56,14 +68,28 @@ public class BasicEnemy extends CombatEntity {
         }
     }
 
+    @Override
+    public void receiveDamage(int amount) {
+        super.receiveDamage(amount);
+        if (target == null) //Standing idle / no target?
+            target = gi.getPlayer(); //Target the player
+        alertNearbyEntities();
+    }
+
     public void setTarget(CombatEntity target) {
         this.target = target;
     }
 
+    /**
+     * Searches through inventory for the best weapon to fight the player with.
+     *
+     * It evaluates each tag of an item based upon pre-defined biases to calculate the 'value' of an item.
+     * Item with highest value wins, becomes equipped as weapon.
+     */
     private void pickNewWeapon(){
-        //Biases
+        //Biases; The higher the number, the more valuable it is
         final double MULT_RANGED = 3;
-        final double MULT_SWEEP = 0.75;
+        final double MULT_SWEEP = 0.75; //Larger area of attack means accidentally hurting other enemies, so it devalues for enemies.
         final double MULT_THRUST = 1.5;
         final double MULT_FIRE = 1.5;
         final double MULT_ICE = 2.5;
@@ -82,7 +108,7 @@ public class BasicEnemy extends CombatEntity {
                 topScore = value;
                 bestItem = item;
             }
-            DebugWindow.reportf(DebugWindow.GAME, "","> item: %1$-17s value: %2$f", item.getItemData().getName(), value);
+            DebugWindow.reportf(DebugWindow.GAME, "","> item: %1$-17s value: %2$f", item.getItemData().getName(), value); //The 'Game' tab is not caption-sensitive, so this is fine
         }
         if (bestItem != null) {
             setWeapon(bestItem);
@@ -91,15 +117,15 @@ public class BasicEnemy extends CombatEntity {
 
     private boolean targetWithinAttackRange(){
         Item weapon = getWeapon();
-        if (weapon.hasTag(TagRegistry.WEAPON_STRIKE)){
+        if (weapon.hasTag(TagRegistry.WEAPON_STRIKE)){ //Strike weapons are able to strike in a 3x3 area centered on entity
             return target.getLocation().boxDistance(getLocation()) <= 1;
-        } else if (weapon.hasTag(TagRegistry.WEAPON_SWEEP)){
+        } else if (weapon.hasTag(TagRegistry.WEAPON_SWEEP)){ //And so are Sweep weapons
             return target.getLocation().boxDistance(getLocation()) <= 1;
-        } else if (weapon.hasTag(TagRegistry.WEAPON_THRUST)){
+        } else if (weapon.hasTag(TagRegistry.WEAPON_THRUST)){ //Thrust weapons are an exception, though
             if (target.getLocation().boxDistance(getLocation()) <= 2) {
                 int dx = Math.abs(target.getLocation().getX() - getLocation().getX());
                 int dy = Math.abs(target.getLocation().getY() - getLocation().getY());
-                return dx == 0 || dy == 0 || dy / dx == 1;
+                return dx == 0 || dy == 0 || dy / dx == 1; //if the slopes are vertical, horizontal, or 45 degrees, that must be valid for attacking.
             }
         }
         return false;
@@ -108,15 +134,15 @@ public class BasicEnemy extends CombatEntity {
     @Override
     public int getPathingSize() {
         DebugWindow.reportf(DebugWindow.STAGE, "Entity.getPathingSize", "\'%1$s\' : %2$d", getName(), detectRange);
-        return detectRange;
+        return detectRange * 2;
     }
 
     private void pathToPlayer(){
-        int dist = gi.getEntityPlayerDistance(this);
+        int dist = gi.getEntityPlayerDistance(this); //Literally gets the index of the PathPoints array to search in
         DebugWindow.reportf(DebugWindow.GAME, "BasicEnemy.pathToPlayer", "Step dist: %1$d", dist);
-        if (dist > 0) {
-            ArrayList pointList = gi.getPathPoints(dist - 1);
-            for (Object obj : pointList) {
+        if (dist > 0) { //Returns -1 if not in there, so better look out.
+            ArrayList pointList = gi.getPathPoints(dist - 1); //Points in (index - 1) are the points that are at minimum 1 step closer to the player
+            for (Object obj : pointList) { //It's trying to move 1 step, so better find that point
                 if (obj instanceof GameInstance.PathPoint) {
                     GameInstance.PathPoint pathPoint = (GameInstance.PathPoint) obj;
                     if (pathPoint.getLoc().stepDistance(getLocation()) == 1) {

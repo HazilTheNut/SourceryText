@@ -7,6 +7,12 @@ import Game.Player;
  */
 public class Door extends Entity {
 
+    /**
+     * Door:
+     *
+     * The extremely-complicated and nearly impossible-to-read superclass that defines the subtle behavior of a single-use door.
+     */
+
     @Override
     public void onInteract(Player player) {
         selfDestruct();

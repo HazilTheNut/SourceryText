@@ -15,8 +15,12 @@ public class LevelScriptRegistry {
     private TreeMap<Integer, Class> scriptMap = new TreeMap<>();
 
     public LevelScriptRegistry(){
+        //Registering stuff starts here
+
         scriptMap.put(1, SnowyWeather.class);
         scriptMap.put(2, RainyWeather.class);
+
+        //Registering stuff ends here
     }
 
     public int[] getMapKeys() {

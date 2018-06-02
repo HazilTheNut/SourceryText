@@ -14,6 +14,18 @@ import java.util.TimerTask;
  */
 public class LayerManager {
 
+    /**
+     * LayerManager:
+     *
+     * The object responsible for sorting and compiling Layers.
+     *
+     * For a Layer to display, it must be added to some LayerManager.
+     * Layers are sorted by their importance. Layers of higher importance will always appear above ones with a lower priority.
+     * This array of Layers is called a stack.
+     *
+     * The LayerManager also has a 'camera', which compounds on top of a Layer's position to get a final position during rendering.
+     */
+
     private ArrayList<Layer> layerStack = new ArrayList<>();
 
     private ArrayList<LayerOperation> operationBufferOne = new ArrayList<>(); //Double buffering to prevent concurrent modification errors
@@ -50,6 +62,12 @@ public class LayerManager {
         return window;
     }
 
+    /**
+     * Adds a Layer to the stack of Layers.
+     * In avoidance of potential synchronization issues, expect a 0-50ms delay before the layer is finally displayed on the screen.
+     *
+     * @param toAdd The Layer to add
+     */
     public void addLayer (Layer toAdd){
         if (bufferOneOpen)
             operationBufferOne.add(() -> addLayerOperation(toAdd));
@@ -57,6 +75,11 @@ public class LayerManager {
             operationBufferTwo.add(() -> addLayerOperation(toAdd));
     }
 
+    /**
+     * Adds a Layer to the Layer stack, placing in a location according to its importance.
+     *
+     * @param toAdd The Layer to add
+     */
     private void addLayerOperation (Layer toAdd){
         for (int ii = layerStack.size()-1; ii >= 0; ii--){
             if (layerStack.get(ii).getImportance() <= toAdd.getImportance()){
@@ -71,6 +94,18 @@ public class LayerManager {
         DebugWindow.addLayerView(toAdd, 0);
     }
 
+    /**
+     * Removes all Layers from the Layer stack that match the input name.
+     * Comparing every SpecialText in each layer is computationally expensive, so just doing a simple String comparison is much more efficient.
+     * If your code is written properly, this should not be a problem.
+     *
+     * In avoidance of potential synchronization issues, expect a 0-50ms delay before the layer is finally removed.
+     *
+     * This function should only really be used when a Layer will not be in use in the future.
+     * It is recommended to instead call Layer.setVisible(), due to it being more reliable and easier to manage on the client-end as well.
+     *
+     * @param toRemove The Layer to remove
+     */
     public void removeLayer(String toRemove){
         if (bufferOneOpen)
             operationBufferOne.add(() -> removeLayerOperation(toRemove));
@@ -78,6 +113,11 @@ public class LayerManager {
             operationBufferTwo.add(() -> removeLayerOperation(toRemove));
     }
 
+    /**
+     * @param name The name of the Layer being searched for
+     *
+     * @return The matching Layer in the Layer stack.
+     */
     public Layer getLayer(String name){
         for (Layer layer : layerStack){
             if (layer.getName().equals(name)) return layer;
@@ -85,6 +125,11 @@ public class LayerManager {
         return null;
     }
 
+    /**
+     * Removes every Layer in the stack that matches the input name.
+     *
+     * @param toRemove The name of the layer that needs to removed.
+     */
     private void removeLayerOperation(String toRemove){
         for (int i = 0; i < layerStack.size();){
             Layer layer = layerStack.get(i);
@@ -98,6 +143,9 @@ public class LayerManager {
         }
     }
 
+    /**
+     * Removes every Layer in the stack.
+     */
     private void clearLayersOperation(){
         for (int i = 0; i < layerStack.size();) {
             DebugWindow.removeLayerView(layerStack.get(i));
@@ -105,6 +153,10 @@ public class LayerManager {
         }
     }
 
+    /**
+     * Clears the entire stack of Layers.
+     * In avoidance of potential synchronization issues, expect a 0-50ms delay before this operation is ran.
+     */
     public void clearLayers(){
         if (bufferOneOpen)
             operationBufferOne.add(() -> {
@@ -118,22 +170,36 @@ public class LayerManager {
             });
     }
 
+    /**
+     * A convenient shortcut for the removeLayer(String) method.
+     * Remember, ALL Layers with the name of the input layer will be removed!
+     *
+     * @param toRemove The layer to remove (and potentially others)
+     */
     public void removeLayer (Layer toRemove){
         removeLayer(toRemove.getName());
     }
 
+    /**
+     * Sets the LayerManager's camera position to a desired location
+     *
+     * @param x The new camera x
+     * @param y The new camera y
+     */
     public void setCameraPos(int x, int y){
-        if (bufferOneOpen)
-            operationBufferOne.add(() -> {camX = x; camY = y;});
-        else
-            operationBufferTwo.add(() -> {camX = x; camY = y;});
+        camX = x;
+        camY = y;
     }
 
+    /**
+     * Translates the LayerManager's camera position
+     *
+     * @param relativeX The x component of the movement vector
+     * @param relativeY The y component of the movement vector
+     */
     public void moveCameraPos(int relativeX, int relativeY){
-        if (bufferOneOpen)
-            operationBufferOne.add(() -> {camX += relativeX; camY += relativeY;});
-        else
-            operationBufferTwo.add(() -> {camX += relativeX; camY += relativeY;});
+        camX += relativeX;
+        camY += relativeY;
     }
 
     public Coordinate getCameraPos() {return new Coordinate(camX, camY); }
@@ -144,20 +210,42 @@ public class LayerManager {
         return previousCompileTime;
     }
 
-    private Layer compileLayers(Dimension targetResolution){
-        long startTime = System.nanoTime();
+    /**
+     * Adding a Layer, removing a Layer, and clearing the Layer stack is placed onto a buffer before operating.
+     *
+     * Every 50ms, the buffer is operated upon.
+     */
+    private void processLayerOperationBuffer(){
         try {
             bufferOneOpen = !bufferOneOpen;
             if (bufferOneOpen) {//Why it's you might ask? Well, don't we want to operate from the closed buffer?
-                for (LayerOperation operation : operationBufferTwo) operation.doOperation();
+                for (int i = 0; i < operationBufferTwo.size(); i++) {
+                    LayerOperation operation = operationBufferTwo.get(i);
+                    operation.doOperation();
+                }
                 operationBufferTwo.clear();
             } else {
-                for (LayerOperation operation : operationBufferOne) operation.doOperation();
+                for (int i = 0; i < operationBufferOne.size(); i++) {
+                    LayerOperation operation = operationBufferOne.get(i);
+                    operation.doOperation();
+                }
                 operationBufferOne.clear();
             }
         } catch (ConcurrentModificationException e){
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Takes all the Layers in the Layer stack and 'compresses' them into ont Layer, which represents a fully rendered screen.
+     *
+     * @param targetResolution The screen resolution to draw to.
+     * @return The Layer that represents a screen.
+     */
+    private Layer compileLayers(Dimension targetResolution){
+        long startTime = System.nanoTime();
+        processLayerOperationBuffer();
+
         Layer finalResult = new Layer(new SpecialText[(int)targetResolution.getWidth()][(int)targetResolution.getHeight()], "final", 0, 0);
         for (int col = 0; col < finalResult.getCols(); col++){
             for (int row = 0; row < finalResult.getRows(); row++){
@@ -171,6 +259,13 @@ public class LayerManager {
         return finalResult;
     }
 
+    /**
+     * Iterates through the Layer stack and returns the appropriate SpecialText.
+     *
+     * @param screenX The x coordinate of the screen to project to
+     * @param screenY The y coordinate of the screen to project to
+     * @return The front-most SpecialText
+     */
     private SpecialText projectTextToScreen(int screenX, int screenY){
         for (int ii = layerStack.size()-1; ii >= 0; ii--){
             Layer layer = layerStack.get(ii);
@@ -183,7 +278,18 @@ public class LayerManager {
         return new SpecialText(' ');
     }
 
-    //Slightly more complicated, but has to account for translucent layers
+    /**
+     * Iterates through the Layer stack and returns a font and highlight color for a specific screen coordinate.
+     *
+     * The output is formatted as follows:
+     *
+     * colors[0] = Highlight color
+     * colors[1] = Font color
+     *
+     * @param screenX The x coordinate of the screen to project to
+     * @param screenY The y coordinate of the screen to project to.
+     * @return The array of colors.
+     */
     private Color[] projectColorsToScreen(int screenX, int screenY){
         Color[] fgBkgColors = new Color[2];
         double alphaSum = 0;
@@ -220,6 +326,14 @@ public class LayerManager {
         return fgBkgColors;
     }
 
+    /**
+     * Gets the SpecialText of a Layer corresponding to a screen coordinate.
+     *
+     * @param screenX The screen x coordinate to target
+     * @param screenY The screen y coordinate to target
+     * @param layer The layer to draw from
+     * @return The SpecialText from the layer, accounting Layer location, camera location, and layer being fixed onto the screen.
+     */
     private SpecialText getSpecialTextAtScreenCoord(int screenX, int screenY, Layer layer){
         if (layer.fixedScreenPos)
             return layer.getSpecialText(screenX - layer.getX(), screenY - layer.getY());
@@ -238,23 +352,4 @@ public class LayerManager {
     private interface LayerOperation{
         void doOperation();
     }
-
-    /*
-    Background layer processing example
-
-    Colors in stack:
-    (255, 0,   0,   80)
-    (0,   255, 0,   80)
-    (0,   0,   255, 80)
-    (255, 255, 0,   30)
-    (0,   255, 255, 140)
-
-    Stops at semi-final color because sum of the opacity is > 255
-    Total: 270
-
-    Red Avg. :   (255 * 80 + 0 * 80 + 0 * 80 + 255 * 30) / (80 + 80 + 80 + 30) = 103
-    Green Avg. : (0 * 80 + 255 * 80 + 0 * 80 + 255 * 30) / (270) = 103
-    Blue avg. :  (0 * 80 + 0 * 80 + 255 * 80 + 0 * 30) / 270 = 75
-    */
-
 }

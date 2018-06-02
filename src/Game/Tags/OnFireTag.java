@@ -119,6 +119,7 @@ public class OnFireTag extends Tag {
         } else {
             level.getOverlayTileLayer().editLayer(loc.getX(), loc.getY(), new SpecialText(' ', new Color(81, 77, 77), new Color(60, 58, 55)));
         }
+        tile.addTag(TagRegistry.SAND, tile);
         return tile;
     }
 

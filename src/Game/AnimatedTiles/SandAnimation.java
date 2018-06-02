@@ -10,6 +10,12 @@ import java.awt.*;
  */
 public class SandAnimation extends AnimatedTile {
 
+    /**
+     * SandAnimation:
+     *
+     * The AnimatedTile that represents the footprints entities leave behind in sandy tiles.
+     */
+
     public SandAnimation(Coordinate loc, SpecialText seed) {
         super(loc);
         Color bg = seed.getBkgColor();

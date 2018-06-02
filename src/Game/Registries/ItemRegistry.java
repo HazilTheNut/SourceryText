@@ -29,6 +29,7 @@ public class ItemRegistry {
      */
 
     static {
+        //Registering stuff starts here
 
         registerItem(100, "Wooden Pole",     1,   TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_THRUST,  TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
         registerItem(101, "Wooden Sword",    2,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_SWEEP,   TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
@@ -60,6 +61,8 @@ public class ItemRegistry {
         registerItem(2008, "Secret Key",   0, TagRegistry.KEY);
 
         registerItem(2500, "Shovel",       1, TagRegistry.IMPORTANT);
+
+        //Registering stuff ends here
     }
 
     public static int[] getMapKeys() {

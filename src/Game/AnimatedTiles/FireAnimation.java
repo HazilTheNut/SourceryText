@@ -11,13 +11,19 @@ import java.util.Random;
  */
 public class FireAnimation extends AnimatedTile {
 
+    /**
+     * FireAnimation:
+     *
+     * The AnimatedTile that represents fire.
+     */
+
     public FireAnimation(Coordinate loc) {
         super(loc);
         Random rand = new Random();
-        currentFrame = (int)(rand.nextFloat() * 59);
+        currentFrame = (int)(rand.nextFloat() * 59); //Start off on a random frame
     }
 
-    private final Color[] fireColors = {
+    private final Color[] fireColors = { //Frames are pre-defined
         new Color(240, 181, 0), // [0]
         new Color(233, 159, 0), // [1]
         new Color(220, 121, 0), // [2]
@@ -32,14 +38,14 @@ public class FireAnimation extends AnimatedTile {
         new SpecialText('v', fireColors[3], fireColors[4]),
         new SpecialText('.', fireColors[4], fireColors[5])
     };
-    private float currentFrame = 0;
+    private float currentFrame;
 
     @Override
     public SpecialText onDisplayUpdate() {
         float framesPerSecond = 7;
         currentFrame += framesPerSecond / 20;
         int frame = (int)currentFrame;
-        int hash = ((frame * 17) % 43) % frames.length;
+        int hash = ((frame * 17) % 43) % frames.length; //Makes the fire feel random without resorting to generating a lot of random numbers.
         return frames[hash];
     }
 }

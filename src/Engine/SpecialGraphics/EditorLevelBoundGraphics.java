@@ -11,6 +11,12 @@ import java.awt.*;
  */
 public class EditorLevelBoundGraphics implements SpecialGraphics {
 
+    /**
+     * EditorLevelBoundGraphics:
+     *
+     * The SpecialGraphics responsible for drawing the border rectangle for the Level Editor
+     */
+
     private ViewWindow window;
     private LayerManager manager;
     private LevelData ldata;
@@ -39,6 +45,7 @@ public class EditorLevelBoundGraphics implements SpecialGraphics {
         drawBoundedRectangle(g, left-3, top-2, right+2, bottom+3, leftMargin, topMargin, rightMargin, bottomMargin);
     }
 
+    //'Bounded' in this context means the rectangle obeys the margin lines of ViewWindow.
     private void drawBoundedRectangle(Graphics g, int left, int top, int right, int bottom, int leftMargin, int topMargin, int rightMargin, int bottomMargin){
         if (left > leftMargin && left < rightMargin){
             g.drawLine(left, Math.max(Math.min(topMargin, bottom), top), left, Math.max(Math.min(bottomMargin, bottom), top));

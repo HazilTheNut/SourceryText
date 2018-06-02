@@ -5,6 +5,10 @@ package Game.Entities;
  */
 public class TargetDummy extends CombatEntity{
 
+    /*
+    * TODO: Delete this class
+    * */
+
     public TargetDummy(){
         setMaxHealth(500);
     }

@@ -7,6 +7,12 @@ import java.awt.*;
 
 public class DebugLayerPanel extends JPanel{
 
+    /**
+     * DebugLayerPanel:
+     *
+     * The 'Layers' panel of the DebugWindow.
+     */
+
     private JPanel listPanel;
 
     public DebugLayerPanel(){
@@ -50,6 +56,13 @@ public class DebugLayerPanel extends JPanel{
     }
 
     private class LayerView extends JPanel{
+
+        /**
+         * LayerView:
+         *
+         * Handles a single Layer and its associated check box
+         */
+
         Layer view;
         JCheckBox visibleCheckBox;
 

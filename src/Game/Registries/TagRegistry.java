@@ -66,6 +66,8 @@ public class TagRegistry {
     public final static int HEALTH_START  = 2000;
 
     static {
+        //Registering stuff starts here
+
         //Basic / shared properties
         registerTag(FLAMMABLE, "Flammable", FlammableTag.class);
         registerTag(ON_FIRE,   "On Fire",   OnFireTag.class);
@@ -96,6 +98,8 @@ public class TagRegistry {
         registerTag(SHALLOW_WATER, "Shallow Water", ShallowWaterTag.class);
         registerTag(DEEP_WATER,    "Deep Water", DeepWaterTag.class);
         registerTag(NO_PATHING, "No Pathing!", NoPathingTag.class);
+
+        //Registering stuff ends here
     }
 
     public int[] getMapKeys() {

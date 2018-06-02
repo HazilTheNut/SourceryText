@@ -15,6 +15,7 @@ public class TileRegistry {
     private static TreeMap<Integer, TileStruct> tileMap = new TreeMap<>();
 
     static {
+        //Registering stuff starts here
 
         registerTile(0, "Floor",         new SpecialText(' ', Color.WHITE,              new Color(30, 30, 30)));
         registerTile(1, "Wall",          new SpecialText('x', Color.WHITE,              new Color(150, 150, 150)), TagRegistry.TILE_WALL, TagRegistry.NO_PATHING);
@@ -28,6 +29,8 @@ public class TileRegistry {
         registerTile(9, "Sand",          new SpecialText(' ', Color.WHITE,              new Color(189, 182, 153)), TagRegistry.SAND);
         registerTile(10,"Wood Floor",    new SpecialText(' ', Color.WHITE,              new Color(61, 28, 0)),     TagRegistry.FLAMMABLE, TagRegistry.BURN_SLOW);
         registerTile(11,"Fire",          new SpecialText(' ', Color.WHITE,              new Color(170, 60, 15)),   TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER, TagRegistry.ON_FIRE);
+
+        //Registering stuff ends here
     }
 
     public static int[] getMapKeys() {

@@ -20,6 +20,19 @@ import java.util.Scanner;
  */
 public class Entity extends TagHolder implements Serializable {
 
+    /**
+     * Entity:
+     *
+     * One of the essential components to Sourcery Text.
+     * The Backdrop, Tiles, WarpZones, and LevelScripts are all very static and unmoving.
+     * In contrast to this, Entities are designed to change.
+     *
+     * Each Entity has its own Layer and Coordinate location.
+     * All Entities are able to move.
+     * All Entities can be instantiated, and they can be destroyed.
+     * All Entities can be divert from the pre-fabricated ones in the EntityRegistry through Entity Arguments and their inventory of items.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     protected GameInstance gi;
@@ -33,6 +46,19 @@ public class Entity extends TagHolder implements Serializable {
     private String name;
     private long uniqueID;
 
+    /**
+     * Initializes an Entity, configuring it such that it can be used by the GameInstance.
+     *
+     * It is important to NOT use the constructor of Entity or its inheritors for anything of significance.
+     * This is because Class.newInstance() runs only the nullary constructor of an Entity, and that is what is used to instantiate Entities.
+     *
+     * So as a work-around, initialize() exists to fill in the purpose of the constructor
+     *
+     * @param pos Starting position of the Entity
+     * @param lm The current LayerManager
+     * @param entityStruct The EntityStruct to unpack
+     * @param gameInstance The current GameInstance
+     */
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance){
         gi = gameInstance;
 
@@ -57,24 +83,37 @@ public class Entity extends TagHolder implements Serializable {
 
     public boolean isSolid() { return true; }
 
+    /**
+     * Runs a simplified version of initialize().
+     *
+     * It does not prepare the Entity for usage in SourceryText, but it is useful if one needs to access other functions of an Entity without instantiating it into the game.
+     *
+     * @param entityStruct The EntityStruct to construct from
+     * @param pos The starting location of the Entity
+     */
     public void simpleInit(EntityStruct entityStruct, Coordinate pos){
         location = pos;
         name = entityStruct.getEntityName();
         icon = entityStruct.getDisplayChar();
-        DebugWindow.reportf(DebugWindow.MISC, "Entity.simpleInit"," Original: %1$s After conversions: %2$s", icon, SpecialText.fromString(icon.toString()));
     }
 
     public void assignGameInstance(GameInstance gi){
         this.gi = gi;
     }
 
-    public void onLevelEnter(){
+    @Override
+    public void onLevelEnter(GameInstance gameInstance){
         gi.getLayerManager().addLayer(sprite);
+        super.onLevelEnter(gi);
+    }
+
+    public void onLevelEnter(){
         onLevelEnter(gi);
     }
 
     public void onLevelExit(){
         gi.getLayerManager().removeLayer(sprite);
+        DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' - - -", getName());
     }
 
     protected String createEntityLayerName(EntityStruct struct, Coordinate coordinate){
@@ -104,7 +143,8 @@ public class Entity extends TagHolder implements Serializable {
 
     /**
      * Basically runs move(), but does the subtractive math for you so you can't get it wrong.
-     * @param pos
+     *
+     * @param pos The position to teleport to
      */
     public void teleport(Coordinate pos){
         move(pos.getX() - location.getX(), pos.getY() - location.getY());
@@ -112,7 +152,8 @@ public class Entity extends TagHolder implements Serializable {
 
     /**
      * A stronger version of teleport, which does not run any checks before placing the Entity at a location, regardless of any solid objects or tiles that exist at the new location.
-     * @param pos
+     *
+     * @param pos The position to relocate to
      */
     public void setPos(Coordinate pos){
         location.setPos(pos.getX(), pos.getY());
@@ -123,9 +164,14 @@ public class Entity extends TagHolder implements Serializable {
     void selfDestruct(){
         gi.removeEntity(this);
         gi.getLayerManager().removeLayer(sprite);
-        DebugWindow.reportf(DebugWindow.GAME, "Entity.selfDestruct","\'%1$s\' at %2$s", getName(), getLocation());
+        DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' - - -", getName());
     }
 
+    /**
+     * A nice convenience function for adding pauses wherever necessary.
+     *
+     * @param time The time (in ms) to wait.
+     */
     void turnSleep(int time){
         try {
             Thread.sleep(time);
@@ -140,10 +186,17 @@ public class Entity extends TagHolder implements Serializable {
 
     public void setName(String str){ name = str; }
 
+    /**
+     * Adds an item to the inventory.
+     *
+     * If there already is an item of the same ID in the inventory and is stackable, then stack them on top of each other.
+     *
+     * @param item The item to add
+     */
     public void addItem(Item item) {
         if (item.isStackable())
             for (Item i : items){
-                if (i.getItemData().getItemId() == item.getItemData().getItemId()){
+                if (i.getItemData().getItemId() == item.getItemData().getItemId() && item.getItemData().getQty() < 99){
                     int total = i.getItemData().getQty() + item.getItemData().getQty();
                     if (total < 100){
                         i.setQty(total);
@@ -164,6 +217,9 @@ public class Entity extends TagHolder implements Serializable {
         return items;
     }
 
+    /**
+     * Performs the actions of scanInventory(), but also performs onTurn() for each item as well
+     */
     public void updateInventory(){
         for (int ii = 0; ii < items.size();){
             if (items.get(ii).getItemData().getQty() <= 0){
@@ -178,6 +234,9 @@ public class Entity extends TagHolder implements Serializable {
         }
     }
 
+    /**
+     * Checks the inventory for items with < 0 quantity and erases them from the inventory.
+     */
     public void scanInventory(){
         for (int ii = 0; ii < items.size();){
             if (items.get(ii).getItemData().getQty() <= 0){
@@ -240,6 +299,7 @@ public class Entity extends TagHolder implements Serializable {
         sprite.editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), colorateWithTags(originalSprite.getFgColor()), originalSprite.getBkgColor()));
     }
 
+    //Override this with stuff to do with interacted with the player
     public void onInteract(Player player){}
 
     @Override
