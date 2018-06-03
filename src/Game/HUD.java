@@ -19,6 +19,13 @@ import java.util.ArrayList;
  */
 public class HUD implements MouseInputReceiver, Serializable {
 
+    /**
+     * HUD:
+     *
+     * The upper "heads-up display" at the top of the screen.
+     * It also handles the synopsis at the bottom of the screen.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Player player;
@@ -52,6 +59,9 @@ public class HUD implements MouseInputReceiver, Serializable {
 
     private Coordinate mousePos;
 
+    /**
+     * Updates the HUD display
+     */
     void updateHUD(){
         Layer tempLayer = new Layer(new SpecialText[HUDLayer.getCols()][HUDLayer.getRows()], "temp", 0, 0);
 
@@ -63,7 +73,7 @@ public class HUD implements MouseInputReceiver, Serializable {
         else
             tempLayer.editLayer(0, 0, new SpecialText('V', Color.WHITE, new Color(30, 30, 30)));
 
-        int pos = 1;
+        int pos = 1; //Everything is arranged relative to each other, using this integer as the starting point for the next HUD element.
 
         double playerHealthPercentage = (double)player.getHealth() / player.getMaxHealth();
 
@@ -77,6 +87,7 @@ public class HUD implements MouseInputReceiver, Serializable {
         tempLayer.inscribeString(hpDisplay, pos, 0, fontColor);
         pos += hpDisplay.length();
 
+        //Draw health bar
         for (int ii = 1; ii <= 10; ii++){
             double diff = playerHealthPercentage - ((double)ii / 10);
             if (diff >= 0) //Draw health bar
@@ -88,6 +99,7 @@ public class HUD implements MouseInputReceiver, Serializable {
         tempLayer.editLayer(pos, 0, new SpecialText(']', fontColor, bkg));
 
         pos+=2;
+        //Draw equipped weapon
         if (player.getWeapon().getItemData().getItemId() > 0) {
             for (int ii = 0; ii < player.getInv().ITEM_STRING_LENGTH + 2; ii++) {
                 if (player.isInSpellMode())
@@ -100,6 +112,7 @@ public class HUD implements MouseInputReceiver, Serializable {
             pos += player.getInv().ITEM_STRING_LENGTH + 2;
         }
 
+        //Draw equipped spell
         if (player.getSpells().size() > 0) {
             pos++;
             spellMenu.getMenuLayer().setPos(pos, 0);
@@ -131,6 +144,11 @@ public class HUD implements MouseInputReceiver, Serializable {
     private final Color txt_entity = new Color(209, 209, 255);
     private final Color txt_weapon = new Color(209, 255, 209);
 
+    /**
+     * Updates the synopsis at the bottom-right of screen
+     *
+     * @param levelPos The level-position of the mouse.
+     */
     public void updateSynopsis(Coordinate levelPos){
         ArrayList<Entity> entities = player.getGameInstance().getCurrentLevel().getEntitiesAt(levelPos);
         Tile t = null;
@@ -145,17 +163,19 @@ public class HUD implements MouseInputReceiver, Serializable {
         startRow = 0;
         boxHeight = 0;
         boxLength = 0;
-        //Calculate box width
+        //Calculate box height
         if (t != null) {
             boxLength = Math.max(boxLength, t.getName().length() + 2);
             boxHeight++;
         }
         for (Entity e : entities){
-            boxLength = Math.max(boxLength, e.getName().length() + 2);
-            boxHeight++;
-            if (e instanceof CombatEntity) {
+            if (e.getName().length() > 0) { //Entities with blank names should be treated as invisible.
+                boxLength = Math.max(boxLength, e.getName().length() + 2);
                 boxHeight++;
-                if (((CombatEntity)e).getWeapon().getItemData().getItemId() > 0) boxHeight++;
+                if (e instanceof CombatEntity) {
+                    boxHeight++;
+                    if (((CombatEntity) e).getWeapon().getItemData().getItemId() > 0) boxHeight++; //Item ID is -1 if no weapon
+                }
             }
         }
         //Begin drawing
@@ -185,7 +205,7 @@ public class HUD implements MouseInputReceiver, Serializable {
             CombatEntity ce = (CombatEntity)e;
             //Draw equipped weapon
             if (ce.getWeapon().getItemData().getItemId() > 0){
-                boxLength = Math.max(boxLength, ce.getWeapon().getItemData().getName().length() + 3);
+                boxLength = Math.max(boxLength, ce.getWeapon().getItemData().getName().length() + 3); //+3 accounts for margins and formatting and whatnot.
                 synopsisLayer.inscribeString(ce.getWeapon().getItemData().getName(), 2, startRow, txt_weapon);
                 synopsisLayer.inscribeString(">", 1, startRow, Color.GRAY);
                 startRow++;
@@ -193,9 +213,9 @@ public class HUD implements MouseInputReceiver, Serializable {
             //Draw Health Bar
             boxLength = Math.max(boxLength, 11);
             double percent = (double)ce.getHealth() / ce.getMaxHealth();
-            float dv = 1f/(boxLength - 2);
+            float dp = 1f/(boxLength - 2); //'dp' refers to difference in percentage per 1 character
             for (int ii = 0; ii < boxLength - 2; ii++){
-                if (percent >= ii * dv){
+                if (percent >= ii * dp){
                     synopsisLayer.editLayer(ii + 1, startRow, new SpecialText(' ', Color.WHITE, new Color(215, 75, 75, 200)));
                 } else {
                     synopsisLayer.editLayer(ii + 1, startRow, new SpecialText(' ', Color.WHITE, new Color(55, 25, 25, 150)));
@@ -221,7 +241,7 @@ public class HUD implements MouseInputReceiver, Serializable {
 
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButtons) {
-        if (mousePos.equals(new Coordinate(0,0))){
+        if (mousePos.equals(new Coordinate(0,0))){ //The little inventory button in the corner
             if (player.getInv().getPlayerInv().isShowing())
                 player.getInv().getPlayerInv().close();
             else

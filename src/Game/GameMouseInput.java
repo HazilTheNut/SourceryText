@@ -61,13 +61,13 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener{
         return new Coordinate(window.getSnappedMouseX(mousePos.getX()), window.getSnappedMouseY(mousePos.getY()));
     }
 
-    public void addInputReceiver(MouseInputReceiver receiver) { inputReceivers.add(receiver); }
+    void addInputReceiver(MouseInputReceiver receiver) { inputReceivers.add(receiver); }
 
-    public void addInputReceiver(MouseInputReceiver receiver, int pos) { inputReceivers.add(pos, receiver); }
+    void addInputReceiver(MouseInputReceiver receiver, int pos) { inputReceivers.add(pos, receiver); }
 
-    public void removeInputListener(MouseInputReceiver receiver) {inputReceivers.remove(receiver); }
+    void removeInputListener(MouseInputReceiver receiver) {inputReceivers.remove(receiver); }
 
-    public void clearInputReceivers(){ inputReceivers.clear(); }
+    void clearInputReceivers(){ inputReceivers.clear(); }
 
     @Override
     public void mouseClicked(MouseEvent e) {

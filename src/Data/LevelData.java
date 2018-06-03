@@ -33,9 +33,9 @@ public class LevelData implements Serializable {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Layer backdrop;
-    private Layer tileDataLayer;
-    private Layer warpZoneLayer;
-    private Layer entityLayer;
+    private transient Layer tileDataLayer;
+    private transient Layer warpZoneLayer;
+    private transient Layer entityLayer;
 
     private int[][] tileData;
     private EntityStruct[][] entityData;

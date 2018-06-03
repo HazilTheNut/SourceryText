@@ -13,6 +13,12 @@ import java.util.ArrayList;
 
 public class GameSaveMenu implements MouseInputReceiver{
 
+    /**
+     * GameSaveMenu:
+     *
+     * The menu responsible for both saving and loading the game.
+     */
+
     private Layer menuLayer; //The layer containing all the visual info about the save files
     private Layer selectorLayer; //The layer that shows which save file is being selected
 
@@ -58,11 +64,17 @@ public class GameSaveMenu implements MouseInputReceiver{
         lm.addLayer(selectorLayer);
     }
 
+    /**
+     * Opens the "Load Game" menu
+     */
     void openLoadDialog(){
         isSaving = false;
         open();
     }
 
+    /**
+     * Opens the "Save Game" menu
+     */
     void openSaveDialog(){
         isSaving = true;
         open();
@@ -86,12 +98,15 @@ public class GameSaveMenu implements MouseInputReceiver{
         mi.removeInputListener(this);
     }
 
+    /**
+     * Updates the entire display for the menu
+     */
     private void updateDisplay(){
         menuLayer.convertNullToOpaque();
         selectorLayer.setVisible(false);
-        for (int i = 0; i < Math.min(saveOptions.size(), MAX_VISISLE_OPTIONS); i++) {
+        for (int i = 0; i < Math.min(saveOptions.size(), MAX_VISISLE_OPTIONS); i++) { //Display has a maximum amount of slots visible at once
             SaveFile saveFile = saveOptions.get(i + scrollPos);
-            menuLayer.insert(saveFile.layer, new Coordinate(0, 2 * i + 1));
+            menuLayer.insert(saveFile.layer, new Coordinate(0, 2 * i + 1)); //SaveFile Layers are pre-drawn
             if (saveFile.equals(selectedSaveFile)){
                 selectorLayer.setVisible(true);
                 selectorLayer.setPos(0, 2 * i + 1);
@@ -100,6 +115,9 @@ public class GameSaveMenu implements MouseInputReceiver{
         updateBanner();
     }
 
+    /**
+     * Updates just the banner at the top
+     */
     private void updateBanner(){
         menuLayer.fillLayer(new SpecialText(' ', Color.WHITE, bannerBkg), new Coordinate(0, 0), new Coordinate(menuLayer.getCols(), 0));
         if (isSaving) {
@@ -113,10 +131,13 @@ public class GameSaveMenu implements MouseInputReceiver{
         menuLayer.inscribeString("Close", lm.getWindow().RESOLUTION_WIDTH - 6, 0, closeBkg);
     }
 
+    /**
+     * Generates the list of save file options.
+     */
     private void generateSaveOptions(){
         if (optionsFillThread != null && optionsFillThread.isAlive())
             optionsFillThread.interrupt();
-        optionsFillThread = new Thread(() -> {
+        optionsFillThread = new Thread(() -> { //In case things are going slowly, this operation is put onto a different thread.
             saveOptions.clear();
             FileIO io = new FileIO();
             File savesFolder = new File(io.getRootFilePath() + "Saves");
@@ -130,7 +151,7 @@ public class GameSaveMenu implements MouseInputReceiver{
                         SaveFile save = new SaveFile(file);
                         Color bkg = (count % 2 == 0) ? darkBkg : lightBkg;
                         count++;
-                        drawSaveOptionLayer(save, bkg);
+                        inscribeSaveOptionLayer(save, bkg);
                         saveOptions.add(save);
                         updateDisplay();
                     }
@@ -140,17 +161,23 @@ public class GameSaveMenu implements MouseInputReceiver{
         optionsFillThread.start();
     }
 
-    private void drawSaveOptionLayer(SaveFile save, Color bkg){
+    /**
+     * Draws the Layer for a save file, which is then stored and made use of later
+     *
+     * @param save The SaveFile to draw for
+     * @param bkg The Layer background color
+     */
+    private void inscribeSaveOptionLayer(SaveFile save, Color bkg){
         Layer optionLayer = new Layer(lm.getWindow().RESOLUTION_WIDTH, 2, "savefile " + save.file.getName(), 0, 0, 0); //Create new layer to assign to SaveOption
         optionLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
         optionLayer.inscribeString(save.file.getName().substring(0, save.file.getName().length() - 4), 1, 0);
         File txtFile = new File(save.file.getPath().substring(0, save.file.getPath().length() - 3).concat("txt"));
-        if (txtFile.exists()){
+        if (txtFile.exists()){ //Fill in text contents only if there is a text file to get the info from.
             try {
                 FileReader reader = new FileReader(txtFile);
                 BufferedReader bufferedReader = new BufferedReader(reader);
                 String desc = bufferedReader.readLine();
-                drawSaveOptionLayer(desc, optionLayer);
+                inscribeSaveOptionLayer(desc, optionLayer);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -159,11 +186,12 @@ public class GameSaveMenu implements MouseInputReceiver{
     }
 
     /**
-     * Draws the layer for a given save option
+     * Draws the text contents of a SaveFile's Layer
+     *
      * @param desc Assumed to be formatted in the way GameMaster generates save file descriptions
      * @param layer The layer to draw on
      */
-    private void drawSaveOptionLayer(String desc, Layer layer){
+    private void inscribeSaveOptionLayer(String desc, Layer layer){
         String[] descValues = new String[6]; //Divide up the description string into usable parts
         int startIndex = 0;
         for (int i = 0; i < descValues.length; i++) {
@@ -174,13 +202,12 @@ public class GameSaveMenu implements MouseInputReceiver{
                 descValues[i] = desc.substring(startIndex);
             startIndex = slashLoc + 1;
         }
-        System.out.printf("Desc values: %1$s\n", (Object)descValues); //Make sure nothing fell apart in the process
         int col = 2;
         Color[] cols = {TextBox.txt_green.brighter(), TextBox.txt_red.brighter(), TextBox.txt_blue.brighter(), TextBox.txt_yellow.brighter()};
         for (int i = 0; i < 4; i++) { //Begin drawing the player stats
             layer.inscribeString(descValues[i], col, 1, cols[i]);
             col += descValues[i].length();
-            if (i < 3)
+            if (i < 3) //Add a forward slash at the end of every number but the last
                 layer.inscribeString("/", col, 1, Color.GRAY);
             col++;
         }
@@ -217,7 +244,7 @@ public class GameSaveMenu implements MouseInputReceiver{
     private void doListClick(Coordinate screenPos){
         int listPos = scrollPos + (screenPos.getY() - 1) / 2; //Gets the index of the save file in the list
         if (listPos < saveOptions.size()) {
-            if (saveOptions.get(listPos).equals(selectedSaveFile)) { //Load game when clicking on already selected save file. Effectively a double-click
+            if (saveOptions.get(listPos).equals(selectedSaveFile)) { //Load/Save game when clicking on already selected save file. Effectively a double-click
                 Thread closeThread = new Thread(() -> {
                     try {
                         Thread.sleep(100); //Needs to wait for GameMouseInput to finish its for loop before removing itself from the list. No Co-modification errors here!
@@ -242,6 +269,8 @@ public class GameSaveMenu implements MouseInputReceiver{
         inputLocked = true;
         gameMaster.saveGame(saveFile);
         close();
+        //Show confirmation message to player.
+        gameMaster.getCurrentGameInstance().getTextBox().showMessage(String.format("<sf>Saved to: <cc>%1$s", saveFile.getName().substring(0, saveFile.getName().length()-4)));
     }
 
     @Override

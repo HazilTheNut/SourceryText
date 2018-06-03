@@ -260,6 +260,11 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             g.drawRect(0,0,boxWidth,getHeight()-1);
             g.drawRect(boxWidth + 2,0,getWidth()-boxWidth-3,getHeight()-1);
 
+            if (mousePointX < getBoxWidth() + 2) { //Don't move Sat-Bri point if hue is changing.
+                satBriPointX = mousePointX;
+                satBriPointY = mousePointY;
+            }
+
             //Draw the little cross-hair on the main box
             g.setColor(Color.WHITE);
             g.drawLine(satBriPointX-1, satBriPointY, satBriPointX-2, satBriPointY);
@@ -281,10 +286,6 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         private void onMouseInput(MouseEvent e){
             mousePointX = e.getX() - getX();
             mousePointY = e.getY() - getY();
-            if (mousePointX < getBoxWidth() + 2) { //Don't move Sat-Bri point if hue is changing.
-                satBriPointX = mousePointX;
-                satBriPointY = mousePointY;
-            }
             if (mousePointX >= getWidth() - 13){ //Selecting hue
                 colorData[0] = (float)mousePointY / getHeight();
             } else {

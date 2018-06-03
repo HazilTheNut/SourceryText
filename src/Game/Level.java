@@ -21,6 +21,24 @@ import java.util.Arrays;
  */
 public class Level implements Serializable {
 
+    /**
+     * Level:
+     *
+     * The Sourcery Text mirror to the levels created using the Level Editor.
+     *
+     * It contains the following:
+     *  > filePath              : The String file path that points to the .lda file this Level is generated from.
+     *  > backdrop              : The Level's art.
+     *  > baseTiles             : The base-level Tiles that should be unchanging.
+     *  > overlayTiles          : Tiles that override the properties of the base Tiles
+     *  > overlayTileLayer      : The Layer that visually describes the existence of an overlay Tile.
+     *  > warpZones             : The list of Warp Zones in the Level
+     *  > entities              : The list of Entities in the Level
+     *  > animatedTilesLayer    : The Layer that the AnimatedTiles modify to create the animations.
+     *  > animatedTiles         : The list of AnimatedTiles in the Level
+     *  > levelScripts          : The list of LevelScripts operating in this level.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private String filePath;
@@ -36,7 +54,7 @@ public class Level implements Serializable {
     private ArrayList<Entity> entities;
 
     private Layer animatedTileLayer;
-    private transient ArrayList<AnimatedTile> animatedTiles;
+    private ArrayList<AnimatedTile> animatedTiles;
 
     private ArrayList<LevelScript> levelScripts;
 
@@ -142,6 +160,7 @@ public class Level implements Serializable {
     void onEnter(LayerManager lm){
         if (animatedTiles == null) {
             animatedTiles = new ArrayList<>();
+            animatedTileLayer.clearLayer();
         }
         for (Entity e : entities) e.onLevelEnter();
         for (Tile t : getAllTiles()) t.onLevelEnter(null);

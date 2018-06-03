@@ -1,15 +1,19 @@
 package Game.AnimatedTiles;
 
 import Data.Coordinate;
+import Data.SerializationVersion;
 import Engine.SpecialText;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.Random;
 
 /**
  * Created by Jared on 4/23/2018.
  */
-public class FireAnimation extends AnimatedTile {
+public class FireAnimation extends AnimatedTile implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     /**
      * FireAnimation:

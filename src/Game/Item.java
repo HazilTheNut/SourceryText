@@ -13,15 +13,21 @@ import java.io.Serializable;
  */
 public class Item extends TagHolder implements Serializable {
 
+    /**
+     * Item:
+     *
+     * A TagHolder designed to be arranged into lists and quantified.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private ItemStruct itemData;
     private long uniqueID;
 
-    public int stackability;
-    public final static int STACKABLE     = 0;
-    public final static int NON_STACKABLE = 1;
-    public final static int NO_QUANTITY   = 2;
+    private int stackability;
+    public final static int STACKABLE     = 0; //Item can stack
+    public final static int NON_STACKABLE = 1; //Item does not stack
+    public final static int NO_QUANTITY   = 2; //Item does not degrade with usage, and also cannot stack. Quantity is unlisted.
 
     public ItemStruct getItemData() { return itemData; }
 
@@ -35,7 +41,7 @@ public class Item extends TagHolder implements Serializable {
     }
 
     public void incrementQty(){
-        itemData.setQty(itemData.getQty()+1);
+        if (stackability != NO_QUANTITY) itemData.setQty(itemData.getQty()+1);
     }
 
     public Item setQty(int amount){
@@ -85,7 +91,7 @@ public class Item extends TagHolder implements Serializable {
 
     @Override
     public void receiveDamage(int amount) {
-        itemData.setQty(itemData.getQty()-amount);
+        itemData.setQty(itemData.getQty()-amount); //"Damage" in this case just decrements the quantity.
     }
 
     @Override

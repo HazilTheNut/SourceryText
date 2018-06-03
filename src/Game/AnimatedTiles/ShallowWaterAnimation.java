@@ -1,14 +1,18 @@
 package Game.AnimatedTiles;
 
 import Data.Coordinate;
+import Data.SerializationVersion;
 import Engine.SpecialText;
 
 import java.awt.*;
+import java.io.Serializable;
 
 /**
  * Created by Jared on 4/22/2018.
  */
-public class ShallowWaterAnimation extends AnimatedTile {
+public class ShallowWaterAnimation extends AnimatedTile implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     /**
      * ShallowWaterAnimation:

@@ -102,6 +102,10 @@ public class GameMaster {
         saveMenu.openSaveDialog();
     }
 
+    GameInstance getCurrentGameInstance() {
+        return currentGameInstance;
+    }
+
     private class DebugWindowOpener extends KeyAdapter{
         @Override
         public void keyPressed(KeyEvent e) {
