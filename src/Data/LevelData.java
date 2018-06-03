@@ -55,11 +55,23 @@ public class LevelData implements Serializable {
             }
         }
         entityData = new EntityStruct[backdrop.getCols()][backdrop.getRows()];
+        resetAuxiliaryLayers();
+        warpZones = new ArrayList<>();
+        refreshTileDataLayer();
+    }
+
+    /**
+     * Resets all Layers not used in the final saved LevelData.
+     *
+     * Sourcery Text makes no usage of the TileData, EntityData, or WarpZone Layer of LevelData, so they are marked as transient to save storage space.
+     * Therefore, these layers need to be reset every time the LevelEditor opens a new level.
+     *
+     * Those layers are thus dubbed "auxiliary" because they are not essential to the function of the LevelData.
+     */
+    public void resetAuxiliaryLayers(){
         tileDataLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "tiledata", 0, 0);
         entityLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "entitydata", 0, 0);
         warpZoneLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "warpzonedata", 0, 0);
-        warpZones = new ArrayList<>();
-        refreshTileDataLayer();
     }
 
     /**
