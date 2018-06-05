@@ -20,6 +20,12 @@ import java.util.ArrayList;
  */
 public class PlayerInventory implements MouseInputReceiver, Serializable {
 
+    /**
+     * PlayerInventory:
+     *
+     * Handles the player and 'other' inventory screens, as well as the Tag lists for both and the selected Item.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Player player;
@@ -30,6 +36,8 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
     private Item selectedItem;
 
     public final int ITEM_STRING_LENGTH = 16;
+
+    //Predefined color palette
 
     private final Color borderBkg = new Color(30, 30, 30);
     private final Color bkgDark   = new Color(25, 25, 25, 252);
@@ -82,7 +90,12 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
 
     private LayerManager getLM() { return player.getGameInstance().getLayerManager(); }
 
-    void initSubInventory(Player player){
+    /**
+     * Initializes the player and 'other' inventory panel
+     *
+     * @param player The Player
+     */
+    private void initSubInventory(Player player){
         playerInv = new SubInventory(player.getGameInstance().getLayerManager(), "inv_player");
         playerInv.configure(PLACEMENT_TOP_LEFT, "Inventory", player, CONFIG_PLAYER_USE);
 
@@ -98,21 +111,32 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         return otherInv;
     }
 
+    /**
+     * Create the Item Tag list (in the center column)
+     *
+     * One would think it would be possible to unify the Tag lists into one function, but it turns out the Item descriptor is very specialized and would turn this method into even more of a spaghetti mess.
+     *
+     * @param item
+     */
     void updateItemDescription(Item item){
         Layer descLayer;
         if (item != null) {
+            //Create temporary Layer and fill it
             descLayer = new Layer(new SpecialText[21][item.getTags().size() + 2], "item_description", 0, 0, LayerImportances.MENU);
             descLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkgDark));
             for (int col = 0; col < descLayer.getCols(); col++){ //Create top border
                 descLayer.editLayer(col, 0, new SpecialText('#', Color.GRAY, borderBkg));
             }
+            //Draw title
             String itemname = item.getItemData().getName();
             descLayer.inscribeString(itemname, getTitleMiddleAlignment(itemname, 21), 0, descFg);
+            //Draw item weight
             double weight = item.calculateWeight();
-            if (weight == Math.floor(weight))
+            if (weight == Math.floor(weight)) //Round off digits beyond decimal place if not necessary
                 descLayer.inscribeString(String.format("Weight: %1$.0f", item.calculateWeight()), 2, 1, Color.GRAY);
             else
                 descLayer.inscribeString(String.format("Weight: %1$.2f", item.calculateWeight()), 2, 1, Color.GRAY);
+            //Draw each Tag in Item.
             for (int ii = 0; ii < item.getTags().size(); ii++) {
                 Color fgColor = item.getTags().get(ii).getTagColor();
                 descLayer.inscribeString(item.getTags().get(ii).getName(), 2, ii + 2, new Color(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
@@ -120,6 +144,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             }
             descriptionLayer.setVisible(true);
             if (!player.getItems().contains(item) && otherInv.mode == CONFIG_OTHER_EXCHANGE){ //Therefore must not be in player inventory and is exchanging items
+                //Create weight preview
                 double newWeight = calculateTotalWeight() + item.calculateWeight();
                 Color weightColor = (newWeight <= player.getWeightCapacity()) ? weightCapAvailable : weightCapFull;
                 playerInv.inscribeWeightPercentage(playerInv.invLayer, 100 * newWeight / player.getWeightCapacity(), weightColor);
@@ -134,6 +159,11 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         descriptionLayer.transpose(descLayer);
     }
 
+    /**
+     * Opens the right-side 'other' inventory panel
+     *
+     * @param e The Entity whose inventory is to be displayed on the panel.
+     */
     void openOtherInventory(Entity e){
         if (e != null) {
             otherInv.configure(PLACEMENT_TOP_RIGHT, e.getName(), e, CONFIG_OTHER_VIEW);
@@ -181,6 +211,11 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         return false;
     }
 
+    /**
+     * Uses an item, as the player.
+     *
+     * @param selectedItem The item to use
+     */
     private void useItem(Item selectedItem){
         player.freeze();
         TagEvent e = selectedItem.onItemUse(player);
@@ -213,6 +248,19 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
 
     public class SubInventory {
 
+        /**
+         * SubInventory:
+         *
+         * Handles a singular inventory panel.
+         *
+         * It is capable of being reconfigured based on what the panel should be doing.
+         * The following are the possible configurations:
+         *  > CONFIG_PLAYER_USE      : Clicking on items will use those items on the player
+         *  > CONFIG_PLAYER_EXCHANGE : Clicking on items will move those items to the 'other' inventory panel
+         *  > CONFIG_OTHER_EXCHANGE  : Clicking on items will move those items to the player's inventory panel
+         *  > CONFIG_OTHER_VIEW      : Clicking on items does nothing
+         */
+
         private Layer invLayer;
         private Coordinate loc;
         private String name;
@@ -229,6 +277,14 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             lm.addLayer(invLayer);
         }
 
+        /**
+         * Fully configures a SubInventory
+         *
+         * @param loc Top-left corner of panel screen location
+         * @param name Name of panel
+         * @param entity The Entity being shown by the panel
+         * @param config The configuration mode
+         */
         public void configure(Coordinate loc, String name, Entity entity, int config){
             this.loc = loc;
             this.name = name;
@@ -299,6 +355,11 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             layer.inscribeString(String.format("%1$3.0f%%", amount), ITEM_STRING_LENGTH, 0, color);
         }
 
+        /**
+         * Draws the items section of the inventory panel
+         *
+         * @param tempLayer The layer to draw on, preferably a temporary one (it makes things double-buffered).
+         */
         private void drawItems(Layer tempLayer){
             //DebugWindow.reportf(DebugWindow.STAGE, "[SubInventory.drawItems]\n offset: %1$d\n invHeight: %2$d", scrollOffset, getInvHeight());
             ArrayList<Item> items = e.getItems();
@@ -314,13 +375,13 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             if (mode == CONFIG_PLAYER_USE || mode == CONFIG_PLAYER_EXCHANGE){
                 inscribeWeightPercentage(tempLayer, 100 * calculateTotalWeight() / player.getWeightCapacity(), weightCapNormal);
             }
-            for (int ii = 0; ii < getInvHeight()-1; ii++) { //Inscribe inv contents
+            for (int ii = 0; ii < getInvHeight()-1; ii++) { //Inscribe inv contents. I'll admit that the scrolling code for the Save/Load menu is a lot cleaner than this.
                 if ((ii + scrollOffset) % 2 == 1) { //Create the alternating colors
                     for (int col = 0; col < ITEM_STRING_LENGTH + 2; col++) {
                         tempLayer.editLayer(col + 1, ii + 1, new SpecialText(' ', Color.WHITE, bkgLight));
                     }
                 }
-                if (ii + scrollOffset < items.size()) {
+                if (ii + scrollOffset < items.size()) { //Don't draw null items
                     Item item = items.get(ii + scrollOffset); //Begin drawing the item
                     Color nameColor = textFg;
                     if (e instanceof CombatEntity) {
@@ -335,6 +396,12 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             tempLayer.inscribeString(name, 2, 0, labelFg);
         }
 
+        /**
+         * Draws the Tag list for the entity that 'owns' this inventory panel
+         *
+         * @param tempLayer The layer to draw on, preferably a temporary one (it makes things double-buffered).
+         * @param xstart The x coordinate to start drawing from (in case the middle column gets shifted around)
+         */
         private void drawTagList(Layer tempLayer, int xstart){
             int top = getLM().getWindow().RESOLUTION_HEIGHT - getTagListHeight() - 1;
             for (int row = top; row < top + getTagListHeight(); row++) { //Fill tag list panel background
@@ -404,7 +471,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             // 3) The mouse leaves from an item
             if (previousItem != null && item != null && !previousItem.equals(item)) updateItemDescription(item);
             if (previousItem == null && item != null)                               updateItemDescription(item);
-            if (previousItem != null && item == null)                               updateItemDescription(item);
+            if (previousItem != null && item == null)                               updateItemDescription(null);
             previousItem = item;
         }
 
@@ -421,22 +488,10 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                     }
                     return true;
                 case CONFIG_PLAYER_EXCHANGE:
-                    if (mouseButton == MouseEvent.BUTTON1) {
-                        moveWholeItem(selected, playerInv.getOwner(), otherInv.getOwner());
-                    } else if (mouseButton == MouseEvent.BUTTON3){
-                        moveOneItem(selected, playerInv.getOwner(), otherInv.getOwner());
-                    }
-                    playerInv.updateDisplay();
-                    otherInv.updateDisplay();
+                    doItemMovement(mouseButton, selected, playerInv.getOwner(), otherInv.getOwner());
                     return true;
                 case CONFIG_OTHER_EXCHANGE:
-                    if (mouseButton == MouseEvent.BUTTON1){
-                        moveWholeItem(selected, otherInv.getOwner(), playerInv.getOwner());
-                    } else if (mouseButton == MouseEvent.BUTTON3){
-                        moveOneItem(selected, otherInv.getOwner(), playerInv.getOwner());
-                    }
-                    playerInv.updateDisplay();
-                    otherInv.updateDisplay();
+                    doItemMovement(mouseButton, selected, otherInv.getOwner(), playerInv.getOwner());
                     return true;
                 case CONFIG_OTHER_VIEW:
                     return true;
@@ -445,14 +500,26 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             }
         }
 
+        private void doItemMovement(int mouseButton, Item selected, Entity from, Entity to){
+            if (mouseButton == MouseEvent.BUTTON1) {
+                moveWholeItem(selected, from, to);
+            } else if (mouseButton == MouseEvent.BUTTON3){
+                moveOneItem(selected, from, to);
+            }
+            playerInv.updateDisplay();
+            otherInv.updateDisplay();
+        }
+
         private void moveOneItem(Item selected, Entity from, Entity to){
             if (selected.isStackable()) {
                 if (to instanceof Player){
                     if (calculateTotalWeight() + selected.getItemData().getRawWeight() > player.getWeightCapacity()) return;
                 }
+                //Remove item from 'from'
                 DebugWindow.reportf(DebugWindow.GAME, "SubInventory.moveOneItem","");
                 selected.decrementQty();
                 from.scanInventory();
+                //Add item to 'to'
                 ItemStruct struct = selected.getItemData();
                 Item singularItem = new Item(new ItemStruct(struct.getItemId(), 1, struct.getName(), struct.getRawWeight()), player.getGameInstance());
                 singularItem.getTags().addAll(selected.getTags());
@@ -480,11 +547,13 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                     moveWholeItem(selected, playerInv.getOwner(), lootPile);
                     otherInv.configure(PLACEMENT_TOP_RIGHT, name, lootPile, CONFIG_OTHER_EXCHANGE);
                     otherInv.show();
+                    playerInv.changeMode(CONFIG_PLAYER_EXCHANGE);
                     playerInv.updateDisplay();
                     otherInv.updateDisplay();
                     return;
                 }
             }
+            //Create a new loot pile, since one obviously doesn't exist
             DebugWindow.reportf(DebugWindow.GAME, "SubInventory.dropItem","Creating new loot pile");
             EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot", null);
             LootPile pile = (LootPile)player.getGameInstance().instantiateEntity(lootPileStruct, player.getLocation(), player.getGameInstance().getCurrentLevel());

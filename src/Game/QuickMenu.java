@@ -14,6 +14,23 @@ import java.util.ArrayList;
  */
 public class QuickMenu implements MouseInputReceiver {
 
+    /**
+     * QuickMenu:
+     *
+     * Ever needed to splash a couple of options at the player, but thought it would be too much work?
+     * The QuickMenu alleviates this issue by being being a reusable menu.
+     *
+     * Due to the placement on the menu on the screen, it is also very convenient to select an option and move on.
+     *
+     * It really does put the "quick" in "QuickMenu"
+     *
+     * Every time you use the QuickMenu, the following is recommended:
+     *
+     * 1) Clear the menu of previous options (not necessary, but it's always a good measure to take)
+     * 2) Add all the options you want the menu to show
+     * 3) Show the menu
+     */
+
     private Layer menuLayer;
     private Layer selectorLayer;
     private ArrayList<MenuItem> menuItems = new ArrayList<>();
@@ -45,10 +62,20 @@ public class QuickMenu implements MouseInputReceiver {
         this.player = player;
     }
 
+    /**
+     * Clears the menu
+     */
     public void clearMenu(){
         menuItems.clear();
     }
 
+    /**
+     * Adds an item/option to the menu
+     *
+     * @param name The name of the item/option
+     * @param color The color of the item/option
+     * @param action What the item/option should do.
+     */
     public void addMenuItem(String name, Color color, MenuAction action){
         menuItems.add(new MenuItem(name, color, action));
     }
@@ -57,6 +84,12 @@ public class QuickMenu implements MouseInputReceiver {
         addMenuItem(name, Color.WHITE, action);
     }
 
+    /**
+     * Shows the menu, freezing the player until they pick an option.
+     *
+     * @param title The title of the menu, to describe the category of options available.
+     * @param closable Whether or not you want the little 'close' button on the top-right to show.
+     */
     public void showMenu(String title, boolean closable){
         isClosable = closable;
         drawMenu();
@@ -71,10 +104,11 @@ public class QuickMenu implements MouseInputReceiver {
         player.freeze();
     }
 
-    public void closeMenu(){
+    private void closeMenu(){
         menuLayer.setVisible(false);
         selectorLayer.setVisible(false);
         player.unfreeze();
+        clearMenu();
     }
 
     private void drawMenu(){
@@ -104,7 +138,7 @@ public class QuickMenu implements MouseInputReceiver {
                     selectorLayer.setVisible(false);
                 }
             }
-            if (isClosable) {
+            if (isClosable) { //Draw the little 'X' at the top-right if the menu is closable
                 if (layerPos.equals(new Coordinate(MENU_WIDTH-1, 0)))
                     menuLayer.editLayer(MENU_WIDTH - 1, 0, closeButtonLit);
                 else

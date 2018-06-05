@@ -11,6 +11,19 @@ import java.io.Serializable;
  */
 public class Tile extends TagHolder implements Serializable {
 
+    /**
+     * Tile:
+     *
+     * A simple TagHolder that contains additional information regarding its position and containing level.
+     *
+     * Tile Tags are handled weirdly.
+     * In most cases, each Tag belongs to a singular TagHolder and is individual.
+     * However, if the Tag is generated during the Level loading process, then that Tag is actually re-used again by the Level.
+     *
+     * That has the odd consequence of some Tags owned by Tiles to belong to multiple Tiles.
+     * This has some conditional consequences, such as the way the SplashySurface Tags figure out when and where to dispense animated tiles.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Coordinate location;

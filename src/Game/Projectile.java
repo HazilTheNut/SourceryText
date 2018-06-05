@@ -15,6 +15,12 @@ import Game.Tags.Tag;
  */
 public class Projectile extends TagHolder {
 
+    /**
+     * Projectile:
+     *
+     * TagHolders that play a flying animation, hitting the first solid object it finds or until it reaches the target location.
+     */
+
     private double xpos;
     private double xvelocity;
     private double ypos;
@@ -42,6 +48,7 @@ public class Projectile extends TagHolder {
         lm.addLayer(iconLayer);
     }
 
+    //Recommended to be ran within a thread separate from the main one.
     public void launchProjectile(int range, GameInstance gi){
         int totalCycles = (int)(range / UNITS_PER_CYCLE);
         iconLayer.setVisible(true);
@@ -53,13 +60,13 @@ public class Projectile extends TagHolder {
             iconLayer.setPos(newPos);
             DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile:"+i,"pos: %1$s", newPos);
             Entity entity = gi.getCurrentLevel().getSolidEntityAt(newPos);
-            if (!newPos.equals(source.getLocation())) { //Should be a nice catch-all to prevent projectiles from not firing correctly
-                if (entity != null) {
+            if (!newPos.equals(source.getLocation())) { //Should be a nice catch-all to prevent projectiles from not firing correctly (by hitting the creator of the projectile)
+                if (entity != null) { //Is the projectile now on top of an entity?
                     collide(entity, gi);
                     destroy();
                     return;
                 }
-                if (!gi.isSpaceAvailable(newPos, TagRegistry.TILE_WALL)) {
+                if (!gi.isSpaceAvailable(newPos, TagRegistry.TILE_WALL)) { //"No Pathing" Tag is also applicable to Deep Water tiles, which should be something projectiles can go over.
                     collideWithTerrain(gi);
                     return;
                 } else {
@@ -71,6 +78,7 @@ public class Projectile extends TagHolder {
         collideWithTerrain(gi);
     }
 
+    //I had an issue earlier where the position rounding was done differently in different places in the code. That's no good!
     private Coordinate getRoundedPos(){
         return new Coordinate((int)Math.round(xpos), (int)Math.round(ypos));
     }
@@ -114,7 +122,7 @@ public class Projectile extends TagHolder {
         }
     }
 
-    public void destroy(){
+    private void destroy(){
         lm.removeLayer(iconLayer);
     }
 

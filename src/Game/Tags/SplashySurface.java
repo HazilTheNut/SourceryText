@@ -18,11 +18,13 @@ public class SplashySurface extends Tag {
      *
      * Overridden by ShallowWaterTag and SandTag.
      * It detects when an Entity steps off of this Tile (if the owner of this tag is a Tile) and runs the method playSplash().
+     *
+     * Since the SplashySurface Tag is most likely to be shared amongst multiple Tiles, a whole list of Coordinates of candidate splash locations exists to track entity movement throughout the entire level.
      */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    ArrayList<Coordinate> splashLocs = new ArrayList<>();
+    private ArrayList<Coordinate> splashLocs = new ArrayList<>();
 
     @Override
     public void onTurn(TagEvent e) {

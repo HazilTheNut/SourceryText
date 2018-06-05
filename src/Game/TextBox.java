@@ -14,6 +14,15 @@ import java.awt.*;
  */
 public class TextBox implements MouseInputReceiver{
 
+    /**
+     * TextBox:
+     *
+     * The text box shown at the bottom of the screen used to deliver messages to the player.
+     *
+     * TextBox contains a custom text parser that handles various flags that relate to the presentation of the message.
+     * The Sourcery Text Level Editor Usage Guide contains additional information regarding which flags are handled and what their purposes are.
+     */
+
     private Layer textBoxLayer;
     private Player player;
     private int width;
@@ -25,6 +34,7 @@ public class TextBox implements MouseInputReceiver{
     private final int STATE_END       = 2;
     private int currentState;
 
+    //Colors!
     public static final Color bkg        = new Color(26, 26, 26);
     public static final Color txt_white  = new Color(225, 225, 225);
     public static final Color txt_red    = new Color(255, 128, 128);
@@ -68,15 +78,16 @@ public class TextBox implements MouseInputReceiver{
     private int xpos = 1;
 
     private void writeMessage(String message){
+        //Starting values
         row = 1;
         xpos = 1;
         int index = 0;
         isSkimming = false;
         int SCROLL_SPEED_NORMAL = 28;
         int SCROLL_SPEED_FAST = 8;
-        int SCROLL_SPPED_SLOW = 250;
+        int SCROLL_SPEED_SLOW = 250;
         int SCROLL_SPEED_SKIM = 3;
-
+        //Begin writing
         int scrollSpeed = SCROLL_SPEED_NORMAL;
         currentState = STATE_SCROLLING;
         Color textColor = txt_white;
@@ -110,7 +121,7 @@ public class TextBox implements MouseInputReceiver{
                 index += 3;
             } else if (isFormattedElement(message, index, "<ss>")) { //Slow speed flag
                 if (!isSkimming) {
-                    scrollSpeed = SCROLL_SPPED_SLOW;
+                    scrollSpeed = SCROLL_SPEED_SLOW;
                 }
                 index += 3;
             } else if (isFormattedElement(message, index, "<p1>")){ //1 Second Pause Flag

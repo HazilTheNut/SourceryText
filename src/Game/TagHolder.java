@@ -16,6 +16,12 @@ import java.util.ArrayList;
  */
 public class TagHolder implements Serializable {
 
+    /**
+     * TagHolder:
+     *
+     * The fundamental 'object' in SourceryText. As the name suggests, it contains a list of Tags.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private ArrayList<Tag> tags = new ArrayList<>();
@@ -79,7 +85,7 @@ public class TagHolder implements Serializable {
      */
     public int getDamageTagAmount(){
         Tag dmgTag = getTag(TagRegistry.DAMAGE_START);
-        if (dmgTag != null && dmgTag instanceof DamageTag){
+        if (dmgTag instanceof DamageTag){
             return ((DamageTag)dmgTag).getDamageAmount();
         }
         return 0;
@@ -91,7 +97,7 @@ public class TagHolder implements Serializable {
      */
     public int getHealthTagAmount(){
         Tag healthTag = getTag(TagRegistry.HEALTH_START);
-        if (healthTag != null && healthTag instanceof HealthTag){
+        if (healthTag instanceof HealthTag){
             return ((HealthTag)healthTag).getHealthAmount();
         }
         return 0;

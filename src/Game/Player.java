@@ -20,6 +20,12 @@ import java.util.ArrayList;
  */
 public class Player extends CombatEntity implements MouseInputReceiver, KeyListener{
 
+    /**
+     * Player:
+     *
+     * The CombatEntity the player gets to control. It has special fields for the weight system, spell system, and movement system.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private HUD hud;
@@ -74,6 +80,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         initNoWeapon();
     }
 
+    /**
+     * Occurs upon the GameInstance initializing, gets the Player ready for game play.
+     */
     void playerInit(){
         inv = new PlayerInventory(gi.getLayerManager(), this);
         hud = new HUD(gi.getLayerManager(), this);
@@ -87,7 +96,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         DebugWindow.reportf(DebugWindow.MISC, "Player.updateSprite","Original sprite %1$s ; Calculated: %2$s", getSprite().getSpecialText(0,0), playerSprite);
     }
 
-    public void updateCameraPos(){
+    /**
+     * Moves the camera position so that it is centered on the player
+     */
+    void updateCameraPos(){
         int cameraOffsetX = (gi.getLayerManager().getWindow().RESOLUTION_WIDTH / -2) - 1;
         int cameraOffsetY = (gi.getLayerManager().getWindow().RESOLUTION_HEIGHT / -2);
         int camNewX = getLocation().getX() + cameraOffsetX;
@@ -99,10 +111,14 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         getSprite().setPos(getLocation());
     }
 
+
     public void updateHUD() {hud.updateHUD();}
 
     public void updateSynopsis() {hud.updateSynopsis(mouseLevelPos);}
 
+    /**
+     * Checks for whether the player is standing in a warp zone (and hadn't just warped there) and moves to a new level if so.
+     */
     private void checkForWarpZones(){
         ArrayList<WarpZone> warpZones = gi.getCurrentLevel().getWarpZones();
         for (WarpZone wz : warpZones){
@@ -148,6 +164,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         postMovementCheck();
     }
 
+    /**
+     * Performs checks after any kind of movement, aside from setPos()
+     */
     private void postMovementCheck(){
         checkForWarpZones();
         updateCameraPos();
@@ -172,8 +191,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     @Override
     protected void doAttackEvent(CombatEntity ce) {
-        if (getWeapon() != null && getWeapon().getItemData().getQty() == 1)
-            removeItem(getWeapon());
+        /*if (getWeapon() != null && getWeapon().getItemData().getQty() == 1)
+            removeItem(getWeapon());*/
         super.doAttackEvent(ce);
         hud.updateSynopsis(ce.getLocation());
         hud.updateHUD();
@@ -182,7 +201,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     @Override
     public void onTurn() {
         super.onTurn();
-        for (int i = 0; i < cooldowns.size(); i++) {
+        for (int i = 0; i < cooldowns.size(); i++) { //Decrement cooldowns
             int cd = cooldowns.get(i)-1;
             if (cd > 0)
                 cooldowns.set(i, cooldowns.get(i)-1);
@@ -194,7 +213,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         if (noEnterWarpZoneTimer > 0) noEnterWarpZoneTimer--;
     }
 
-    public void cleanup(){
+    /**
+     * Cleanup action done when GameInstance is closing
+     */
+    void cleanup(){
         hud.setPlayer(null);
         inv.setPlayer(null);
         gi = null;
@@ -230,6 +252,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     }
 
+    /**
+     * Essentially, what happens when you push the 'Inventory' button (default: E)
+     */
     private void toggleInventory(){
         if (inv.getPlayerInv().isShowing()) {
             inv.getPlayerInv().close();
@@ -314,9 +339,9 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     private void movementKeyDown(Coordinate vector){
         movementVector = movementVector.add(vector);
         movementVector = new Coordinate(Math.max(-1, Math.min(1, movementVector.getX())), Math.max(-1, Math.min(1, movementVector.getY()))); //Sanitates the movement vector
-        if (movementThread == null || !movementThread.isAlive()) {
+        if (movementThread == null || !movementThread.isAlive()) { //Probably should not rudely interrupt movement thread.
             movementThread = new Thread(() -> {
-                while (!movementVector.equals(new Coordinate(0, 0))){
+                while (!movementVector.equals(new Coordinate(0, 0))){ //Move while movement vector is not zero
                     long loopStartTime = System.nanoTime();
                     if (!isFrozen()) {
                         if (movementVector.getX() != 0) {
@@ -336,6 +361,11 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         }
     }
 
+    /**
+     * Does the try/catch stuff that usually looks messy
+     *
+     * @param time Amount of time to sleep, in milliseconds
+     */
     private void sleepMoveThread(int time){
         try {
             Thread.sleep(time);
@@ -412,7 +442,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 DebugWindow.reportf(DebugWindow.GAME, "Player.onMouseClick","Spell casted! %1$s", levelPos);
                 Thread spellThread = new Thread(() -> {
                     if (isSpellReady()) {
-                        freeze();
+                        freeze(); //Stop player actions while casting spell
                         cooldowns.add(equippedSpell.castSpell(levelPos, this, getGameInstance(), magicPower));
                         gi.doEnemyTurn();
                     }
@@ -435,17 +465,20 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
                     if (getLocation().stepDistance(levelPos) <= 1){
                         ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(levelPos);
-                        if (entities.size() == 1) entities.get(0).onInteract(this);
+                        if (entities.size() == 1) {
+                            entities.get(0).onInteract(this);
+                            return; //Don't try to move into the thing you're trying to interact with.
+                        }
                         else if (entities.size() > 1){
-                            QuickMenu quickMenu = gi.getQuickMenu();
+                            QuickMenu quickMenu = gi.getQuickMenu(); //Create menu of options to interact with
                             quickMenu.clearMenu();
                             for (int i = 0; i < entities.size(); i++) {
                                 int finalI = i;
                                 quickMenu.addMenuItem(entities.get(i).getName(), () -> entities.get(finalI).onInteract(this));
                             }
                             quickMenu.showMenu("Interact:", true);
+                            return;
                         }
-                        return;
                     }
 
                     pathToPosition(levelPos, 75);
@@ -493,6 +526,8 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     public void setWeightCapacity(double weightCapacity) {
         this.weightCapacity = weightCapacity;
     }
+
+    //Below is pathfinding stuff
 
     protected void pathToPosition(Coordinate target, int range){
         currentPoints = new ArrayList<>();

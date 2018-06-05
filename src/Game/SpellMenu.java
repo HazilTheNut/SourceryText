@@ -13,6 +13,13 @@ import java.io.Serializable;
 
 public class SpellMenu implements Serializable {
 
+    /**
+     * SpellMenu:
+     *
+     * The drop-down menu on the HUD for selecting spells.
+     * This class would be a subclass of HUD, if not for the fact that it needs to be serializable.
+     */
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Layer menuLayer;
@@ -27,7 +34,7 @@ public class SpellMenu implements Serializable {
 
     final int width = 12;
 
-    public SpellMenu(Player player){
+    SpellMenu(Player player){
         menuLayer = new Layer(width, 50, "HUD_spellmenu", 0, 0, LayerImportances.HUD_SPELL_MENU);
         menuLayer.fixedScreenPos = true;
         cursorLayer = new Layer(width, 1, "HUD_spellcursor", 0, 0, LayerImportances.HUD_SPELL_CURSOR);
@@ -43,7 +50,7 @@ public class SpellMenu implements Serializable {
         this.player = player;
     }
 
-    void show(){
+    private void show(){
         isShowing = true;
         menuLayer.clearLayer();
         drawTopBand(prevMousePos);
@@ -56,13 +63,18 @@ public class SpellMenu implements Serializable {
         }
     }
 
-    void hide(){
+    private void hide(){
         isShowing = false;
         menuLayer.clearLayer();
         cursorLayer.setVisible(false);
         drawTopBand(prevMousePos);
     }
 
+    /**
+     * Draws the top band shown in the HUD top bar.
+     *
+     * @param mousePos The position of the mouse
+     */
     void drawTopBand(Coordinate mousePos){
         if (isShowing)
             drawBand(new Color(44, 41, 51), 0);
@@ -97,9 +109,9 @@ public class SpellMenu implements Serializable {
         }
         Spell atCursor = getSpellAtCursor(screenPos);
         if (isShowing){
-            if (atCursor != null)
+            if (atCursor != null) //If the cursor is elsewhere, don't set the player spell to null.
                 player.setEquippedSpell(atCursor);
-            hide();
+            hide(); //Menu should close if the value is null anyways because the SpellMenu is designed to behave like a normal drop-down menu.
             player.updateHUD();
             return true;
         }
@@ -114,6 +126,7 @@ public class SpellMenu implements Serializable {
     }
 
     boolean onMouseMove(Coordinate screenPos){
+        //The mouseOverDropdownBtn boolean is there to reduce the amount of times the top band is being drawn.
         if (isMouseOnDropdownBtn(screenPos) && !mouseOverDropdownBtn){
             mouseOverDropdownBtn = true;
             drawTopBand(screenPos);
