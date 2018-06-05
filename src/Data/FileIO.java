@@ -97,6 +97,8 @@ public class FileIO {
         }
     }
 
+    // TODO: Compress serialized objects
+
     /**
      * Runs the FileChooser to pick a .lda file.
      *
