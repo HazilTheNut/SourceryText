@@ -34,10 +34,13 @@ public class OneWayDoor extends Entity {
     @Override
     public void onInteract(Player player) {
         Coordinate diff = getLocation().subtract(player.getLocation()); //Get relative position to player
-        if ((direction == DIR_LEFT && diff.equals(new Coordinate(-1, 0))) || (direction == DIR_RIGHT && diff.equals(new Coordinate(1, 0))))
-            selfDestruct();
-        else
-            gi.getTextBox().showMessage("The door is locked on the other side");
+        if (direction != DIR_ERROR) {
+            if ((direction == DIR_LEFT && diff.equals(new Coordinate(-1, 0))) || (direction == DIR_RIGHT && diff.equals(new Coordinate(1, 0))))
+                selfDestruct();
+            else
+                gi.getTextBox().showMessage("The door is locked on the other side");
+        } else
+            gi.getTextBox().showMessage("The one way door has lost its way...");
     }
 
     @Override
