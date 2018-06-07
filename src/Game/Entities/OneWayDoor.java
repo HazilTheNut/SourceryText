@@ -39,9 +39,8 @@ public class OneWayDoor extends Entity {
                 selfDestruct();
             else
                 gi.getTextBox().showMessage("The door is locked on the other side");
-        } else {
-            gi.getTextBox().showMessage("The door cannot be opened<p1>, ever");
-        }
+        } else
+            gi.getTextBox().showMessage("The one way door has lost its way...");
     }
 
     @Override
