@@ -327,7 +327,7 @@ public class CombatEntity extends Entity {
     }
 
     @Override
-    void selfDestruct() {
+    public void selfDestruct() {
         EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot Pile", null);
         for (Item item : getItems()){
             lootPileStruct.addItem(item.getItemData());

@@ -20,17 +20,28 @@ public class GameMaster {
     private LayerManager layerManager;
 
     private GameSaveMenu saveMenu;
+    private GameMainMenu mainMenu;
+
+    private boolean gameRunning = false;
 
     public GameMaster(LayerManager layerManager){
         this.layerManager = layerManager;
+
+        //Mouse Input
         mouseInput = new GameMouseInput(this.layerManager.getWindow(), this.layerManager);
         this.layerManager.getWindow().addMouseListener(mouseInput);
         this.layerManager.getWindow().addMouseMotionListener(mouseInput);
         this.layerManager.getWindow().addMouseWheelListener(mouseInput);
         this.layerManager.getWindow().addKeyListener(new DebugWindowOpener());
+
+        //Menus
         saveMenu = new GameSaveMenu(this.layerManager, mouseInput, this);
+        mainMenu = new GameMainMenu(mouseInput, layerManager, this);
     }
 
+    /**
+     * Creates a new GameInstance starting at the beginning of the game
+     */
     public void newGame(){
         currentGameInstance = new GameInstance();
         currentGameInstance.assignLayerManager(layerManager);
@@ -43,8 +54,14 @@ public class GameMaster {
         currentGameInstance.establishMouseInput();
         FileIO io = new FileIO();
         currentGameInstance.enterLevel(io.getRootFilePath() + "LevelData/gameStart.lda", new Coordinate(0, 0));
+        gameRunning = true;
     }
 
+    /**
+     * Serializes a GameInstance and writes up a summary .txt file of it.
+     *
+     * @param saveFile The File to save the GameInstance to.
+     */
     public void saveGame(File saveFile){
         FileIO io = new FileIO();
         currentGameInstance.stopAnimations();
@@ -53,6 +70,12 @@ public class GameMaster {
         currentGameInstance.startAnimations();
     }
 
+    /**
+     * Writes the text summary used by the 'Save Game' menu to describe each save in the list.
+     * This shaves off a lot of time on rendering the save options, since deserialization of objects is far slower than reading a text file.
+     *
+     * @param saveFilePath The string file path to the game save file (the .sts one). This method will automatically replace the '.sts' with a '.txt'
+     */
     private void writeSaveSummary(String saveFilePath){
         String newPath = saveFilePath.substring(0, saveFilePath.length() - 3);
         newPath = newPath.concat("txt");
@@ -67,19 +90,37 @@ public class GameMaster {
         }
     }
 
+    /**
+     * 'Closes' a GameInstance, shutting down all processes and clearing all Layers in the LayerManager.
+     */
     void exitGame(){
         currentGameInstance.dispose();
         for (KeyListener listener : layerManager.getWindow().getKeyListeners()) layerManager.getWindow().removeKeyListener(listener);
         layerManager.getWindow().addKeyListener(new DebugWindowOpener());
         layerManager.clearLayers();
         mouseInput.clearInputReceivers();
+        gameRunning = false;
     }
 
+    /**
+     * Runs both exitGame() and mainMenu.open() without any NullPointerExceptions getting in the way.
+     */
+    void exitGameToMainMenu(){
+        exitGame();
+        mainMenu.open();
+    }
+
+    /**
+     * Loads a serialized GameInstance from storage and runs the new GameInstance.
+     *
+     * @param gameFile The File that is the saved game (the serialized GameInstance)
+     */
     void loadGame(File gameFile){
         Thread loadGameThread = new Thread(() -> {
             //Cleanup old GameInstance
             FileIO io = new FileIO();
-            exitGame();
+            if (gameRunning) exitGame();
+            mainMenu.close();
             //Generate new one
             currentGameInstance = io.openGameInstance(gameFile);
             currentGameInstance.assignLayerManager(layerManager);
@@ -88,6 +129,7 @@ public class GameMaster {
             currentGameInstance.initialize();
             currentGameInstance.establishMouseInput();
             currentGameInstance.enterLevel(currentGameInstance.getCurrentLevel().getFilePath(), currentGameInstance.getPlayer().getLocation());
+            gameRunning = true;
             layerManager.addLayer(mouseInput.getMouseHighlight());
             DebugWindow.reportf(DebugWindow.STAGE, "GameMaster.loadGame","Successful load of game!");
         });
@@ -104,6 +146,10 @@ public class GameMaster {
 
     GameInstance getCurrentGameInstance() {
         return currentGameInstance;
+    }
+
+    public GameMainMenu getMainMenu() {
+        return mainMenu;
     }
 
     private class DebugWindowOpener extends KeyAdapter{

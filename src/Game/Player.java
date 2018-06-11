@@ -322,7 +322,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
                 });
                 quickMenu.addMenuItem("Options",      new Color(173, 255, 228), () -> {});
                 quickMenu.addMenuItem("Quit to Menu", new Color(255, 171, 171), () -> {
-                    gi.getGameMaster().exitGame();
+                    gi.getGameMaster().exitGameToMainMenu();
                 });
                 quickMenu.addMenuItem("Close",        () -> {});
                 quickMenu.showMenu("Options", true);

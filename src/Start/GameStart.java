@@ -37,7 +37,7 @@ public class GameStart {
         LayerManager lm = new LayerManager(window);
 
         GameMaster master = new GameMaster(lm);
-        master.newGame();
+        master.getMainMenu().open();
     }
 
 }

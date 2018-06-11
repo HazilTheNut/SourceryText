@@ -262,9 +262,10 @@ public class FileIO {
         try {
             FileInputStream fileIn = new FileInputStream(gameFile);
             ObjectInputStream objIn = new ObjectInputStream(fileIn);
+            GameInstance gi = (GameInstance)objIn.readObject();
             fileIn.close();
             objIn.close();
-            return (GameInstance)objIn.readObject();
+            return gi;
         } catch (IOException | ClassNotFoundException e) {
             JOptionPane.showMessageDialog(new JFrame(), "ERROR: File being accessed is out of date / improper!", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();

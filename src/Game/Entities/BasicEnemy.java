@@ -36,7 +36,7 @@ public class BasicEnemy extends CombatEntity {
     }
 
     protected int detectRange = 15;
-    protected int alertRadius = 25;
+    protected int alertRadius = 5;
 
     public CombatEntity target;
 

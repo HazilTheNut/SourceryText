@@ -161,7 +161,7 @@ public class Entity extends TagHolder implements Serializable {
         onContact(gi.getTileAt(location), gi);
     }
 
-    void selfDestruct(){
+    public void selfDestruct(){
         gi.removeEntity(this);
         gi.getLayerManager().removeLayer(sprite);
         DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' - - -", getName());
