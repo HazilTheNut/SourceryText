@@ -1,5 +1,6 @@
 package Start;
 
+import Data.FileIO;
 import Engine.LayerManager;
 import Engine.ViewWindow;
 import Game.GameMaster;
@@ -26,6 +27,10 @@ public class GameStart {
         gameFrame.getContentPane().addComponentListener(window);
 
         gameFrame.getContentPane().validate();
+
+        FileIO io = new FileIO();
+        ImageIcon icon = new ImageIcon(io.getRootFilePath() + "gameicon.png");
+        gameFrame.setIconImage(icon.getImage());
 
         gameFrame.setSize(500, 500);
         gameFrame.setResizable(true);
