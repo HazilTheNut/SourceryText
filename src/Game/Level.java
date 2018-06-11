@@ -15,7 +15,6 @@ import Game.Tags.Tag;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Created by Jared on 4/7/2018.
@@ -49,8 +48,6 @@ public class Level implements Serializable {
     private Tile[][] baseTiles;
     private ArrayList<Tile> overlayTiles;
     private Layer overlayTileLayer;
-    private ArrayList<Tag> tileTags;
-    private HashMap<Integer, Tile> tileMap;
 
     private ArrayList<WarpZone> warpZones;
 
@@ -68,8 +65,6 @@ public class Level implements Serializable {
         animatedTiles = new ArrayList<>();
         entities = new ArrayList<>();
         warpZones = new ArrayList<>();
-
-        tileTags = new ArrayList<>();
     }
 
     void initialize(LevelData ldata){
@@ -80,6 +75,8 @@ public class Level implements Serializable {
 
         baseTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
         overlayTiles = new ArrayList<>();
+
+        ArrayList<Tag> tileTags = new ArrayList<>();
 
         DebugWindow.reportf(DebugWindow.STAGE, "Level.initialize","Columns: %1$d", backdrop.getCols());
         for (int col = 0; col < backdrop.getCols(); col++){

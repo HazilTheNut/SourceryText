@@ -261,9 +261,11 @@ public class FileIO {
     public GameInstance openGameInstance(File gameFile){
         try {
             FileInputStream fileIn = new FileInputStream(gameFile);
-            ObjectInputStream objIn = new ObjectInputStream(fileIn);
+            GZIPInputStream gzipIn = new GZIPInputStream(fileIn);
+            ObjectInputStream objIn = new ObjectInputStream(gzipIn);
             GameInstance gi = (GameInstance)objIn.readObject();
             fileIn.close();
+            gzipIn.close();
             objIn.close();
             return gi;
         } catch (IOException | ClassNotFoundException e) {
@@ -279,10 +281,12 @@ public class FileIO {
         }
         try {
             FileOutputStream out = new FileOutputStream(path);
-            ObjectOutputStream objOut = new ObjectOutputStream(out);
+            GZIPOutputStream gzipOut = new GZIPOutputStream(out);
+            ObjectOutputStream objOut = new ObjectOutputStream(gzipOut);
             objOut.writeObject(gi);
             objOut.flush();
             objOut.close();
+            gzipOut.close();
             out.close();
             System.out.println("[FileIO.serializeGameInstance] Saved game to: " + path);
         } catch (java.io.IOException e) {

@@ -283,7 +283,6 @@ public class GameInstance implements Serializable {
 
     public void removeEntity(Entity e){
         entityOperations.add(() -> {
-            e.selfDestruct();
             currentLevel.removeEntity(e);
         });
     }
