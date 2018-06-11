@@ -15,6 +15,7 @@ import Game.Tags.Tag;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by Jared on 4/7/2018.
@@ -48,6 +49,8 @@ public class Level implements Serializable {
     private Tile[][] baseTiles;
     private ArrayList<Tile> overlayTiles;
     private Layer overlayTileLayer;
+    private ArrayList<Tag> tileTags;
+    private HashMap<Integer, Tile> tileMap;
 
     private ArrayList<WarpZone> warpZones;
 
@@ -65,6 +68,8 @@ public class Level implements Serializable {
         animatedTiles = new ArrayList<>();
         entities = new ArrayList<>();
         warpZones = new ArrayList<>();
+
+        tileTags = new ArrayList<>();
     }
 
     void initialize(LevelData ldata){
@@ -75,16 +80,16 @@ public class Level implements Serializable {
 
         baseTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
         overlayTiles = new ArrayList<>();
-        ArrayList<Tag> generatedTags = new ArrayList<>();
+
         DebugWindow.reportf(DebugWindow.STAGE, "Level.initialize","Columns: %1$d", backdrop.getCols());
         for (int col = 0; col < backdrop.getCols(); col++){
-            //DebugWindow.reportf(DebugWindow.STAGE, "[Level.initialize] Col %1$d ; Tags generated: %2$d", col, generatedTags.size());
+            //DebugWindow.reportf(DebugWindow.STAGE, "[Level.initialize] Col %1$d ; Tags generated: %2$d", col, tileTags.size());
             for (int row = 0; row < backdrop.getRows(); row++){
                 TileStruct struct = TileRegistry.getTileStruct(ldata.getTileId(col, row));
                 Tile tile = new Tile(new Coordinate(col, row), struct.getTileName(), this);
                 for (int id : struct.getTagIDs()){
                     boolean tagAlreadyGenerated = false; //Generating new tags is resource-expensive if done in bulk, so a shortcut is made by remembering which tags are already generated and just re-use them.
-                    for (Tag tag : generatedTags){
+                    for (Tag tag : tileTags){
                         if (tag.getId() == id){
                             tile.addTag(tag, tile); //This may have pointer-y issues later, but it probably won't.
                             tagAlreadyGenerated = true;
@@ -92,7 +97,7 @@ public class Level implements Serializable {
                     }
                     if (!tagAlreadyGenerated){
                         Tag newTag = TagRegistry.getTag(id);
-                        generatedTags.add(newTag);
+                        tileTags.add(newTag);
                         tile.addTag(newTag, tile);
                     }
                 }

@@ -60,8 +60,17 @@ public class Tile extends TagHolder implements Serializable {
         }
     }
 
+    public Tile copy(Coordinate newLoc){
+        Tile copy = new Tile(newLoc, name, level);
+        copy.getTags().clear();
+        copy.getTags().addAll(getTags());
+        return copy;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof Tile && ((Tile) obj).location.equals(location) && ((Tile)obj).getTagList().equals(getTagList()));
     }
+
+
 }

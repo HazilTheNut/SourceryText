@@ -55,6 +55,7 @@ public class GameMaster {
         FileIO io = new FileIO();
         currentGameInstance.enterLevel(io.getRootFilePath() + "LevelData/gameStart.lda", new Coordinate(0, 0));
         gameRunning = true;
+        layerManager.addLayer(mouseInput.getMouseHighlight());
     }
 
     /**

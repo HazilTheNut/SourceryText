@@ -44,8 +44,6 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener{
         mouseHighlight = new Layer(new SpecialText[1][1], "mouse", 0, 0, LayerImportances.GAME_CURSOR);
         mouseHighlight.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(200, 200, 200, 75)));
         mouseHighlight.fixedScreenPos = true;
-
-        lm.addLayer(mouseHighlight);
     }
 
     public Layer getMouseHighlight() {
