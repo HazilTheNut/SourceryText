@@ -9,6 +9,8 @@ import java.awt.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Created by Jared on 3/16/2018.
@@ -149,7 +151,7 @@ public class FileIO {
      * @param startingPath The beginning location of FileChooser
      * @return The selected File
      */
-    public File chooseFile(String startingPath, String ext, String extDesc){
+    private File chooseFile(String startingPath, String ext, String extDesc){
         System.out.printf("[FileIO.chooseLevelData] Starting path: %1$s\n", startingPath);
         JFileChooser chooser = new JFileChooser(startingPath);
         System.out.println(startingPath);
@@ -166,7 +168,7 @@ public class FileIO {
     }
 
     /**
-     * De-serializes a .lda file.
+     * De-serializes a .lda file that is compressed via GZIP.
      *
      * @param savedLevel The LevelData file being opened.
      * @return The now-usable LevelData.
@@ -174,8 +176,34 @@ public class FileIO {
     public LevelData openLevel(File savedLevel){
         try {
             FileInputStream fileIn = new FileInputStream(savedLevel);
+            GZIPInputStream gzipIn = new GZIPInputStream(fileIn);
+            ObjectInputStream objIn = new ObjectInputStream(gzipIn);
+            LevelData levelData = (LevelData)objIn.readObject();
+            objIn.close();
+            gzipIn.close();
+            fileIn.close();
+            return levelData;
+        } catch (IOException | ClassNotFoundException e) {
+            JOptionPane.showMessageDialog(new JFrame(), "ERROR: File being accessed is out of date / improper!", "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * De-serializes a .lda file that is not compressed via GZIP
+     *
+     * @param savedLevel The LevelData file being opened.
+     * @return The now-usable LevelData.
+     */
+    public LevelData openLevelNonGZIP(File savedLevel){
+        try {
+            FileInputStream fileIn = new FileInputStream(savedLevel);
             ObjectInputStream objIn = new ObjectInputStream(fileIn);
-            return (LevelData)objIn.readObject();
+            LevelData levelData = (LevelData)objIn.readObject();
+            objIn.close();
+            fileIn.close();
+            return levelData;
         } catch (IOException | ClassNotFoundException e) {
             JOptionPane.showMessageDialog(new JFrame(), "ERROR: File being accessed is out of date / improper!", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -189,7 +217,7 @@ public class FileIO {
      * @param startingPath file path to start prompt from
      * @return chosen file path
      */
-    private String serializeLevelData(LevelData ldata, String startingPath){
+    public String serializeLevelData(LevelData ldata, String startingPath){
         String path;
         JFileChooser fileChooser = new JFileChooser(startingPath);
         int fileChooseOption = fileChooser.showSaveDialog(new Component(){});
@@ -215,8 +243,13 @@ public class FileIO {
     public void quickSerializeLevelData(LevelData ldata, String path){
         try {
             FileOutputStream out = new FileOutputStream(path);
-            ObjectOutputStream objOut = new ObjectOutputStream(out);
+            GZIPOutputStream gzipOut = new GZIPOutputStream(out);
+            ObjectOutputStream objOut = new ObjectOutputStream(gzipOut);
             objOut.writeObject(ldata);
+            objOut.flush();
+            objOut.close();
+            gzipOut.close();
+            out.close();
             System.out.println("[FileIO.serializeLevelData] Saved level to: " + path);
         } catch (java.io.IOException e) {
             e.printStackTrace();
@@ -229,6 +262,8 @@ public class FileIO {
         try {
             FileInputStream fileIn = new FileInputStream(gameFile);
             ObjectInputStream objIn = new ObjectInputStream(fileIn);
+            fileIn.close();
+            objIn.close();
             return (GameInstance)objIn.readObject();
         } catch (IOException | ClassNotFoundException e) {
             JOptionPane.showMessageDialog(new JFrame(), "ERROR: File being accessed is out of date / improper!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -245,6 +280,9 @@ public class FileIO {
             FileOutputStream out = new FileOutputStream(path);
             ObjectOutputStream objOut = new ObjectOutputStream(out);
             objOut.writeObject(gi);
+            objOut.flush();
+            objOut.close();
+            out.close();
             System.out.println("[FileIO.serializeGameInstance] Saved game to: " + path);
         } catch (java.io.IOException e) {
             e.printStackTrace();

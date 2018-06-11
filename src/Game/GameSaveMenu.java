@@ -8,8 +8,13 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class GameSaveMenu implements MouseInputReceiver{
 
@@ -171,6 +176,8 @@ public class GameSaveMenu implements MouseInputReceiver{
         Layer optionLayer = new Layer(lm.getWindow().RESOLUTION_WIDTH, 2, "savefile " + save.file.getName(), 0, 0, 0); //Create new layer to assign to SaveOption
         optionLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
         optionLayer.inscribeString(save.file.getName().substring(0, save.file.getName().length() - 4), 1, 0);
+        optionLayer.inscribeString(getSaveFileDate(save), 11, 0, TextBox.txt_silver);
+
         File txtFile = new File(save.file.getPath().substring(0, save.file.getPath().length() - 3).concat("txt"));
         if (txtFile.exists()){ //Fill in text contents only if there is a text file to get the info from.
             try {
@@ -185,6 +192,18 @@ public class GameSaveMenu implements MouseInputReceiver{
         save.layer = optionLayer;
     }
 
+    private String getSaveFileDate(SaveFile save){
+        Date updateDate = new Date(save.file.lastModified());
+        Date currentDate = new Date();
+        SimpleDateFormat formatter;
+        if (currentDate.getTime() - updateDate.getTime() > 1000 * 60 * 60 * 24) {
+            formatter = new SimpleDateFormat("dd/MM/yy");
+        } else {
+            formatter = new SimpleDateFormat("h:mm a");
+        }
+        return formatter.format(updateDate);
+    }
+
     /**
      * Draws the text contents of a SaveFile's Layer
      *
@@ -192,7 +211,8 @@ public class GameSaveMenu implements MouseInputReceiver{
      * @param layer The layer to draw on
      */
     private void inscribeSaveOptionLayer(String desc, Layer layer){
-        String[] descValues = new String[6]; //Divide up the description string into usable parts
+        //Divide up the description string into usable parts
+        String[] descValues = new String[7];
         int startIndex = 0;
         for (int i = 0; i < descValues.length; i++) {
             int slashLoc = desc.indexOf('/', startIndex);
@@ -204,15 +224,19 @@ public class GameSaveMenu implements MouseInputReceiver{
         }
         int col = 2;
         Color[] cols = {TextBox.txt_green.brighter(), TextBox.txt_red.brighter(), TextBox.txt_blue.brighter(), TextBox.txt_yellow.brighter()};
-        for (int i = 0; i < 4; i++) { //Begin drawing the player stats
+
+        //Begin drawing the player stats
+        for (int i = 0; i < 4; i++) {
             layer.inscribeString(descValues[i], col, 1, cols[i]);
             col += descValues[i].length();
             if (i < 3) //Add a forward slash at the end of every number but the last
                 layer.inscribeString("/", col, 1, Color.GRAY);
             col++;
         }
-        layer.inscribeString(descValues[4], 19, 0); //Draw level name
-        layer.inscribeString(descValues[5], 19, 1, Color.GRAY); //Draw current zone
+
+        layer.inscribeString(descValues[4], 20, 0); //Draw level name
+        layer.inscribeString(descValues[5], 20, 1, Color.GRAY); //Draw current zone
+        //layer.inscribeString(descValues[6], 11, 0, TextBox.txt_silver); //Draw turn counter
     }
     
     @Override

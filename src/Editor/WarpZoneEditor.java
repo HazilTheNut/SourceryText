@@ -56,6 +56,7 @@ public class WarpZoneEditor extends JFrame{
 
         lm.addLayer(warpZoneLayer);
 
+        ldata.resetAuxiliaryLayers();
         ldata.updateWarpZoneLayer(toEdit.getNewRoomStartX(), toEdit.getNewRoomStartY());
         ldata.getWarpZoneLayer().setVisible(true);
         lm.addLayer(ldata.getWarpZoneLayer());

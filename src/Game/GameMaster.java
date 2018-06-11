@@ -60,7 +60,7 @@ public class GameMaster {
         try {
             PrintWriter writer = new PrintWriter(newPath, "UTF-8");
             Player player = currentGameInstance.getPlayer();
-            writer.printf("%1$02d/%2$02d/%3$02d/%4$02d/%5$s/%6$s", player.getMaxHealth(), player.getStrength(), player.getMagicPower(), (int)player.getWeightCapacity(), currentGameInstance.getCurrentLevel().getName(), currentGameInstance.getCurrentZoneName());
+            writer.printf("%1$02d/%2$02d/%3$02d/%4$02d/%5$s/%6$s/%7$d", player.getMaxHealth(), player.getStrength(), player.getMagicPower(), (int)player.getWeightCapacity(), currentGameInstance.getCurrentLevel().getName(), currentGameInstance.getCurrentZoneName(), currentGameInstance.getTurnCounter());
             writer.close();
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             e.printStackTrace();

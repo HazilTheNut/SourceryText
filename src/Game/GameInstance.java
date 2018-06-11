@@ -53,6 +53,7 @@ public class GameInstance implements Serializable {
     private transient Timer tileAnimationTimer;
 
     private long currentUID = 1;
+    private long turnCounter = 0;
 
     public GameInstance(){
         levels = new ArrayList<>();
@@ -321,6 +322,8 @@ public class GameInstance implements Serializable {
             reportUpdatePerformance(runTimes);
             getPlayer().updateHUD();
             getPlayer().updateSynopsis();
+            turnCounter++;
+            DebugWindow.reportf(DebugWindow.STAGE, "GameInstace:turnCounter", "%1$d", turnCounter);
             isPlayerTurn = true;
         //});
         //enemyTurnThread.start();
@@ -361,6 +364,10 @@ public class GameInstance implements Serializable {
 
     public QuickMenu getQuickMenu() {
         return quickMenu;
+    }
+
+    public long getTurnCounter() {
+        return turnCounter;
     }
 
     private interface EntityOperation{
