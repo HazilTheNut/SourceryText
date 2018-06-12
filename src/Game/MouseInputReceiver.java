@@ -15,4 +15,10 @@ public interface MouseInputReceiver {
 
     //Ran whenever mouse wheel is spun. Return true to prevent mouse input reaching elements below current one.
     boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement);
+
+    //Ran when a button is pressed down. Return true to prevent mouse input reaching elements below current one.
+    boolean onInputDown(Coordinate levelPos, Coordinate screenPos, int actionID);
+
+    //Ran when a button is released. Return true to prevent mouse input reaching elements below current one.
+    boolean onInputUp(Coordinate levelPos, Coordinate screenPos, int actionID);
 }

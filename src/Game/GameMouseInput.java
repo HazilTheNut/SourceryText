@@ -6,19 +6,16 @@ import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Engine.ViewWindow;
-import Game.Debug.DebugWindow;
 
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
  * Created by Jared on 3/28/2018.
  */
-public class GameMouseInput implements MouseInputListener, MouseWheelListener{
+public class GameMouseInput implements MouseInputListener, MouseWheelListener, KeyListener {
 
     /**
      * GameMouseInput:
@@ -26,7 +23,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener{
      * The centralized mouse input system for SourceryText.
      *
      * All MouseInputReceivers are placed into an ArrayList, and are ran in the opposite order of their addition to the list.
-     * As input passes through each MouseInputReceiver, each has the choice to stop the input short by returning true to any of the mouse input methods (onMouseLick, onMouseMove, etc.).
+     * As input passes through each MouseInputReceiver, each has the choice to stop the input short by returning true to any of the mouse input methods (onMouseClick, onMouseMove, etc.).
      * This acts as MouseInputReceivers layering on top of each other and preventing input to receivers beneath it.
      */
 
@@ -36,6 +33,8 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener{
     private Layer mouseHighlight;
 
     private ArrayList<MouseInputReceiver> inputReceivers = new ArrayList<>();
+    private Coordinate mouseRawPos;
+    private InputMap inputMap;
 
     public GameMouseInput(ViewWindow viewWindow, LayerManager layerManager){
         window = viewWindow;
@@ -67,6 +66,18 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener{
 
     void clearInputReceivers(){ inputReceivers.clear(); }
 
+    public void performInputEvent(InputEventAction eventAction){
+        for (MouseInputReceiver receiver : inputReceivers){
+            if (eventAction.doAction(receiver)) return;
+        }
+    }
+
+    public interface InputEventAction {
+        boolean doAction(MouseInputReceiver receiver);
+    }
+
+    //Event stuff below
+
     @Override
     public void mouseClicked(MouseEvent e) {
 
@@ -74,18 +85,17 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener{
 
     @Override
     public void mousePressed(MouseEvent e) {
-        Coordinate mousePos = new Coordinate(e.getX(), e.getY());
-        for (MouseInputReceiver receiver : inputReceivers){
-            DebugWindow.reportf(DebugWindow.STAGE, "GameMouseInput.mousePressed","Mouse button \'%1$d\' fired for class \'%2$s\'", e.getButton(), receiver.getClass().getSimpleName());
-            if (receiver.onMouseClick(getTiledMousePos(mousePos), getScreenPos(mousePos), e.getButton())){
-                return;
-            }
-        }
+        mouseRawPos = new Coordinate(e.getX(), e.getY());
+        performInputEvent(receiver -> receiver.onMouseClick(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), e.getButton()));
+        if (inputMap != null)
+            performInputEvent(receiver -> receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE))));
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
+        mouseRawPos = new Coordinate(e.getX(), e.getY());
+        if (inputMap != null)
+            performInputEvent(receiver -> receiver.onInputUp(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE))));
     }
 
     @Override
@@ -106,23 +116,31 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener{
     @Override
     public void mouseMoved(MouseEvent e) {
         mouseHighlight.setPos(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()));
-        //DebugWindow.reportf(DebugWindow.STAGE, "[GameMouseInput] mouse move event");
-        Coordinate mousePos = new Coordinate(e.getX(), e.getY());
-        for (MouseInputReceiver receiver : inputReceivers){
-            //DebugWindow.reportf(DebugWindow.STAGE, "[GameMouseInput] Mouse move fired for class \'%2$s\'", e.getButton(), receiver.getClass().getSimpleName());
-            if (receiver.onMouseMove(getTiledMousePos(mousePos), getScreenPos(mousePos)))
-                return;
-        }
+        mouseRawPos = new Coordinate(e.getX(), e.getY());
+        performInputEvent(receiver -> receiver.onMouseMove(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos)));
     }
 
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        Coordinate mousePos = new Coordinate(e.getX(), e.getY());
-        for (MouseInputReceiver receiver : inputReceivers){
-            if (receiver.onMouseWheel(getTiledMousePos(mousePos), getScreenPos(mousePos), e.getPreciseWheelRotation())){
-                return;
-            }
-        }
+        mouseRawPos = new Coordinate(e.getX(), e.getY());
+        performInputEvent(receiver -> receiver.onMouseWheel(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), e.getPreciseWheelRotation()));
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (inputMap != null)
+            performInputEvent(receiver -> receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getKeyCode(), InputType.TYPE_KEY))));
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if (inputMap != null)
+            performInputEvent(receiver -> receiver.onInputUp(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getKeyCode(), InputType.TYPE_KEY))));
     }
 }

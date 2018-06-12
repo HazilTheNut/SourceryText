@@ -305,6 +305,16 @@ public class GameSaveMenu implements MouseInputReceiver{
         return true;
     }
 
+    @Override
+    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, int actionID) {
+        return false;
+    }
+
+    @Override
+    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, int actionID) {
+        return false;
+    }
+
     private class SaveFile {
         File file;
         Layer layer;

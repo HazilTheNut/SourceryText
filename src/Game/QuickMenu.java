@@ -170,6 +170,16 @@ public class QuickMenu implements MouseInputReceiver {
         return false;
     }
 
+    @Override
+    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, int actionID) {
+        return false;
+    }
+
+    @Override
+    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, int actionID) {
+        return false;
+    }
+
     public interface MenuAction {
         void doAction();
     }

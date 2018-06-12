@@ -418,6 +418,16 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         return false;
     }
 
+    @Override
+    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, int actionID) {
+        return false;
+    }
+
+    @Override
+    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, int actionID) {
+        return false;
+    }
+
     private boolean isSpellReady(){
         return cooldowns.size() < numberSpellBeads;
     }

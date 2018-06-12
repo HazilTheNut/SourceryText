@@ -255,4 +255,14 @@ public class HUD implements MouseInputReceiver, Serializable {
     public boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement) {
         return false;
     }
+
+    @Override
+    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, int actionID) {
+        return false;
+    }
+
+    @Override
+    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, int actionID) {
+        return false;
+    }
 }

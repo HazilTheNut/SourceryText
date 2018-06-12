@@ -211,6 +211,16 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         return false;
     }
 
+    @Override
+    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, int actionID) {
+        return false;
+    }
+
+    @Override
+    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, int actionID) {
+        return false;
+    }
+
     /**
      * Uses an item, as the player.
      *
