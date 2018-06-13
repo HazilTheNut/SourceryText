@@ -10,15 +10,12 @@ import Game.Registries.TagRegistry;
 import Game.Spells.Spell;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 /**
  * Created by Jared on 3/27/2018.
  */
-public class Player extends CombatEntity implements MouseInputReceiver, KeyListener{
+public class Player extends CombatEntity implements MouseInputReceiver{
 
     /**
      * Player:
@@ -53,6 +50,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     private final Coordinate EAST     = new Coordinate(1, 0);
     private final Coordinate SOUTH    = new Coordinate(0, 1);
     private final Coordinate WEST     = new Coordinate(-1, 0);
+    private boolean[] activeMovements = {false, false, false, false}; //North, East, South, and West correspondingly
     private transient Thread movementThread;
     private final int MOVEMENT_INTERVAL = 125;
 
@@ -86,7 +84,6 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     void playerInit(){
         inv = new PlayerInventory(gi.getLayerManager(), this);
         hud = new HUD(gi.getLayerManager(), this);
-        gi.getLayerManager().getWindow().addKeyListener(this);
         initSwooshLayer();
     }
 
@@ -248,11 +245,6 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         mi.addInputReceiver(this);
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
-
     /**
      * Essentially, what happens when you push the 'Inventory' button (default: E)
      */
@@ -268,10 +260,10 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         updateHUD();
     }
 
+    /*
     @Override
     public void keyPressed(KeyEvent e) {
         if (!downKeyCodes.contains(e.getExtendedKeyCode())){
-            onKeyDown(e.getExtendedKeyCode());
             downKeyCodes.add(e.getExtendedKeyCode());
         }
     }
@@ -291,51 +283,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         if (downKeyCodes.size() == 0) movementVector = new Coordinate(0, 0);
         DebugWindow.reportf(DebugWindow.STAGE, "Player movementVector","%1$s", movementVector);
     }
-
-    //Holding down a key on the keyboard fires keyPressed() a gajillion times. This method is ONLY ran when a key is pressed down.
-    private void onKeyDown(int keyCode){
-        if (!isFrozen()) {
-            if (keyCode == KeyEvent.VK_E){
-                toggleInventory();
-            } else if (keyCode == KeyEvent.VK_SHIFT){
-                spellMode = true;
-                updateHUD();
-            } else if (keyCode == KeyEvent.VK_Q){
-                ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(mouseLevelPos);
-                if (entities.size() == 1) inv.openOtherInventory(entities.get(0));
-                else if (entities.size() > 1){
-                    QuickMenu quickMenu = gi.getQuickMenu();
-                    quickMenu.clearMenu();
-                    for (int i = 0; i < entities.size(); i++) {
-                        int finalI = i;
-                        quickMenu.addMenuItem(entities.get(i).getName(), () -> inv.openOtherInventory(entities.get(finalI)));
-                    }
-                    quickMenu.showMenu("Inspect:", true);
-                } else {
-                    inv.openOtherInventory(null);
-                }
-            } else if (keyCode == KeyEvent.VK_ESCAPE) {
-                QuickMenu quickMenu = gi.getQuickMenu();
-                quickMenu.clearMenu();
-                quickMenu.addMenuItem("Load Game",    new Color(255, 230, 170), () -> {
-                    gi.getGameMaster().openGameLoadMenu();
-                });
-                quickMenu.addMenuItem("Options",      new Color(173, 255, 228), () -> {});
-                quickMenu.addMenuItem("Quit to Menu", new Color(255, 171, 171), () -> {
-                    gi.getGameMaster().exitGameToMainMenu();
-                });
-                quickMenu.addMenuItem("Close",        () -> {});
-                quickMenu.showMenu("Options", true);
-            } else {
-                if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) movementKeyDown(EAST);
-                if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A)  movementKeyDown(WEST);
-                if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S)  movementKeyDown(SOUTH);
-                if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W)    movementKeyDown(NORTH);
-            }
-            terminatePathing = true;
-        }
-        DebugWindow.reportf(DebugWindow.STAGE, "Player movementVector","%1$s", movementVector);
-    }
+    */
 
     private void movementKeyDown(Coordinate vector){
         movementVector = movementVector.add(vector);
@@ -403,13 +351,6 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton) {
-        if (mouseButton == MouseEvent.BUTTON1){
-            DebugWindow.reportf(DebugWindow.STAGE, "Player.onMouseClick","Left click event! l:%1$s s:%2$s", levelPos, screenPos);
-            doLeftClick(levelPos);
-        } else if (mouseButton == MouseEvent.BUTTON3){
-            DebugWindow.reportf(DebugWindow.STAGE, "Player.onMouseClick","Right click event! l:%1$s s:%2$s", levelPos, screenPos);
-            doRightClick(levelPos);
-        }
         return false;
     }
 
@@ -420,16 +361,121 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
 
     @Override
     public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
+        if (!isFrozen() && actions != null && actions.size() > 0) {
+            terminatePathing = true;
+            if (actions.contains(InputMap.INVENTORY)) {
+                toggleInventory();
+            }
+            if (actions.contains(InputMap.INSPECT)) {
+                inspect(levelPos);
+            }
+            if (actions.contains(InputMap.OPEN_MENU)) {
+                openMenu();
+            }
+            if (actions.contains(InputMap.CAST_SPELL)){
+                castSpell(levelPos);
+            }
+            if (actions.contains(InputMap.ATTACK)){
+                playerAttack(levelPos);
+            }
+            if (actions.contains(InputMap.PASS_TURN)){
+                Thread passTurnThread = new Thread(() -> {
+                    freeze();
+                    gi.doEnemyTurn();
+                });
+                passTurnThread.start();
+            }
+            if (actions.contains(InputMap.MOVE_INTERACT)){
+                moveAndInteract(levelPos);
+            }
+            if (actions.contains(InputMap.MOVE_NORTH)){
+                movementKeyDown(NORTH);
+            }
+            if (actions.contains(InputMap.MOVE_SOUTH)){
+                movementKeyDown(SOUTH);
+            }
+            if (actions.contains(InputMap.MOVE_EAST)){
+                movementKeyDown(EAST);
+            }
+            if (actions.contains(InputMap.MOVE_WEST)){
+                movementKeyDown(WEST);
+            }
+        }
         return false;
     }
 
     @Override
     public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
+        if (actions != null) {
+            if (actions.contains(InputMap.MOVE_NORTH)) {
+                movementKeyUp(NORTH);
+            }
+            if (actions.contains(InputMap.MOVE_SOUTH)) {
+                movementKeyUp(SOUTH);
+            }
+            if (actions.contains(InputMap.MOVE_EAST)) {
+                movementKeyUp(EAST);
+            }
+            if (actions.contains(InputMap.MOVE_WEST)) {
+                movementKeyUp(WEST);
+            }
+        }
         return false;
     }
 
+    private void inspect(Coordinate levelPos){
+        ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(levelPos);
+        if (entities.size() == 1) inv.openOtherInventory(entities.get(0));
+        else if (entities.size() > 1){
+            QuickMenu quickMenu = gi.getQuickMenu();
+            quickMenu.clearMenu();
+            for (int i = 0; i < entities.size(); i++) {
+                int finalI = i;
+                quickMenu.addMenuItem(entities.get(i).getName(), () -> inv.openOtherInventory(entities.get(finalI)));
+            }
+            quickMenu.showMenu("Inspect:", true);
+        } else {
+            inv.openOtherInventory(null);
+        }
+    }
+
+    private void openMenu(){
+        QuickMenu quickMenu = gi.getQuickMenu();
+        quickMenu.clearMenu();
+        quickMenu.addMenuItem("Load Game",    new Color(255, 230, 170), () -> {
+            gi.getGameMaster().openGameLoadMenu();
+        });
+        quickMenu.addMenuItem("Options",      new Color(173, 255, 228), () -> {});
+        quickMenu.addMenuItem("Quit to Menu", new Color(255, 171, 171), () -> {
+            gi.getGameMaster().exitGameToMainMenu();
+        });
+        quickMenu.addMenuItem("Close",        () -> {});
+        quickMenu.showMenu("Options", true);
+    }
+
+    private void castSpell(Coordinate levelPos){
+        DebugWindow.reportf(DebugWindow.GAME, "Player.onMouseClick","Spell casted! %1$s", levelPos);
+        Thread spellThread = new Thread(() -> {
+            if (isSpellReady()) {
+                freeze(); //Stop player actions while casting spell
+                cooldowns.add(equippedSpell.castSpell(levelPos, this, getGameInstance(), magicPower));
+                gi.doEnemyTurn();
+            }
+        });
+        spellThread.start();
+    }
+
+    private void playerAttack(Coordinate levelPos){
+        Thread attackThread = new Thread(() -> {
+            freeze();
+            doWeaponAttack(levelPos);
+            gi.doEnemyTurn();
+        });
+        attackThread.start();
+    }
+
     private boolean isSpellReady(){
-        return cooldowns.size() < numberSpellBeads;
+        return cooldowns.size() < numberSpellBeads && equippedSpell != null;
     }
 
     public int getNumberSpellBeads() {
@@ -440,30 +486,7 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
         return cooldowns;
     }
 
-    private void doLeftClick(Coordinate levelPos){
-        if (!isFrozen()) {
-            if (!spellMode) {
-                Thread attackThread = new Thread(() -> {
-                    freeze();
-                    doWeaponAttack(levelPos);
-                    gi.doEnemyTurn();
-                });
-                attackThread.start();
-            } else {
-                DebugWindow.reportf(DebugWindow.GAME, "Player.onMouseClick","Spell casted! %1$s", levelPos);
-                Thread spellThread = new Thread(() -> {
-                    if (isSpellReady()) {
-                        freeze(); //Stop player actions while casting spell
-                        cooldowns.add(equippedSpell.castSpell(levelPos, this, getGameInstance(), magicPower));
-                        gi.doEnemyTurn();
-                    }
-                });
-                spellThread.start();
-            }
-        }
-    }
-
-    private void doRightClick(Coordinate levelPos){
+    private void moveAndInteract(Coordinate levelPos){
         if (pathingThread != null && pathingThread.isAlive())
             terminatePathing = true;
         else {

@@ -31,6 +31,7 @@ public class InputMap implements Serializable {
     public static final int INV_MOVE_WHOLE = 11;
     public static final int INV_MOVE_ONE   = 12;
     public static final int PASS_TURN      = 13;
+    public static final int OPEN_MENU      = 14;
 
     /*
     Each input is mapped to a list of actions. For example, the mouse left-click can both be mapped to using an item and attacking enemies.
@@ -121,6 +122,8 @@ public class InputMap implements Serializable {
                 return "Inv: Move One Item";
             case PASS_TURN:
                 return "Pass Turn";
+            case OPEN_MENU:
+                return "Open Menu";
             default:
                 return "NO_ASSOCIATION";
         }

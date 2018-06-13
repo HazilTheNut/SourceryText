@@ -39,6 +39,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     private ArrayList<MouseInputReceiver> inputReceivers = new ArrayList<>();
     private Coordinate mouseRawPos;
     private InputMap inputMap;
+    private ArrayList<InputType> downInputs; //A List of InputTypes that represent the buttons currently held down.
 
     public GameMouseInput(ViewWindow viewWindow, LayerManager layerManager){
         window = viewWindow;
@@ -47,6 +48,9 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         mouseHighlight = new Layer(new SpecialText[1][1], "mouse", 0, 0, LayerImportances.GAME_CURSOR);
         mouseHighlight.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(200, 200, 200, 75)));
         mouseHighlight.fixedScreenPos = true;
+
+        mouseRawPos = new Coordinate(MouseInfo.getPointerInfo().getLocation().x, MouseInfo.getPointerInfo().getLocation().y);
+        downInputs = new ArrayList<>();
 
         initializeInputMap();
     }
@@ -124,6 +128,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
             defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON1, InputType.TYPE_MOUSE), InputMap.INV_MOVE_ONE);
             defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON3, InputType.TYPE_MOUSE), InputMap.INV_MOVE_WHOLE);
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_SPACE, InputType.TYPE_KEY), InputMap.PASS_TURN);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_ESCAPE, InputType.TYPE_KEY), InputMap.OPEN_MENU);
             io.serializeInputMap(defMap, defaultInputMapFile.getPath());
         }
     }
@@ -194,21 +199,21 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (inputMap != null)
+        InputType input = new InputType(e.getKeyCode(), InputType.TYPE_KEY);
+        if (inputMap != null && !downInputs.contains(input)) { //keyPressed() gets ran a bunch of times in a row if the button is held down long enough, which is not desired.
+            downInputs.add(input);
             performInputEvent(receiver -> {
-                ArrayList<Integer> actions = inputMap.getAction(new InputType(e.getKeyCode(), InputType.TYPE_KEY));
-                if (actions != null) {
-                    StringBuilder actionList = new StringBuilder();
-                    for (int action : actions) actionList.append(inputMap.describeAction(action)).append(" | ");
-                    DebugWindow.reportf(DebugWindow.STAGE, "GameMouseInput.keyPressed", "input down: %s", actionList);
-                }
+                ArrayList<Integer> actions = inputMap.getAction(input);
                 return receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), actions);
             });
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (inputMap != null)
+        if (inputMap != null) {
+            downInputs.remove(new InputType(e.getKeyCode(), InputType.TYPE_KEY));
             performInputEvent(receiver -> receiver.onInputUp(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getKeyCode(), InputType.TYPE_KEY))));
+        }
     }
 }

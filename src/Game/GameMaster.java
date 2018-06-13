@@ -7,7 +7,6 @@ import Game.Debug.DebugWindow;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -48,8 +47,6 @@ public class GameMaster {
         currentGameInstance.assignLayerManager(layerManager);
         currentGameInstance.assignMouseInput(mouseInput);
         currentGameInstance.assignGameMaster(this);
-        for (KeyListener listener : layerManager.getWindow().getKeyListeners()) layerManager.getWindow().removeKeyListener(listener);
-        layerManager.getWindow().addKeyListener(new DebugWindowOpener());
         currentGameInstance.initialize();
         mouseInput.clearInputReceivers();
         currentGameInstance.establishMouseInput();
@@ -97,8 +94,6 @@ public class GameMaster {
      */
     void exitGame(){
         currentGameInstance.dispose();
-        for (KeyListener listener : layerManager.getWindow().getKeyListeners()) layerManager.getWindow().removeKeyListener(listener);
-        layerManager.getWindow().addKeyListener(new DebugWindowOpener());
         layerManager.clearLayers();
         mouseInput.clearInputReceivers();
         gameRunning = false;

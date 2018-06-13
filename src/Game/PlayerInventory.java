@@ -430,12 +430,12 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             }
             if (getOwner() instanceof CombatEntity) {
                 CombatEntity owner = (CombatEntity) getOwner();
-                tempLayer.inscribeString(String.format("Vit: %1$d", owner.getMaxHealth()), xstart - 2, top + i + 1, TextBox.txt_green.brighter());
-                tempLayer.inscribeString(String.format("Str: %1$d", owner.getStrength()),  xstart + 7, top + i + 1, TextBox.txt_red.brighter());
+                tempLayer.inscribeString(String.format("Vit: %1$d", owner.getMaxHealth()), xstart - 1, top + i + 1, TextBox.txt_green.brighter());
+                tempLayer.inscribeString(String.format("Str: %1$d", owner.getStrength()),  xstart + 8, top + i + 1, TextBox.txt_red.brighter());
             }
             if (getOwner() instanceof Player) {
-                tempLayer.inscribeString(String.format("Mag: %1$d",   player.getMagicPower()),      xstart - 2, top + i + 2, TextBox.txt_blue.brighter());
-                tempLayer.inscribeString(String.format("Cap: %1$.0f", player.getWeightCapacity()),  xstart + 7, top + i + 2, TextBox.txt_yellow.brighter());
+                tempLayer.inscribeString(String.format("Mag: %1$d",   player.getMagicPower()),      xstart - 1, top + i + 2, TextBox.txt_blue.brighter());
+                tempLayer.inscribeString(String.format("Cap: %1$.0f", player.getWeightCapacity()),  xstart + 8, top + i + 2, TextBox.txt_yellow.brighter());
             }
         }
 
