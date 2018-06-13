@@ -1,10 +1,14 @@
 package Game;
 
+import Data.SerializationVersion;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
 
 public class InputType implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     /*
     InputType:
@@ -30,6 +34,11 @@ public class InputType implements Serializable {
             return type.inputCode == inputCode && type.inputType == inputType;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return (65537 * inputType) + inputCode;
     }
 
     @Override

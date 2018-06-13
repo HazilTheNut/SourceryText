@@ -2,6 +2,8 @@ package Game;
 
 import Data.Coordinate;
 
+import java.util.ArrayList;
+
 /**
  * Created by Jared on 3/29/2018.
  */
@@ -17,8 +19,8 @@ public interface MouseInputReceiver {
     boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement);
 
     //Ran when a button is pressed down. Return true to prevent mouse input reaching elements below current one.
-    boolean onInputDown(Coordinate levelPos, Coordinate screenPos, int actionID);
+    boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions);
 
     //Ran when a button is released. Return true to prevent mouse input reaching elements below current one.
-    boolean onInputUp(Coordinate levelPos, Coordinate screenPos, int actionID);
+    boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions);
 }

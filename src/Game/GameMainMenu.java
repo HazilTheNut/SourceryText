@@ -7,6 +7,7 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class GameMainMenu implements MouseInputReceiver{
 
@@ -110,12 +111,12 @@ public class GameMainMenu implements MouseInputReceiver{
     }
 
     @Override
-    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, int actionID) {
+    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return false;
     }
 
     @Override
-    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, int actionID) {
+    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return false;
     }
 }

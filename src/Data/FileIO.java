@@ -2,6 +2,7 @@ package Data;
 
 import Editor.EditorToolPanel;
 import Game.GameInstance;
+import Game.InputMap;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -38,10 +39,10 @@ public class FileIO {
      */
     public String getRootFilePath(){
         String path = decodeFilePath(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
-        System.out.println("[FileIO.getRootFilePath] base path: " + path);
+        //System.out.println("[FileIO.getRootFilePath] base path: " + path);
         String reducedPath = path.substring(0, path.lastIndexOf('/'));
         reducedPath += "/";
-        System.out.println("[FileIO.getRootFilePath] root path: " + reducedPath);
+        //System.out.println("[FileIO.getRootFilePath] root path: " + reducedPath);
         return reducedPath;
     }
 
@@ -259,15 +260,24 @@ public class FileIO {
     public String serializeLevelData(LevelData ldata) {return serializeLevelData(ldata, getRootFilePath()); }
 
     public GameInstance openGameInstance(File gameFile){
+        return (GameInstance)openSerializedFile(gameFile);
+    }
+
+    public InputMap openInputMap(File mapFile){
+        return (InputMap)openSerializedFile(mapFile);
+    }
+
+    private Object openSerializedFile(File gameFile){
         try {
             FileInputStream fileIn = new FileInputStream(gameFile);
             GZIPInputStream gzipIn = new GZIPInputStream(fileIn);
             ObjectInputStream objIn = new ObjectInputStream(gzipIn);
-            GameInstance gi = (GameInstance)objIn.readObject();
+            Object obj = objIn.readObject();
             fileIn.close();
             gzipIn.close();
             objIn.close();
-            return gi;
+            System.out.println("[FileIO.openSerializedFile] path: " + gameFile.getPath());
+            return obj;
         } catch (IOException | ClassNotFoundException e) {
             JOptionPane.showMessageDialog(new JFrame(), "ERROR: File being accessed is out of date / improper!", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
@@ -276,22 +286,29 @@ public class FileIO {
     }
 
     public void serializeGameInstance(GameInstance gi, String path){
-        if (!path.endsWith(".sts")) { // Add '.sav' to file if user didn't.
-            path += ".sts";
+        serializeObject(gi, path, ".sts");
+    }
+
+    public void serializeInputMap(InputMap inputMap, String path){
+        serializeObject(inputMap, path, ".stim");
+    }
+
+    private void serializeObject(Serializable obj, String path, String ext){
+        if (!path.endsWith(ext)) { // Add '.sav' to file if user didn't.
+            path += ext;
         }
         try {
             FileOutputStream out = new FileOutputStream(path);
             GZIPOutputStream gzipOut = new GZIPOutputStream(out);
             ObjectOutputStream objOut = new ObjectOutputStream(gzipOut);
-            objOut.writeObject(gi);
+            objOut.writeObject(obj);
             objOut.flush();
             objOut.close();
             gzipOut.close();
             out.close();
-            System.out.println("[FileIO.serializeGameInstance] Saved game to: " + path);
+            System.out.println("[FileIO.serializeObject] Saved to: " + path);
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
-
     }
 }

@@ -6,6 +6,7 @@ import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.Debug.DebugWindow;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class GameSaveMenu implements MouseInputReceiver{
 
@@ -238,6 +241,33 @@ public class GameSaveMenu implements MouseInputReceiver{
         layer.inscribeString(descValues[5], 20, 1, Color.GRAY); //Draw current zone
         //layer.inscribeString(descValues[6], 11, 0, TextBox.txt_silver); //Draw turn counter
     }
+
+    /**
+     * Returns the highest save file number, based upon what save files exist in the Saves folder.
+     * Even if lower-number save files are deleted, this number will not change.
+     *
+     * @return The largest number in the save files.
+     */
+    private int getSaveFileCount(){
+        FileIO io = new FileIO();
+        File saveFolder = new File(io.getRootFilePath() + "Saves");
+        Pattern saveFilePattern = Pattern.compile("Saves/Save [0-9]+\\.sts");
+        if (saveFolder.exists()) {
+            int max = 0;
+            for (File file : Objects.requireNonNull(saveFolder.listFiles())){
+                String path = io.getRelativeFilePath(io.decodeFilePath(file.getPath()));
+                if (saveFilePattern.matcher(path).matches()){
+                    String cutdownStr = path.substring(11, 14);
+                    DebugWindow.reportf(DebugWindow.MISC, "GameSaveMenu.getSaveFileCount", "Original: %1$s : reduced: %2$s", path, cutdownStr);
+                    max = Math.max(max, Integer.valueOf(cutdownStr));
+                } else {
+                    DebugWindow.reportf(DebugWindow.MISC, "GameSaveMenu.getSaveFileCount", "Path not matching: file: %2$s, rel: %1$s", path, file.getPath());
+                }
+            }
+            return max;
+        }
+        return 0;
+    }
     
     @Override
     public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
@@ -256,7 +286,7 @@ public class GameSaveMenu implements MouseInputReceiver{
             } else if (cursorOnCloseButton) {
                 close();
             } else if (cursorOnNewSaveButton) {
-                String fileName = String.format("Save %1$03d", saveOptions.size() + 1);
+                String fileName = String.format("Save %1$03d", getSaveFileCount() + 1);
                 FileIO io = new FileIO();
                 String fullPath = io.getRootFilePath() + "Saves/" + fileName + ".sts";
                 runGameSaveRoutine(new File(fullPath));
@@ -291,6 +321,9 @@ public class GameSaveMenu implements MouseInputReceiver{
 
     private void runGameSaveRoutine(File saveFile){
         inputLocked = true;
+        FileIO io = new FileIO();
+        File savesFolder = new File(io.getRootFilePath() + "Saves");
+        if (!savesFolder.exists()) savesFolder.mkdir();
         gameMaster.saveGame(saveFile);
         close();
         //Show confirmation message to player.
@@ -306,12 +339,12 @@ public class GameSaveMenu implements MouseInputReceiver{
     }
 
     @Override
-    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, int actionID) {
+    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return false;
     }
 
     @Override
-    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, int actionID) {
+    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return false;
     }
 

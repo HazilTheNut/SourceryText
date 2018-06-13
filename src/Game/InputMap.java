@@ -1,9 +1,14 @@
 package Game;
 
+import Data.SerializationVersion;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InputMap implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     /*
       InputMap:
@@ -25,9 +30,13 @@ public class InputMap implements Serializable {
     public static final int INV_DROP       = 10;
     public static final int INV_MOVE_WHOLE = 11;
     public static final int INV_MOVE_ONE   = 12;
+    public static final int PASS_TURN      = 13;
 
-    private HashMap<InputType, Integer> primaryInputMap;
-    private HashMap<InputType, Integer> secondaryInputMap;
+    /*
+    Each input is mapped to a list of actions. For example, the mouse left-click can both be mapped to using an item and attacking enemies.
+     */
+    private HashMap<InputType, ArrayList<Integer>> primaryInputMap;
+    private HashMap<InputType, ArrayList<Integer>> secondaryInputMap;
 
     public InputMap(){
         primaryInputMap = new HashMap<>();
@@ -49,8 +58,14 @@ public class InputMap implements Serializable {
      * @param inputType The InputType to look for
      * @param actionID The action that should be taken as a response.
      */
-    private void bindKey(HashMap<InputType, Integer> inputMap, InputType inputType, int actionID){
-        inputMap.put(inputType, actionID);
+    private void bindKey(HashMap<InputType, ArrayList<Integer>> inputMap, InputType inputType, int actionID){
+        if (inputMap.containsKey(inputType)){ //Add to any list that already exists
+            inputMap.get(inputType).add(actionID);
+        } else { //Otherwise, form a list.
+            ArrayList<Integer> actionList = new ArrayList<>();
+            actionList.add(actionID);
+            inputMap.put(inputType, actionList);
+        }
     }
 
     public void clearKeybindPrimary(int actionID){
@@ -61,18 +76,19 @@ public class InputMap implements Serializable {
         clearKeybind(secondaryInputMap, actionID);
     }
 
-    private void clearKeybind(HashMap<InputType, Integer> inputMap, int actionID){
-        if (inputMap.containsValue(actionID)){
-            for (InputType input : inputMap.keySet()){
-                if (inputMap.get(input) == actionID) inputMap.remove(input);
+    private void clearKeybind(HashMap<InputType, ArrayList<Integer>> inputMap, int actionID){
+        for (InputType inputType : inputMap.keySet()){
+            inputMap.get(inputType).remove(new Integer(actionID));
+            if (inputMap.get(inputType).size() == 0){ //If the list is empty
+                inputMap.remove(inputType); //Trim it off!
             }
         }
     }
 
-    public int getAction(InputType inputType){
+    public ArrayList<Integer> getAction(InputType inputType){
         if (primaryInputMap.containsKey(inputType)) return primaryInputMap.get(inputType);
         if (secondaryInputMap.containsKey(inputType)) return secondaryInputMap.get(inputType);
-        return -1;
+        return null;
     }
 
     public String describeAction(int actionID){
@@ -103,6 +119,8 @@ public class InputMap implements Serializable {
                 return "Inv: Move Whole Item";
             case INV_MOVE_ONE:
                 return "Inv: Move One Item";
+            case PASS_TURN:
+                return "Pass Turn";
             default:
                 return "NO_ASSOCIATION";
         }

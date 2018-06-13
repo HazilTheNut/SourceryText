@@ -8,6 +8,7 @@ import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 5/9/2018.
@@ -228,12 +229,12 @@ public class TextBox implements MouseInputReceiver{
     }
 
     @Override
-    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, int actionID) {
+    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return false;
     }
 
     @Override
-    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, int actionID) {
+    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return false;
     }
 }

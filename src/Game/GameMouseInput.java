@@ -1,15 +1,18 @@
 package Game;
 
 import Data.Coordinate;
+import Data.FileIO;
 import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Engine.ViewWindow;
+import Game.Debug.DebugWindow;
 
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -21,6 +24,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
      * GameMouseInput:
      *
      * The centralized mouse input system for SourceryText.
+     * Although the word "mouse" is in the name of this class and associates, keyboard input also passes through this system too.
      *
      * All MouseInputReceivers are placed into an ArrayList, and are ran in the opposite order of their addition to the list.
      * As input passes through each MouseInputReceiver, each has the choice to stop the input short by returning true to any of the mouse input methods (onMouseClick, onMouseMove, etc.).
@@ -43,6 +47,8 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         mouseHighlight = new Layer(new SpecialText[1][1], "mouse", 0, 0, LayerImportances.GAME_CURSOR);
         mouseHighlight.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(200, 200, 200, 75)));
         mouseHighlight.fixedScreenPos = true;
+
+        initializeInputMap();
     }
 
     public Layer getMouseHighlight() {
@@ -76,6 +82,52 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         boolean doAction(MouseInputReceiver receiver);
     }
 
+    public void setInputMap(InputMap inputMap) {
+        this.inputMap = inputMap;
+    }
+
+    public InputMap getInputMap() {
+        return inputMap;
+    }
+
+    private void initializeInputMap(){
+        System.out.println("[GameMouseInput] init");
+        generateDefaultInputMap();
+        FileIO io = new FileIO();
+        File inputMapFile = new File(io.getRootFilePath() + "keybinds.stim");
+        if (!inputMapFile.exists()){
+            File defaultInputMapFile = new File(io.getRootFilePath() + "default.stim");
+            if (defaultInputMapFile.exists()){
+                inputMap = io.openInputMap(defaultInputMapFile);
+            }
+        } else {
+            inputMap = io.openInputMap(inputMapFile);
+        }
+    }
+
+    private void generateDefaultInputMap(){
+        FileIO io = new FileIO();
+        File defaultInputMapFile = new File(io.getRootFilePath() + "default.stim");
+        if (!defaultInputMapFile.exists()){
+            InputMap defMap = new InputMap();
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_W, InputType.TYPE_KEY), InputMap.MOVE_NORTH);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_S, InputType.TYPE_KEY), InputMap.MOVE_SOUTH);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_A, InputType.TYPE_KEY), InputMap.MOVE_WEST);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_D, InputType.TYPE_KEY), InputMap.MOVE_EAST);
+            defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON3, InputType.TYPE_MOUSE), InputMap.MOVE_INTERACT);
+            defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON1, InputType.TYPE_MOUSE), InputMap.ATTACK);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_E, InputType.TYPE_KEY), InputMap.INVENTORY);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_Q, InputType.TYPE_KEY), InputMap.INSPECT);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_F, InputType.TYPE_KEY), InputMap.CAST_SPELL);
+            defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON1, InputType.TYPE_MOUSE), InputMap.INV_USE);
+            defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON3, InputType.TYPE_MOUSE), InputMap.INV_DROP);
+            defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON1, InputType.TYPE_MOUSE), InputMap.INV_MOVE_ONE);
+            defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON3, InputType.TYPE_MOUSE), InputMap.INV_MOVE_WHOLE);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_SPACE, InputType.TYPE_KEY), InputMap.PASS_TURN);
+            io.serializeInputMap(defMap, defaultInputMapFile.getPath());
+        }
+    }
+
     //Event stuff below
 
     @Override
@@ -88,7 +140,15 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         mouseRawPos = new Coordinate(e.getX(), e.getY());
         performInputEvent(receiver -> receiver.onMouseClick(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), e.getButton()));
         if (inputMap != null)
-            performInputEvent(receiver -> receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE))));
+            performInputEvent(receiver -> {
+                ArrayList<Integer> actions = inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE));
+                if (actions != null) {
+                    StringBuilder actionList = new StringBuilder();
+                    for (int action : actions) actionList.append(inputMap.describeAction(action)).append(" | ");
+                    DebugWindow.reportf(DebugWindow.STAGE, "GameMouseInput.mousePressed", "input down: %s", actionList);
+                }
+                return receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE)));
+            });
     }
 
     @Override
@@ -135,7 +195,15 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     @Override
     public void keyPressed(KeyEvent e) {
         if (inputMap != null)
-            performInputEvent(receiver -> receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getKeyCode(), InputType.TYPE_KEY))));
+            performInputEvent(receiver -> {
+                ArrayList<Integer> actions = inputMap.getAction(new InputType(e.getKeyCode(), InputType.TYPE_KEY));
+                if (actions != null) {
+                    StringBuilder actionList = new StringBuilder();
+                    for (int action : actions) actionList.append(inputMap.describeAction(action)).append(" | ");
+                    DebugWindow.reportf(DebugWindow.STAGE, "GameMouseInput.keyPressed", "input down: %s", actionList);
+                }
+                return receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), actions);
+            });
     }
 
     @Override

@@ -419,12 +419,12 @@ public class Player extends CombatEntity implements MouseInputReceiver, KeyListe
     }
 
     @Override
-    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, int actionID) {
+    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return false;
     }
 
     @Override
-    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, int actionID) {
+    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return false;
     }
 
