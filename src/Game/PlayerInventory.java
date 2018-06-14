@@ -11,7 +11,6 @@ import Game.Entities.LootPile;
 import Game.Registries.EntityRegistry;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -193,14 +192,6 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
 
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton) {
-        if (mouseButton == MouseEvent.BUTTON1 || mouseButton == MouseEvent.BUTTON3){
-            Item item = playerInv.getItemAtCursor(screenPos);
-            if (item != null)
-                return playerInv.onItemClick(item, mouseButton);
-            item = otherInv.getItemAtCursor(screenPos);
-            if (item != null)
-                return otherInv.onItemClick(item, mouseButton);
-        }
         return false;
     }
 
@@ -213,6 +204,12 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
 
     @Override
     public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
+        Item item = playerInv.getItemAtCursor(screenPos);
+        if (item != null)
+            return playerInv.onItemClick(item, actions);
+        item = otherInv.getItemAtCursor(screenPos);
+        if (item != null)
+            return otherInv.onItemClick(item, actions);
         return false;
     }
 
@@ -485,23 +482,23 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             previousItem = item;
         }
 
-        private boolean onItemClick(Item selected, int mouseButton){
+        private boolean onItemClick(Item selected, ArrayList<Integer> actions){
             switch (mode){
                 case CONFIG_PLAYER_USE:
                     if (!player.isFrozen()){
-                        if (mouseButton == MouseEvent.BUTTON1) {
+                        if (actions.contains(InputMap.INV_USE)) {
                             Thread itemUseThread = new Thread(() -> useItem(selectedItem));
                             itemUseThread.start();
-                        } else if (mouseButton == MouseEvent.BUTTON3){
+                        } else if (actions.contains(InputMap.INV_DROP)){
                             dropItem(selected);
                         }
                     }
                     return true;
                 case CONFIG_PLAYER_EXCHANGE:
-                    doItemMovement(mouseButton, selected, playerInv.getOwner(), otherInv.getOwner());
+                    doItemMovement(actions, selected, playerInv.getOwner(), otherInv.getOwner());
                     return true;
                 case CONFIG_OTHER_EXCHANGE:
-                    doItemMovement(mouseButton, selected, otherInv.getOwner(), playerInv.getOwner());
+                    doItemMovement(actions, selected, otherInv.getOwner(), playerInv.getOwner());
                     return true;
                 case CONFIG_OTHER_VIEW:
                     return true;
@@ -510,10 +507,10 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             }
         }
 
-        private void doItemMovement(int mouseButton, Item selected, Entity from, Entity to){
-            if (mouseButton == MouseEvent.BUTTON1) {
+        private void doItemMovement(ArrayList<Integer> actions, Item selected, Entity from, Entity to){
+            if (actions.contains(InputMap.INV_MOVE_WHOLE)) {
                 moveWholeItem(selected, from, to);
-            } else if (mouseButton == MouseEvent.BUTTON3){
+            } else if (actions.contains(InputMap.INV_MOVE_ONE)){
                 moveOneItem(selected, from, to);
             }
             playerInv.updateDisplay();

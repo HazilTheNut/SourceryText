@@ -17,7 +17,7 @@ public class InputMap implements Serializable {
       The Key-binding system would then match each of these actions with some form of input event, all MouseInputReceivers could check for these integers to detect if the correct key had been pressed.
      */
 
-    public static final int MOVE_NORTH     = 0;
+    public static final int MOVE_NORTH     = 0; //The Keybinds menu assumes all the game actions are consecutively ordered.
     public static final int MOVE_SOUTH     = 1;
     public static final int MOVE_WEST      = 2;
     public static final int MOVE_EAST      = 3;
@@ -86,13 +86,21 @@ public class InputMap implements Serializable {
         }
     }
 
-    public ArrayList<Integer> getAction(InputType inputType){
+    ArrayList<Integer> getAction(InputType inputType){
         if (primaryInputMap.containsKey(inputType)) return primaryInputMap.get(inputType);
         if (secondaryInputMap.containsKey(inputType)) return secondaryInputMap.get(inputType);
         return null;
     }
 
-    public String describeAction(int actionID){
+    public HashMap<InputType, ArrayList<Integer>> getPrimaryInputMap() {
+        return primaryInputMap;
+    }
+
+    public HashMap<InputType, ArrayList<Integer>> getSecondaryInputMap() {
+        return secondaryInputMap;
+    }
+
+    public static String describeAction(int actionID){
         switch (actionID){
             case MOVE_NORTH:
                 return "Move North";

@@ -159,7 +159,7 @@ public class GameSaveMenu implements MouseInputReceiver{
                         SaveFile save = new SaveFile(file);
                         Color bkg = (count % 2 == 0) ? darkBkg : lightBkg;
                         count++;
-                        inscribeSaveOptionLayer(save, bkg);
+                        drawSaveOptionLayer(save, bkg);
                         saveOptions.add(save);
                         updateDisplay();
                     }
@@ -175,12 +175,11 @@ public class GameSaveMenu implements MouseInputReceiver{
      * @param save The SaveFile to draw for
      * @param bkg The Layer background color
      */
-    private void inscribeSaveOptionLayer(SaveFile save, Color bkg){
+    private void drawSaveOptionLayer(SaveFile save, Color bkg){
         Layer optionLayer = new Layer(lm.getWindow().RESOLUTION_WIDTH, 2, "savefile " + save.file.getName(), 0, 0, 0); //Create new layer to assign to SaveOption
         optionLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
         optionLayer.inscribeString(save.file.getName().substring(0, save.file.getName().length() - 4), 1, 0);
         optionLayer.inscribeString(getSaveFileDate(save), 11, 0, TextBox.txt_silver);
-
         File txtFile = new File(save.file.getPath().substring(0, save.file.getPath().length() - 3).concat("txt"));
         if (txtFile.exists()){ //Fill in text contents only if there is a text file to get the info from.
             try {

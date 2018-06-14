@@ -31,7 +31,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     private transient Thread pathingThread;
     private boolean terminatePathing;
 
-    private Coordinate mouseLevelPos;
+    private Coordinate mouseScreenPos;
 
     private boolean spellMode = false;
 
@@ -111,7 +111,10 @@ public class Player extends CombatEntity implements MouseInputReceiver{
 
     public void updateHUD() {hud.updateHUD();}
 
-    public void updateSynopsis() {hud.updateSynopsis(mouseLevelPos);}
+    public void updateSynopsis() {
+        if (mouseScreenPos != null)
+            hud.updateSynopsis(mouseScreenPos.subtract(gi.getLayerManager().getCameraPos()));
+    }
 
     /**
      * Checks for whether the player is standing in a warp zone (and hadn't just warped there) and moves to a new level if so.
@@ -332,7 +335,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
 
     @Override
     public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
-        mouseLevelPos = levelPos;
+        mouseScreenPos = screenPos;
         if (gi.getCurrentLevel().isLocationValid(levelPos)) {
             DebugWindow.reportf(DebugWindow.CURSOR, "BASE TILE", "Tags: %1$s", gi.getCurrentLevel().getBaseTiles()[levelPos.getX()][levelPos.getY()].getTagList());
             Tile overlay = gi.getCurrentLevel().getOverlayTileAt(levelPos);
@@ -442,13 +445,9 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     private void openMenu(){
         QuickMenu quickMenu = gi.getQuickMenu();
         quickMenu.clearMenu();
-        quickMenu.addMenuItem("Load Game",    new Color(255, 230, 170), () -> {
-            gi.getGameMaster().openGameLoadMenu();
-        });
-        quickMenu.addMenuItem("Options",      new Color(173, 255, 228), () -> {});
-        quickMenu.addMenuItem("Quit to Menu", new Color(255, 171, 171), () -> {
-            gi.getGameMaster().exitGameToMainMenu();
-        });
+        quickMenu.addMenuItem("Load Game",    new Color(255, 230, 170), () -> gi.getGameMaster().openGameLoadMenu());
+        quickMenu.addMenuItem("Controls",     new Color(173, 255, 228), () -> gi.getGameMaster().openKeybindMenu());
+        quickMenu.addMenuItem("Quit to Menu", new Color(255, 171, 171), () -> gi.getGameMaster().exitGameToMainMenu());
         quickMenu.addMenuItem("Close",        () -> {});
         quickMenu.showMenu("Options", true);
     }

@@ -57,7 +57,7 @@ public class GameMainMenu implements MouseInputReceiver{
         
         menuLayer.inscribeString("New Game",  startX, optionsStartY);
         menuLayer.inscribeString("Load Game", startX, optionsStartY + 1);
-        menuLayer.inscribeString("Options",   startX, optionsStartY + 2);
+        menuLayer.inscribeString("Controls",  startX, optionsStartY + 2);
         menuLayer.inscribeString("Quit",      startX, optionsStartY + 3);
     }
 
@@ -96,6 +96,9 @@ public class GameMainMenu implements MouseInputReceiver{
                 case 1: //"Load Game"
                     gameMaster.openGameLoadMenu();
                     selectorLayer.setVisible(false);
+                    break;
+                case 2: //"Options"
+                    gameMaster.openKeybindMenu();
                     break;
                 case 3: //"Quit"
                     System.exit(0);

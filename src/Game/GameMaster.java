@@ -20,6 +20,7 @@ public class GameMaster {
 
     private GameSaveMenu saveMenu;
     private GameMainMenu mainMenu;
+    private GameKeybindsMenu keybindsMenu;
 
     private boolean gameRunning = false;
 
@@ -37,6 +38,7 @@ public class GameMaster {
         //Menus
         saveMenu = new GameSaveMenu(this.layerManager, mouseInput, this);
         mainMenu = new GameMainMenu(mouseInput, layerManager, this);
+        keybindsMenu = new GameKeybindsMenu(this.layerManager, mouseInput);
     }
 
     /**
@@ -139,6 +141,10 @@ public class GameMaster {
 
     public void openGameSaveMenu(){
         saveMenu.openSaveDialog();
+    }
+
+    public void openKeybindMenu() {
+        keybindsMenu.open();
     }
 
     GameInstance getCurrentGameInstance() {

@@ -125,10 +125,14 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_F, InputType.TYPE_KEY), InputMap.CAST_SPELL);
             defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON1, InputType.TYPE_MOUSE), InputMap.INV_USE);
             defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON3, InputType.TYPE_MOUSE), InputMap.INV_DROP);
-            defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON1, InputType.TYPE_MOUSE), InputMap.INV_MOVE_ONE);
-            defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON3, InputType.TYPE_MOUSE), InputMap.INV_MOVE_WHOLE);
+            defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON3, InputType.TYPE_MOUSE), InputMap.INV_MOVE_ONE);
+            defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON1, InputType.TYPE_MOUSE), InputMap.INV_MOVE_WHOLE);
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_SPACE, InputType.TYPE_KEY), InputMap.PASS_TURN);
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_ESCAPE, InputType.TYPE_KEY), InputMap.OPEN_MENU);
+            defMap.bindKeySecondary(new InputType(KeyEvent.VK_UP,    InputType.TYPE_KEY), InputMap.MOVE_NORTH);
+            defMap.bindKeySecondary(new InputType(KeyEvent.VK_DOWN,  InputType.TYPE_KEY), InputMap.MOVE_SOUTH);
+            defMap.bindKeySecondary(new InputType(KeyEvent.VK_LEFT,  InputType.TYPE_KEY), InputMap.MOVE_WEST);
+            defMap.bindKeySecondary(new InputType(KeyEvent.VK_RIGHT, InputType.TYPE_KEY), InputMap.MOVE_EAST);
             io.serializeInputMap(defMap, defaultInputMapFile.getPath());
         }
     }

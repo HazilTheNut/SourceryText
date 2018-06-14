@@ -32,7 +32,7 @@ public class WetTag extends Tag {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    private int LIFETIME_START = 10;
+    private int LIFETIME_START = 20;
     private int lifetime = LIFETIME_START;
     private boolean drying;
 
