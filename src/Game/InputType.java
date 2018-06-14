@@ -430,8 +430,14 @@ public class InputType implements Serializable {
                     return "MIDDLE CLICK";
                 case MouseEvent.BUTTON3:
                     return "RIGHT CLICK";
+                case 4:
+                    return "MOUSE4";
+                case 5:
+                    return "MOUES5";
+                case 6:
+                    return "MOUES6";
             }
         }
-        return "ERROR";
+        return "UNKNOWN";
     }
 }

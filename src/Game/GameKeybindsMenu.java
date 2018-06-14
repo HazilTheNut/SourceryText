@@ -215,6 +215,8 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
                 } else if (screenPos.getX() >= secondaryAnchor && screenPos.getX() < secondaryAnchor + 15) {
                     selectorLayer.setPos(secondaryAnchor, screenPos.getY());
                     selectorLayer.setVisible(true);
+                } else {
+                    selectorLayer.setVisible(false);
                 }
             } else {
                 selectorLayer.setVisible(false);
@@ -286,7 +288,11 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
                     selectedKeybindSet.primaryInput = new InputType(e.getKeyCode(), InputType.TYPE_KEY);
                 else
                     selectedKeybindSet.secondaryInput = new InputType(e.getKeyCode(), InputType.TYPE_KEY);
-            }
+            } else
+            if (settingPrimary)
+                selectedKeybindSet.primaryInput = null;
+            else
+                selectedKeybindSet.secondaryInput = null;
             selectedKeybindSet = null;
             selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, selectorStandby));
             changesDetected = true;
