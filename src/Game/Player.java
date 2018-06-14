@@ -8,6 +8,7 @@ import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.Spells.Spell;
+import Game.Tags.RangeTag;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -216,9 +217,15 @@ public class Player extends CombatEntity implements MouseInputReceiver{
 
     @Override
     protected void fireArrowProjectile(Projectile arrow) {
-        arrow.launchProjectile(25, gi);
-        getWeapon().decrementQty();
+        doYellowFlash();
         doEnemyTurn();
+        turnSleep(100);
+        RangeTag rangeTag = (RangeTag)getWeapon().getTag(TagRegistry.RANGE_START);
+        if (rangeTag == null)
+            arrow.launchProjectile(25, gi);
+        else
+            arrow.launchProjectile(rangeTag.getRange(), gi);
+        getWeapon().decrementQty();
     }
 
     /**

@@ -22,6 +22,7 @@ public class HealthTag extends Tag{
 
     public HealthTag(int amount){
         healthAmount = amount;
+        setName(String.format("Health: %1$d", amount));
     }
 
     @Override

@@ -172,7 +172,7 @@ public class Entity extends TagHolder implements Serializable {
      *
      * @param time The time (in ms) to wait.
      */
-    void turnSleep(int time){
+    protected void turnSleep(int time){
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {

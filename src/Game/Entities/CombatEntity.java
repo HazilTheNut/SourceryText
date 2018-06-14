@@ -8,10 +8,13 @@ import Game.*;
 import Game.Debug.DebugWindow;
 import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
+import Game.Tags.DamageTag;
 import Game.Tags.Tag;
 
 import java.awt.*;
 import java.util.ArrayList;
+
+import static Game.Debug.DebugWindow.GAME;
 
 /**
  * Created by Jared on 3/28/2018.
@@ -176,7 +179,7 @@ public class CombatEntity extends Entity {
         int dx =  target.getX() - getLocation().getX();
         double angle = (180 / Math.PI) * Math.atan2(dy, dx);
         if (angle < 0) angle += 360;
-        DebugWindow.reportf(DebugWindow.GAME, "CombatEntity.calculateMeleeDirection","Angle: %1$f dx: %2$d dy: %3$d", angle, dx, dy);
+        DebugWindow.reportf(GAME, "CombatEntity.calculateMeleeDirection","Angle: %1$f dx: %2$d dy: %3$d", angle, dx, dy);
         for (int dir : directions){
             if (Math.abs(angle - dir) <= 22.5)
                 return dir;
@@ -305,12 +308,31 @@ public class CombatEntity extends Entity {
             ArrowProjectile arrow = new ArrowProjectile(this, targetPos, new SpecialText('+', new Color(255, 231, 217), new Color(191, 174, 163, 15)), gi.getLayerManager());
             arrow.getTags().addAll(weapon.getTags());
             arrow.getTags().addAll(arrowItem.getTags());
+            DamageTag damageTag = (DamageTag)arrow.getTag(TagRegistry.DAMAGE_START);
+            int dmgBonus = getStrength() / 4;
+            DebugWindow.reportf(GAME, "CombatEntity.doBowAttack", "Strength: %1$d Damage Bonus: %2$d", getStrength(), dmgBonus);
+            if (damageTag != null) {
+                arrow.removeTag(TagRegistry.DAMAGE_START);
+                DamageTag totalDamageTag = new DamageTag(damageTag.getDamageAmount() + dmgBonus);
+                totalDamageTag.setId(TagRegistry.DAMAGE_START);
+                arrow.addTag(totalDamageTag, getWeapon());
+            }
             fireArrowProjectile(arrow);
         }
     }
 
     protected void fireArrowProjectile(Projectile arrow){
         //Override by Player, BasicEnemy, etc.
+    }
+
+    /**
+     * Does the yellow flash animation to signify readying a bow.
+     */
+    protected void doYellowFlash(){
+        SpecialText originalText = getSprite().getSpecialText(0, 0);
+        getSprite().editLayer(0, 0, new SpecialText(originalText.getCharacter(), originalText.getFgColor(), new Color(255, 255, 0, 55)));
+        turnSleep(300);
+        getSprite().editLayer(0, 0, originalText);
     }
 
     public int getHealth() {

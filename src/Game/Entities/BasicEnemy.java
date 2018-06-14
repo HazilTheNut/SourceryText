@@ -9,6 +9,7 @@ import Game.Item;
 import Game.Registries.TagRegistry;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by Jared on 4/3/2018.
@@ -139,6 +140,7 @@ public class BasicEnemy extends CombatEntity {
 
     private void pathToPlayer(){
         int dist = gi.getEntityPlayerDistance(this); //Literally gets the index of the PathPoints array to search in
+        ArrayList<Coordinate> candidateLocations = new ArrayList<>();
         DebugWindow.reportf(DebugWindow.GAME, "BasicEnemy.pathToPlayer", "Step dist: %1$d", dist);
         if (dist > 0) { //Returns -1 if not in there, so better look out.
             ArrayList pointList = gi.getPathPoints(dist - 1); //Points in (index - 1) are the points that are at minimum 1 step closer to the player
@@ -146,11 +148,14 @@ public class BasicEnemy extends CombatEntity {
                 if (obj instanceof GameInstance.PathPoint) {
                     GameInstance.PathPoint pathPoint = (GameInstance.PathPoint) obj;
                     if (pathPoint.getLoc().stepDistance(getLocation()) == 1) {
-                        teleport(pathPoint.getLoc());
-                        return;
+                        candidateLocations.add(pathPoint.getLoc());
                     }
                 }
             }
+        }
+        if (candidateLocations.size() > 0) {
+            Random random = new Random();
+            teleport(candidateLocations.get(random.nextInt(candidateLocations.size())));
         }
     }
 }

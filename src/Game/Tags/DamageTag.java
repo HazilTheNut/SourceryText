@@ -16,10 +16,11 @@ public class DamageTag extends Tag{
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    public int damageAmount;
+    private int damageAmount;
 
     public DamageTag(int dmg){
         damageAmount = dmg;
+        setName(String.format("Damage: %d", dmg));
     }
 
     @Override
@@ -29,5 +30,9 @@ public class DamageTag extends Tag{
 
     public int getDamageAmount() {
         return damageAmount;
+    }
+
+    public void setDamageAmount(int damageAmount) {
+        this.damageAmount = damageAmount;
     }
 }

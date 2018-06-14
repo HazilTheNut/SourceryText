@@ -31,7 +31,7 @@ public class TagRegistry {
      * 800   999   | Extra Space
      * 1000  1999  | Damage Tag
      * 2000  2999  | Health Tag
-     *
+     * 3000  3999  | Range Tag
      */
     public final static int FLAMMABLE     = 0;
     public final static int ON_FIRE       = 1;
@@ -66,6 +66,7 @@ public class TagRegistry {
 
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
+    public final static int RANGE_START   = 3000;
 
     static {
         //Registering stuff starts here
@@ -133,13 +134,15 @@ public class TagRegistry {
     public static Tag getTag(int id) {
         if (id >= DAMAGE_START && id < HEALTH_START){
             DamageTag tag = new DamageTag(id - DAMAGE_START);
-            tag.setName(String.format("Damage: %1$d", id - DAMAGE_START));
             tag.setId(DAMAGE_START);
             return tag;
         } else if (id >= HEALTH_START && id < HEALTH_START + 1000) {
             HealthTag tag = new HealthTag(id - HEALTH_START);
-            tag.setName(String.format("Health: %1$d", id - HEALTH_START));
             tag.setId(HEALTH_START);
+            return tag;
+        } else if (id >= RANGE_START && id < RANGE_START + 1000) {
+            RangeTag tag = new RangeTag(id - RANGE_START);
+            tag.setId(RANGE_START);
             return tag;
         } else {
             return generateTag(id);

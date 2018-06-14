@@ -147,17 +147,17 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     @Override
     public void mousePressed(MouseEvent e) {
         mouseRawPos = new Coordinate(e.getX(), e.getY());
-        performInputEvent(receiver -> receiver.onMouseClick(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), e.getButton()));
         if (inputMap != null)
             performInputEvent(receiver -> {
                 ArrayList<Integer> actions = inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE));
                 if (actions != null) {
                     StringBuilder actionList = new StringBuilder();
-                    for (int action : actions) actionList.append(inputMap.describeAction(action)).append(" | ");
+                    for (int action : actions) actionList.append(InputMap.describeAction(action)).append(" | ");
                     DebugWindow.reportf(DebugWindow.STAGE, "GameMouseInput.mousePressed", "input down: %s", actionList);
                 }
                 return receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE)));
             });
+        performInputEvent(receiver -> receiver.onMouseClick(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), e.getButton()));
     }
 
     @Override
