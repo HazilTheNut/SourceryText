@@ -49,6 +49,8 @@ public class TagRegistry {
     public final static int WEAPON_STRIKE = 201;
     public final static int WEAPON_THRUST = 202;
     public final static int WEAPON_SWEEP  = 203;
+    public final static int WEAPON_BOW    = 204;
+    public final static int ARROW         = 205;
     public final static int KEY           = 210;
     public final static int SPECIAL_ITEM  = 211;
 
@@ -86,6 +88,8 @@ public class TagRegistry {
         registerTag(WEAPON_STRIKE, "Striking Weapon",  StrikeWeaponTypeTag.class);
         registerTag(WEAPON_THRUST, "Thrusting Weapon", ThrustWeaponTypeTag.class);
         registerTag(WEAPON_SWEEP,  "Sweeping Weapon",  SweepWeaponTypeTag.class);
+        registerTag(WEAPON_BOW, "Bow",                 BowWeaponTag.class);
+        registerTag(ARROW, "Arrow",                    ArrowTag.class);
         registerTag(KEY, "Key", KeyTag.class);
         registerTag(SPECIAL_ITEM, "Special Item", SpecialItemTag.class);
         registerTag(LEVEL_UP, "Level up!", LevelUpTag.class);

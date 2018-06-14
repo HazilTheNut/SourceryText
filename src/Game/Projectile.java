@@ -22,14 +22,15 @@ public class Projectile extends TagHolder {
      */
 
     private double xpos;
-    private double xvelocity;
+    protected double xvelocity;
     private double ypos;
-    private double yvelocity;
+    protected double yvelocity;
 
     private Layer iconLayer;
     private LayerManager lm;
 
     private Entity source;
+    private Coordinate targetPos;
 
     private final double UNITS_PER_CYCLE = 0.9;
 
@@ -37,15 +38,20 @@ public class Projectile extends TagHolder {
         source = creator;
         xpos = creator.getLocation().getX();
         ypos = creator.getLocation().getY();
+        targetPos = target;
         double angle = Math.atan2(target.getY() - Math.round(ypos), target.getX() - Math.round(xpos));
         DebugWindow.reportf(DebugWindow.GAME, "Projectile.playerInit","Start pos: %1$s; Angle: %2$f", creator.getLocation(), angle * (180 / Math.PI));
         xvelocity = UNITS_PER_CYCLE * Math.cos(angle);
         yvelocity = UNITS_PER_CYCLE * Math.sin(angle);
         iconLayer = new Layer(1, 1, creator.getLocation().toString() + target.toString() + icon.toString(), (int)xpos, (int)ypos, LayerImportances.ANIMATION);
-        iconLayer.editLayer(0, 0, icon);
+        iconLayer.editLayer(0, 0, getIcon(icon));
         iconLayer.setVisible(false);
         this.lm = lm;
         lm.addLayer(iconLayer);
+    }
+
+    protected SpecialText getIcon(SpecialText baseIcon){
+        return baseIcon;
     }
 
     //Recommended to be ran within a thread separate from the main one.
@@ -66,7 +72,7 @@ public class Projectile extends TagHolder {
                     destroy();
                     return;
                 }
-                if (!gi.isSpaceAvailable(newPos, TagRegistry.TILE_WALL)) { //"No Pathing" Tag is also applicable to Deep Water tiles, which should be something projectiles can go over.
+                if (!gi.isSpaceAvailable(newPos, TagRegistry.TILE_WALL) || newPos.equals(targetPos)) { //"No Pathing" Tag is also applicable to Deep Water tiles, which should be something projectiles can go over.
                     collideWithTerrain(gi);
                     return;
                 } else {

@@ -40,11 +40,15 @@ public class ItemRegistry {
         registerItem(106, "Iron Sword",      4,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_SWEEP);
         registerItem(107, "Iron Spear",      5,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST);
         registerItem(108, "Wooden Club",     2.5, TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAMMABLE);
+        registerItem(109, "Rotted Bow",      2,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_BOW,     TagRegistry.FLAMMABLE);
+        registerItem(110, "Balsa Wood Bow",  1,   TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_BOW,     TagRegistry.FLAMMABLE);
 
         registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10);
         registerItem(1001, "Health Potion",   0.10, TagRegistry.HEALTH_START + 25);
         registerItem(1002, "Health Flask",    0.25, TagRegistry.HEALTH_START + 40);
         registerItem(1003, "Health Jar",      0.60, TagRegistry.HEALTH_START + 65);
+
+        registerItem(1500, "Arrow",           0.03, TagRegistry.ARROW);
 
         registerItem(1898, "Magic Potato", 0, TagRegistry.LEVEL_UP);
         registerItem(1900, "Fire Scroll",  0, TagRegistry.LEARN_FIRE);

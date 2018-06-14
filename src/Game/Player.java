@@ -214,6 +214,13 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         if (noEnterWarpZoneTimer > 0) noEnterWarpZoneTimer--;
     }
 
+    @Override
+    protected void fireArrowProjectile(Projectile arrow) {
+        arrow.launchProjectile(25, gi);
+        getWeapon().decrementQty();
+        doEnemyTurn();
+    }
+
     /**
      * Cleanup action done when GameInstance is closing
      */

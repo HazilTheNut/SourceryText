@@ -4,12 +4,10 @@ import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.*;
 import Game.Debug.DebugWindow;
-import Game.GameInstance;
-import Game.Item;
 import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
-import Game.TagEvent;
 import Game.Tags.Tag;
 
 import java.awt.*;
@@ -85,7 +83,7 @@ public class CombatEntity extends Entity {
         setMaxHealth(readIntArg(hpArg, defaultMaxHealth));
         EntityArg strArg = searchForArg(entityStruct.getArgs(), "strength");
         setStrength(readIntArg(strArg, defaultStrength));
-        initSwooshLayer(); //The 'swooshLayer' is the white flash that happens during attack animations.
+        initSwooshLayer(); //The 'swooshLayer' is the white flash that happens during performAttack animations.
         initNoWeapon();
     }
 
@@ -106,7 +104,7 @@ public class CombatEntity extends Entity {
             health -= amount;
             double percentage = Math.sqrt(Math.max(Math.min((double) amount / maxHealth, 1), 0.1));
             SpecialText originalSprite = getSprite().getSpecialText(0, 0);
-            //Flash is more red if attack deals a larger portion of maximum health
+            //Flash is more red if performAttack deals a larger portion of maximum health
             getSprite().editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), originalSprite.getFgColor(), new Color(255, 0, 0, (int) (255 * percentage))));
             turnSleep(100 + (int) (500 * percentage)); //Also waits a little longer for more painful attacks, in order to sell the hit even more.
             getSprite().editLayer(0, 0, originalSprite);
@@ -117,11 +115,11 @@ public class CombatEntity extends Entity {
     /**
      * Since there are numerous 'attack' methods, things can a little confusing.
      *
-     * This method plays the attack animation and runs doAttackEvent() if an enemy happens to be at the attack location.
+     * This method plays the performAttack animation and runs doAttackEvent() if an enemy happens to be at the performAttack location.
      *
-     * @param loc The location to attack
+     * @param loc The location to performAttack
      */
-    private void attack(Coordinate loc){
+    private void performAttack(Coordinate loc){
         if (shouldDoAction()){
             swooshLayer.setVisible(true);
             swooshLayer.setPos(loc);
@@ -144,7 +142,7 @@ public class CombatEntity extends Entity {
      *
      * If successful, runs receiveDamage() on the CombatEntity being attacked
      *
-     * @param ce CombatEntity to attack
+     * @param ce CombatEntity to performAttack
      */
     protected void doAttackEvent(CombatEntity ce){
         if (getWeapon() != null) {
@@ -171,7 +169,7 @@ public class CombatEntity extends Entity {
      * Takes a target position and figures out which of eight direction is points closest to the point.
      *
      * @param target The non-relative location to aim to
-     * @return The integer direction (deg) to attack to. Value is -1 if something went wrong.
+     * @return The integer direction (deg) to performAttack to. Value is -1 if something went wrong.
      */
     protected int calculateMeleeDirection(Coordinate target){
         int dy = getLocation().getY() - target.getY(); //Need y coordinate to be in terms of a mathematical xy-plane, so its value is reversed.
@@ -187,9 +185,9 @@ public class CombatEntity extends Entity {
     }
 
     /**
-     * Acts as a wrapper for attack() [The animation one], allowing for weapon attack patterns.
+     * Acts as a wrapper for performAttack() [The animation one], allowing for weapon performAttack patterns.
      *
-     * @param loc The location to attack
+     * @param loc The location to performAttack
      */
     protected void doWeaponAttack(Coordinate loc){
         for (int i = 0; i < getWeapon().getTags().size(); i++) {
@@ -204,6 +202,9 @@ public class CombatEntity extends Entity {
                 case TagRegistry.WEAPON_SWEEP:
                     doSweepWeaponAttack(calculateMeleeDirection(loc));
                     break;
+                case TagRegistry.WEAPON_BOW:
+                    doBowAttack(loc);
+                    break;
             }
         }
     }
@@ -212,29 +213,29 @@ public class CombatEntity extends Entity {
     private void doStrikeWeaponAttack(int direction){
         switch (direction){
             case UP:
-                attack(getLocation().add(new Coordinate(0, -1)));
+                performAttack(getLocation().add(new Coordinate(0, -1)));
                 break;
             case UP_RIGHT:
-                attack(getLocation().add(new Coordinate(1, -1)));
+                performAttack(getLocation().add(new Coordinate(1, -1)));
                 break;
             case RIGHT:
             case RIGHT_360:
-                attack(getLocation().add(new Coordinate(1, 0)));
+                performAttack(getLocation().add(new Coordinate(1, 0)));
                 break;
             case DOWN_RIGHT:
-                attack(getLocation().add(new Coordinate(1, 1)));
+                performAttack(getLocation().add(new Coordinate(1, 1)));
                 break;
             case DOWN:
-                attack(getLocation().add(new Coordinate(0, 1)));
+                performAttack(getLocation().add(new Coordinate(0, 1)));
                 break;
             case DOWN_LEFT:
-                attack(getLocation().add(new Coordinate(-1, 1)));
+                performAttack(getLocation().add(new Coordinate(-1, 1)));
                 break;
             case LEFT:
-                attack(getLocation().add(new Coordinate(-1, 0)));
+                performAttack(getLocation().add(new Coordinate(-1, 0)));
                 break;
             case UP_LEFT:
-                attack(getLocation().add(new Coordinate(-1, -1)));
+                performAttack(getLocation().add(new Coordinate(-1, -1)));
                 break;
         }
     }
@@ -243,37 +244,37 @@ public class CombatEntity extends Entity {
     private void doThrustWeaponAttack(int direction){
         switch (direction){
             case UP:
-                attack(getLocation().add(new Coordinate(0, -1)));
-                attack(getLocation().add(new Coordinate(0, -2)));
+                performAttack(getLocation().add(new Coordinate(0, -1)));
+                performAttack(getLocation().add(new Coordinate(0, -2)));
                 break;
             case UP_RIGHT:
-                attack(getLocation().add(new Coordinate(1, -1)));
-                attack(getLocation().add(new Coordinate(2, -2)));
+                performAttack(getLocation().add(new Coordinate(1, -1)));
+                performAttack(getLocation().add(new Coordinate(2, -2)));
                 break;
             case RIGHT:
             case RIGHT_360:
-                attack(getLocation().add(new Coordinate(1, 0)));
-                attack(getLocation().add(new Coordinate(2, 0)));
+                performAttack(getLocation().add(new Coordinate(1, 0)));
+                performAttack(getLocation().add(new Coordinate(2, 0)));
                 break;
             case DOWN_RIGHT:
-                attack(getLocation().add(new Coordinate(1, 1)));
-                attack(getLocation().add(new Coordinate(2, 2)));
+                performAttack(getLocation().add(new Coordinate(1, 1)));
+                performAttack(getLocation().add(new Coordinate(2, 2)));
                 break;
             case DOWN:
-                attack(getLocation().add(new Coordinate(0, 1)));
-                attack(getLocation().add(new Coordinate(0, 2)));
+                performAttack(getLocation().add(new Coordinate(0, 1)));
+                performAttack(getLocation().add(new Coordinate(0, 2)));
                 break;
             case DOWN_LEFT:
-                attack(getLocation().add(new Coordinate(-1, 1)));
-                attack(getLocation().add(new Coordinate(-2, 2)));
+                performAttack(getLocation().add(new Coordinate(-1, 1)));
+                performAttack(getLocation().add(new Coordinate(-2, 2)));
                 break;
             case LEFT:
-                attack(getLocation().add(new Coordinate(-1, 0)));
-                attack(getLocation().add(new Coordinate(-2, 0)));
+                performAttack(getLocation().add(new Coordinate(-1, 0)));
+                performAttack(getLocation().add(new Coordinate(-2, 0)));
                 break;
             case UP_LEFT:
-                attack(getLocation().add(new Coordinate(-1, -1)));
-                attack(getLocation().add(new Coordinate(-2, -2)));
+                performAttack(getLocation().add(new Coordinate(-1, -1)));
+                performAttack(getLocation().add(new Coordinate(-2, -2)));
                 break;
         }
     }
@@ -287,6 +288,29 @@ public class CombatEntity extends Entity {
             dir += 45;
             if (dir >= 360) dir -= 360;
         }
+    }
+
+    private void doBowAttack(Coordinate targetPos){
+        //Search for an arrow
+        Item arrowItem = null;
+        for (Item item : getItems()){
+            if (item.hasTag(TagRegistry.ARROW)){
+                item.decrementQty();
+                scanInventory();
+                arrowItem = item;
+                break;
+            }
+        }
+        if (arrowItem != null) {
+            ArrowProjectile arrow = new ArrowProjectile(this, targetPos, new SpecialText('+', new Color(255, 231, 217), new Color(191, 174, 163, 15)), gi.getLayerManager());
+            arrow.getTags().addAll(weapon.getTags());
+            arrow.getTags().addAll(arrowItem.getTags());
+            fireArrowProjectile(arrow);
+        }
+    }
+
+    protected void fireArrowProjectile(Projectile arrow){
+        //Override by Player, BasicEnemy, etc.
     }
 
     public int getHealth() {
