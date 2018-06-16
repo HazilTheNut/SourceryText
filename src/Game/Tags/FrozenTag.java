@@ -90,6 +90,11 @@ public class FrozenTag extends Tag {
     }
 
     @Override
+    public String getName() {
+        return String.format("%1$s (%2$d)", super.getName(), duration);
+    }
+
+    @Override
     public Color getTagColor() {
         return new Color(184, 188, 230);
     }

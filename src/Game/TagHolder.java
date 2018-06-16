@@ -109,7 +109,25 @@ public class TagHolder implements Serializable {
 
     public void heal(int amount){}
 
-    public void receiveDamage(int amount){}
+    public void onReceiveDamage(int amount, TagHolder source, GameInstance gi){
+        TagEvent dmgEvent = new TagEvent(amount, true, source, this, gi);
+        for (Tag tag : tags){
+            tag.onReceiveDamage(dmgEvent);
+        }
+        dmgEvent.doFutureActions();
+        if (dmgEvent.eventPassed()){
+            dmgEvent.doCancelableActions();
+            receiveDamage(dmgEvent.getAmount());
+        }
+    }
+
+    protected void receiveDamage(int amount){
+        //Override this
+    }
+
+    public int getCurrentHealth(){
+        return 0; //Override this
+    }
 
     public void onContact(TagHolder other, GameInstance gi){
         contactEvent(this, other, gi);

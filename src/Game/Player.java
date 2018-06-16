@@ -145,8 +145,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     @Override
     public void updateInventory() {
         super.updateInventory();
-        if (inv.getPlayerInv().isShowing())
-            inv.getPlayerInv().updateDisplay();
+        inv.updateDisplays();
         updateHUD();
     }
 

@@ -6,9 +6,7 @@ import Data.EntityStruct;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
-import Game.GameInstance;
-import Game.Item;
-import Game.Projectile;
+import Game.*;
 import Game.Registries.TagRegistry;
 import Game.Tags.RangeTag;
 
@@ -35,7 +33,8 @@ public class BasicEnemy extends CombatEntity {
      * > If an enemy spots the player, they will alert nearby BasicEnemies to attack the player
      * > The GameInstance ignores solid entities when calculating the path-finding map. This means even if an enemy blocks a path to the player BasicEnemies will keep approaching the player.
      *
-     * TODO: Operate Ranged Weapons
+     * Although most of the code for BasicEnemy allows for targeting things other than the player, all the pathfinding calculations are done by the GameInstance, which are always centered on the player.
+     * This was done to reduce the performance cost per entity existing in a level.
      */
 
 
@@ -92,13 +91,13 @@ public class BasicEnemy extends CombatEntity {
             }
         }
     }
-
     @Override
-    public void receiveDamage(int amount) {
-        super.receiveDamage(amount);
-        if (target == null) //Standing idle / no target?
-            target = gi.getPlayer(); //Target the player
-        alertNearbyEntities();
+    public void onReceiveDamage(int amount, TagHolder source, GameInstance gi) {
+        super.onReceiveDamage(amount, source, gi);
+        if (target == null && source instanceof Player) {
+            target = (Player)source; //Target the source of the damage
+            alertNearbyEntities();
+        }
         pickNewWeapon();
     }
 

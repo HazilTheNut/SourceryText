@@ -95,6 +95,11 @@ public class Item extends TagHolder implements Serializable {
     }
 
     @Override
+    public int getCurrentHealth() {
+        return itemData.getQty();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj instanceof Item) {
             Item item = (Item) obj;

@@ -98,7 +98,8 @@ public class OnFireTag extends Tag {
                         if (lifetime <= 0) {
                             e.getSource().removeTag(TagRegistry.ON_FIRE);
                         } else {
-                            e.getSource().receiveDamage(1);
+                            float health = e.getSource().getCurrentHealth();
+                            e.getSource().onReceiveDamage((int)Math.ceil(health / 10), e.getSource(), e.getGameInstance()); //Deals 10% of current health, rounding up.
                         }
                     }
                 }
@@ -106,6 +107,11 @@ public class OnFireTag extends Tag {
                 shouldSpread = true;
             }
         });
+    }
+
+    @Override
+    public String getName() {
+        return String.format("%1$s (%2$d)", super.getName(), lifetime);
     }
 
     @Override
@@ -119,6 +125,7 @@ public class OnFireTag extends Tag {
             Tile tile = (Tile) owner;
             if (fireAnimation != null) {
                 tile.getLevel().removeAnimatedTile(fireAnimation.getLocation());
+
             }
         }
     }

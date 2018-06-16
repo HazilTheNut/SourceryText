@@ -95,7 +95,7 @@ public class Projectile extends TagHolder {
         dmgEvent.doFutureActions();
         if (dmgEvent.eventPassed()){
             dmgEvent.doCancelableActions();
-            other.receiveDamage(dmgEvent.getAmount());
+            other.onReceiveDamage(dmgEvent.getAmount(), this, gi);
             onContact(other, gi);
         }
     }

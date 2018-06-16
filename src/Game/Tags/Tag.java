@@ -59,33 +59,58 @@ public class Tag implements Serializable {
     // E V E N T S
 
     //Ran when the player enters a level. Cancellation does nothing. GameInstance is null for Tiles.
+    //Source: this
+    //Target: this
     public void onLevelEnter(TagEvent e){}
 
     //Upon when the TagHolder Item is 'used'
+    //Source: this
+    //Target: this
     public void onItemUse(TagEvent e) {}
 
     //Upon dealing damage, useful for calculating the total damage of an attack
+    //Source: this
+    //Target: receiving damage
     public void onDealDamage(TagEvent e) {}
 
+    //Upon receiving damage, useful for calculating the total damage of an attack
+    //Source: damage dealer
+    //Target: this
+    public void onReceiveDamage(TagEvent e){}
+
     //Ran every turn
+    //Source: this
+    //Target: this
     public void onTurn(TagEvent e){}
 
     //Ran whenever two TagHolders come in physical contact with each other
+    //Source: this
+    //Target: other TagHolder being contacted
     public void onContact(TagEvent e){}
 
     //Ran on every iteration of projectile over tiles
+    //Source: this
+    //Target: other TagHolder 'below', almost always a Tile
     public void onFlyOver(TagEvent e){}
 
     //Ran on every movement of owner Entity
+    //Source: this
+    //Target: this
     public void onMove(TagEvent e){}
 
-    //Ran when en Entity tries do an action that 'takes up a turn'. Target is null
+    //Ran when en Entity tries do an action that 'takes up a turn'.
+    //Source: this
+    //Target: null
     public void onEntityAction(TagEvent e){}
 
     //Ran when the tag holder containing this tag receives another tag. GameInstance is null
+    //Source: source of tag addition
+    //Target: this
     public void onAdd(TagEvent e){}
 
     //Ran when this tag is being added to a tag holder, happens after onAdd() and all future actions. GameInstance is null
+    //Source: source of tag addition
+    //Target: this
     public void onAddThis(TagEvent e){}
 
     //Ran when this tag is removed. Cannot be canceled

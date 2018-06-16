@@ -62,6 +62,14 @@ public class WetTag extends Tag {
     }
 
     @Override
+    public String getName() {
+        if (drying)
+            return String.format("%1$s (%2$d)", super.getName(), lifetime);
+        else
+            return super.getName();
+    }
+
+    @Override
     public void onRemove(TagHolder owner) {
         if (owner instanceof Tile) {
             Tile tile = (Tile) owner;
@@ -84,6 +92,6 @@ public class WetTag extends Tag {
 
     @Override
     public Color getTagColor() {
-        return new Color(50, 50, 166, 50);
+        return new Color(41, 41, 166, 50);
     }
 }

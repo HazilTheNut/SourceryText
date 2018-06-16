@@ -253,6 +253,11 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         return sum;
     }
 
+    void updateDisplays(){
+        if (playerInv.isShowing()) playerInv.updateDisplay();
+        if (otherInv.isShowing()) otherInv.updateDisplay();
+    }
+
     public class SubInventory {
 
         /**
@@ -334,17 +339,21 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         }
 
         void updateDisplay(){
-            Layer tempLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 4][getLM().getWindow().RESOLUTION_HEIGHT], "temp", 0, 0);
+            if (e != null) {
+                Layer tempLayer = new Layer(new SpecialText[ITEM_STRING_LENGTH + 4][getLM().getWindow().RESOLUTION_HEIGHT], "temp", 0, 0);
 
-            drawItems(tempLayer);
+                drawItems(tempLayer);
 
-            if (mode == CONFIG_PLAYER_EXCHANGE || mode == CONFIG_PLAYER_USE)
-                drawTagList(tempLayer, 3);
-            else
-                drawTagList(tempLayer, 2);
+                if (mode == CONFIG_PLAYER_EXCHANGE || mode == CONFIG_PLAYER_USE)
+                    drawTagList(tempLayer, 3);
+                else
+                    drawTagList(tempLayer, 2);
 
-            invLayer.transpose(tempLayer);
-            invLayer.setPos(loc);
+                invLayer.transpose(tempLayer);
+                invLayer.setPos(loc);
+            } else {
+                close();
+            }
         }
 
         void doScrolling(Coordinate screenPos, double scrollAmount){
@@ -422,7 +431,8 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             tempLayer.inscribeString(e.getName(), getTitleMiddleAlignment(e.getName(), ITEM_STRING_LENGTH + 4 - xstart) + xstart - 1, top, descFg); //Inscribe entity name
             int i;
             for (i = 0; i < e.getTags().size(); i++) {
-                tempLayer.inscribeString(e.getTags().get(i).getName(), xstart, top + i + 1);
+                Color fgColor = e.getTags().get(i).getTagColor();
+                tempLayer.inscribeString(e.getTags().get(i).getName(), xstart, top + i + 1, new Color(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
                 tempLayer.editLayer(xstart-2, top + i + 1, new SpecialText('*', Color.GRAY, bkgDark));
             }
             if (getOwner() instanceof CombatEntity) {

@@ -63,6 +63,11 @@ public class CombatEntity extends Entity {
         this.health = health;
     }
 
+    @Override
+    public int getCurrentHealth() {
+        return health;
+    }
+
     public void setStrength(int strength) {
         this.strength = strength;
     }
@@ -155,7 +160,7 @@ public class CombatEntity extends Entity {
             event.doFutureActions();
             if (event.eventPassed()) {
                 event.doCancelableActions();
-                ce.receiveDamage(event.getAmount());
+                ce.onReceiveDamage(event.getAmount(), this, gi);
                 getWeapon().decrementQty();
                 if (getWeapon().getItemData().getQty() <= 0) {
                     setWeapon(null);
