@@ -440,7 +440,7 @@ public class GameInstance implements Serializable {
         if (currentLevel.isLocationValid(loc) && !getTileAt(loc).hasTag(TagRegistry.NO_PATHING) && !pointLog.contains(new PathPoint(loc, -1))) {
             points[n].add(new PathPoint(loc, n));
             pointLog.add(new PathPoint(loc, n));
-            pathTestLayer.editLayer(loc.getX(), loc.getY(), new SpecialText(' ', Color.WHITE, testColors[n % testColors.length]));
+            //pathTestLayer.editLayer(loc.getX(), loc.getY(), new SpecialText(' ', Color.WHITE, testColors[n % testColors.length]));
         }
         for (Entity e : currentLevel.getEntitiesAt(loc)){
             if (!entityPathMap.containsKey(e.getUniqueID())) entityPathMap.put(e.getUniqueID(), n);

@@ -22,7 +22,7 @@ public class NewPathfinder extends BasicEnemy implements Serializable {
         processedPoints.clear();
         openPoints.clear();
         nextPoints.clear();
-        nextPoints.add(new PathPoint(target.getLocation(), target.getLocation().stepDistance(getLocation())));
+        nextPoints.add(new PathPoint(target.getLocation(), target.getLocation().stepDistance(getLocation()), 0));
         ArrayList<Coordinate> movementOptions = new ArrayList<>();
         while(!movementFound){
             //Rebuild the set of open points to process
@@ -30,24 +30,24 @@ public class NewPathfinder extends BasicEnemy implements Serializable {
             //Start from end of list (with smallest distances)
             int lowestDistance = openPoints.get(openPoints.size()-1).distanceToTarget; //The list of 'open' points is already sorted by distance to the target position.
             for (int i = 0; i < openPoints.size();) {
-                if (openPoints.get(i).distanceToTarget == 1){
+                PathPoint pt = openPoints.get(i);
+                if (pt.distanceToTarget == 1){
                     movementFound = true;
-                    movementOptions.add(openPoints.get(i).pos);
-                    gi.getPathTestLayer().editLayer(openPoints.get(i).pos, new SpecialText(' ', Color.WHITE, new Color(55, 255, 255, 150)));
+                    movementOptions.add(pt.pos);
+                    gi.getPathTestLayer().editLayer(pt.pos, new SpecialText(' ', Color.WHITE, new Color(55, 255, 255, 150)));
                     i++;
-                } else if (openPoints.get(i).distanceToTarget == lowestDistance){ //Prioritize the points that are closest to the target position.
-                    processedPoints.add(openPoints.get(i));
-                    attemptNextPoint(openPoints.get(i).pos.add(new Coordinate(1, 0)), getLocation());
-                    attemptNextPoint(openPoints.get(i).pos.add(new Coordinate(0, 1)), getLocation());
-                    attemptNextPoint(openPoints.get(i).pos.add(new Coordinate(-1, 0)), getLocation());
-                    attemptNextPoint(openPoints.get(i).pos.add(new Coordinate(0, -1)), getLocation());
+                } else if (pt.distanceToTarget == lowestDistance){ //Prioritize the points that are closest to the target position.
+                    processedPoints.add(pt);
+                    attemptNextPoint(pt.pos.add(new Coordinate(1, 0)), getLocation(), pt);
+                    attemptNextPoint(pt.pos.add(new Coordinate(0, 1)), getLocation(), pt);
+                    attemptNextPoint(pt.pos.add(new Coordinate(-1, 0)), getLocation(), pt);
+                    attemptNextPoint(pt.pos.add(new Coordinate(0, -1)), getLocation(), pt);
                     openPoints.remove(i);
                 } else {
                     i++;
                 }
             }
         }
-        turnSleep(500);
         if (movementOptions.size() == 1) teleport(movementOptions.get(0));
         if (movementOptions.size() > 1) {
             Random random = new Random();
@@ -71,11 +71,11 @@ public class NewPathfinder extends BasicEnemy implements Serializable {
         nextPoints.clear();
     }
 
-    private void attemptNextPoint(Coordinate pos, Coordinate endPos){
-        PathPoint nextPoint = new PathPoint(pos, endPos.stepDistance(pos));
-        if (gi.isSpaceAvailable(pos, TagRegistry.NO_PATHING) && !nextPoints.contains(nextPoint) && !processedPoints.contains(nextPoint)){
+    private void attemptNextPoint(Coordinate pos, Coordinate endPos, PathPoint source){
+        PathPoint nextPoint = new PathPoint(pos, endPos.stepDistance(pos), source.generation + 1);
+        if (gi.isSpaceAvailable(pos, TagRegistry.NO_PATHING) && !nextPoints.contains(nextPoint) && !processedPoints.contains(nextPoint) && !openPoints.contains(nextPoint)){
             nextPoints.add(nextPoint);
-            gi.getPathTestLayer().editLayer(pos, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 150)));
+            gi.getPathTestLayer().editLayer(pos, new SpecialText(' ', Color.WHITE, testColors[nextPoint.generation % 9]));
         }
     }
 
@@ -84,15 +84,15 @@ public class NewPathfinder extends BasicEnemy implements Serializable {
     private transient ArrayList<PathPoint> nextPoints = new ArrayList<>(); //The next set of points to check.
 
     private Color[] testColors = {
-            new Color(100, 50, 50, 50),
-            new Color(99, 80, 50, 50),
-            new Color(87, 97, 49, 50),
-            new Color(59, 97, 49, 50),
-            new Color(49, 97, 68, 50),
-            new Color(49, 97, 97, 50),
-            new Color(49, 68, 97, 50),
-            new Color(60, 49, 97, 50),
-            new Color(87, 49, 97, 50)
+            new Color(100, 50, 50, 150),
+            new Color(99, 80, 50, 150),
+            new Color(87, 97, 49, 150),
+            new Color(59, 97, 49, 150),
+            new Color(49, 97, 68, 150),
+            new Color(49, 97, 97, 150),
+            new Color(49, 68, 97, 150),
+            new Color(60, 49, 97, 150),
+            new Color(87, 49, 97, 150)
     };
 
     private class PathPoint {
@@ -101,9 +101,10 @@ public class NewPathfinder extends BasicEnemy implements Serializable {
         int distanceToTarget;
         int generation;
 
-        private PathPoint(Coordinate loc, int dist){
+        private PathPoint(Coordinate loc, int dist, int g){
             pos = loc;
             distanceToTarget = dist;
+            generation = g;
         }
 
         @Override
