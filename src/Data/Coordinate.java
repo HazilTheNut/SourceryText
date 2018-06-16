@@ -87,7 +87,7 @@ public class Coordinate implements Serializable {
     /**
      * If a square was centered on this coordinate, how large would it have to be to include the other point into the square's interior?
      * @param other The coordinate to include into this hypothetical square
-     * @return The "box distance"
+     * @return The "box distance" (1/2 the width of the square, -1)
      */
     public int boxDistance(Coordinate other){
         return Math.max(Math.abs(getX() - other.getX()), Math.abs(getY() - other.getY()));
@@ -100,7 +100,7 @@ public class Coordinate implements Serializable {
      * @return The sqrt(dx^2 + dy^2) distance we all know and love
      */
     public int hypDistance(Coordinate other){
-        return (int)Math.sqrt(Math.pow(getX() - other.getX(), 2) + Math.pow(getX() - other.getX(), 2));
+        return (int)Math.sqrt(Math.pow(getX() - other.getX(), 2) + Math.pow(getY() - other.getY(), 2));
     }
 
     @Override

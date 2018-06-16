@@ -15,7 +15,7 @@ public class RangeTag extends Tag{
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    public int range;
+    private int range;
 
     public RangeTag(int range){
         this.range = range;
@@ -25,4 +25,6 @@ public class RangeTag extends Tag{
     public int getRange() {
         return range;
     }
+
+    public static final int RANGE_DEFAULT = 15;
 }

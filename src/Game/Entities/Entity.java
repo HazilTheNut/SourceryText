@@ -280,7 +280,7 @@ public class Entity extends TagHolder implements Serializable {
         updateSprite();
     }
 
-    boolean shouldDoAction(){
+    protected boolean shouldDoAction(){
         TagEvent actionEvent = new TagEvent(0, true, this, null, gi);
         for (Tag tag : getTags()){
             tag.onEntityAction(actionEvent);

@@ -1,16 +1,9 @@
 package Game.Entities;
 
-/**
- * Created by Jared on 3/28/2018.
- */
-public class TargetDummy extends CombatEntity{
+public class TargetDummy extends BasicEnemy {
 
-    /*
-    * TODO: Delete this class
-    * */
+    @Override
+    public void onTurn() {
 
-    public TargetDummy(){
-        setMaxHealth(500);
     }
-
 }

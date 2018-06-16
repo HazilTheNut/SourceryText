@@ -1,13 +1,18 @@
 package Game.Entities;
 
 import Data.Coordinate;
+import Data.EntityArg;
 import Data.EntityStruct;
 import Engine.LayerManager;
+import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.GameInstance;
 import Game.Item;
+import Game.Projectile;
 import Game.Registries.TagRegistry;
+import Game.Tags.RangeTag;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -26,6 +31,10 @@ public class BasicEnemy extends CombatEntity {
      * > Switch weapons when they break
      * > Alert nearby entities if they spot the Player
      *
+     * BasicEnemies are designed to attack in groups, so the following behaviors exist:
+     * > If an enemy spots the player, they will alert nearby BasicEnemies to attack the player
+     * > The GameInstance ignores solid entities when calculating the path-finding map. This means even if an enemy blocks a path to the player BasicEnemies will keep approaching the player.
+     *
      * TODO: Operate Ranged Weapons
      */
 
@@ -34,12 +43,29 @@ public class BasicEnemy extends CombatEntity {
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
         pickNewWeapon();
+        detectRange = readIntArg(searchForArg(entityStruct.getArgs(), "detectRange"), detectRange);
+        alertRadius = readIntArg(searchForArg(entityStruct.getArgs(), "alertRadius"), alertRadius);
     }
 
-    protected int detectRange = 15;
-    protected int alertRadius = 5;
+    private int detectRange = 15;
+    private int alertRadius = 5;
 
     public CombatEntity target;
+
+    //For Ranged Enemies
+    private Projectile readyArrow;
+    private static final int RAYCAST_CLEAR  = 0;
+    private static final int RAYCAST_ENTITY = 1;
+    private static final int RAYCAST_WALL   = 2;
+    private boolean clockwiseOrbit = false; //"Orbiting" occurs when a friendly CombatEntity is in between this and the target.
+
+    @Override
+    public ArrayList<EntityArg> generateArgs() {
+        ArrayList<EntityArg> args = super.generateArgs();
+        args.add(new EntityArg("detectRange",String.valueOf(detectRange)));
+        args.add(new EntityArg("alertRadius",String.valueOf(alertRadius)));
+        return args;
+    }
 
     @Override
     public void onTurn() {
@@ -48,13 +74,11 @@ public class BasicEnemy extends CombatEntity {
             target = gi.getPlayer();
             alertNearbyEntities(); //Let everyone know
         }
-
         if (target != null) {
-            if (targetWithinAttackRange()) { //Can I attack?
-                doWeaponAttack(target.getLocation()); //Attack!
-            } else if (target.getLocation().stepDistance(getLocation()) <= detectRange * 2){ //Is it close?
-                pathToPlayer(); //Get to it!
-            }
+            if (isRanged())
+                doRangedBehavior();
+            else
+                doMeleeBehavior();
         }
         super.onTurn();
     }
@@ -75,10 +99,75 @@ public class BasicEnemy extends CombatEntity {
         if (target == null) //Standing idle / no target?
             target = gi.getPlayer(); //Target the player
         alertNearbyEntities();
+        pickNewWeapon();
     }
 
     public void setTarget(CombatEntity target) {
         this.target = target;
+    }
+
+    private boolean isRanged(){
+        return getWeapon().hasTag(TagRegistry.WEAPON_BOW);
+    }
+
+    private void doMeleeBehavior(){
+        if (targetWithinAttackRange()) { //Can I attack?
+            doWeaponAttack(target.getLocation()); //Attack!
+        } else if (target.getLocation().stepDistance(getLocation()) <= detectRange * 2){ //Is it close?
+            pathToPlayer(); //Get to it!
+        }
+    }
+
+    private void doRangedBehavior(){
+        /*
+        PSEUDO-CODE:
+
+        if (!arrowReady){
+            if (withinAttackRange()) {
+                Raycast raycast = raycastToPlayer();
+                if (raycast.wallExists) {
+                    pathToPlayer();
+                } else if (raycast.enemyExists){
+                    moveTangentToPlayerLine():
+                } else {
+                    readyArrow();
+                }
+            } else {
+                pathToPlayer();
+            }
+        } else {
+            shootAtPlayer();
+        }
+         */
+        if (readyArrow != null) { //Test for an arrow ready to fire
+            RangeTag rangeTag = (RangeTag)weapon.getTag(TagRegistry.RANGE_START);
+            if (rangeTag != null) {
+                readyArrow.launchProjectile(rangeTag.getRange(), gi);
+            } else {
+                readyArrow.launchProjectile(RangeTag.RANGE_DEFAULT, gi);
+            }
+            readyArrow = null;
+        } else if (targetWithinAttackRange()) { //Otherwise, do normal business
+            switch (raycastToTarget()){
+                case RAYCAST_CLEAR: //No obstacle between enemy and target
+                    doWeaponAttack(target.getLocation());
+                    break;
+                case RAYCAST_WALL: //A wall tile exists between enemy and target
+                    pathToPlayer();
+                    break;
+                case RAYCAST_ENTITY:
+                    moveTangentToTarget();
+                    break;
+            }
+        } else if (target.getLocation().stepDistance(getLocation()) <= detectRange * 2){
+            pathToPlayer();
+        }
+    }
+
+    @Override
+    protected void fireArrowProjectile(Projectile arrow) {
+        doYellowFlash();
+        readyArrow = arrow;
     }
 
     /**
@@ -89,7 +178,7 @@ public class BasicEnemy extends CombatEntity {
      */
     private void pickNewWeapon(){
         //Biases; The higher the number, the more valuable it is
-        final double MULT_RANGED = 3;
+        final double MULT_RANGED = (target != null && target.getLocation().boxDistance(getLocation()) <= 1) ? 0 : 3;
         final double MULT_SWEEP = 0.75; //Larger area of attack means accidentally hurting other enemies, so it devalues for enemies.
         final double MULT_THRUST = 1.5;
         final double MULT_FIRE = 1.5;
@@ -105,6 +194,7 @@ public class BasicEnemy extends CombatEntity {
             if (item.hasTag(TagRegistry.ON_FIRE))       value *= MULT_FIRE;
             if (item.hasTag(TagRegistry.FLAME_ENCHANT)) value *= MULT_FIRE;
             if (item.hasTag(TagRegistry.FROST_ENCHANT)) value *= MULT_ICE;
+            if (item.hasTag(TagRegistry.WEAPON_BOW))    value *= MULT_RANGED;
             if (value > topScore){
                 topScore = value;
                 bestItem = item;
@@ -127,6 +217,13 @@ public class BasicEnemy extends CombatEntity {
                 int dx = Math.abs(target.getLocation().getX() - getLocation().getX());
                 int dy = Math.abs(target.getLocation().getY() - getLocation().getY());
                 return dx == 0 || dy == 0 || dy / dx == 1; //if the slopes are vertical, horizontal, or 45 degrees, that must be valid for attacking.
+            }
+        } else if (weapon.hasTag(TagRegistry.WEAPON_BOW)){ //Bows get a special treatment
+            RangeTag rangeTag = (RangeTag)weapon.getTag(TagRegistry.RANGE_START);
+            if (rangeTag != null){
+                return target.getLocation().hypDistance(getLocation()) <= rangeTag.getRange();
+            } else {
+                return target.getLocation().hypDistance(getLocation()) <= RangeTag.RANGE_DEFAULT;
             }
         }
         return false;
@@ -153,9 +250,46 @@ public class BasicEnemy extends CombatEntity {
                 }
             }
         }
+        //Move in a random fashion if possible, in order to be harder to hit with an arrow
         if (candidateLocations.size() > 0) {
             Random random = new Random();
             teleport(candidateLocations.get(random.nextInt(candidateLocations.size())));
         }
+    }
+
+    private int raycastToTarget(){
+        if (target == null) return -1;
+        Coordinate diff = target.getLocation().subtract(getLocation());
+        double angle = Math.atan2(diff.getY(), diff.getX());
+        double dx = Math.cos(angle);
+        double dy = Math.sin(angle);
+        double dist = (target.getLocation().hypDistance(getLocation()));
+        boolean friendExists = false;
+        for (int i = 1; i <= dist; i++){
+            Coordinate pos = getLocation().add(new Coordinate((int)Math.round(i*dx), (int)Math.round(i*dy)));
+            gi.getPathTestLayer().editLayer(pos, new SpecialText(' ', Color.WHITE, new Color(255, 30, 30, 150)));
+            if (gi.getCurrentLevel().getTileAt(pos).hasTag(TagRegistry.TILE_WALL)){
+                return RAYCAST_WALL;
+            } else if (gi.getCurrentLevel().getSolidEntityAt(pos) instanceof BasicEnemy){
+                friendExists = true;
+            }
+        }
+        DebugWindow.reportf(DebugWindow.GAME, "BasicEnemy.raycastToTarget", "diff : %1$s, dist = %2$f", diff, dist);
+        if (friendExists)
+            return RAYCAST_ENTITY;
+        else
+            return RAYCAST_CLEAR;
+    }
+
+    private void moveTangentToTarget(){
+        if (target == null) return;
+        Coordinate diff = target.getLocation().subtract(getLocation());
+        int div = (clockwiseOrbit) ? 2 : -2; //Flips direction of movement
+        double angle = Math.atan2(diff.getY(), diff.getX()) + (Math.PI / div);
+        Coordinate relativePos = new Coordinate((int)Math.round(Math.cos(angle)), (int)Math.round(Math.sin(angle)));
+        if (!gi.isSpaceAvailable(getLocation().add(relativePos), TagRegistry.NO_PATHING))
+            clockwiseOrbit = !clockwiseOrbit;
+        else
+            teleport(getLocation().add(relativePos));
     }
 }

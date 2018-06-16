@@ -151,6 +151,10 @@ public class GameMaster {
         return currentGameInstance;
     }
 
+    public GameMouseInput getMouseInput() {
+        return mouseInput;
+    }
+
     public GameMainMenu getMainMenu() {
         return mainMenu;
     }

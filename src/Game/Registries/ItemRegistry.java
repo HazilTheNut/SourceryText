@@ -63,10 +63,10 @@ public class ItemRegistry {
         registerItem(121, "War Spear",       7.5, TagRegistry.DAMAGE_START + 21, TagRegistry.WEAPON_THRUST);
         registerItem(122, "Defender Bow",    4.5, TagRegistry.DAMAGE_START + 14, TagRegistry.RANGE_START + 30, TagRegistry.WEAPON_BOW);
         //Tier 7 ~ The Voluminous Void
-        registerItem(123, "Plasma Axe",      8.5,  TagRegistry.DAMAGE_START + 35, TagRegistry.WEAPON_STRIKE,   TagRegistry.FLAME_ENCHANT);
-        registerItem(124, "Laser Sword",     5.5,  TagRegistry.DAMAGE_START + 30, TagRegistry.WEAPON_SWEEP,    TagRegistry.FLAME_ENCHANT);
-        registerItem(125, "Electro-Spear",   6.5,  TagRegistry.DAMAGE_START + 28, TagRegistry.WEAPON_THRUST);
-        registerItem(126, "Magnetic Bow",    4,    TagRegistry.DAMAGE_START + 18, TagRegistry.RANGE_START + 30, TagRegistry.WEAPON_BOW);
+        registerItem(123, "Chrome Axe",      8.5,  TagRegistry.DAMAGE_START + 35, TagRegistry.WEAPON_STRIKE);
+        registerItem(124, "Chrome Sword",    5.5,  TagRegistry.DAMAGE_START + 30, TagRegistry.WEAPON_SWEEP);
+        registerItem(125, "Chrome Spear",    6.5,  TagRegistry.DAMAGE_START + 28, TagRegistry.WEAPON_THRUST);
+        registerItem(126, "Chrome Bow",      4,    TagRegistry.DAMAGE_START + 18, TagRegistry.RANGE_START + 30, TagRegistry.WEAPON_BOW);
 
         //'Special' Weapons
         registerItem(102, "Flaming Axe",     5,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAME_ENCHANT);

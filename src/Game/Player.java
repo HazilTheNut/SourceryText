@@ -51,13 +51,10 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     private final Coordinate EAST     = new Coordinate(1, 0);
     private final Coordinate SOUTH    = new Coordinate(0, 1);
     private final Coordinate WEST     = new Coordinate(-1, 0);
-    private boolean[] activeMovements = {false, false, false, false}; //North, East, South, and West correspondingly
     private transient Thread movementThread;
     private final int MOVEMENT_INTERVAL = 125;
 
     private final SpecialText playerSprite = new SpecialText('@', new Color(223, 255, 214));
-    
-    private ArrayList<Integer> downKeyCodes = new ArrayList<>(); //KeyCodes of keys currently pressed down on the keyboard
 
     Player(GameInstance gameInstance){
 
@@ -220,12 +217,14 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         doYellowFlash();
         doEnemyTurn();
         turnSleep(100);
-        RangeTag rangeTag = (RangeTag)getWeapon().getTag(TagRegistry.RANGE_START);
-        if (rangeTag == null)
-            arrow.launchProjectile(25, gi);
-        else
-            arrow.launchProjectile(rangeTag.getRange(), gi);
-        getWeapon().decrementQty();
+        if (shouldDoAction()) {
+            RangeTag rangeTag = (RangeTag) getWeapon().getTag(TagRegistry.RANGE_START);
+            if (rangeTag == null)
+                arrow.launchProjectile(RangeTag.RANGE_DEFAULT, gi);
+            else
+                arrow.launchProjectile(rangeTag.getRange(), gi);
+            getWeapon().decrementQty();
+        }
     }
 
     /**
@@ -435,6 +434,9 @@ public class Player extends CombatEntity implements MouseInputReceiver{
             }
             if (actions.contains(InputMap.MOVE_WEST)) {
                 movementKeyUp(WEST);
+            }
+            if (gi.getGameMaster().getMouseInput().getDownInputs().size() == 0){
+                movementVector = new Coordinate(0, 0);
             }
         }
         return false;

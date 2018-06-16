@@ -382,6 +382,10 @@ public class GameInstance implements Serializable {
 
     private Layer pathTestLayer;
 
+    public Layer getPathTestLayer() {
+        return pathTestLayer;
+    }
+
     private void calculatePathing(){
         entityPathMap = new HashMap<>();
         pathTestLayer.transpose(new Layer(currentLevel.getBackdrop().getCols(), currentLevel.getBackdrop().getRows(), "", 0, 0, 0));
