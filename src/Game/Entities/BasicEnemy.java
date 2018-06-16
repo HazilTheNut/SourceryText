@@ -234,7 +234,7 @@ public class BasicEnemy extends CombatEntity {
         return detectRange * 2;
     }
 
-    private void pathToPlayer(){
+    protected void pathToPlayer(){
         int dist = gi.getEntityPlayerDistance(this); //Literally gets the index of the PathPoints array to search in
         ArrayList<Coordinate> candidateLocations = new ArrayList<>();
         DebugWindow.reportf(DebugWindow.GAME, "BasicEnemy.pathToPlayer", "Step dist: %1$d", dist);
