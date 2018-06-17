@@ -388,7 +388,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
                 openMenu();
             }
             if (actions.contains(InputMap.CAST_SPELL)){
-                castSpell(levelPos);
+                readySpell(levelPos);
             }
             if (actions.contains(InputMap.ATTACK)){
                 playerAttack(levelPos);
@@ -434,6 +434,9 @@ public class Player extends CombatEntity implements MouseInputReceiver{
             if (actions.contains(InputMap.MOVE_WEST)) {
                 movementKeyUp(WEST);
             }
+            if (actions.contains(InputMap.CAST_SPELL)){
+                castSpell(levelPos);
+            }
             if (gi.getGameMaster().getMouseInput().getDownInputs().size() == 0){
                 movementVector = new Coordinate(0, 0);
             }
@@ -467,8 +470,12 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         quickMenu.showMenu("Options", true);
     }
 
+    private void readySpell(Coordinate levelPos){
+        if (isSpellReady())
+            equippedSpell.readySpell(levelPos, this, getGameInstance(), magicPower);
+    }
+
     private void castSpell(Coordinate levelPos){
-        DebugWindow.reportf(DebugWindow.GAME, "Player.onMouseClick","Spell casted! %1$s", levelPos);
         Thread spellThread = new Thread(() -> {
             if (isSpellReady()) {
                 freeze(); //Stop player actions while casting spell
@@ -529,12 +536,13 @@ public class Player extends CombatEntity implements MouseInputReceiver{
                         }
                     }
 
-                    pathToPosition(levelPos, 75);
+                    pathToPosition(levelPos, 150); //Limit of 150 steps away to prevent the game hanging for too long.
                     gi.doEnemyTurn();
 
-                    int runTime = (int)((System.nanoTime() - loopStartTime) / 1000000);
+                    float runTime = (System.nanoTime() - loopStartTime) / 1000000f;
+                    DebugWindow.reportf(DebugWindow.STAGE, "Player.moveAndInteract", "Loop time: %1$fms", runTime);
                     try {
-                        Thread.sleep(Math.max((int)(MOVEMENT_INTERVAL * 0.9) - runTime, 0));
+                        Thread.sleep(Math.max((int)(MOVEMENT_INTERVAL * 0.9) - (int)runTime, 0));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -577,6 +585,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
 
     //Below is pathfinding stuff
 
+    /*
     protected void pathToPosition(Coordinate target, int range){
         currentPoints = new ArrayList<>();
         futurePoints = new ArrayList<>();
@@ -643,4 +652,5 @@ public class Player extends CombatEntity implements MouseInputReceiver{
             return String.format("PathPoint:[%1$d,%2$d,%3$d]", x, y, g);
         }
     }
+    */
 }

@@ -84,9 +84,10 @@ public class ItemRegistry {
         registerItem(1500, "Arrow",           0.03, TagRegistry.ARROW, TagRegistry.FLAMMABLE);
 
         //Upgrades
-        registerItem(1898, "Magic Potato", 0, TagRegistry.LEVEL_UP);
-        registerItem(1900, "Fire Scroll",  0, TagRegistry.LEARN_FIRE);
-        registerItem(1901, "Ice Scroll",   0, TagRegistry.LEARN_ICE);
+        registerItem(1898, "Magic Potato",     0, TagRegistry.LEVEL_UP);
+        registerItem(1900, "Fire Scroll",      0, TagRegistry.LEARN_FIRE);
+        registerItem(1901, "Ice Scroll",       0, TagRegistry.LEARN_ICE);
+        registerItem(1902, "Locumancy Scroll", 0, TagRegistry.LEARN_LOCUMANCY);
 
         //Keys
         registerItem(2000, "Key",          0, TagRegistry.KEY);

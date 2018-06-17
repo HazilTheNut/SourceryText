@@ -1,6 +1,7 @@
 package Game.Spells;
 
 import Data.Coordinate;
+import Data.SerializationVersion;
 import Engine.SpecialText;
 import Game.Entities.Entity;
 import Game.GameInstance;
@@ -13,6 +14,8 @@ import java.awt.*;
  * Created by Jared on 4/19/2018.
  */
 public class FireBoltSpell extends Spell {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private final SpecialText icon = new SpecialText('*', new Color(173, 105, 87), new Color(120, 65, 50, 20));
 

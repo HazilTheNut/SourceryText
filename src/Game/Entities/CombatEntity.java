@@ -13,6 +13,7 @@ import Game.Tags.Tag;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static Game.Debug.DebugWindow.GAME;
 
@@ -398,5 +399,132 @@ public class CombatEntity extends Entity {
     public void updateInventory() {
         super.updateInventory();
         if (!getItems().contains(weapon)) weapon = null;
+    }
+
+    //Path-finding stuff below
+
+    protected void pathToPosition(Coordinate loc){
+        pathToPosition(loc, Integer.MAX_VALUE);
+    }
+
+    protected void pathToPosition(Coordinate loc, int maxDistance) {
+        boolean movementFound = false;
+        long startTime = System.nanoTime();
+        processedPoints = new ArrayList<>();
+        openPoints = new ArrayList<>();
+        nextPoints = new ArrayList<>();
+        nextPoints.add(new PathPoint(loc, loc.stepDistance(getLocation()), 0));
+        ArrayList<Coordinate> movementOptions = new ArrayList<>();
+        gi.getPathTestLayer().clearLayer();
+        while(!movementFound){
+            //Rebuild the set of open points to process
+            updateOpenPoints();
+            if (openPoints.size() == 0) movementFound = true; //Should catch any situation where the target is inaccessible.
+            else {
+                //Start from end of list (with smallest distances)
+                int lowestDistance = openPoints.get(openPoints.size() - 1).distanceToTarget; //The list of 'open' points is already sorted by distance to the target position.
+                for (int i = 0; i < openPoints.size(); ) {
+                    PathPoint pt = openPoints.get(i);
+                    if (pt.distanceToTarget == 1) {
+                        movementFound = true;
+                        movementOptions.add(pt.pos);
+                        gi.getPathTestLayer().editLayer(pt.pos, new SpecialText(' ', Color.WHITE, new Color(55, 255, 255, 150)));
+                        i++;
+                    } else if (pt.distanceToTarget == lowestDistance) { //Prioritize the points that are closest to the target position.
+                        processedPoints.add(pt);
+                        attemptNextPoint(pt.pos.add(new Coordinate(1, 0)), getLocation(), pt, maxDistance);
+                        attemptNextPoint(pt.pos.add(new Coordinate(0, 1)), getLocation(), pt, maxDistance);
+                        attemptNextPoint(pt.pos.add(new Coordinate(-1, 0)), getLocation(), pt, maxDistance);
+                        attemptNextPoint(pt.pos.add(new Coordinate(0, -1)), getLocation(), pt, maxDistance);
+                        openPoints.remove(i);
+                    } else {
+                        i++;
+                    }
+                }
+                if (gi.getPathTestLayer().getVisible()) turnSleep(150);
+            }
+        }
+        if (gi.getPathTestLayer().getVisible()) turnSleep(350);
+        if (movementOptions.size() == 1) teleport(movementOptions.get(0));
+        if (movementOptions.size() > 1) {
+            Random random = new Random();
+            teleport(movementOptions.get(random.nextInt(movementOptions.size())));
+        }
+        DebugWindow.reportf(DebugWindow.STAGE, "pathToPlayer", "Time to solve: %1$fms", (System.nanoTime() - startTime) / 1000000f);
+    }
+
+    private void updateOpenPoints(){
+        for (PathPoint nextPoint : nextPoints){
+            boolean pointInserted = false;
+            for (int i = 0; i < openPoints.size(); i++) {
+                if (openPoints.get(i).distanceToTarget < nextPoint.distanceToTarget){ //The list of open points is sorted by proximity in order to easily check the closest ones.
+                    openPoints.add(i, nextPoint);
+                    pointInserted = true;
+                    i = openPoints.size(); //Ends this loop
+                }
+            }
+            if (!pointInserted) openPoints.add(nextPoint);
+        }
+        nextPoints.clear();
+    }
+
+    private void attemptNextPoint(Coordinate pos, Coordinate endPos, PathPoint source, int maxDistance){
+        PathPoint nextPoint = new PathPoint(pos, endPos.stepDistance(pos), source.generation + 1);
+        if (isLocationPathable(nextPoint, maxDistance)){
+            nextPoints.add(nextPoint);
+            gi.getPathTestLayer().editLayer(pos, new SpecialText(' ', Color.WHITE, testColors[nextPoint.distanceToTarget % testColors.length]));
+        }
+    }
+
+    private boolean isLocationPathable(PathPoint point, int maxDistance){
+        //Check if a point is already logged.
+        boolean unique = !nextPoints.contains(point) && !processedPoints.contains(point) && !openPoints.contains(point);
+        //Check if location is valid for placing a point
+        boolean nonSolid = !gi.getCurrentLevel().getBackdrop().isLayerLocInvalid(point.pos) && !gi.getCurrentLevel().getTileAt(point.pos).hasTag(TagRegistry.NO_PATHING);
+        Entity atLoc = gi.getCurrentLevel().getSolidEntityAt(point.pos);
+        nonSolid &= !(atLoc != null && atLoc.hasTag(TagRegistry.NO_PATHING));
+        //Check if the point can be on the optimal path.
+        boolean pointPossible = point.generation + point.distanceToTarget <= maxDistance;
+        if (!pointPossible && unique && nonSolid)
+            gi.getPathTestLayer().editLayer(point.pos, new SpecialText(' ', Color.WHITE, new Color(255, 50, 50, 150)));
+        return nonSolid && unique && pointPossible;
+    }
+
+    private transient ArrayList<PathPoint> processedPoints; //Points not to check.
+    private transient ArrayList<PathPoint> openPoints; //Points to check
+    private transient ArrayList<PathPoint> nextPoints; //The next set of points to check.
+
+    private Color[] testColors = {
+            new Color(100, 50, 50, 150),
+            new Color(99, 80, 50, 150),
+            new Color(87, 97, 49, 150),
+            new Color(59, 97, 49, 150),
+            new Color(49, 97, 68, 150),
+            new Color(49, 97, 97, 150),
+            new Color(49, 68, 97, 150),
+            new Color(60, 49, 97, 150),
+            new Color(87, 49, 97, 150)
+    };
+
+    private class PathPoint {
+
+        Coordinate pos;
+        int distanceToTarget;
+        int generation;
+
+        private PathPoint(Coordinate loc, int dist, int g){
+            pos = loc;
+            distanceToTarget = dist;
+            generation = g;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof PathPoint) {
+                PathPoint pathPoint = (PathPoint) obj;
+                return pathPoint.pos.equals(pos);
+            }
+            return false;
+        }
     }
 }

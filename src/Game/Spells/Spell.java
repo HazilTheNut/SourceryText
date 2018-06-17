@@ -16,7 +16,16 @@ public class Spell implements Serializable {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     /**
-     * Performs spell cast
+     * Occurs when the spell button is pressed
+     *
+     * @param targetLoc Target location for spell (aiming, etc.)
+     * @param spellCaster The one doing the spell casting
+     * @param gi The Game Instance
+     */
+    public void readySpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower){}
+
+    /**
+     * Performs spell cast, when the button is released
      *
      * @param targetLoc Target location for spell (aiming, etc.)
      * @param spellCaster The one doing the spell casting

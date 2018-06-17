@@ -27,6 +27,7 @@ public class NewPathfinder extends BasicEnemy implements Serializable {
         while(!movementFound){
             //Rebuild the set of open points to process
             updateOpenPoints();
+            if (openPoints.size() == 0) movementFound = true; //Should catch any situation where the target is inaccessible.
             //Start from end of list (with smallest distances)
             int lowestDistance = openPoints.get(openPoints.size()-1).distanceToTarget; //The list of 'open' points is already sorted by distance to the target position.
             for (int i = 0; i < openPoints.size();) {
@@ -47,7 +48,9 @@ public class NewPathfinder extends BasicEnemy implements Serializable {
                     i++;
                 }
             }
+            if (gi.getPathTestLayer().getVisible()) turnSleep(500);
         }
+        if (gi.getPathTestLayer().getVisible()) turnSleep(500);
         if (movementOptions.size() == 1) teleport(movementOptions.get(0));
         if (movementOptions.size() > 1) {
             Random random = new Random();
@@ -75,7 +78,7 @@ public class NewPathfinder extends BasicEnemy implements Serializable {
         PathPoint nextPoint = new PathPoint(pos, endPos.stepDistance(pos), source.generation + 1);
         if (gi.isSpaceAvailable(pos, TagRegistry.NO_PATHING) && !nextPoints.contains(nextPoint) && !processedPoints.contains(nextPoint) && !openPoints.contains(nextPoint)){
             nextPoints.add(nextPoint);
-            gi.getPathTestLayer().editLayer(pos, new SpecialText(' ', Color.WHITE, testColors[nextPoint.generation % 9]));
+            gi.getPathTestLayer().editLayer(pos, new SpecialText(' ', Color.WHITE, testColors[nextPoint.distanceToTarget % testColors.length]));
         }
     }
 

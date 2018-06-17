@@ -1,6 +1,7 @@
 package Game.Spells;
 
 import Data.Coordinate;
+import Data.SerializationVersion;
 import Engine.SpecialText;
 import Game.Entities.Entity;
 import Game.GameInstance;
@@ -13,6 +14,8 @@ import java.awt.*;
  * Created by Jared on 4/19/2018.
  */
 public class IceBoltSpell extends Spell {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private final SpecialText icon = new SpecialText('*', new Color(154, 181, 190), new Color(92, 114, 120, 20));
 

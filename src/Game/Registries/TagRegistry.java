@@ -39,6 +39,7 @@ public class TagRegistry {
     public final static int BURN_SLOW     = 3;
     public final static int FLAME_ENCHANT = 4;
     public final static int BURN_FOREVER  = 5;
+    public final static int IMMOVABLE     = 6;
 
     public final static int FROZEN        = 10;
     public final static int FROST_ENCHANT = 11;
@@ -54,9 +55,10 @@ public class TagRegistry {
     public final static int KEY           = 210;
     public final static int SPECIAL_ITEM  = 211;
 
-    public final static int LEVEL_UP      = 388;
-    public final static int LEARN_FIRE    = 390;
-    public final static int LEARN_ICE     = 391;
+    public final static int LEVEL_UP        = 388;
+    public final static int LEARN_FIRE      = 390;
+    public final static int LEARN_ICE       = 391;
+    public final static int LEARN_LOCUMANCY = 392;
 
     public final static int TILE_WALL     = 400;
     public final static int SAND          = 401;
@@ -78,6 +80,7 @@ public class TagRegistry {
         registerTag(BURN_FAST, "Fast Burning", BurnFastTag.class);
         registerTag(FLAME_ENCHANT, "Fire Enchantment", FlameEnchantTag.class);
         registerTag(BURN_FOREVER, "Burns Forever", BurnForeverTag.class);
+        registerTag(IMMOVABLE, "Immovable", ImmovableTag.class);
 
         registerTag(FROZEN, "Frozen", FrozenTag.class);
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);
@@ -96,13 +99,14 @@ public class TagRegistry {
         registerTag(LEVEL_UP, "Level up!", LevelUpTag.class);
         registerTag(LEARN_FIRE, "Teaches Fire Bolt", LearnFireBoltTag.class);
         registerTag(LEARN_ICE, "Teaches Ice Bolt", LearnIceBoltTag.class);
+        registerTag(LEARN_LOCUMANCY, "Teaches Locumancy", LearnLocumancyTag.class);
 
         //Tile related
         registerTag(TILE_WALL, "Wall", WallTag.class);
         registerTag(SAND, "Sand", SandTag.class);
         registerTag(SHALLOW_WATER, "Shallow Water", ShallowWaterTag.class);
         registerTag(DEEP_WATER,    "Deep Water", DeepWaterTag.class);
-        registerTag(NO_PATHING, "No Pathing!", NoPathingTag.class);
+        registerTag(NO_PATHING, "Impassable", NoPathingTag.class);
 
         //Registering stuff ends here
     }

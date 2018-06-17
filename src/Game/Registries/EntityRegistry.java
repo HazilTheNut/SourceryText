@@ -22,14 +22,14 @@ public class EntityRegistry {
         //Registering stuff starts here
 
         registerEntity(0,  "New Pathfinder", new SpecialText('P'),                                                       NewPathfinder.class);
-        registerEntity(1,  "Save Point",   new SpecialText('S', new Color(40, 225, 115), new Color(20, 100, 80, 40)),    SavePoint.class);
+        registerEntity(1,  "Save Point",   new SpecialText('S', new Color(40, 225, 115), new Color(20, 100, 80, 40)),    SavePoint.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(2,  "Basic Enemy",  new SpecialText('E', new Color(255, 130, 130), new Color(255, 180, 180, 15)), BasicEnemy.class, TagRegistry.FLAMMABLE);
-        registerEntity(3,  "Sign",         new SpecialText('S', new Color(110, 100, 250), new Color(55, 50, 125, 30)),   Sign.class);
-        registerEntity(4,  "Chest",        new SpecialText('C', new Color(245, 245, 175), new Color(175, 100,  35, 45)), Chest.class);
-        registerEntity(5,  "Door",         new SpecialText('-', new Color(143, 74, 17),   new Color(75, 45, 10, 50)),    Door.class);
-        registerEntity(6,  "Locked Door",  new SpecialText('-', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    LockedDoor.class);
+        registerEntity(3,  "Sign",         new SpecialText('S', new Color(110, 100, 250), new Color(55, 50, 125, 30)),   Sign.class, TagRegistry.NO_PATHING);
+        registerEntity(4,  "Chest",        new SpecialText('C', new Color(245, 245, 175), new Color(175, 100,  35, 45)), Chest.class, TagRegistry.NO_PATHING);
+        registerEntity(5,  "Door",         new SpecialText('-', new Color(143, 74, 17),   new Color(75, 45, 10, 50)),    Door.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
+        registerEntity(6,  "Locked Door",  new SpecialText('-', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    LockedDoor.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(LOOT_PILE, "Loot",  new SpecialText('%', new Color(191, 191, 75),  new Color(155, 155, 60, 15)),  LootPile.class);
-        registerEntity(8,  "One-Way Door", new SpecialText('x', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    OneWayDoor.class);
+        registerEntity(8,  "One-Way Door", new SpecialText('x', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    OneWayDoor.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
 
         //Registering stuff ends here
     }
