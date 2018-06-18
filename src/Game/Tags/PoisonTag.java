@@ -1,6 +1,7 @@
 package Game.Tags;
 
 import Data.SerializationVersion;
+import Game.Entities.Entity;
 import Game.Item;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
@@ -23,6 +24,9 @@ public class PoisonTag extends Tag{
      *
      * For All but Items:
      * > Deals 2 damage to owner of tag every turn.
+     *
+     * For Entities:
+     * > Requires the Entity to have a LivingTag for this to exist.
      */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
@@ -32,8 +36,8 @@ public class PoisonTag extends Tag{
 
     @Override
     public void onAddThis(TagEvent e) {
-        super.onAddThis(e);
         if (lifetime == 0) lifetime = LIFETIME_START;
+        if (e.getTarget() instanceof Entity && !e.getTarget().hasTag(TagRegistry.LIVING)) e.cancel();
     }
 
     @Override

@@ -73,6 +73,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         setName("Player");
 
         addTag(TagRegistry.FLAMMABLE, this);
+        addTag(TagRegistry.LIVING, this);
         initNoWeapon();
     }
 

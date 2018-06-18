@@ -26,6 +26,6 @@ public class VenomousTag extends Tag {
 
     @Override
     public Color getTagColor() {
-        return new Color(119, 255, 0);
+        return new Color(121, 226, 0);
     }
 }

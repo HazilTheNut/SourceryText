@@ -72,7 +72,7 @@ public class TagRegistry {
     public final static int DEEP_WATER    = 403;
     public final static int NO_PATHING    = 404; //Tag not found.
 
-    public final static int FLESH         = 600;
+    public final static int LIVING        = 600;
 
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
@@ -120,6 +120,9 @@ public class TagRegistry {
         registerTag(SHALLOW_WATER, "Shallow Water", ShallowWaterTag.class);
         registerTag(DEEP_WATER,    "Deep Water", DeepWaterTag.class);
         registerTag(NO_PATHING, "Impassable", NoPathingTag.class);
+
+        //Entity related
+        registerTag(LIVING, "Living", LivingTag.class);
 
         //Registering stuff ends here
     }
