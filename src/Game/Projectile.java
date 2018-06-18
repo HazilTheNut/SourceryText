@@ -34,7 +34,7 @@ public class Projectile extends TagHolder {
 
     private final double UNITS_PER_CYCLE = 0.9;
 
-    public Projectile(Entity creator, Coordinate target, SpecialText icon, LayerManager lm){
+    public Projectile(Entity creator, Coordinate target, SpecialText icon){
         source = creator;
         xpos = creator.getLocation().getX();
         ypos = creator.getLocation().getY();
@@ -46,7 +46,7 @@ public class Projectile extends TagHolder {
         iconLayer = new Layer(1, 1, creator.getLocation().toString() + target.toString() + icon.toString(), (int)xpos, (int)ypos, LayerImportances.ANIMATION);
         iconLayer.editLayer(0, 0, getIcon(icon));
         iconLayer.setVisible(false);
-        this.lm = lm;
+        lm = creator.getGameInstance().getLayerManager();
         lm.addLayer(iconLayer);
     }
 

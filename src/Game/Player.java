@@ -184,7 +184,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         super.receiveDamage(amount);
         hud.updateHUD();
         if (pathingThread != null && pathingThread.isAlive()) terminatePathing = true;
-        if (getHealth() <= 0) gi.getGameMaster().exitGame();
+        if (getHealth() <= 0) gi.getGameMaster().exitGameToMainMenu();
     }
 
     @Override

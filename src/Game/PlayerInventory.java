@@ -575,6 +575,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot", null);
             LootPile pile = (LootPile)player.getGameInstance().instantiateEntity(lootPileStruct, player.getLocation(), player.getGameInstance().getCurrentLevel());
             pile.onLevelEnter();
+            player.getGameInstance().addEntity(lootPileStruct, player.getLocation());
             otherInv.configure(PLACEMENT_TOP_RIGHT, name, pile, CONFIG_OTHER_EXCHANGE);
             otherInv.show();
             moveWholeItem(selected, playerInv.getOwner(), pile);

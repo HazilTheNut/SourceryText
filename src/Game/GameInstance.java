@@ -228,6 +228,7 @@ public class GameInstance implements Serializable {
 
     /**
      * Instantiates an entity into a level, running initialize() and retrieving data from EntityRegistry.
+     * Note: Unsafe, ConcurrentModificationExceptions are prone to occur.
      *
      * @param base The base EntityStruct to build the Entity from
      * @param pos The pos where the entity should wind up
@@ -280,6 +281,13 @@ public class GameInstance implements Serializable {
 
     public void removeEntity(Entity e){
         entityOperations.add(() -> currentLevel.removeEntity(e));
+    }
+
+    public void addEntity(EntityStruct entityStruct, Coordinate loc){
+        entityOperations.add(() -> {
+            Entity e = instantiateEntity(entityStruct, loc, currentLevel);
+            e.onLevelEnter();
+        });
     }
 
     public void establishMouseInput(){

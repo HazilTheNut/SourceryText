@@ -40,6 +40,9 @@ public class TagRegistry {
     public final static int FLAME_ENCHANT = 4;
     public final static int BURN_FOREVER  = 5;
     public final static int IMMOVABLE     = 6;
+    public final static int METALLIC      = 7;
+    public final static int SHARP         = 8; //TODO: Program bleeding
+    public final static int ELECTRIC      = 9;
 
     public final static int FROZEN        = 10;
     public final static int FROST_ENCHANT = 11;
@@ -54,6 +57,7 @@ public class TagRegistry {
     public final static int ARROW         = 205;
     public final static int KEY           = 210;
     public final static int SPECIAL_ITEM  = 211;
+    public final static int POISON_SOAKED = 220;
 
     public final static int LEVEL_UP        = 388;
     public final static int LEARN_FIRE      = 390;
@@ -65,6 +69,11 @@ public class TagRegistry {
     public final static int SHALLOW_WATER = 402;
     public final static int DEEP_WATER    = 403;
     public final static int NO_PATHING    = 404; //Tag not found.
+
+    public final static int ALIVE         = 600;
+    public final static int POISON        = 601; //TODO: Program poison
+    public final static int VENOMOUS      = 602;
+    public final static int BLEEDING      = 603;
 
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
@@ -81,6 +90,8 @@ public class TagRegistry {
         registerTag(FLAME_ENCHANT, "Fire Enchantment", FlameEnchantTag.class);
         registerTag(BURN_FOREVER, "Burns Forever", BurnForeverTag.class);
         registerTag(IMMOVABLE, "Immovable", ImmovableTag.class);
+        registerTag(METALLIC, "Metallic", MetallicTag.class);
+        registerTag(ELECTRIC, "Electric", ElectricTag.class);
 
         registerTag(FROZEN, "Frozen", FrozenTag.class);
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);

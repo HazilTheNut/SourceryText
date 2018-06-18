@@ -29,7 +29,7 @@ public class LocumancySpell extends Spell {
     @Override
     public void readySpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         validLocations = new ArrayList<>();
-        int range = 15 + (magicPower / 16);
+        int range = 5 + (magicPower / 16); //At 80 (max) magic power, range doubles.
         previewLayer = new Layer(range * 2 + 1, range * 2 + 1, "Locumancy_preview", targetLoc.getX() - range, targetLoc.getY() - range, LayerImportances.ANIMATION);
         ArrayList<Entity> atLoc = gi.getCurrentLevel().getEntitiesAt(targetLoc);
         toTransport = new ArrayList<>();

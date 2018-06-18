@@ -21,4 +21,9 @@ public class FlameEnchantTag extends OnFireTag {
     public void onAdd(TagEvent e) {
         if (e.getTarget().hasTag(TagRegistry.WET) || e.getTarget().hasTag(TagRegistry.FROZEN)) e.cancel();
     }
+
+    @Override
+    public String getName() {
+        return "Flame Enchantment";
+    }
 }

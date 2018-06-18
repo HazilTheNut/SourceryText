@@ -130,26 +130,6 @@ public class BasicEnemy extends CombatEntity {
     }
 
     private void doRangedBehavior(){
-        /*
-        PSEUDO-CODE:
-
-        if (!arrowReady){
-            if (withinAttackRange()) {
-                Raycast raycast = raycastToPlayer();
-                if (raycast.wallExists) {
-                    pathToPlayer();
-                } else if (raycast.enemyExists){
-                    moveTangentToPlayerLine():
-                } else {
-                    readyArrow();
-                }
-            } else {
-                pathToPlayer();
-            }
-        } else {
-            shootAtPlayer();
-        }
-         */
         if (readyArrow != null) { //Test for an arrow ready to fire
             RangeTag rangeTag = (RangeTag)weapon.getTag(TagRegistry.RANGE_START);
             if (rangeTag != null) {

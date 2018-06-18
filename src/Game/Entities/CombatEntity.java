@@ -38,6 +38,8 @@ public class CombatEntity extends Entity {
     protected int defaultMaxHealth = 10;
     protected int defaultStrength  = 1;
 
+    protected boolean isAlive = true;
+
     private static final int RIGHT = 0;
     private static final int UP_RIGHT = 45;
     private static final int UP = 90;
@@ -109,7 +111,8 @@ public class CombatEntity extends Entity {
 
     @Override
     public void receiveDamage(int amount) {
-        if (amount > 0 ) {
+        if (health > 0) isAlive = true;
+        if (amount > 0 && isAlive) {
             health -= amount;
             double percentage = Math.sqrt(Math.max(Math.min((double) amount / maxHealth, 1), 0.1));
             SpecialText originalSprite = getSprite().getSpecialText(0, 0);
@@ -380,12 +383,16 @@ public class CombatEntity extends Entity {
 
     @Override
     public void selfDestruct() {
-        EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot Pile", null);
-        for (Item item : getItems()){
-            lootPileStruct.addItem(item.getItemData());
+        if (isAlive) {
+            isAlive = false;
+            if (getItems().size() > 0) {
+                EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot Pile", null);
+                for (Item item : getItems()) {
+                    lootPileStruct.addItem(item.getItemData());
+                }
+                gi.addEntity(lootPileStruct, getLocation());
+            }
         }
-        Entity pile = gi.instantiateEntity(lootPileStruct, getLocation(), gi.getCurrentLevel());
-        pile.onLevelEnter();
         super.selfDestruct();
     }
 
