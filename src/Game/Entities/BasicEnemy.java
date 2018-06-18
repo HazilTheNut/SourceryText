@@ -6,13 +6,15 @@ import Data.EntityStruct;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
-import Game.*;
+import Game.GameInstance;
+import Game.Item;
+import Game.Projectile;
 import Game.Registries.TagRegistry;
+import Game.TagHolder;
 import Game.Tags.RangeTag;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Created by Jared on 4/3/2018.
@@ -242,28 +244,6 @@ public class BasicEnemy extends CombatEntity {
     public int getPathingSize() {
         DebugWindow.reportf(DebugWindow.STAGE, "Entity.getPathingSize", "\'%1$s\' : %2$d", getName(), detectRange);
         return detectRange * 2;
-    }
-
-    protected void pathToPlayer(){
-        int dist = gi.getEntityPlayerDistance(this); //Literally gets the index of the PathPoints array to search in
-        ArrayList<Coordinate> candidateLocations = new ArrayList<>();
-        DebugWindow.reportf(DebugWindow.GAME, "BasicEnemy.pathToPlayer", "Step dist: %1$d", dist);
-        if (dist > 0) { //Returns -1 if not in there, so better look out.
-            ArrayList pointList = gi.getPathPoints(dist - 1); //Points in (index - 1) are the points that are at minimum 1 step closer to the player
-            for (Object obj : pointList) { //It's trying to move 1 step, so better find that point
-                if (obj instanceof GameInstance.PathPoint) {
-                    GameInstance.PathPoint pathPoint = (GameInstance.PathPoint) obj;
-                    if (pathPoint.getLoc().stepDistance(getLocation()) == 1) {
-                        candidateLocations.add(pathPoint.getLoc());
-                    }
-                }
-            }
-        }
-        //Move in a random fashion if possible, in order to be harder to hit with an arrow
-        if (candidateLocations.size() > 0) {
-            Random random = new Random();
-            teleport(candidateLocations.get(random.nextInt(candidateLocations.size())));
-        }
     }
 
     private int raycastToTarget(){
