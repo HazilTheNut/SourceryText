@@ -408,6 +408,7 @@ public class CombatEntity extends Entity {
     }
 
     protected void pathToPosition(Coordinate loc, int maxDistance) {
+        defineTestColors();
         boolean movementFound = false;
         long startTime = System.nanoTime();
         processedPoints = new ArrayList<>();
@@ -436,7 +437,7 @@ public class CombatEntity extends Entity {
                         attemptNextPoint(pt.pos.add(new Coordinate(0, 1)), getLocation(), pt, maxDistance);
                         attemptNextPoint(pt.pos.add(new Coordinate(-1, 0)), getLocation(), pt, maxDistance);
                         attemptNextPoint(pt.pos.add(new Coordinate(0, -1)), getLocation(), pt, maxDistance);
-                        openPoints.remove(i);
+                        openPoints.remove(i); //Don't increment i because removing elements shifts things down.
                     } else {
                         i++;
                     }
@@ -494,17 +495,20 @@ public class CombatEntity extends Entity {
     private transient ArrayList<PathPoint> openPoints; //Points to check
     private transient ArrayList<PathPoint> nextPoints; //The next set of points to check.
 
-    private Color[] testColors = {
-            new Color(100, 50, 50, 150),
-            new Color(99, 80, 50, 150),
-            new Color(87, 97, 49, 150),
-            new Color(59, 97, 49, 150),
-            new Color(49, 97, 68, 150),
-            new Color(49, 97, 97, 150),
-            new Color(49, 68, 97, 150),
-            new Color(60, 49, 97, 150),
-            new Color(87, 49, 97, 150)
-    };
+    private Color[] testColors;
+
+    private void defineTestColors(){
+        testColors = new Color[9];
+        testColors[0] = new Color(100, 50, 50, 150);
+        testColors[1] = new Color(99, 80, 50, 150);
+        testColors[2] = new Color(87, 97, 49, 150);
+        testColors[3] = new Color(59, 97, 49, 150);
+        testColors[4] = new Color(49, 97, 68, 150);
+        testColors[5] = new Color(49, 97, 97, 150);
+        testColors[6] = new Color(49, 68, 97, 150);
+        testColors[7] = new Color(60, 49, 97, 150);
+        testColors[8] =  new Color(87, 49, 97, 150);
+    }
 
     private class PathPoint {
 

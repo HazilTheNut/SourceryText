@@ -282,9 +282,7 @@ public class GameInstance implements Serializable {
     }
 
     public void removeEntity(Entity e){
-        entityOperations.add(() -> {
-            currentLevel.removeEntity(e);
-        });
+        entityOperations.add(() -> currentLevel.removeEntity(e));
     }
 
     public void establishMouseInput(){

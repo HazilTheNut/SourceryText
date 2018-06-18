@@ -83,10 +83,7 @@ public class OnFireTag extends Tag {
                 if (e.getSource() instanceof Tile) {
                     Tile source = (Tile) e.getSource();
                     Level level = e.getGameInstance().getCurrentLevel();
-                    spreadToTile(level, source.getLocation().add(new Coordinate(1, 0)), e.getSource());
-                    spreadToTile(level, source.getLocation().add(new Coordinate(-1, 0)), e.getSource());
-                    spreadToTile(level, source.getLocation().add(new Coordinate(0, 1)), e.getSource());
-                    spreadToTile(level, source.getLocation().add(new Coordinate(0, -1)), e.getSource());
+                    spread(source.getLocation(), e.getSource(), source.getLevel());
                     if (!burnForever) lifetime--;
                     if (lifetime <= 0) {
                         e.getSource().removeTag(TagRegistry.ON_FIRE);
@@ -103,10 +100,21 @@ public class OnFireTag extends Tag {
                         }
                     }
                 }
+                if (e.getSource() instanceof Entity) {
+                    Entity source = (Entity) e.getSource();
+                    spread(source.getLocation(), e.getSource(), e.getGameInstance().getCurrentLevel());
+                }
             } else {
                 shouldSpread = true;
             }
         });
+    }
+    
+    private void spread(Coordinate seed, TagHolder source, Level level){
+        spreadToTile(level, seed.add(new Coordinate(1, 0)), source);
+        spreadToTile(level, seed.add(new Coordinate(-1, 0)), source);
+        spreadToTile(level, seed.add(new Coordinate(0, 1)), source);
+        spreadToTile(level, seed.add(new Coordinate(0, -1)), source);
     }
 
     @Override
