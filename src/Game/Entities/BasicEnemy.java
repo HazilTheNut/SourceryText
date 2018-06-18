@@ -69,6 +69,7 @@ public class BasicEnemy extends CombatEntity {
     @Override
     public void onTurn() {
         if (weapon == null && getItems().size() > 0) pickNewWeapon(); //No Weapon? Try picking new ones if there's something in the inventory
+        if (target != null && target.getHealth() <= 0) target = null;
         if (target == null && gi.getPlayer().getLocation().stepDistance(getLocation()) <= detectRange){ //Target player if nearby and not already targeting something
             target = gi.getPlayer();
             alertNearbyEntities(); //Let everyone know
@@ -94,15 +95,24 @@ public class BasicEnemy extends CombatEntity {
     @Override
     public void onReceiveDamage(int amount, TagHolder source, GameInstance gi) {
         super.onReceiveDamage(amount, source, gi);
-        if (target == null && source instanceof Player) {
-            target = (Player)source; //Target the source of the damage
+        if (source instanceof Projectile) {
+            Projectile projectile = (Projectile) source;
+            if (projectile.getSource() instanceof CombatEntity) {
+                CombatEntity projectileSource = (CombatEntity) projectile.getSource();
+                setTarget(projectileSource);
+                alertNearbyEntities();
+            }
+        }
+        if (source instanceof CombatEntity) {
+            setTarget((CombatEntity)source); //Target the source of the damage
             alertNearbyEntities();
         }
         pickNewWeapon();
     }
 
     public void setTarget(CombatEntity target) {
-        this.target = target;
+        if (!target.equals(this))
+            this.target = target;
     }
 
     private boolean isRanged(){
@@ -113,7 +123,7 @@ public class BasicEnemy extends CombatEntity {
         if (targetWithinAttackRange()) { //Can I attack?
             doWeaponAttack(target.getLocation()); //Attack!
         } else if (target.getLocation().stepDistance(getLocation()) <= detectRange * 2){ //Is it close?
-            pathToPlayer(); //Get to it!
+            pathToPosition(target.getLocation(), getPathingSize()); //Get to it!
         }
     }
 
@@ -152,14 +162,14 @@ public class BasicEnemy extends CombatEntity {
                     doWeaponAttack(target.getLocation());
                     break;
                 case RAYCAST_WALL: //A wall tile exists between enemy and target
-                    pathToPlayer();
+                    pathToPosition(target.getLocation(), getPathingSize());
                     break;
                 case RAYCAST_ENTITY:
                     moveTangentToTarget();
                     break;
             }
         } else if (target.getLocation().stepDistance(getLocation()) <= detectRange * 2){
-            pathToPlayer();
+            pathToPosition(target.getLocation(), getPathingSize());
         }
     }
 

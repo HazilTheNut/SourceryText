@@ -140,4 +140,8 @@ public class Projectile extends TagHolder {
             DebugWindow.reportf(DebugWindow.GAME, "Projectile.sleep","Error caught: " + e.getMessage());
         }
     }
+
+    public Entity getSource() {
+        return source;
+    }
 }
