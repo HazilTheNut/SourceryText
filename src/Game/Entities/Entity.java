@@ -276,8 +276,8 @@ public class Entity extends TagHolder implements Serializable {
     }
 
     @Override
-    public void addTag(int tagID, TagHolder source) {
-        super.addTag(tagID, source);
+    public void addTag(Tag tag, TagHolder source) {
+        super.addTag(tag, source);
         updateSprite();
     }
 

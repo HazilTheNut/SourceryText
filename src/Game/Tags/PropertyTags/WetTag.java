@@ -4,6 +4,7 @@ import Data.SerializationVersion;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
+import Game.Item;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
@@ -27,7 +28,6 @@ public class WetTag extends Tag {
      *
      * For Entities:
      *  > Dries off after a certain number of turns.
-     *  > Timer starts and refreshes when the Entity steps through wet Tiles.
      */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
@@ -38,7 +38,7 @@ public class WetTag extends Tag {
 
     @Override
     public void onAddThis(TagEvent e) {
-        if (e.getTarget() instanceof Entity){
+        if (e.getTarget() instanceof Entity || e.getTarget() instanceof Item){
             drying = true;
             lifetime = LIFETIME_START;
         } else if (e.getTarget() instanceof Tile){

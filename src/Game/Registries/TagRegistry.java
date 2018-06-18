@@ -41,13 +41,16 @@ public class TagRegistry {
     public final static int BURN_FOREVER  = 5;
     public final static int IMMOVABLE     = 6;
     public final static int METALLIC      = 7;
-    public final static int SHARP         = 8; //TODO: Program bleeding
+    public final static int SHARP         = 8;
     public final static int ELECTRIC      = 9;
 
     public final static int FROZEN        = 10;
     public final static int FROST_ENCHANT = 11;
     public final static int WET           = 12;
     public final static int NO_REFREEZE   = 13;
+
+    public final static int POISON        = 20; //TODO: Program poison
+    public final static int VENOMOUS      = 21;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -57,7 +60,6 @@ public class TagRegistry {
     public final static int ARROW         = 205;
     public final static int KEY           = 210;
     public final static int SPECIAL_ITEM  = 211;
-    public final static int POISON_SOAKED = 220;
 
     public final static int LEVEL_UP        = 388;
     public final static int LEARN_FIRE      = 390;
@@ -70,10 +72,7 @@ public class TagRegistry {
     public final static int DEEP_WATER    = 403;
     public final static int NO_PATHING    = 404; //Tag not found.
 
-    public final static int ALIVE         = 600;
-    public final static int POISON        = 601; //TODO: Program poison
-    public final static int VENOMOUS      = 602;
-    public final static int BLEEDING      = 603;
+    public final static int FLESH         = 600;
 
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
@@ -91,7 +90,10 @@ public class TagRegistry {
         registerTag(BURN_FOREVER, "Burns Forever", BurnForeverTag.class);
         registerTag(IMMOVABLE, "Immovable", ImmovableTag.class);
         registerTag(METALLIC, "Metallic", MetallicTag.class);
+        registerTag(SHARP, "Sharp", SharpTag.class);
         registerTag(ELECTRIC, "Electric", ElectricTag.class);
+        registerTag(POISON, "Poison", PoisonTag.class);
+        registerTag(VENOMOUS, "Venomous", VenomousTag.class);
 
         registerTag(FROZEN, "Frozen", FrozenTag.class);
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);

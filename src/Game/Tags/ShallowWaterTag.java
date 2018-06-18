@@ -21,10 +21,13 @@ public class ShallowWaterTag extends SplashySurface {
     /**
      * ShallowWaterTag:
      *
-     * The Tag that makes Tiles splashy.
+     * The Tag that makes Tiles splashy, in a watery way.
      *
      * For Tiles:
      *  > Creates splash animation when Entities step off of the Tile.
+     *
+     * For All TagHolders:
+     * > Transmits WetTag to those in contact with it.
      */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;

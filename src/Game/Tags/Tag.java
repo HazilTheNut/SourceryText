@@ -80,7 +80,7 @@ public class Tag implements Serializable {
 
     //Ran every turn
     //Source: this
-    //Target: this
+    //Target: this. If this is a Tile, then it is instead the solid entity atop this Tile (can be null)
     public void onTurn(TagEvent e){}
 
     //Ran whenever two TagHolders come in physical contact with each other
@@ -98,7 +98,7 @@ public class Tag implements Serializable {
     //Target: this
     public void onMove(TagEvent e){}
 
-    //Ran when en Entity tries do an action that 'takes up a turn'.
+    //Ran when en Entity tries do an action that 'takes up a turn'. Cancel to prevent the action from happening.
     //Source: this
     //Target: null
     public void onEntityAction(TagEvent e){}
