@@ -145,4 +145,8 @@ public class SpellMenu implements Serializable {
         }
         return isShowing;
     }
+
+    public boolean isShowing() {
+        return isShowing;
+    }
 }

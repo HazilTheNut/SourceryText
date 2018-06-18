@@ -29,24 +29,34 @@ public class LocumancySpell extends Spell {
     @Override
     public void readySpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         validLocations = new ArrayList<>();
-        int range = 7 + (magicPower / 16);
+        int range = 15 + (magicPower / 16);
         previewLayer = new Layer(range * 2 + 1, range * 2 + 1, "Locumancy_preview", targetLoc.getX() - range, targetLoc.getY() - range, LayerImportances.ANIMATION);
         ArrayList<Entity> atLoc = gi.getCurrentLevel().getEntitiesAt(targetLoc);
         toTransport = new ArrayList<>();
         for (Entity e : atLoc) if (!e.hasTag(TagRegistry.IMMOVABLE)) toTransport.add(e);
         if (toTransport.size() > 0) {
             //Draw the diamond-shape
-            for (int x = -1 * range; x <= range; x++) {
-                int height = range - Math.abs(x);
-                for (int y = -1 * height; y <= height; y++) {
-                    Coordinate localPos = new Coordinate(x, y);
-                    if (gi.isSpaceAvailable(targetLoc.add(localPos),TagRegistry.NO_PATHING)) {
-                        validLocations.add(targetLoc.add(localPos));
-                        previewLayer.editLayer(new Coordinate(x + range, y + range), new SpecialText(' ', Color.WHITE, new Color(157, 0, 255, 100)));
-                    }
-                }
+            spreadPoints(targetLoc, gi, targetLoc, range);
+            for (int i = 0; i < validLocations.size();) {
+                spreadPoints(validLocations.get(i), gi, targetLoc, range);
+                i++; //You laugh, but this gets IntelliJ to shut up about using a foreach loop, which won't work.
             }
             gi.getLayerManager().addLayer(previewLayer);
+        }
+    }
+
+    private void spreadPoints(Coordinate seed, GameInstance gi, Coordinate startLoc, int range){
+        attemptPoint(seed.add(new Coordinate(1, 0)), gi, startLoc, range);
+        attemptPoint(seed.add(new Coordinate(0, 1)), gi, startLoc, range);
+        attemptPoint(seed.add(new Coordinate(0, -1)), gi, startLoc, range);
+        attemptPoint(seed.add(new Coordinate(-1, 0)), gi, startLoc, range);
+    }
+
+    private void attemptPoint(Coordinate loc, GameInstance gi, Coordinate startLoc, int range){
+        if (gi.isSpaceAvailable(loc, TagRegistry.NO_PATHING) && loc.stepDistance(startLoc) <= range && !validLocations.contains(loc)){
+            validLocations.add(loc);
+            Coordinate layerLoc = loc.subtract(startLoc).add(new Coordinate(previewLayer.getCols(), previewLayer.getRows()).multiply(0.5));
+            previewLayer.editLayer(layerLoc, new SpecialText(' ', Color.WHITE, new Color(157, 0, 255, 100)));
         }
     }
 

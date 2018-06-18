@@ -247,6 +247,7 @@ public class HUD implements MouseInputReceiver, Serializable {
             else
                 player.getInv().getPlayerInv().show();
             updateHUD();
+            return true;
         }
         return player.getSpells().size() > 0 && spellMenu.onMouseClick(screenPos);
     }
@@ -258,11 +259,11 @@ public class HUD implements MouseInputReceiver, Serializable {
 
     @Override
     public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
-        return false;
+        return (mousePos != null && mousePos.getY() == 0) || spellMenu.isShowing();
     }
 
     @Override
     public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
-        return false;
+        return (mousePos != null && mousePos.getY() == 0) || spellMenu.isShowing();
     }
 }
