@@ -61,6 +61,7 @@ public class Entity extends TagHolder implements Serializable {
      */
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance){
         gi = gameInstance;
+        uniqueID = gi.issueUID();
 
         simpleInit(entityStruct, pos);
         String defName = EntityRegistry.getEntityStruct(entityStruct.getEntityId()).getEntityName(); //Default name
@@ -78,7 +79,6 @@ public class Entity extends TagHolder implements Serializable {
             Item item = ItemRegistry.generateItem(struct.getItemId(), gameInstance).setQty(struct.getQty());
             addItem(item);
         }
-        uniqueID = gi.issueUID();
     }
 
     public boolean isSolid() { return true; }
@@ -116,8 +116,8 @@ public class Entity extends TagHolder implements Serializable {
         DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' - - -", getName());
     }
 
-    protected String createEntityLayerName(EntityStruct struct, Coordinate coordinate){
-        return String.format("%1$s [%2$d,%3$d]", struct.getEntityName(), coordinate.getX(), coordinate.getY());
+    private String createEntityLayerName(EntityStruct struct, Coordinate coordinate){
+        return String.format("%1$s:%4$d [%2$d,%3$d]", struct.getEntityName(), coordinate.getX(), coordinate.getY(), uniqueID);
     }
 
     public Coordinate getLocation(){ return location; }

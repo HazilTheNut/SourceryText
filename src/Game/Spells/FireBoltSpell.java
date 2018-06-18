@@ -30,7 +30,7 @@ public class FireBoltSpell extends Spell {
         fireBolt.addTag(TagRegistry.DAMAGE_START + calculateDamage(6, magicPower), spellCaster);
         fireBolt.addTag(TagRegistry.FLAMMABLE,        spellCaster);
         fireBolt.addTag(TagRegistry.ON_FIRE,          spellCaster);
-        fireBolt.launchProjectile(12, gi);
+        fireBolt.launchProjectile(12);
         return calculateCooldown(22, magicPower);
     }
 }

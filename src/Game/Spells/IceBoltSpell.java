@@ -29,7 +29,7 @@ public class IceBoltSpell extends Spell {
         Projectile fireBolt = new Projectile(spellCaster, targetLoc, icon);
         fireBolt.addTag(TagRegistry.DAMAGE_START + calculateDamage(10, magicPower), spellCaster);
         fireBolt.addTag(TagRegistry.FROST_ENCHANT,    spellCaster);
-        fireBolt.launchProjectile(14, gi);
+        fireBolt.launchProjectile(14);
         return calculateCooldown(25, magicPower);
     }
 }

@@ -133,9 +133,9 @@ public class BasicEnemy extends CombatEntity {
         if (readyArrow != null) { //Test for an arrow ready to fire
             RangeTag rangeTag = (RangeTag)weapon.getTag(TagRegistry.RANGE_START);
             if (rangeTag != null) {
-                readyArrow.launchProjectile(rangeTag.getRange(), gi);
+                readyArrow.launchProjectile(rangeTag.getRange());
             } else {
-                readyArrow.launchProjectile(RangeTag.RANGE_DEFAULT, gi);
+                readyArrow.launchProjectile(RangeTag.RANGE_DEFAULT);
             }
             readyArrow = null;
         } else if (targetWithinAttackRange()) { //Otherwise, do normal business

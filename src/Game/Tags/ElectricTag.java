@@ -1,12 +1,12 @@
 package Game.Tags;
 
+import Data.Coordinate;
 import Data.SerializationVersion;
 import Engine.SpecialText;
+import Game.*;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
-import Game.Projectile;
 import Game.Registries.TagRegistry;
-import Game.TagEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -15,31 +15,65 @@ public class ElectricTag extends Tag {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
+    public ElectricTag(){
+        blacklist = new ArrayList<>();
+    }
+
+    private transient ArrayList<Entity> blacklist;
+
     @Override
     public void onContact(TagEvent e) {
+        e.getTarget().onReceiveDamage(5, e.getSource(), e.getGameInstance());
+        Coordinate startLoc = null;
         if (e.getTarget() instanceof Entity) {
-            Entity target = (Entity) e.getTarget();
-            target.onReceiveDamage(5, e.getSource(), target.getGameInstance());
-            if (isConductive(target)) {
-                ArrayList<Entity> entities = target.getGameInstance().getCurrentLevel().getEntities();
-                for (Entity entity : entities) {
-                    if (entity.getLocation().hypDistance(target.getLocation()) <= 8) shootProjectileAt(target, entity);
-                }
-            }
+            startLoc = ((Entity) e.getTarget()).getLocation();
+        }
+        if (e.getTarget() instanceof Tile) {
+            startLoc = ((Tile) e.getTarget()).getLocation();
+        }
+        if (startLoc != null) {
+            if (isTagHolderConductive(e.getTarget()))
+                zapNearbyEntities(e.getGameInstance(), startLoc);
         }
     }
 
-    private void shootProjectileAt(Entity source, Entity target){
-        if (source != target) {
-            Projectile zapProj = new Projectile(source, target.getLocation(), new SpecialText('+', new Color(255, 255, 50), new Color(255, 255, 50, 50)));
-            zapProj.addTag(TagRegistry.DAMAGE_START + 5, source);
-            zapProj.launchProjectile(source.getLocation().hypDistance(target.getLocation()) + 5, source.getGameInstance());
+    private void zapNearbyEntities(GameInstance gi, Coordinate startLoc){
+        ArrayList<Entity> entities = gi.getCurrentLevel().getEntities();
+        for (Entity entity : entities) {
+            if (entity.getLocation().hypDistance(startLoc) <= 6) shootProjectileAt(startLoc, entity);
         }
     }
 
-    private boolean isConductive(Entity e){
-        return e.hasTag(TagRegistry.METALLIC) || (e instanceof CombatEntity && ((CombatEntity)e).getWeapon().hasTag(TagRegistry.METALLIC));
+    private void shootProjectileAt(Coordinate origin, Entity target){
+        if (isEntityConductive(target)) {
+            Projectile zapProj = new Projectile(origin, target.getLocation(), new SpecialText('+', new Color(255, 255, 50), new Color(255, 255, 50, 50)), target.getGameInstance());
+            zapProj.addTag(TagRegistry.DAMAGE_START + 5, null);
+            //Create ElectricTag and blacklist entities that cause the ElectricTag to spread backwards.
+            ElectricTag electricTag = (ElectricTag) TagRegistry.getTag(TagRegistry.ELECTRIC);
+            for (Entity e : blacklist) electricTag.addToBlacklist(e);
+            for (Entity e : target.getGameInstance().getCurrentLevel().getEntitiesAt(origin)) electricTag.addToBlacklist(e);
+            zapProj.addTag(electricTag, null);
+            //Launch the projectile
+            zapProj.launchProjectile(origin.hypDistance(target.getLocation()) + 5);
+        }
     }
+
+    private boolean isTagHolderConductive(TagHolder holder){
+        if (holder instanceof Entity) {
+            return isEntityConductive((Entity) holder);
+        }
+        return testConductivity(holder);
+    }
+
+    private boolean isEntityConductive(Entity e){
+        return (testConductivity(e) || (e instanceof CombatEntity && testConductivity( ((CombatEntity)e).getWeapon() ))) && !blacklist.contains(e);
+    }
+
+    private boolean testConductivity(TagHolder holder){
+        return holder.hasTag(TagRegistry.METALLIC) || holder.hasTag(TagRegistry.WET);
+    }
+
+    private void addToBlacklist(Entity e) { blacklist.add(e); }
 
     @Override
     public Color getTagColor() {

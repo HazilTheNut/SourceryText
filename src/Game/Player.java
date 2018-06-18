@@ -219,9 +219,9 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         if (shouldDoAction()) {
             RangeTag rangeTag = (RangeTag) getWeapon().getTag(TagRegistry.RANGE_START);
             if (rangeTag == null)
-                arrow.launchProjectile(RangeTag.RANGE_DEFAULT, gi);
+                arrow.launchProjectile(RangeTag.RANGE_DEFAULT);
             else
-                arrow.launchProjectile(rangeTag.getRange(), gi);
+                arrow.launchProjectile(rangeTag.getRange());
             getWeapon().decrementQty();
         }
     }
@@ -479,8 +479,13 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         Thread spellThread = new Thread(() -> {
             if (isSpellReady()) {
                 freeze(); //Stop player actions while casting spell
-                cooldowns.add(equippedSpell.castSpell(levelPos, this, getGameInstance(), magicPower));
-                gi.doEnemyTurn();
+                int cd = equippedSpell.castSpell(levelPos, this, getGameInstance(), magicPower);
+                if (cd > 0) {
+                    cooldowns.add(cd);
+                    gi.doEnemyTurn();
+                } else {
+                    unfreeze();
+                }
             }
         });
         spellThread.start();

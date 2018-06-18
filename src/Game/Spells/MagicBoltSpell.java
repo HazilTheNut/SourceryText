@@ -28,7 +28,7 @@ public class MagicBoltSpell extends Spell {
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         Projectile magicBolt = new Projectile(spellCaster, targetLoc, icon);
         magicBolt.addTag(TagRegistry.DAMAGE_START + calculateDamage(4, magicPower), spellCaster);
-        magicBolt.launchProjectile(25, gi);
+        magicBolt.launchProjectile(25);
         return calculateCooldown(15, magicPower);
     }
 }

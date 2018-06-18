@@ -138,14 +138,16 @@ public class CombatEntity extends Entity {
             turnSleep(75);
             swooshLayer.setVisible(false);
             Entity entity = getGameInstance().getCurrentLevel().getSolidEntityAt(loc);
+            TagHolder toContact = getGameInstance().getCurrentLevel().getTileAt(loc);
             if (entity instanceof CombatEntity) {
                 doAttackEvent((CombatEntity) entity);
-            } else {
-                if (getWeapon() != null)
-                    getWeapon().onContact(getGameInstance().getTileAt(loc), getGameInstance());
-                else
-                    onContact(getGameInstance().getTileAt(loc), getGameInstance());
+            } else if (entity != null) {
+                toContact = entity;
             }
+            if (getWeapon() != null)
+                    getWeapon().onContact(toContact, getGameInstance());
+                else
+                    onContact(toContact, getGameInstance());
         }
     }
 
