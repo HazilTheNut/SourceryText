@@ -116,7 +116,10 @@ public class Level implements Serializable {
         levelScripts.clear();
     }
 
-    public void addEntity(Entity e){ entities.add(e); }
+    public void addEntity(Entity e){
+        entities.add(e);
+        e.onContact(getTileAt(e.getLocation()), e.getGameInstance());
+    }
 
     public void removeEntity(Entity e){ entities.remove(e); }
 

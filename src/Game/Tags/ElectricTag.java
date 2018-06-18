@@ -45,7 +45,7 @@ public class ElectricTag extends Tag {
     }
 
     private void shootProjectileAt(Coordinate origin, Entity target){
-        if (isEntityConductive(target)) {
+        if (isEntityConductive(target) && target.isAlive()) {
             Projectile zapProj = new Projectile(origin, target.getLocation(), new SpecialText('+', new Color(255, 255, 50), new Color(255, 255, 50, 50)), target.getGameInstance());
             zapProj.addTag(TagRegistry.DAMAGE_START + 5, null);
             //Create ElectricTag and blacklist entities that cause the ElectricTag to spread backwards.

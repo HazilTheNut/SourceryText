@@ -32,7 +32,7 @@ public class WetTag extends Tag {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    private int LIFETIME_START = 20;
+    public static final int LIFETIME_START = 20;
     private int lifetime = LIFETIME_START;
     private boolean drying;
 
@@ -80,18 +80,11 @@ public class WetTag extends Tag {
     }
 
     @Override
-    public void onContact(TagEvent e) {
-        super.onContact(e);
-        if (e.getSource() instanceof Tile) {
-            if (!e.getTarget().hasTag(TagRegistry.WET))
-                e.getTarget().addTag(TagRegistry.WET, e.getSource());
-            else
-                ((WetTag)e.getTarget().getTag(getId())).lifetime = LIFETIME_START;
-        }
-    }
-
-    @Override
     public Color getTagColor() {
         return new Color(41, 41, 166, 50);
+    }
+
+    public void setLifetime(int lifetime) {
+        this.lifetime = lifetime;
     }
 }

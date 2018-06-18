@@ -38,8 +38,6 @@ public class CombatEntity extends Entity {
     protected int defaultMaxHealth = 10;
     protected int defaultStrength  = 1;
 
-    protected boolean isAlive = true;
-
     private static final int RIGHT = 0;
     private static final int UP_RIGHT = 45;
     private static final int UP = 90;
@@ -386,7 +384,6 @@ public class CombatEntity extends Entity {
     @Override
     public void selfDestruct() {
         if (isAlive) {
-            isAlive = false;
             if (getItems().size() > 0) {
                 EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot Pile", null);
                 for (Item item : getItems()) {

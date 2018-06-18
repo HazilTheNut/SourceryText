@@ -46,6 +46,8 @@ public class Entity extends TagHolder implements Serializable {
     private String name;
     private long uniqueID;
 
+    boolean isAlive = true;
+
     /**
      * Initializes an Entity, configuring it such that it can be used by the GameInstance.
      *
@@ -82,6 +84,10 @@ public class Entity extends TagHolder implements Serializable {
     }
 
     public boolean isSolid() { return true; }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
 
     /**
      * Runs a simplified version of initialize().
@@ -162,6 +168,7 @@ public class Entity extends TagHolder implements Serializable {
     }
 
     public void selfDestruct(){
+        isAlive = false;
         gi.removeEntity(this);
         gi.getLayerManager().removeLayer(sprite);
         DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' - - -", getName());
