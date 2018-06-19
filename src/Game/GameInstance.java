@@ -113,6 +113,7 @@ public class GameInstance implements Serializable {
                             i--;
                         }
                     }
+                    currentLevel.onAnimatedTileUpdate();
                 }
             }
         }, 50, 50);
@@ -308,21 +309,25 @@ public class GameInstance implements Serializable {
      */
     void doEnemyTurn(){
         //Thread enemyTurnThread = new Thread(() -> {
-            long[] runTimes = new long[4];
+            long[] runTimes = new long[6];
             runTimes[0] = System.nanoTime();
+            currentLevel.onTurnStart();
+            runTimes[1] = System.nanoTime();
             for (EntityOperation op : entityOperations) {
                 op.run();
             }
             entityOperations.clear();
-            runTimes[1] = System.nanoTime();
+            runTimes[2] = System.nanoTime();
             for (Entity e : currentLevel.getEntities()) {
                 e.onTurn();
             }
-            runTimes[2] = System.nanoTime();
+            runTimes[3] = System.nanoTime();
             for (Tile tile : currentLevel.getAllTiles()){
                 tile.onTurn(GameInstance.this);
             }
-            runTimes[3] = System.nanoTime();
+            runTimes[4] = System.nanoTime();
+            currentLevel.onTurnEnd();
+            runTimes[5] = System.nanoTime();
             reportUpdatePerformance(runTimes);
             getPlayer().updateHUD();
             getPlayer().updateSynopsis();
@@ -343,14 +348,18 @@ public class GameInstance implements Serializable {
 
     private void reportUpdatePerformance(long[] times){
         if (times.length >= 4) {
-            double entityop   = (double)(times[1] - times[0]) / 1000000;
-            double entityturn = (double)(times[2] - times[1]) / 1000000;
-            double tileupdate = (double)(times[3] - times[2]) / 1000000;
-            double total      = (double)(times[3] - times[0]) / 1000000;
+            double lsstart    = (double)(times[1] - times[0]) / 1000000;
+            double entityop   = (double)(times[2] - times[1]) / 1000000;
+            double entityturn = (double)(times[3] - times[2]) / 1000000;
+            double tileupdate = (double)(times[4] - times[3]) / 1000000;
+            double lsend      = (double)(times[5] - times[4]) / 1000000;
+            double total      = (double)(times[5] - times[0]) / 1000000;
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "GameInstance.reportUpdatePerformance","Results:");
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "ls_start","   %1$fms", lsstart);
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "enityop","    %1$fms", entityop);
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "enityturn","  %1$fms", entityturn);
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "tileupdate"," %1$fms", tileupdate);
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "ls_end","     %1$fms", lsend);
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "TOTAL","      %1$fms", total);
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "","");
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "LEVEL", " \'%1$s\':", currentLevel.getName());

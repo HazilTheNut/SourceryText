@@ -305,4 +305,8 @@ public class LevelData implements Serializable {
     public boolean hasScript(int scriptId){
         return levelScripts.contains(scriptId);
     }
+
+    public ArrayList<Integer> getLevelScripts() {
+        return levelScripts;
+    }
 }

@@ -1,8 +1,6 @@
 package Game.Registries;
 
 import Game.LevelScripts.LevelScript;
-import Game.LevelScripts.RainyWeather;
-import Game.LevelScripts.SnowyWeather;
 
 import java.util.Set;
 import java.util.TreeMap;
@@ -12,18 +10,17 @@ import java.util.TreeMap;
  */
 public class LevelScriptRegistry {
 
-    private TreeMap<Integer, Class> scriptMap = new TreeMap<>();
+    private static TreeMap<Integer, Class> scriptMap = new TreeMap<>();
 
-    public LevelScriptRegistry(){
+    static{
         //Registering stuff starts here
 
-        scriptMap.put(1, SnowyWeather.class);
-        scriptMap.put(2, RainyWeather.class);
+
 
         //Registering stuff ends here
     }
 
-    public int[] getMapKeys() {
+    public static int[] getMapKeys() {
         Set<Integer> ints = scriptMap.keySet();
         int[] output = new int[ints.size()];
         int index = 0;
@@ -34,7 +31,7 @@ public class LevelScriptRegistry {
         return output;
     }
 
-    public LevelScript getLevelScript(int id) {
+    public static LevelScript getLevelScript(int id) {
         Class scriptClass = scriptMap.get(id);
         if (scriptClass != null) {
             try {
@@ -47,7 +44,7 @@ public class LevelScriptRegistry {
         return null;
     }
 
-    public Class getLevelScriptClass(int id){
+    public static Class getLevelScriptClass(int id){
         return scriptMap.get(id);
     }
 }

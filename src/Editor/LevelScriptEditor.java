@@ -33,9 +33,8 @@ public class LevelScriptEditor extends JFrame {
 
         //Create the JPanel that binds them together
         JPanel scriptsMasterPanel = new JPanel();
-        LevelScriptRegistry lsr = new LevelScriptRegistry();
-        for (int id : lsr.getMapKeys()) {
-            Class scriptClass = lsr.getLevelScriptClass(id);
+        for (int id : LevelScriptRegistry.getMapKeys()) {
+            Class scriptClass = LevelScriptRegistry.getLevelScriptClass(id);
             if (scriptClass != null) {
                 new LevelScriptButtonPanel(scriptClass, enabledScriptsPanel, disabledScriptsPanel, scriptsMasterPanel, ldata, id);
             }

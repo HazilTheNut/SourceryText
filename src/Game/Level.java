@@ -8,6 +8,7 @@ import Game.AnimatedTiles.AnimatedTile;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.LevelScripts.LevelScript;
+import Game.Registries.LevelScriptRegistry;
 import Game.Registries.TagRegistry;
 import Game.Registries.TileRegistry;
 import Game.Tags.Tag;
@@ -105,6 +106,14 @@ public class Level implements Serializable {
         animatedTileLayer = new Layer(backdrop.getCols(), backdrop.getRows(), "animated_tiles (" + getName() + ")", 0, 0, LayerImportances.TILE_ANIM);
 
         levelScripts = new ArrayList<>();
+
+        for (int scriptID : ldata.getLevelScripts()){
+            LevelScript ls = LevelScriptRegistry.getLevelScript(scriptID);
+            if (ls != null) {
+                ls.onLevelLoad();
+                levelScripts.add(ls);
+            }
+        }
     }
 
     void destroy(){
@@ -172,6 +181,7 @@ public class Level implements Serializable {
         lm.addLayer(backdrop);
         lm.addLayer(overlayTileLayer);
         lm.addLayer(animatedTileLayer);
+        for (LevelScript ls : levelScripts) ls.onLevelEnter();
     }
 
     void onExit(LayerManager lm){
@@ -179,6 +189,19 @@ public class Level implements Serializable {
         lm.removeLayer(backdrop);
         lm.removeLayer(overlayTileLayer);
         lm.removeLayer(animatedTileLayer);
+        for (LevelScript ls : levelScripts) ls.onLevelExit();
+    }
+
+    void onTurnStart(){
+        for (LevelScript ls : levelScripts) ls.onTurnStart();
+    }
+
+    void onTurnEnd(){
+        for (LevelScript ls : levelScripts) ls.onTurnEnd();
+    }
+
+    void onAnimatedTileUpdate(){
+        for (LevelScript ls : levelScripts) ls.onAnimatedTileUpdate();
     }
 
     public Tile getTileAt(Coordinate loc){
