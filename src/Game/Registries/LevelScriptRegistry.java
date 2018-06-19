@@ -1,6 +1,7 @@
 package Game.Registries;
 
 import Game.LevelScripts.LevelScript;
+import Game.LevelScripts.WetTileDrying;
 
 import java.util.Set;
 import java.util.TreeMap;
@@ -15,7 +16,7 @@ public class LevelScriptRegistry {
     static{
         //Registering stuff starts here
 
-
+        scriptMap.put(1, WetTileDrying.class);
 
         //Registering stuff ends here
     }

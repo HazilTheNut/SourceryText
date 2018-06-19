@@ -7,6 +7,7 @@ import Engine.SpecialText;
 import Game.AnimatedTiles.AnimatedTile;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
+import Game.LevelScripts.LevelScript;
 import Game.Registries.EntityRegistry;
 
 import java.io.File;
@@ -221,6 +222,10 @@ public class GameInstance implements Serializable {
         newLevel.setWarpZones(ldata.getWarpZones());
 
         levels.add(newLevel);
+
+        for (LevelScript ls : newLevel.getLevelScripts()) ls.initialize(this, newLevel);
+
+        newLevel.onLevelLoad();
 
         DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Loading of level \'%1$s\' complete!", newLevel.getName());
 

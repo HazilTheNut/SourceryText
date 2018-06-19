@@ -110,10 +110,13 @@ public class Level implements Serializable {
         for (int scriptID : ldata.getLevelScripts()){
             LevelScript ls = LevelScriptRegistry.getLevelScript(scriptID);
             if (ls != null) {
-                ls.onLevelLoad();
                 levelScripts.add(ls);
             }
         }
+    }
+
+    public ArrayList<LevelScript> getLevelScripts() {
+        return levelScripts;
     }
 
     void destroy(){
@@ -200,9 +203,15 @@ public class Level implements Serializable {
         for (LevelScript ls : levelScripts) ls.onTurnEnd();
     }
 
+    void onLevelLoad(){
+        for (LevelScript ls : levelScripts) ls.onLevelLoad();
+    }
+
     void onAnimatedTileUpdate(){
         for (LevelScript ls : levelScripts) ls.onAnimatedTileUpdate();
     }
+
+
 
     public Tile getTileAt(Coordinate loc){
         if (loc != null && isLocationValid(loc)) {
