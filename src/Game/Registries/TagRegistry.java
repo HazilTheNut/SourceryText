@@ -49,7 +49,7 @@ public class TagRegistry {
     public final static int WET           = 12;
     public final static int NO_REFREEZE   = 13;
 
-    public final static int POISON        = 20; //TODO: Program poison
+    public final static int POISON        = 20;
     public final static int VENOMOUS      = 21;
 
     public final static int WEAPON        = 200;
@@ -72,6 +72,7 @@ public class TagRegistry {
     public final static int SHALLOW_WATER = 402;
     public final static int DEEP_WATER    = 403;
     public final static int NO_PATHING    = 404; //Tag not found.
+    public final static int MAGNETIC      = 405;
 
     public final static int LIVING        = 600;
 

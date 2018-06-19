@@ -25,7 +25,7 @@ public class Magnet extends Entity {
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
         MagneticTag magneticTag = new MagneticTag();
-        magneticTag.setId(9001);
+        magneticTag.setId(TagRegistry.MAGNETIC);
         magneticTag.setName("Magnetic");
         addTag(magneticTag, null);
         isAttractive = readBoolArg(searchForArg(entityStruct.getArgs(), "isAttractive"), true);
