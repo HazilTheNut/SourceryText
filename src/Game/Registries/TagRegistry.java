@@ -65,6 +65,7 @@ public class TagRegistry {
     public final static int LEARN_FIRE      = 390;
     public final static int LEARN_ICE       = 391;
     public final static int LEARN_LOCUMANCY = 392;
+    public final static int LEARN_THUNDER   = 393;
 
     public final static int TILE_WALL     = 400;
     public final static int SAND          = 401;
@@ -113,6 +114,7 @@ public class TagRegistry {
         registerTag(LEARN_FIRE, "Teaches Fire Bolt", LearnFireBoltTag.class);
         registerTag(LEARN_ICE, "Teaches Ice Bolt", LearnIceBoltTag.class);
         registerTag(LEARN_LOCUMANCY, "Teaches Locumancy", LearnLocumancyTag.class);
+        registerTag(LEARN_THUNDER, "Teaches Thunder Bolt", LearnThunderBoltTag.class);
 
         //Tile related
         registerTag(TILE_WALL, "Wall", WallTag.class);

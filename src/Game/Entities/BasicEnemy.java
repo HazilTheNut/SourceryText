@@ -3,6 +3,7 @@ package Game.Entities;
 import Data.Coordinate;
 import Data.EntityArg;
 import Data.EntityStruct;
+import Data.SerializationVersion;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
@@ -39,6 +40,7 @@ public class BasicEnemy extends CombatEntity {
      * This was done to reduce the performance cost per entity existing in a level.
      */
 
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {

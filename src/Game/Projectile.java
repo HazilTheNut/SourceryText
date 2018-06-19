@@ -64,7 +64,6 @@ public class Projectile extends TagHolder {
             iconLayer.editLayer(0, 0, getIcon(icon));
             iconLayer.setVisible(false);
             lm = gi.getLayerManager();
-            lm.addLayer(iconLayer);
         }
     }
 
@@ -75,15 +74,17 @@ public class Projectile extends TagHolder {
     //Recommended to be ran within a thread separate from the main one.
     public void launchProjectile(int range){
         if (!targetPos.equals(startPos)) {
-            int totalCycles = (int) (range / UNITS_PER_CYCLE);
+            lm.addLayer(iconLayer);
+            double distance = 0;
             iconLayer.setVisible(true);
             DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", xvelocity, yvelocity);
-            for (int i = 0; i < totalCycles; i++) {
+            while (distance < range) {
                 xpos += xvelocity;
                 ypos += yvelocity;
                 Coordinate newPos = getRoundedPos();
                 iconLayer.setPos(newPos);
-                DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile:" + i, "pos: %1$s", newPos);
+                iconLayer.editLayer(0, 0, getIcon(iconLayer.getSpecialText(0, 0)));
+                DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile:" + (int)distance, "pos: %1$s", newPos);
                 Entity entity = gi.getCurrentLevel().getSolidEntityAt(newPos);
                 if (!newPos.equals(startPos)) { //Should be a nice catch-all to prevent projectiles from not firing correctly (by hitting the creator of the projectile)
                     if (entity != null) { //Is the projectile now on top of an entity?
@@ -99,9 +100,41 @@ public class Projectile extends TagHolder {
                     }
                 }
                 sleep(50);
+                gi.onProjectileFly(this);
+                normalizeVelocity();
+                distance += UNITS_PER_CYCLE;
             }
             collideWithTerrain();
         }
+    }
+
+    /**
+     * Adjusts the position and trajectory of this Projectile
+     *
+     * @param dx x component of translation vector
+     * @param dy y component of translation vector
+     * @param dvx x component of the velocity vector
+     * @param dvy y component of the velocity vector
+     */
+    public void adjust(double dx, double dy, double dvx, double dvy){
+        xpos += dx;
+        ypos += dy;
+        xvelocity += dvx;
+        yvelocity += dvy;
+    }
+
+    private void normalizeVelocity(){
+        double speed = Math.sqrt(Math.pow(xvelocity, 2) + Math.pow(yvelocity, 2));
+        xvelocity *= (UNITS_PER_CYCLE / speed);
+        yvelocity *= (UNITS_PER_CYCLE / speed);
+    }
+
+    public double getXpos() {
+        return xpos;
+    }
+
+    public double getYpos() {
+        return ypos;
     }
 
     //I had an issue earlier where the position rounding was done differently in different places in the code. That's no good!

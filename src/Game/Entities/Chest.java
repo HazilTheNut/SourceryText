@@ -1,5 +1,6 @@
 package Game.Entities;
 
+import Data.SerializationVersion;
 import Game.Player;
 import Game.PlayerInventory;
 
@@ -13,6 +14,8 @@ public class Chest extends Entity {
      *
      * An entity that opens an inventory dialog upon being interacted with. This entity does not self-destruct if its inventory is empty.
      */
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
     public void onInteract(Player player) {

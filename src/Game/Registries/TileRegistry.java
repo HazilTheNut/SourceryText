@@ -24,7 +24,7 @@ public class TileRegistry {
         registerTile(4, "Shallow Water", new SpecialText('~', new Color(100, 100, 175), new Color(85, 85, 160)),   TagRegistry.SHALLOW_WATER, TagRegistry.WET);
         registerTile(5, "Deep Water",    new SpecialText('~', new Color(50, 50, 90),    new Color(45, 45, 80)),    TagRegistry.DEEP_WATER, TagRegistry.WET, TagRegistry.NO_PATHING);
         registerTile(6, "Wooden Wall",   new SpecialText('x', new Color(116, 58, 0),    new Color(75, 35, 0)),     TagRegistry.TILE_WALL, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE);
-        registerTile(7, "Metallic Wall", new SpecialText('x', new Color(255, 255, 220), new Color(110, 110, 110)), TagRegistry.TILE_WALL, TagRegistry.NO_PATHING);
+        registerTile(7, "Pit",           new SpecialText(' ', Color.BLACK,              Color.BLACK),              TagRegistry.NO_PATHING);
         registerTile(8, "Carpet",        new SpecialText(' ', Color.WHITE,              new Color(110, 35, 25)),   TagRegistry.FLAMMABLE);
         registerTile(9, "Sand",          new SpecialText(' ', Color.WHITE,              new Color(189, 182, 153)), TagRegistry.SAND);
         registerTile(10,"Wood Floor",    new SpecialText(' ', Color.WHITE,              new Color(61, 28, 0)),     TagRegistry.FLAMMABLE, TagRegistry.BURN_SLOW);

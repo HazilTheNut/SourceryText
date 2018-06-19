@@ -61,12 +61,12 @@ public class ItemRegistry {
         registerItem(119, "Battle Axe",      10,  TagRegistry.DAMAGE_START + 27, TagRegistry.WEAPON_STRIKE, TagRegistry.METALLIC, TagRegistry.SHARP);
         registerItem(120, "Skirmish Sword",  8,   TagRegistry.DAMAGE_START + 22, TagRegistry.WEAPON_SWEEP, TagRegistry.METALLIC, TagRegistry.SHARP);
         registerItem(121, "War Spear",       7.5, TagRegistry.DAMAGE_START + 21, TagRegistry.WEAPON_THRUST, TagRegistry.METALLIC, TagRegistry.SHARP);
-        registerItem(122, "Defender Bow",    4.5, TagRegistry.DAMAGE_START + 14, TagRegistry.RANGE_START + 30, TagRegistry.WEAPON_BOW, TagRegistry.METALLIC);
+        registerItem(122, "Defender Bow",    4.5, TagRegistry.DAMAGE_START + 14, TagRegistry.RANGE_START + 40, TagRegistry.WEAPON_BOW, TagRegistry.METALLIC);
         //Tier 7 ~ The Voluminous Void
         registerItem(123, "Chrome Axe",      8.5,  TagRegistry.DAMAGE_START + 35, TagRegistry.WEAPON_STRIKE, TagRegistry.METALLIC, TagRegistry.SHARP);
         registerItem(124, "Chrome Sword",    5.5,  TagRegistry.DAMAGE_START + 30, TagRegistry.WEAPON_SWEEP, TagRegistry.METALLIC, TagRegistry.SHARP);
         registerItem(125, "Chrome Spear",    6.5,  TagRegistry.DAMAGE_START + 28, TagRegistry.WEAPON_THRUST, TagRegistry.METALLIC, TagRegistry.SHARP);
-        registerItem(126, "Chrome Bow",      4,    TagRegistry.DAMAGE_START + 18, TagRegistry.RANGE_START + 30, TagRegistry.WEAPON_BOW, TagRegistry.METALLIC);
+        registerItem(126, "Chrome Bow",      4,    TagRegistry.DAMAGE_START + 18, TagRegistry.RANGE_START + 45, TagRegistry.WEAPON_BOW, TagRegistry.METALLIC);
 
         //'Special' Weapons
         registerItem(102, "Flaming Axe",     5,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.METALLIC, TagRegistry.FLAME_ENCHANT);
@@ -90,6 +90,7 @@ public class ItemRegistry {
         registerItem(1900, "Fire Scroll",      0, TagRegistry.LEARN_FIRE);
         registerItem(1901, "Ice Scroll",       0, TagRegistry.LEARN_ICE);
         registerItem(1902, "Locumancy Scroll", 0, TagRegistry.LEARN_LOCUMANCY);
+        registerItem(1903, "Thunder Scroll",   0, TagRegistry.LEARN_THUNDER);
 
         //Keys
         registerItem(2000, "Key",          0, TagRegistry.KEY);

@@ -3,6 +3,7 @@ package Game.Entities;
 import Data.Coordinate;
 import Data.EntityArg;
 import Data.EntityStruct;
+import Data.SerializationVersion;
 import Engine.LayerManager;
 import Game.*;
 import Game.Debug.DebugWindow;
@@ -23,6 +24,8 @@ public class LockedDoor extends Entity {
      * The LockedDoor uses item names to define the key that opens it.
      * NOTE: these checks are not case-sensitive!
      */
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private String keyName;
     private boolean consumesKey = true;

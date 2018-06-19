@@ -1,5 +1,6 @@
 package Game.Entities;
 
+import Data.SerializationVersion;
 import Game.Player;
 
 /**
@@ -12,6 +13,8 @@ public class Door extends Entity {
      *
      * The extremely-complicated and nearly impossible-to-read superclass that defines the subtle behavior of a single-use door.
      */
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
     public void onInteract(Player player) {

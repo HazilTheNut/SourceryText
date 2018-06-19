@@ -81,7 +81,7 @@ public class LocumancySpell extends Spell {
             new Color(168, 154, 216),
             new Color(145, 81, 241)
         };
-        char[] chars = {'#', '@', '%', ' ', '^', '$', 'h', 'e', 'y', 's', 't', 'u', 'p', 'i', 'd', '!'};
+        char[] chars = {'#', '@', '%', ' ', '^', '$', 'H', 'i', ' ', 't', 'h', 'e', 'r', 'E', '!'};
         Layer fromLayer = new Layer(1, 1, "Lcoumancy_from", toTransport.get(0).getLocation().getX(),toTransport.get(0).getLocation().getY(), LayerImportances.ANIMATION);
         Layer toLayer =   new Layer(1, 1, "Lcoumancy_to", targetLoc.getX(),targetLoc.getY(), LayerImportances.ANIMATION);
         gi.getLayerManager().addLayer(fromLayer);

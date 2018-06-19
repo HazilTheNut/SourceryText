@@ -142,6 +142,7 @@ public class TagHolder implements Serializable {
         for (Tag tag : source.getTags()){
             tag.onContact(e);
         }
+        e.doFutureActions();
         if (e.eventPassed()){
             e.doCancelableActions();
         }

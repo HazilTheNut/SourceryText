@@ -383,4 +383,9 @@ public class GameInstance implements Serializable {
     public Layer getPathTestLayer() {
         return pathTestLayer;
     }
+
+    void onProjectileFly(Projectile projectile){
+        for (Entity e : currentLevel.getEntities())
+            e.onProjectileFly(projectile);
+    }
 }

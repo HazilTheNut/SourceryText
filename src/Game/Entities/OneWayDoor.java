@@ -3,6 +3,7 @@ package Game.Entities;
 import Data.Coordinate;
 import Data.EntityArg;
 import Data.EntityStruct;
+import Data.SerializationVersion;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.GameInstance;
@@ -23,6 +24,8 @@ public class OneWayDoor extends Entity {
      * OneWayDoor uses the '}' and '{' characters to denote direction, so currently left and right are the only possible directions.
      * Up and down are possibilities, but OnwWayDoors would not be easy to identify (as there are would be several different shapes to look for)
      */
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private boolean leftDirection = false; //Defines the direction of the OneWayDoor
 

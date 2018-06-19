@@ -3,6 +3,7 @@ package Game.Entities;
 import Data.Coordinate;
 import Data.EntityArg;
 import Data.EntityStruct;
+import Data.SerializationVersion;
 import Engine.LayerManager;
 import Game.GameInstance;
 import Game.Player;
@@ -19,6 +20,8 @@ public class Sign extends Entity {
      *
      * Upon interaction, it sends a message to the GameInstance's TextBox, which of course then displays it to the player.
      */
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private String text;
 
