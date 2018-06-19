@@ -62,6 +62,7 @@ public class TagRegistry {
     public final static int SPECIAL_ITEM  = 211;
 
     public final static int LEVEL_UP        = 388;
+    public final static int SPELL_BEAD      = 399;
     public final static int LEARN_FIRE      = 390;
     public final static int LEARN_ICE       = 391;
     public final static int LEARN_LOCUMANCY = 392;
@@ -113,6 +114,7 @@ public class TagRegistry {
         registerTag(KEY, "Key", KeyTag.class);
         registerTag(SPECIAL_ITEM, "Special Item", SpecialItemTag.class);
         registerTag(LEVEL_UP, "Level up!", LevelUpTag.class);
+        registerTag(SPELL_BEAD, "Spell Bead", SpellBeadTag.class);
         registerTag(LEARN_FIRE, "Teaches Fire Bolt", LearnFireBoltTag.class);
         registerTag(LEARN_ICE, "Teaches Ice Bolt", LearnIceBoltTag.class);
         registerTag(LEARN_LOCUMANCY, "Teaches Locumancy", LearnLocumancyTag.class);

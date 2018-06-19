@@ -89,6 +89,7 @@ public class ItemRegistry {
 
         //Upgrades
         registerItem(1898, "Magic Potato",     0, TagRegistry.LEVEL_UP);
+        registerItem(1899, "Spell Bead",       0, TagRegistry.SPELL_BEAD);
         registerItem(1900, "Fire Scroll",      0, TagRegistry.LEARN_FIRE);
         registerItem(1901, "Ice Scroll",       0, TagRegistry.LEARN_ICE);
         registerItem(1902, "Warp Scroll",      0, TagRegistry.LEARN_LOCUMANCY);

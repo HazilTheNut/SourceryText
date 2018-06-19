@@ -522,6 +522,10 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         return numberSpellBeads;
     }
 
+    public void incrementSpellBeads() {
+        numberSpellBeads++;
+    }
+
     public ArrayList<Integer> getCooldowns() {
         return cooldowns;
     }
