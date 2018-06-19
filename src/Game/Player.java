@@ -34,12 +34,12 @@ public class Player extends CombatEntity implements MouseInputReceiver{
 
     private Coordinate mouseScreenPos;
 
-    private boolean spellMode = false;
-
     private ArrayList<Spell> spells = new ArrayList<>();
     private Spell equippedSpell;
     private int numberSpellBeads = 1;
     private ArrayList<Integer> cooldowns = new ArrayList<>();
+
+    private ArrayList<PlayerActionCollector> playerActionCollectors;
 
     private int magicPower = 0;
     private double weightCapacity = 20;
@@ -75,6 +75,8 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         addTag(TagRegistry.FLAMMABLE, this);
         addTag(TagRegistry.LIVING, this);
         initNoWeapon();
+
+        playerActionCollectors = new ArrayList<>();
     }
 
     /**
@@ -153,6 +155,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     @Override
     protected void move(int relativeX, int relativeY) {
         super.move(relativeX, relativeY);
+        for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerMove(getLocation());
         postMovementCheck();
     }
 
@@ -261,6 +264,14 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         mi.addInputReceiver(this);
     }
 
+    public void addPlayerActionCollector(PlayerActionCollector actionCollector) {
+        playerActionCollectors.add(actionCollector);
+    }
+
+    public void removePlayerActionCollector(PlayerActionCollector actionCollector){
+        playerActionCollectors.remove(actionCollector);
+    }
+
     /**
      * Essentially, what happens when you push the 'Inventory' button (default: E)
      */
@@ -343,8 +354,6 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     private void movementKeyUp(Coordinate vector){
         movementVector = movementVector.subtract(vector);
     }
-
-    public boolean isInSpellMode() { return spellMode; }
 
     @Override
     public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
@@ -472,8 +481,10 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     }
 
     private void readySpell(Coordinate levelPos){
-        if (isSpellReady())
+        if (isSpellReady()) {
             equippedSpell.readySpell(levelPos, this, getGameInstance(), magicPower);
+            for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerReadySpell(levelPos, equippedSpell);
+        }
     }
 
     private void castSpell(Coordinate levelPos){
@@ -481,6 +492,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
             if (isSpellReady()) {
                 freeze(); //Stop player actions while casting spell
                 int cd = equippedSpell.castSpell(levelPos, this, getGameInstance(), magicPower);
+                for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerCastSpell(levelPos, equippedSpell);
                 if (cd > 0) {
                     cooldowns.add(cd);
                     gi.doEnemyTurn();
@@ -495,6 +507,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     private void playerAttack(Coordinate levelPos){
         Thread attackThread = new Thread(() -> {
             freeze();
+            for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerAttack(levelPos, getWeapon());
             doWeaponAttack(levelPos);
             gi.doEnemyTurn();
         });
@@ -528,6 +541,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
                         ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(levelPos);
                         if (entities.size() == 1) {
                             entities.get(0).onInteract(this);
+                            for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerInteract(entities.get(0).getLocation());
                             return; //Don't try to move into the thing you're trying to interact with.
                         }
                         else if (entities.size() > 1){
@@ -535,7 +549,10 @@ public class Player extends CombatEntity implements MouseInputReceiver{
                             quickMenu.clearMenu();
                             for (int i = 0; i < entities.size(); i++) {
                                 int finalI = i;
-                                quickMenu.addMenuItem(entities.get(i).getName(), () -> entities.get(finalI).onInteract(this));
+                                quickMenu.addMenuItem(entities.get(i).getName(), () -> {
+                                    entities.get(finalI).onInteract(this);
+                                    for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerInteract(entities.get(finalI).getLocation());
+                                });
                             }
                             quickMenu.showMenu("Interact:", true);
                             return;

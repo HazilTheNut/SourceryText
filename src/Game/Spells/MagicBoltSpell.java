@@ -31,4 +31,9 @@ public class MagicBoltSpell extends Spell {
         magicBolt.launchProjectile(25);
         return calculateCooldown(15, magicPower);
     }
+
+    @Override
+    public Spell copy() {
+        return new MagicBoltSpell();
+    }
 }

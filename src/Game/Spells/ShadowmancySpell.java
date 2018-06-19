@@ -7,6 +7,7 @@ import Game.Entities.Entity;
 import Game.GameInstance;
 import Game.Player;
 import Game.PlayerShadow;
+import Game.Registries.EntityRegistry;
 
 public class ShadowmancySpell extends Spell {
 
@@ -20,12 +21,32 @@ public class ShadowmancySpell extends Spell {
     @Override
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         if (spellCaster instanceof Player){
-            EntityStruct shadowStruct = new EntityStruct(10, "Shadow", null);
-            PlayerShadow playerShadow = (PlayerShadow)gi.instantiateEntity(shadowStruct, targetLoc, gi.getCurrentLevel());
-            playerShadow.setOffset(targetLoc.subtract(spellCaster.getLocation()));
-            playerShadow.onLevelEnter();
-            return 4;
+            PlayerShadow ps = (PlayerShadow)getPlayerShadow(gi);
+            if (ps == null) {
+                EntityStruct shadowStruct = new EntityStruct(EntityRegistry.PLAYER_SHADOW, "Shadow", null);
+                PlayerShadow playerShadow = (PlayerShadow) gi.instantiateEntity(shadowStruct, targetLoc, gi.getCurrentLevel());
+                playerShadow.setOffset(targetLoc.subtract(spellCaster.getLocation()));
+                playerShadow.onLevelEnter();
+
+                return 10;
+            } else {
+                ps.setOffset(targetLoc.subtract(spellCaster.getLocation()));
+                return 4;
+            }
         }
         return 0;
+    }
+
+    private Entity getPlayerShadow(GameInstance gi){
+        for (Entity e : gi.getCurrentLevel().getEntities()){
+            if (e.getName().equals(EntityRegistry.getEntityStruct(EntityRegistry.PLAYER_SHADOW).getEntityName()))
+                return e;
+        }
+        return null;
+    }
+
+    @Override
+    public Spell copy() {
+        return new ShadowmancySpell();
     }
 }

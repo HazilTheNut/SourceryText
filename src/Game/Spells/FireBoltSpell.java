@@ -33,4 +33,9 @@ public class FireBoltSpell extends Spell {
         fireBolt.launchProjectile(12);
         return calculateCooldown(22, magicPower);
     }
+
+    @Override
+    public Spell copy() {
+        return new FireBoltSpell();
+    }
 }

@@ -32,4 +32,9 @@ public class ThunderBoltSpell extends Spell {
         thunderBolt.launchProjectile(20);
         return calculateCooldown(32, magicPower);
     }
+
+    @Override
+    public Spell copy() {
+        return new ThunderBoltSpell();
+    }
 }

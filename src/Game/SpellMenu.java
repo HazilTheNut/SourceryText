@@ -78,7 +78,7 @@ public class SpellMenu implements Serializable {
     void drawTopBand(Coordinate mousePos){
         if (isShowing)
             drawBand(new Color(44, 41, 51), 0);
-        else if (player.isInSpellMode() || isMouseOnDropdownBtn(mousePos))
+        else if (isMouseOnDropdownBtn(mousePos))
             drawBand(new Color(37, 34, 43), 0);
         else
             drawBand(new Color(28, 25, 32), 0);

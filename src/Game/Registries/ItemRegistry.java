@@ -28,6 +28,8 @@ public class ItemRegistry {
 
      */
 
+     public static int ID_ARROW = 1500;
+
     static {
         //Registering stuff starts here
 
@@ -83,7 +85,7 @@ public class ItemRegistry {
         registerItem(1002, "Health Flask",    0.25, TagRegistry.HEALTH_START + 40);
         registerItem(1003, "Health Jar",      0.60, TagRegistry.HEALTH_START + 65);
 
-        registerItem(1500, "Arrow",           0.03, TagRegistry.ARROW, TagRegistry.FLAMMABLE, TagRegistry.METALLIC, TagRegistry.SHARP);
+        registerItem(ID_ARROW, "Arrow",           0.03, TagRegistry.ARROW, TagRegistry.FLAMMABLE, TagRegistry.METALLIC, TagRegistry.SHARP);
 
         //Upgrades
         registerItem(1898, "Magic Potato",     0, TagRegistry.LEVEL_UP);

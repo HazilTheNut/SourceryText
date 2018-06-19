@@ -30,7 +30,7 @@ public class LocumancySpell extends Spell {
     public void readySpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         validLocations = new ArrayList<>();
         int range = 5 + (magicPower / 16); //At 80 (max) magic power, range doubles.
-        previewLayer = new Layer(range * 2 + 1, range * 2 + 1, "Locumancy_preview", targetLoc.getX() - range, targetLoc.getY() - range, LayerImportances.ANIMATION);
+        previewLayer = new Layer(range * 2 + 1, range * 2 + 1, "Locumancy_preview:" + spellCaster.getName(), targetLoc.getX() - range, targetLoc.getY() - range, LayerImportances.ANIMATION);
         ArrayList<Entity> atLoc = gi.getCurrentLevel().getEntitiesAt(targetLoc);
         toTransport = new ArrayList<>();
         for (Entity e : atLoc) if (!e.hasTag(TagRegistry.IMMOVABLE)) toTransport.add(e);
@@ -98,5 +98,10 @@ public class LocumancySpell extends Spell {
         }
         gi.getLayerManager().removeLayer(fromLayer);
         gi.getLayerManager().removeLayer(toLayer);
+    }
+
+    @Override
+    public Spell copy() {
+        return new LocumancySpell();
     }
 }

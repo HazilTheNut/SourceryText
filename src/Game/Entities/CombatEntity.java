@@ -307,8 +307,6 @@ public class CombatEntity extends Entity {
         Item arrowItem = null;
         for (Item item : getItems()){
             if (item.hasTag(TagRegistry.ARROW)){
-                item.decrementQty();
-                scanInventory();
                 arrowItem = item;
                 break;
             }
@@ -327,6 +325,8 @@ public class CombatEntity extends Entity {
                 arrow.addTag(totalDamageTag, getWeapon());
             }
             fireArrowProjectile(arrow);
+            arrowItem.decrementQty();
+            scanInventory();
         }
     }
 

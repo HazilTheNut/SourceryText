@@ -32,4 +32,9 @@ public class IceBoltSpell extends Spell {
         fireBolt.launchProjectile(14);
         return calculateCooldown(25, magicPower);
     }
+
+    @Override
+    public Spell copy() {
+        return new IceBoltSpell();
+    }
 }

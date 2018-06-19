@@ -49,4 +49,6 @@ public class Spell implements Serializable {
         return result;
     }
 
+    public Spell copy(){ return new Spell(); }
+
 }
