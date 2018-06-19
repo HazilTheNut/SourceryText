@@ -50,7 +50,7 @@ public class CombatEntity extends Entity {
 
     private static final int[] directions = {RIGHT, UP_RIGHT, UP, UP_LEFT, LEFT, DOWN_LEFT, DOWN, DOWN_RIGHT, RIGHT_360};
 
-    private Item noWeapon;
+    public Item noWeapon;
 
     Item weapon;
     protected Layer swooshLayer;

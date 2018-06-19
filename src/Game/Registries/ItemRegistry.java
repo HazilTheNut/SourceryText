@@ -89,8 +89,9 @@ public class ItemRegistry {
         registerItem(1898, "Magic Potato",     0, TagRegistry.LEVEL_UP);
         registerItem(1900, "Fire Scroll",      0, TagRegistry.LEARN_FIRE);
         registerItem(1901, "Ice Scroll",       0, TagRegistry.LEARN_ICE);
-        registerItem(1902, "Locumancy Scroll", 0, TagRegistry.LEARN_LOCUMANCY);
+        registerItem(1902, "Warp Scroll",      0, TagRegistry.LEARN_LOCUMANCY);
         registerItem(1903, "Thunder Scroll",   0, TagRegistry.LEARN_THUNDER);
+        registerItem(1904, "Shadow Scroll",    0, TagRegistry.LEARN_SHADOWMANCY);
 
         //Keys
         registerItem(2000, "Key",          0, TagRegistry.KEY);
