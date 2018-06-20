@@ -35,5 +35,4 @@ public class AnimatedTile implements Serializable {
      * @return The SpecialText that will represent the current 'frame' of the animation. Return null to end animation.
      */
     public SpecialText onDisplayUpdate(){ return null; }
-
 }

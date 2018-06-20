@@ -207,6 +207,7 @@ public class GameInstance implements Serializable {
 
         DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Initialize level...");
         newLevel.initialize(ldata);
+        for (LevelScript ls : newLevel.getLevelScripts()) ls.initialize(this, newLevel);
 
         DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Process entity data...");
         EntityStruct[][] entityMatrix = ldata.getEntityData();
@@ -222,8 +223,6 @@ public class GameInstance implements Serializable {
         newLevel.setWarpZones(ldata.getWarpZones());
 
         levels.add(newLevel);
-
-        for (LevelScript ls : newLevel.getLevelScripts()) ls.initialize(this, newLevel);
 
         newLevel.onLevelLoad();
 

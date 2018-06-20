@@ -78,6 +78,7 @@ public class ItemRegistry {
         registerItem(128, "Ice Sword",       4,   TagRegistry.DAMAGE_START + 8, TagRegistry.WEAPON_STRIKE, TagRegistry.FROST_ENCHANT, TagRegistry.SHARP);
         registerItem(129, "Electro Spear",   6,   TagRegistry.DAMAGE_START + 10, TagRegistry.WEAPON_THRUST, TagRegistry.ELECTRIC, TagRegistry.SHARP);
         registerItem(130, "Venom Bow",       2.5, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_BOW, TagRegistry.VENOMOUS);
+        registerItem(131, "Torch",           1,   TagRegistry.DAMAGE_START + 1, TagRegistry.WEAPON_STRIKE, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
 
         //Healing items / potions with various effects
         registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10);
