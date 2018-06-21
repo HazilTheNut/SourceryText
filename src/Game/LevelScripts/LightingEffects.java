@@ -188,7 +188,7 @@ public class LightingEffects extends LevelScript {
             }
         }
         //Apply smoothing
-        //smoothLightMap();
+        smoothLightMap();
     }
 
     private void smoothLightMap(){
