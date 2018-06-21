@@ -182,19 +182,24 @@ public class LightingEffects extends LevelScript {
         }
         //Assemble the lightmaps
         lightMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
-        for (int col = 0; col < level.getBackdrop().getCols(); col++) { //Iterate over every part of the level. //TODO: Clip range to just the screen.
-            for (int row = 0; row < level.getBackdrop().getRows(); row++) {
+        Coordinate start = getLightmapCalculationStart();
+        Coordinate end = getLightmapCalculationEnd();
+        for (int col = start.getX(); col < end.getX(); col++) {
+            for (int row = start.getY(); row < end.getY(); row++) {
                 for (LightNode node : lightNodes) lightMap[col][row] += node.lightMap[col][row];
             }
         }
         //Apply smoothing
         smoothLightMap();
+        smoothLightMap(); //Run a second pass to smooth things out further.
     }
 
     private void smoothLightMap(){
         double[][] smoothedMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
-        for (int col = 0; col < smoothedMap.length; col++) { //Iterate over every part of the level. //TODO: Clip range to just the screen.
-            for (int row = 0; row < smoothedMap[0].length; row++) {
+        Coordinate start = getLightmapCalculationStart();
+        Coordinate end = getLightmapCalculationEnd();
+        for (int col = start.getX(); col < end.getX(); col++) {
+            for (int row = start.getY(); row < end.getY(); row++) {
                 int numPoints = 0;
                 double total = 0;
                 if (getLightMapAmount(new Coordinate(col - 1, row)) >= 0){
@@ -225,7 +230,14 @@ public class LightingEffects extends LevelScript {
         return lightMap[pos.getX()][pos.getY()];
     }
 
+    private Coordinate getLightmapCalculationStart(){
+        return new Coordinate(Math.max(0, gi.getLayerManager().getCameraPos().getX() - 1), Math.max(0, gi.getLayerManager().getCameraPos().getY() - 1));
+    }
 
+    private Coordinate getLightmapCalculationEnd(){
+        Coordinate start = getLightmapCalculationStart();
+        return new Coordinate(Math.min(level.getBackdrop().getCols(), start.getX() + gi.getLayerManager().getWindow().RESOLUTION_WIDTH + 1), Math.min(level.getBackdrop().getRows(), start.getY() + gi.getLayerManager().getWindow().RESOLUTION_HEIGHT + 1));
+    }
 
     /**
      * Performs a raycast until it hits a wall, defining lighting values for all the points in between.
