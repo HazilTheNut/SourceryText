@@ -53,9 +53,12 @@ public class GameInstance implements Serializable {
     private long currentUID = 1;
     private long turnCounter = 0;
 
+    private ArrayList<String> gameEvents;
+
     public GameInstance(){
         levels = new ArrayList<>();
         entityOperations = new ArrayList<>();
+        gameEvents = new ArrayList<>();
     }
 
     void assignLayerManager(LayerManager lm){
@@ -385,6 +388,10 @@ public class GameInstance implements Serializable {
 
     public long getTurnCounter() {
         return turnCounter;
+    }
+
+    public ArrayList<String> getGameEvents() {
+        return gameEvents;
     }
 
     private interface EntityOperation{

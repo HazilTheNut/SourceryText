@@ -27,11 +27,14 @@ public class LightingEffects extends LevelScript {
     private Color lightingCold = new Color(10, 10, 20);
     private Color lightingWarm = new Color(255, 181, 107);
 
+    private double[][] lightMap;
+
     @Override
     public void onLevelLoad() {
         super.onLevelLoad();
         shadingLayer = new Layer(level.getBackdrop().getCols(), level.getBackdrop().getRows(), "ls_lighting: " + level.getName(), 0, 0, LayerImportances.VFX);
         lightNodes = new ArrayList<>();
+        lightMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
         identifyLightNodes();
         drawShadingLayer();
     }
@@ -51,6 +54,10 @@ public class LightingEffects extends LevelScript {
         identifyLightNodes();
         compileLightmaps();
         drawShadingLayer();
+    }
+
+    public double[][] getLightMap() {
+        return lightMap;
     }
 
     /**
@@ -117,8 +124,9 @@ public class LightingEffects extends LevelScript {
         Layer tempLayer = new Layer(shadingLayer.getCols(), shadingLayer.getRows(), "shandingtemp", 0, 0, 0);
         for (int col = 0; col < level.getBackdrop().getCols(); col++) { //Iterate over every part of the level. //TODO: Clip range to just the screen.
             for (int row = 0; row < level.getBackdrop().getRows(); row++) {
-                double lightness = 0;
-                for (LightNode node : lightNodes) lightness += node.lightMap[col][row];
+                lightMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
+                for (LightNode node : lightNodes) lightMap[col][row] += node.lightMap[col][row];
+                double lightness = lightMap[col][row];
                 double warmLightingCutoff = 4;
                 if (lightness < 1){ //Draw the cold colors if it is dim.
                     int opacity = (int)(255 - (225 * lightness));
