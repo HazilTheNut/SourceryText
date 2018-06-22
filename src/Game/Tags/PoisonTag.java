@@ -60,10 +60,18 @@ public class PoisonTag extends Tag{
 
     @Override
     public void onContact(TagEvent e) {
+        //From Entity to Item
         if (e.getTarget() instanceof Item) {
             Item target = (Item) e.getTarget();
             if (target.hasTag(TagRegistry.SHARP)){
                 transmit(target);
+            }
+        }
+        //From Item to Entity
+        if (e.getSource() instanceof Item) {
+            Item source = (Item) e.getSource();
+            if (source.hasTag(TagRegistry.SHARP)){
+                transmit(e.getTarget());
             }
         }
     }

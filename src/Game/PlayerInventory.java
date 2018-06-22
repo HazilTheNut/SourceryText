@@ -183,7 +183,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         if (prevMousePos == null || !prevMousePos.equals(screenPos)) {
             prevMousePos = screenPos;
             selectorLayer.setVisible(false);
-            descriptionLayer.setVisible(false);
+            //descriptionLayer.setVisible(false);
             playerInv.onMouseMove(screenPos);
             otherInv.onMouseMove(screenPos);
         }
