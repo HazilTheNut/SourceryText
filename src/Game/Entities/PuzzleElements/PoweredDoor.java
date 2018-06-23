@@ -3,6 +3,7 @@ package Game.Entities.PuzzleElements;
 import Data.Coordinate;
 import Data.EntityArg;
 import Data.EntityStruct;
+import Data.SerializationVersion;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Entities.Entity;
@@ -13,6 +14,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class PoweredDoor extends Entity implements Powerable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private SpecialText closedIcon;
     private SpecialText openIcon;

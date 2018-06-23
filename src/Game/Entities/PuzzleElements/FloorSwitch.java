@@ -3,6 +3,7 @@ package Game.Entities.PuzzleElements;
 import Data.Coordinate;
 import Data.EntityArg;
 import Data.EntityStruct;
+import Data.SerializationVersion;
 import Engine.LayerManager;
 import Game.Entities.Entity;
 import Game.GameInstance;
@@ -11,13 +12,15 @@ import java.util.ArrayList;
 
 public class FloorSwitch extends Entity {
 
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
+
     private Coordinate powerTo;
     private boolean isPowering;
 
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
-        args.add(new EntityArg("powerTo", "[0,'0]"));
+        args.add(new EntityArg("powerTo", "[0,0]"));
         return args;
     }
 

@@ -66,6 +66,9 @@ public class OnFireTag extends Tag {
             lifetime = 12;
             spreadLikelihood = 0.2;
         }
+        if (e.getTarget().hasTag(TagRegistry.BURN_SPREAD)){
+            spreadLikelihood = 1;
+        }
     }
 
     @Override
