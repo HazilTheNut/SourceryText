@@ -111,6 +111,8 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         colorPicker.setPreferredSize(new Dimension(315, 300));
         colorPickerPanel.addMouseListener(colorPicker);
         colorPickerPanel.addMouseMotionListener(colorPicker);
+        getContentPane().addComponentListener(colorPicker);
+
         colorPickerPanel.add(colorPicker);
 
         add(colorPickerPanel, BorderLayout.CENTER);
@@ -200,7 +202,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         dispose();
     }
 
-    class ColorPicker extends JComponent implements MouseInputListener {
+    class ColorPicker extends JComponent implements MouseInputListener, ComponentListener {
 
         /**
          * ColorPicker:
@@ -212,18 +214,11 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
          * Main Box: The large square that allows for modifying Saturation and Brightness
          * Hue Slider: The slider on the right that modifies Hue.
          */
-        int mousePointX = 0;
-        int mousePointY = 0;
-        
-        int satBriPointX = 0; //This point has to be remembered so that it stays put while changing hue
-        int satBriPointY = 0; //Could be a Coordinate, but it's old code.
 
         float[] colorData;
 
         void setColorData(float[] data) {
             colorData = data;
-            mousePointX = (int)(colorData[1] * (getBoxWidth())) + 1;
-            mousePointY = (int)(colorData[2] * (getHeight()-1)) + 1;
         }
 
         float[] getColorData() { return colorData; }
@@ -250,7 +245,6 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             }
 
             //Draw white line on the hue slider
-            System.out.printf("Hue: %1$f\n", colorData[0]);
             int lineY = (int)(getHeight() * colorData[0]);
             g.setColor(Color.WHITE);
             g.fillRect(boxWidth, lineY - 2, getWidth() - boxWidth, 4);
@@ -260,10 +254,10 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             g.drawRect(0,0,boxWidth,getHeight()-1);
             g.drawRect(boxWidth + 2,0,getWidth()-boxWidth-3,getHeight()-1);
 
-            if (mousePointX < getBoxWidth() + 2) { //Don't move Sat-Bri point if hue is changing.
-                satBriPointX = mousePointX;
-                satBriPointY = mousePointY;
-            }
+            //if (mousePointX < getBoxWidth() + 2) { //Don't move Sat-Bri point if hue is changing.
+            int satBriPointX = (int)(getBoxWidth() * colorData[1]);
+            int satBriPointY = (int)(getBoxWidth() * colorData[2]);
+            //}
 
             //Draw the little cross-hair on the main box
             g.setColor(Color.WHITE);
@@ -284,8 +278,8 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         }
 
         private void onMouseInput(MouseEvent e){
-            mousePointX = e.getX() - getX();
-            mousePointY = e.getY() - getY();
+            int mousePointX = e.getX() - getX();
+            int mousePointY = e.getY() - getY();
             if (mousePointX >= getWidth() - 13){ //Selecting hue
                 colorData[0] = (float)mousePointY / getHeight();
             } else {
@@ -325,6 +319,26 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         @Override
         public void mouseExited(MouseEvent e) {
+
+        }
+
+        @Override
+        public void componentResized(ComponentEvent e) {
+            repaint();
+        }
+
+        @Override
+        public void componentMoved(ComponentEvent e) {
+
+        }
+
+        @Override
+        public void componentShown(ComponentEvent e) {
+
+        }
+
+        @Override
+        public void componentHidden(ComponentEvent e) {
 
         }
     }
