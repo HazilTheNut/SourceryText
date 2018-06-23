@@ -93,6 +93,7 @@ public class TextBox implements MouseInputReceiver{
         currentState = STATE_SCROLLING;
         Color textColor = txt_white;
         while (index < message.length()){
+            player.freeze();
             if (message.charAt(index) == ' ') { //End of a word
                 int nextIndex = getIndexOfNextSpace(message, index + 1);
                 DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","Next Word: \"%1$s\"", message.substring(index, nextIndex));
@@ -199,13 +200,7 @@ public class TextBox implements MouseInputReceiver{
         }
     }
 
-    @Override
-    public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
-        return false;
-    }
-
-    @Override
-    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton) {
+    private boolean doClick(){
         if (textBoxLayer.getVisible()){
             switch (currentState){
                 case STATE_END:
@@ -224,17 +219,27 @@ public class TextBox implements MouseInputReceiver{
     }
 
     @Override
+    public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
+        return false;
+    }
+
+    @Override
+    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton) {
+        return doClick();
+    }
+
+    @Override
     public boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement) {
         return false;
     }
 
     @Override
     public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
-        return false;
+        return doClick();
     }
 
     @Override
     public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
-        return false;
+        return textBoxLayer.getVisible();
     }
 }

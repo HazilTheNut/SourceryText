@@ -122,6 +122,8 @@ public class OnFireTag extends Tag {
 
     @Override
     public String getName() {
+        if (burnForever)
+            return "On Fire";
         return String.format("%1$s (%2$d)", super.getName(), lifetime);
     }
 

@@ -584,7 +584,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         gi.doEnemyTurn();
     }
 
-    void freeze() {gi.setPlayerTurn(false);}
+    public void freeze() {gi.setPlayerTurn(false);}
 
     void unfreeze() {
         if (gi != null) {

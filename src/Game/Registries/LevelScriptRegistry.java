@@ -1,9 +1,6 @@
 package Game.Registries;
 
-import Game.LevelScripts.LevelScript;
-import Game.LevelScripts.LightingEffects;
-import Game.LevelScripts.ResetOnEnter;
-import Game.LevelScripts.WetTileDrying;
+import Game.LevelScripts.*;
 
 import java.util.Set;
 import java.util.TreeMap;
@@ -22,6 +19,7 @@ public class LevelScriptRegistry {
         scriptMap.put(2, LightingEffects.class);
         scriptMap.put(3, ResetOnEnter.class);
 
+        scriptMap.put(1000, CinemaTutorialBasement.class);
         //Registering stuff ends here
     }
 
