@@ -256,7 +256,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
             //if (mousePointX < getBoxWidth() + 2) { //Don't move Sat-Bri point if hue is changing.
             int satBriPointX = (int)(getBoxWidth() * colorData[1]);
-            int satBriPointY = (int)(getBoxWidth() * colorData[2]);
+            int satBriPointY = (int)(getHeight()   * colorData[2]);
             //}
 
             //Draw the little cross-hair on the main box
@@ -279,13 +279,14 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         private void onMouseInput(MouseEvent e){
             int mousePointX = e.getX() - getX();
-            int mousePointY = e.getY() - getY();
+            int mousePointY = e.getY() - getY() - 1;
             if (mousePointX >= getWidth() - 13){ //Selecting hue
                 colorData[0] = (float)mousePointY / getHeight();
             } else {
-                colorData[1] = (float)(mousePointX-1)/(getWidth()-15);
-                colorData[2] = (float)(mousePointY-1)/(getHeight()-1);
+                colorData[1] = ((float)mousePointX)/(getBoxWidth());
+                colorData[2] = ((float)mousePointY)/(getHeight());
             }
+            System.out.printf("Pt: %1$d, %2$d (%3$dx%4$d) sat: %5$.1f%% bri: %6$.1f%%\n", mousePointX, mousePointY, getBoxWidth(), getHeight(), 100 * colorData[1], 100 * colorData[2]);
             generateColor();
         }
 
