@@ -407,6 +407,23 @@ public class Entity extends TagHolder implements Serializable {
         return def;
     }
 
+    /**
+     * Reads an EntityArg and returns an ArrayList of Coordinates
+     * @param arg EntityArg to read
+     * @return Resulting coordinates
+     */
+    protected ArrayList<Coordinate> readCoordListArg(EntityArg arg){
+        ArrayList<Coordinate> coordList = new ArrayList<>();
+        if (arg != null){
+            StringIntParser stringIntParser = new StringIntParser();
+            int[] numbers = stringIntParser.getInts(arg.getArgValue());
+            for (int i = 0; i < numbers.length / 2; i++) {
+                coordList.add(new Coordinate(numbers[2 * i], numbers[(2 * i) + 1]));
+            }
+        }
+        return coordList;
+    }
+
     protected EntityArg searchForArg(ArrayList<EntityArg> providedArgs, String name){
         for (EntityArg arg : providedArgs){
             if (arg.getArgName().equals(name))

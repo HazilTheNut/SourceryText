@@ -47,7 +47,9 @@ public class WarpZoneEditor extends JFrame{
         window.RESOLUTION_WIDTH = Math.max(8 + wz.getWidth(), 30);
         window.RESOLUTION_HEIGHT = Math.max(8 + wz.getHeight(), 20);
 
-        lm.addLayer(ldata.getBackdrop());
+        Layer backdrop = ldata.getBackdrop();
+        backdrop.setVisible(true);
+        lm.addLayer(backdrop);
 
         //Creates layer for the warp currently being edited.
         warpZoneLayer = new Layer(new SpecialText[wz.getWidth()][wz.getHeight()], "previewZone", wz.getNewRoomStartX(), wz.getNewRoomStartY());
@@ -107,7 +109,6 @@ public class WarpZoneEditor extends JFrame{
     private void confirm(){
         wz.setTranslation(warpZoneLayer.getX(), warpZoneLayer.getY());
         System.out.printf("[WarpZoneEditor.confirm] New Room Pos: %1$s", new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY()));
-        lm.clearLayers();
         dispose();
     }
 

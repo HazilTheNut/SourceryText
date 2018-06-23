@@ -14,20 +14,20 @@ public class FloorSwitch extends Entity {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    private Coordinate powerTo;
+    private ArrayList<Coordinate> powerToLocs;
     private boolean isPowering;
 
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
-        args.add(new EntityArg("powerTo", "[0,0]"));
+        args.add(new EntityArg("powerToLocs", "[0,0],[0,0],..."));
         return args;
     }
 
     @Override
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
-        powerTo = readCoordArg(searchForArg(entityStruct.getArgs(), "powerTo"), new Coordinate(-1, -1));
+        powerToLocs = readCoordListArg(searchForArg(entityStruct.getArgs(), "powerToLocs"));
     }
 
     @Override
@@ -51,21 +51,25 @@ public class FloorSwitch extends Entity {
     }
 
     private void powerOn(){
-        ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(powerTo);
-        for (Entity e : entities){
-            if (e instanceof Powerable) {
-                Powerable powerable = (Powerable) e;
-                powerable.onPowerOn();
+        for (Coordinate powerTo : powerToLocs) {
+            ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(powerTo);
+            for (Entity e : entities) {
+                if (e instanceof Powerable) {
+                    Powerable powerable = (Powerable) e;
+                    powerable.onPowerOn();
+                }
             }
         }
     }
 
     private void powerOff(){
-        ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(powerTo);
-        for (Entity e : entities){
-            if (e instanceof Powerable) {
-                Powerable powerable = (Powerable) e;
-                powerable.onPowerOff();
+        for (Coordinate powerTo : powerToLocs) {
+            ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(powerTo);
+            for (Entity e : entities) {
+                if (e instanceof Powerable) {
+                    Powerable powerable = (Powerable) e;
+                    powerable.onPowerOff();
+                }
             }
         }
     }

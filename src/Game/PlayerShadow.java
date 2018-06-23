@@ -15,6 +15,7 @@ import Game.Tags.RangeTag;
 import Game.Tags.Tag;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class PlayerShadow extends CombatEntity implements PlayerActionCollector {
 
@@ -119,8 +120,8 @@ public class PlayerShadow extends CombatEntity implements PlayerActionCollector 
 
     @Override
     public void onPlayerInteract(Coordinate loc) {
-        Entity e = gi.getCurrentLevel().getEntitiesAt(loc.add(offset)).get(0);
-        if (e != null)
+        ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(loc.add(offset));
+        for( Entity e : entities)
             e.onInteract(player);
     }
 }

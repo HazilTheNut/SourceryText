@@ -76,6 +76,7 @@ public class TagRegistry {
     public final static int DEEP_WATER    = 403;
     public final static int NO_PATHING    = 404; //Tag not found.
     public final static int MAGNETIC      = 405;
+    public final static int TOGGLING      = 406;
 
     public final static int LIVING        = 600;
 
