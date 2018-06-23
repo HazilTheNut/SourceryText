@@ -280,6 +280,8 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         private void onMouseInput(MouseEvent e){
             int mousePointX = e.getX() - getX();
             int mousePointY = e.getY() - getY() - 1;
+            mousePointX = Math.max(0, Math.min(mousePointX, getBoxWidth()));
+            mousePointY = Math.max(0, Math.min(mousePointY, getHeight()));
             if (mousePointX >= getWidth() - 13){ //Selecting hue
                 colorData[0] = (float)mousePointY / getHeight();
             } else {
