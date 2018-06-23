@@ -306,6 +306,10 @@ public class Entity extends TagHolder implements Serializable {
         sprite.editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), colorateWithTags(originalSprite.getFgColor()), originalSprite.getBkgColor()));
     }
 
+    public void setIcon(SpecialText icon) {
+        this.icon = icon;
+    }
+
     //Override this with stuff to do with interacted with the player
     public void onInteract(Player player){}
 
@@ -361,7 +365,7 @@ public class Entity extends TagHolder implements Serializable {
     /**
      * Reads an EntityArg and returns a string
      * @param arg EntityArg to read
-     * @param def Deafult string if arg does not exist or an error occurred in trying to read the value
+     * @param def Default string if arg does not exist or an error occurred in trying to read the value
      * @return Resulting SpecialText
      */
     protected SpecialText readSpecTxtArg(EntityArg arg, SpecialText def){
@@ -372,10 +376,33 @@ public class Entity extends TagHolder implements Serializable {
         return def;
     }
 
+    /**
+     * Reads an EntityArg and returns a boolean
+     * @param arg EntityArg to read
+     * @param def Default boolean if arg does not exist or an error occurred in trying to read the value
+     * @return Resulting boolean
+     */
     protected boolean readBoolArg(EntityArg arg, boolean def){
         if (arg != null) {
             if (arg.getArgValue().toLowerCase().equals("true")) return true;
             if (arg.getArgValue().toLowerCase().equals("false")) return false;
+        }
+        return def;
+    }
+
+    /**
+     * Reads an EntityArg and returns a Coordinate
+     * @param arg EntityArg to read
+     * @param def Default Coordinate if arg does not exist or an error occurred in trying to read the value
+     * @return Resulting coordinate
+     */
+    protected Coordinate readCoordArg(EntityArg arg, Coordinate def){
+        if (arg != null){
+            StringIntParser stringIntParser = new StringIntParser();
+            int[] numbers = stringIntParser.getInts(arg.getArgValue());
+            if (numbers.length >= 2){
+                return new Coordinate(numbers[0], numbers[1]);
+            }
         }
         return def;
     }
@@ -387,5 +414,4 @@ public class Entity extends TagHolder implements Serializable {
         }
         return null;
     }
-
 }

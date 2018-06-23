@@ -1,11 +1,10 @@
 package Engine;
 
 import Data.SerializationVersion;
-import Game.Debug.DebugWindow;
+import Data.StringIntParser;
 
 import java.awt.*;
 import java.io.Serializable;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -108,20 +107,9 @@ public class SpecialText implements Serializable {
      */
     public static SpecialText fromString(String text){
         char c = text.charAt(1);
-        try {
-            int fr = readInt(text.substring(4, 7));
-            int fg = readInt(text.substring(8, 11));
-            int fb = readInt(text.substring(12, 15));
-            int fa = readInt(text.substring(16, 19));
-            int br = readInt(text.substring(22, 25));
-            int bg = readInt(text.substring(26, 29));
-            int bb = readInt(text.substring(30, 33));
-            int ba = readInt(text.substring(34, 37));
-            return new SpecialText(c, new Color(fr, fg, fb, fa), new Color(br, bg, bb, ba));
-        } catch ( NoSuchElementException | IllegalStateException e){
-            DebugWindow.reportf(DebugWindow.MISC, "SpecialText.fromString", "Error: %1$s", e.getMessage());
-            return null;
-        }
+        StringIntParser stringIntParser = new StringIntParser();
+        int[] values = stringIntParser.getInts(text);
+        return new SpecialText(c, new Color(values[0], values[1], values[2], values[3]), new Color(values[4], values[5], values[6], values[7]));
     }
 
     private static int readInt(String str){

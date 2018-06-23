@@ -2,6 +2,7 @@ package Game.Registries;
 
 import Game.LevelScripts.LevelScript;
 import Game.LevelScripts.LightingEffects;
+import Game.LevelScripts.ResetOnEnter;
 import Game.LevelScripts.WetTileDrying;
 
 import java.util.Set;
@@ -19,6 +20,7 @@ public class LevelScriptRegistry {
 
         scriptMap.put(1, WetTileDrying.class);
         scriptMap.put(2, LightingEffects.class);
+        scriptMap.put(3, ResetOnEnter.class);
 
         //Registering stuff ends here
     }

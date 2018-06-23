@@ -291,6 +291,10 @@ public class GameInstance implements Serializable {
         entityOperations.add(() -> currentLevel.removeEntity(e));
     }
 
+    public void unloadLevel(Level level){
+        levels.remove(level);
+    }
+
     public void addEntity(EntityStruct entityStruct, Coordinate loc){
         entityOperations.add(() -> {
             Entity e = instantiateEntity(entityStruct, loc, currentLevel);
