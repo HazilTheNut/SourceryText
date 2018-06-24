@@ -6,6 +6,7 @@ import Data.EntityStruct;
 import Data.SerializationVersion;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.Entities.PuzzleElements.Powerable;
 import Game.GameInstance;
 import Game.Projectile;
 import Game.Registries.TagRegistry;
@@ -15,7 +16,7 @@ import Game.Tags.Tag;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Magnet extends Entity {
+public class Magnet extends Entity implements Powerable {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
@@ -60,14 +61,28 @@ public class Magnet extends Entity {
             getSprite().editLayer(0, 0, new SpecialText('M', new Color(150 + hueAdjust, 150, 150), new Color(100 + hueAdjust, 100, 100, 15)));
     }
 
+    private void toggle(){
+        isAttractive = !isAttractive;
+        updateIcon();
+    }
+
+    @Override
+    public void onPowerOff() {
+        toggle();
+    }
+
+    @Override
+    public void onPowerOn() {
+        toggle();
+    }
+
     private class MagneticTag extends Tag{
         private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
         @Override
         public void onContact(TagEvent e) {
             if (e.getTarget().hasTag(TagRegistry.ELECTRIC)) {
-                isAttractive = !isAttractive;
-                updateIcon();
+                toggle();
             }
         }
     }

@@ -167,7 +167,7 @@ public class QuickMenu implements MouseInputReceiver {
 
     @Override
     public boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement) {
-        return false;
+        return menuLayer.getVisible();
     }
 
     @Override

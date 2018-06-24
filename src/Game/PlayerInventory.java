@@ -187,19 +187,19 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             playerInv.onMouseMove(screenPos);
             otherInv.onMouseMove(screenPos);
         }
-        return false;
+        return isInInvLayers(screenPos);
     }
 
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton) {
-        return false;
+        return isInInvLayers(screenPos);
     }
 
     @Override
     public boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement) {
         playerInv.doScrolling(screenPos, wheelMovement);
         otherInv.doScrolling(screenPos, wheelMovement);
-        return false;
+        return isInInvLayers(screenPos);
     }
 
     @Override
@@ -210,12 +210,16 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         item = otherInv.getItemAtCursor(screenPos);
         if (item != null)
             return otherInv.onItemClick(item, actions);
-        return false;
+        return isInInvLayers(screenPos);
     }
 
     @Override
     public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
-        return false;
+        return isInInvLayers(screenPos);
+    }
+
+    private boolean isInInvLayers(Coordinate mousePos){
+        return (otherInv.invLayer.getVisible() && !otherInv.invLayer.isLayerLocInvalid(mousePos)) || (playerInv.invLayer.getVisible() && !playerInv.invLayer.isLayerLocInvalid(mousePos));
     }
 
     /**
