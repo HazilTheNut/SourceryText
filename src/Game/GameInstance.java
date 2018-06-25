@@ -1,6 +1,7 @@
 package Game;
 
 import Data.*;
+import Engine.FrameUpdateListener;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
@@ -13,13 +14,11 @@ import Game.Registries.EntityRegistry;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Jared on 3/27/2018.
  */
-public class GameInstance implements Serializable {
+public class GameInstance implements Serializable, FrameUpdateListener {
 
     /**
      * GameInstance:
@@ -48,8 +47,6 @@ public class GameInstance implements Serializable {
     private transient TextBox textBox;
     private transient QuickMenu quickMenu;
 
-    private transient Timer tileAnimationTimer;
-
     private long currentUID = 1;
     private long turnCounter = 0;
 
@@ -63,6 +60,7 @@ public class GameInstance implements Serializable {
 
     void assignLayerManager(LayerManager lm){
         this.lm = lm;
+
     }
 
     void assignMouseInput(GameMouseInput gmi){
@@ -95,39 +93,20 @@ public class GameInstance implements Serializable {
     }
 
     void stopAnimations(){
-        tileAnimationTimer.cancel();
+        lm.removeFrameUpdateListener(this);
     }
 
     /**
      * Starts the timer that updates the AnimatedTiles.
      */
     void startAnimations(){
-        tileAnimationTimer = new Timer();
-        tileAnimationTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if (currentLevel != null) {
-                    ArrayList<AnimatedTile> animatedTiles = currentLevel.getAnimatedTiles();
-                    for (int i = 0; i < animatedTiles.size(); i++){
-                        AnimatedTile animatedTile = animatedTiles.get(i);
-                        SpecialText text = animatedTile.onDisplayUpdate();
-                        currentLevel.getAnimatedTileLayer().editLayer(animatedTile.getLocation().getX(), animatedTile.getLocation().getY(), text);
-                        if (text == null) {
-                            currentLevel.removeAnimatedTile(animatedTile.getLocation());
-                            i--;
-                        }
-                    }
-                    currentLevel.onAnimatedTileUpdate();
-                }
-            }
-        }, 50, 50);
+        lm.addFrameUpdateListener(this);
     }
 
     /**
      * Closes the GameInstance, preparing everything to be garbage-collected.
      */
     void dispose(){
-        tileAnimationTimer.cancel();
         if (currentLevel != null) {
             currentLevel.onExit(lm);
             currentLevel.removeEntity(getPlayer());
@@ -396,6 +375,31 @@ public class GameInstance implements Serializable {
 
     public ArrayList<String> getGameEvents() {
         return gameEvents;
+    }
+
+    @Override
+    public void onFrameDrawStart() {
+        if (player != null){
+            player.updateCameraPos();
+        }
+        if (currentLevel != null) {
+            currentLevel.onAnimatedTileUpdate();
+            ArrayList<AnimatedTile> animatedTiles = currentLevel.getAnimatedTiles();
+            for (int i = 0; i < animatedTiles.size(); i++){
+                AnimatedTile animatedTile = animatedTiles.get(i);
+                SpecialText text = animatedTile.onDisplayUpdate();
+                currentLevel.getAnimatedTileLayer().editLayer(animatedTile.getLocation().getX(), animatedTile.getLocation().getY(), text);
+                if (text == null) {
+                    currentLevel.removeAnimatedTile(animatedTile.getLocation());
+                    i--;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onFrameDrawEnd() {
+
     }
 
     private interface EntityOperation{

@@ -18,6 +18,7 @@ public class LevelScriptRegistry {
         scriptMap.put(1, WetTileDrying.class);
         scriptMap.put(2, LightingEffects.class);
         scriptMap.put(3, ResetOnEnter.class);
+        scriptMap.put(4, SpaceBackground.class);
 
         scriptMap.put(1000, CinemaTutorialBasement.class);
         //Registering stuff ends here

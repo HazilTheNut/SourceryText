@@ -211,8 +211,6 @@ public class Level implements Serializable {
         for (LevelScript ls : levelScripts) ls.onAnimatedTileUpdate();
     }
 
-
-
     public Tile getTileAt(Coordinate loc){
         if (loc != null && isLocationValid(loc)) {
             Tile overlay = getOverlayTileAt(loc);

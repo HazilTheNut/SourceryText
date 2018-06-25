@@ -170,7 +170,6 @@ public class Player extends CombatEntity implements MouseInputReceiver{
      */
     private void postMovementCheck(){
         checkForWarpZones();
-        updateCameraPos();
         if (inv.getOtherInv().getMode() == PlayerInventory.CONFIG_OTHER_EXCHANGE && inv.getOtherInv().isShowing()){
             inv.closeOtherInventory();
             inv.getPlayerInv().close();

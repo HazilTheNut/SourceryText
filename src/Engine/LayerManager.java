@@ -31,6 +31,8 @@ public class LayerManager {
     private ArrayList<LayerOperation> operationBufferOne = new ArrayList<>(); //Double buffering to prevent concurrent modification errors
     private ArrayList<LayerOperation> operationBufferTwo = new ArrayList<>();
 
+    private ArrayList<FrameUpdateListener> frameUpdateListeners = new ArrayList<>();
+
     private boolean bufferOneOpen = true;
 
     private int camX;
@@ -210,6 +212,45 @@ public class LayerManager {
         return previousCompileTime;
     }
 
+    public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener){
+        frameUpdateListeners.add(frameUpdateListener);
+    }
+
+    public void removeFrameUpdateListener(FrameUpdateListener frameUpdateListener){
+        frameUpdateListeners.remove(frameUpdateListener);
+    }
+
+    /**
+     * Updates all FrameUpdateListeners prior to drawing a frame.
+     *
+     * This process is handled on a separate thread to provide protection against possible interruptions in the drawing process.
+     * The full drawing process waits 5ms before drawing to allow for some, if not all, of the processes to finish.
+     */
+    private void frameStartUpdate(){
+        Thread thread = new Thread(() -> {
+            for (int i = 0; i < frameUpdateListeners.size();) {
+                frameUpdateListeners.get(i).onFrameDrawStart();
+                i++;
+            }
+        });
+        thread.start();
+    }
+
+    /**
+     * Updates all FrameUpdateListeners at the end of drawing a frame.
+     *
+     * This process is handled on a separate thread to provide protection against possible interruptions in the drawing process.
+     */
+    private void frameEndUpdate(){
+        Thread thread = new Thread(() -> {
+            for (int i = 0; i < frameUpdateListeners.size();) {
+                frameUpdateListeners.get(i).onFrameDrawEnd();
+                i++;
+            }
+        });
+        thread.start();
+    }
+
     /**
      * Adding a Layer, removing a Layer, and clearing the Layer stack is placed onto a buffer before operating.
      *
@@ -243,9 +284,10 @@ public class LayerManager {
      * @return The Layer that represents a screen.
      */
     private Layer compileLayers(Dimension targetResolution){
+        frameStartUpdate();
+        sleep(5);
         long startTime = System.nanoTime();
         processLayerOperationBuffer();
-
         Layer finalResult = new Layer(new SpecialText[(int)targetResolution.getWidth()][(int)targetResolution.getHeight()], "final", 0, 0);
         for (int col = 0; col < finalResult.getCols(); col++){
             for (int row = 0; row < finalResult.getRows(); row++){
@@ -256,6 +298,7 @@ public class LayerManager {
         }
         finalResult.convertNullToOpaque();
         previousCompileTime = System.nanoTime() - startTime;
+        frameEndUpdate();
         return finalResult;
     }
 
@@ -346,6 +389,14 @@ public class LayerManager {
         System.out.println("LAYERS: \n");
         for (Layer layer : layerStack){
             System.out.println(layer.getName());
+        }
+    }
+
+    private void sleep(long millis){
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

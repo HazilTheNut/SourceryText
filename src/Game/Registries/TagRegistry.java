@@ -75,10 +75,11 @@ public class TagRegistry {
     public final static int SHALLOW_WATER = 402;
     public final static int DEEP_WATER    = 403;
     public final static int NO_PATHING    = 404; //Tag not found.
-    public final static int MAGNETIC      = 405;
-    public final static int TOGGLING      = 406;
+    public final static int SLIDING       = 405;
 
     public final static int LIVING        = 600;
+    public final static int MAGNETIC      = 601;
+    public final static int TOGGLING      = 602;
 
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
@@ -130,6 +131,7 @@ public class TagRegistry {
         registerTag(SHALLOW_WATER, "Shallow Water", ShallowWaterTag.class);
         registerTag(DEEP_WATER,    "Deep Water", DeepWaterTag.class);
         registerTag(NO_PATHING, "Impassable", NoPathingTag.class);
+        registerTag(SLIDING, "Sliding", SlidingSurfaceTag.class);
 
         //Entity related
         registerTag(LIVING, "Living", LivingTag.class);

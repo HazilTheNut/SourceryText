@@ -144,6 +144,20 @@ public class Entity extends TagHolder implements Serializable {
             location.movePos(relativeX, relativeY);
             sprite.movePos(relativeX, relativeY);
             onContact(gi.getTileAt(location), gi);
+            checkForSlidingSurface(relativeX, relativeY);
+        }
+    }
+
+    protected void checkForSlidingSurface(int relativeX, int relativeY){
+        if (gi.getCurrentLevel().getTileAt(getLocation()).hasTag(TagRegistry.SLIDING)) {
+            double magnitude = Math.sqrt(Math.pow(relativeX, 2) + Math.pow(relativeY, 2));
+            Coordinate vector = new Coordinate((int) Math.round(relativeX / magnitude), (int) Math.round(relativeY / magnitude));
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            move(vector.getX(), vector.getY());
         }
     }
 
