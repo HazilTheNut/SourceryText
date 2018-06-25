@@ -42,6 +42,7 @@ public class LayerManager {
     private ViewWindow window;
 
     private long previousCompileTime;
+    private boolean isDrawingFrame;
 
     int arbitraryNumber = 0;
 
@@ -212,6 +213,10 @@ public class LayerManager {
         return previousCompileTime;
     }
 
+    public boolean isDrawingFrame() {
+        return isDrawingFrame;
+    }
+
     public void addFrameUpdateListener(FrameUpdateListener frameUpdateListener){
         frameUpdateListeners.add(frameUpdateListener);
     }
@@ -284,6 +289,7 @@ public class LayerManager {
      * @return The Layer that represents a screen.
      */
     private Layer compileLayers(Dimension targetResolution){
+        isDrawingFrame = true;
         frameStartUpdate();
         sleep(5);
         long startTime = System.nanoTime();
@@ -298,6 +304,7 @@ public class LayerManager {
         }
         finalResult.convertNullToOpaque();
         previousCompileTime = System.nanoTime() - startTime;
+        isDrawingFrame = false;
         frameEndUpdate();
         return finalResult;
     }

@@ -154,6 +154,8 @@ public class Player extends CombatEntity implements MouseInputReceiver{
 
     @Override
     protected void move(int relativeX, int relativeY) {
+        while (gi.getLayerManager().isDrawingFrame())
+            turnSleep(2);
         super.move(relativeX, relativeY);
         for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerMove(getLocation());
         postMovementCheck();
@@ -608,75 +610,4 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     public void setWeightCapacity(double weightCapacity) {
         this.weightCapacity = weightCapacity;
     }
-
-    //Below is pathfinding stuff
-
-    /*
-    protected void pathToPosition(Coordinate target, int range){
-        currentPoints = new ArrayList<>();
-        futurePoints = new ArrayList<>();
-        futurePoints.add(new SpreadPoint(target.getX(), target.getY(), 0));
-        doPathing(1, range);
-    }
-
-    private transient ArrayList<SpreadPoint> currentPoints;
-    private transient ArrayList<SpreadPoint> futurePoints;
-
-    private void doPathing(int n, int detectRange){
-        if (n > detectRange) return;
-        moveFutureToPresentPoints();
-        for (SpreadPoint point : currentPoints){
-            attemptFuturePoint(point.x+1, point.y, n);
-            attemptFuturePoint(point.x-1, point.y, n);
-            attemptFuturePoint(point.x, point.y+1, n);
-            attemptFuturePoint(point.x, point.y-1, n);
-        }
-        for (SpreadPoint pt : futurePoints){
-            if (pt.x == getLocation().getX() && pt.y == getLocation().getY()){
-                for (SpreadPoint cp : currentPoints){
-                    if (getLocation().stepDistance(new Coordinate(cp.x, cp.y)) <= 1){
-                        teleport(new Coordinate(cp.x, cp.y));
-                        return;
-                    }
-                }
-            }
-        }
-        doPathing(n+1, detectRange);
-    }
-
-    private void moveFutureToPresentPoints(){
-        for (SpreadPoint point : futurePoints) if (!currentPoints.contains(point)) {
-            currentPoints.add(point);
-        }
-        futurePoints.clear();
-    }
-
-    private void attemptFuturePoint(int col, int row, int generation){
-        if (getGameInstance().isSpaceAvailable(new Coordinate(col, row), TagRegistry.NO_PATHING) || getLocation().equals(new Coordinate(col, row))) futurePoints.add(new SpreadPoint(col, row, generation));
-    }
-
-    private class SpreadPoint{
-        int x;
-        int y;
-        int g; //Shorthand for 'generation'
-        private SpreadPoint(int x, int y, int g){
-            this.x = x;
-            this.y = y;
-            this.g = g;
-        }
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof SpreadPoint){
-                SpreadPoint other = (SpreadPoint)obj;
-                return x == other.x && y == other.y;
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("PathPoint:[%1$d,%2$d,%3$d]", x, y, g);
-        }
-    }
-    */
 }
