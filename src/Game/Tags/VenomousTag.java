@@ -1,6 +1,7 @@
 package Game.Tags;
 
 import Data.SerializationVersion;
+import Game.Registries.TagRegistry;
 import Game.TagEvent;
 
 import java.awt.*;
@@ -13,7 +14,7 @@ public class VenomousTag extends Tag {
      * The Tag that unconditionally transmits poison upon contact.
      *
      * For All TagHolders:
-     * > Transmits a PoisonTag upon contact.
+     * > Transmits a PoisonTag upon contact, if the target is living.
      */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
@@ -21,7 +22,8 @@ public class VenomousTag extends Tag {
     @Override
     public void onContact(TagEvent e) {
         PoisonTag poisonTag = new PoisonTag();
-        poisonTag.transmit(e.getTarget());
+        if (e.getTarget().hasTag(TagRegistry.LIVING))
+            poisonTag.transmit(e.getTarget());
     }
 
     @Override

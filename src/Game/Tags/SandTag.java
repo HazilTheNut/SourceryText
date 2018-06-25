@@ -2,6 +2,7 @@ package Game.Tags;
 
 import Data.Coordinate;
 import Data.SerializationVersion;
+import Engine.SpecialText;
 import Game.AnimatedTiles.SandAnimation;
 import Game.GameInstance;
 
@@ -23,6 +24,10 @@ public class SandTag extends SplashySurface {
 
     @Override
     protected void playSplash(Coordinate loc, GameInstance gi) {
-        gi.addAnimatedTile(new SandAnimation(loc, gi.getCurrentLevel().getBackdrop().getSpecialText(loc.getX(), loc.getY())));
+        SpecialText seed = gi.getCurrentLevel().getOverlayTileLayer().getSpecialText(loc.getX(), loc.getY());
+        if (seed != null)
+            gi.addAnimatedTile(new SandAnimation(loc, seed));
+        else
+            gi.addAnimatedTile(new SandAnimation(loc, gi.getCurrentLevel().getBackdrop().getSpecialText(loc.getX(), loc.getY())));
     }
 }

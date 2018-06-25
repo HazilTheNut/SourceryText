@@ -34,7 +34,7 @@ public class SpaceBackground extends LevelScript {
     }
 
     private void drawBackground(){
-        int STARCOUNTER_START = 10; //Ensures minimum of 10 stars per tile
+        int STARCOUNTER_START = 20; //Ensures minimum of 10 stars per tile
         int starCounter = STARCOUNTER_START;
         float starLikelihood = 1f / STARCOUNTER_START;
         backgroundLayer = new Layer(gi.getLayerManager().getWindow().RESOLUTION_WIDTH, gi.getLayerManager().getWindow().RESOLUTION_HEIGHT, "space_background: " + level.getName(), 0, 0, LayerImportances.BACKDROP - 1);

@@ -115,7 +115,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
      *
      * One would think it would be possible to unify the Tag lists into one function, but it turns out the Item descriptor is very specialized and would turn this method into even more of a spaghetti mess.
      *
-     * @param item
+     * @param item The item to describe
      */
     void updateItemDescription(Item item){
         Layer descLayer;
