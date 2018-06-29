@@ -21,7 +21,7 @@ public class RoomCover extends Entity implements Powerable {
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
-        args.add(new EntityArg("bounds","[0,0]-[0,0]"));
+        args.add(new EntityArg("bounds","[0,0]-[999,999]"));
         args.add(new EntityArg("includeWalls","true"));
         return args;
     }
