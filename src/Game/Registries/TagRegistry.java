@@ -80,6 +80,7 @@ public class TagRegistry {
     public final static int LIVING        = 600;
     public final static int MAGNETIC      = 601;
     public final static int TOGGLING      = 602;
+    public final static int BRIGHT        = 603;
 
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
@@ -135,6 +136,7 @@ public class TagRegistry {
 
         //Entity related
         registerTag(LIVING, "Living", LivingTag.class);
+        registerTag(BRIGHT, "Bright", BrightTag.class);
 
         //Registering stuff ends here
     }

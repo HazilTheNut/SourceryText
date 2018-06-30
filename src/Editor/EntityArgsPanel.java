@@ -58,6 +58,10 @@ public class EntityArgsPanel extends JPanel {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.LINE_AXIS));
 
+        JButton resetButton = new JButton("Reset");
+        resetButton.addActionListener(e -> reset(entityStruct, argEditorPanel));
+        bottomPanel.add(resetButton);
+
         bottomPanel.add(Box.createHorizontalGlue()); //We want the bottom buttons to be right-justified, consistent with all the other UI's
 
         JButton finishButton = new JButton("Done");
@@ -65,6 +69,42 @@ public class EntityArgsPanel extends JPanel {
         bottomPanel.add(finishButton);
 
         add(bottomPanel, BorderLayout.PAGE_END);
+    }
+
+    private void reset(EntityStruct entityStruct, JPanel argEditorPanel){
+        //Generate an entity so that we can obtain its EntityArgs
+        Entity generated = null;
+        try {
+            generated = (Entity) EntityRegistry.getEntityClass(entityStruct.getEntityId()).newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        if (generated != null) {
+            argEditorPanel.removeAll(); //Clear everything out
+            entityStruct.getArgs().clear();
+            generated.simpleInit(entityStruct, new Coordinate(0, 0));
+            ArrayList<EntityArg> args = generated.generateArgs();
+            if (args != null) {
+                for (EntityArg arg : args) {
+                    writeArgValue(entityStruct, arg.getArgName(), arg.getArgValue()); //Write stuff onto the entity struct
+                }
+            }
+            for (EntityArg arg : entityStruct.getArgs()){ //Update editors once finished
+                argEditorPanel.add(new ArgEditor(arg));
+            }
+            argEditorPanel.validate();
+            argEditorPanel.repaint();
+        }
+    }
+
+    private void writeArgValue(EntityStruct entityStruct, String name, String value){
+        for (EntityArg arg : entityStruct.getArgs()){
+            if (arg.getArgName().equals(name)) {
+                arg.setArgValue(value);
+                return;
+            }
+        }
+        entityStruct.getArgs().add(new EntityArg(name, value));
     }
 
     private class ArgEditor extends JPanel{

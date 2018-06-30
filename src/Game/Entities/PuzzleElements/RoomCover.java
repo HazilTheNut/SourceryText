@@ -17,17 +17,24 @@ public class RoomCover extends Entity implements Powerable {
 
     private Layer coverLayer;
     private boolean includeWalls;
+    private boolean ignoreWalls;
 
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("bounds","[0,0]-[999,999]"));
         args.add(new EntityArg("includeWalls","true"));
+        args.add(new EntityArg("ignoreWalls", "false"));
         return args;
     }
 
     @Override
     public boolean isSolid() {
+        return false;
+    }
+
+    @Override
+    public boolean isVisible() {
         return false;
     }
 
@@ -41,13 +48,14 @@ public class RoomCover extends Entity implements Powerable {
             getSprite().editLayer(0, 0, null);
         }
         includeWalls = readBoolArg(searchForArg(entityStruct.getArgs(), "includeWalls"), true);
+        ignoreWalls = readBoolArg(searchForArg(entityStruct.getArgs(), "ignoreWalls"), false);
     }
 
     private void buildCoverLayer(Coordinate bound1, Coordinate bound2){
-        int left   = Math.min(bound1.getX(), bound2.getX());
-        int top    = Math.min(bound1.getY(), bound2.getY());
-        int right  = Math.max(bound1.getX(), bound2.getX());
-        int bottom = Math.max(bound1.getY(), bound2.getY());
+        int left   = Math.max(Math.min(bound1.getX(), bound2.getX()), 0);
+        int top    = Math.max(Math.min(bound1.getY(), bound2.getY()), 0);
+        int right  = Math.min(Math.max(bound1.getX(), bound2.getX()), gi.getCurrentLevel().getBackdrop().getCols());
+        int bottom = Math.min(Math.max(bound1.getY(), bound2.getY()), gi.getCurrentLevel().getBackdrop().getRows());
         coverLayer = new Layer(right - left + 1, bottom - top + 1, "cover" + getUniqueID(), left, top, LayerImportances.VFX-1);
     }
 
@@ -73,7 +81,7 @@ public class RoomCover extends Entity implements Powerable {
     }
 
     private void attemptPoint(Coordinate origin, Coordinate attempt, ArrayList<Coordinate> locs){
-        boolean isSpace = (includeWalls && gi.isSpaceAvailable(origin, TagRegistry.TILE_WALL)) || (!includeWalls && gi.isSpaceAvailable(attempt, TagRegistry.TILE_WALL));
+        boolean isSpace = ignoreWalls || (includeWalls && gi.isSpaceAvailable(origin, TagRegistry.TILE_WALL)) || (!includeWalls && gi.isSpaceAvailable(attempt, TagRegistry.TILE_WALL));
         boolean alreadyThere = !locs.contains(attempt);
         boolean isBounded = !coverLayer.isLayerLocInvalid(attempt.subtract(coverLayer.getPos()));
         if (isSpace && alreadyThere && isBounded){

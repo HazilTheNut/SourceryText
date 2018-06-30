@@ -85,6 +85,9 @@ public class Entity extends TagHolder implements Serializable {
 
     public boolean isSolid() { return true; }
 
+    //Marking this is false only affects whether the synopsis panel should 'see' it.
+    public boolean isVisible() { return true; }
+
     public boolean isAlive() {
         return isAlive;
     }

@@ -21,7 +21,8 @@ public class LightingEffects extends LevelScript {
 
     private int[] lightIDs = {
             TagRegistry.ON_FIRE,
-            TagRegistry.FLAME_ENCHANT
+            TagRegistry.FLAME_ENCHANT,
+            TagRegistry.BRIGHT
     };
 
     private Color lightingCold = new Color(10, 10, 20);
@@ -68,19 +69,16 @@ public class LightingEffects extends LevelScript {
         for (int col = 0; col < level.getBackdrop().getCols(); col++) {
             for (int row = 0; row < level.getBackdrop().getRows(); row++) {
                 //Test tile
-                if (testForLightTag(level.getTileAt(new Coordinate(col, row))))
-                    addLightNode(new LightNode(col, row, 5));
+                addLightNode(new LightNode(col, row, testForLightTag(level.getTileAt(new Coordinate(col, row)))));
                 //Test entities
                 ArrayList<Entity> atLoc = level.getEntitiesAt(new Coordinate(col, row));
                 for (Entity e : atLoc){
                     //Test entity's own tags
-                    if (testForLightTag(e))
-                        addLightNode(new LightNode(col, row, 5));
+                    addLightNode(new LightNode(col, row, testForLightTag(e)));
                     //Test if Entity is CombatEntity and is holding a light-emitting Item.
                     if (e instanceof CombatEntity) {
                         CombatEntity ce = (CombatEntity) e;
-                        if (testForLightTag(ce.getWeapon()))
-                            addLightNode(new LightNode(col, row, 5));
+                        addLightNode(new LightNode(col, row, testForLightTag(ce.getWeapon())));
                     }
                 }
             }
@@ -99,6 +97,7 @@ public class LightingEffects extends LevelScript {
      * @param lightNode The LightNode to add.
      */
     private void addLightNode(LightNode lightNode){
+        if (lightNode.luminance == 0) return;
         for (LightNode other : lightNodes){
             double dist = dist(other, lightNode);
             if (dist <= other.gravity){
@@ -110,11 +109,16 @@ public class LightingEffects extends LevelScript {
         lightNodes.add(lightNode);
     }
 
-    private boolean testForLightTag(TagHolder holder){
+    private double testForLightTag(TagHolder holder){
         for (int id : lightIDs){
-            if (holder.hasTag(id)) return true;
+            if (holder.hasTag(id)){
+                if (holder.hasTag(TagRegistry.BRIGHT))
+                    return 25;
+                else
+                    return 5;
+            }
         }
-        return false;
+        return 0;
     }
 
     /**
@@ -259,7 +263,7 @@ public class LightingEffects extends LevelScript {
             double dist = Math.sqrt(Math.pow(node.x - x, 2) + Math.pow(node.y - y, 2));
             double lightness = node.luminance / Math.max(Math.pow(dist, 2), 1);
             node.assignLightMapValue(toCheck.getX(), toCheck.getY(), lightness);
-            if (level.getTileAt(toCheck).hasTag(TagRegistry.TILE_WALL)){
+            if (level.isLocationValid(toCheck) && level.getTileAt(toCheck).hasTag(TagRegistry.TILE_WALL)){
                 return;
             }
         }

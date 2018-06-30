@@ -172,7 +172,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     }
 
     /**
-     * Unpacks a level from storage, but doesn't set the current room to the newly unpacked one automatically.
+     * Unpacks a level from storage, and automatically sets the current room to the newly unpacked one automatically.
      *
      * @param levelFilePath The non-relative file path to the level's file
      * @return returns the loaded level
@@ -180,6 +180,8 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private Level loadLevel(String levelFilePath){
         DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Begin level load to memory from %1$s", levelFilePath);
         Level newLevel = new Level(levelFilePath);
+
+        currentLevel = newLevel;
 
         FileIO io = new FileIO();
 

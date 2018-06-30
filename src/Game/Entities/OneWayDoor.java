@@ -27,8 +27,6 @@ public class OneWayDoor extends Entity {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    private boolean leftDirection = false; //Defines the direction of the OneWayDoor
-
     private final int DIR_ERROR = 0;
     private final int DIR_LEFT  = 1;
     private final int DIR_RIGHT = 2;
@@ -41,7 +39,7 @@ public class OneWayDoor extends Entity {
             if ((direction == DIR_LEFT && diff.equals(new Coordinate(-1, 0))) || (direction == DIR_RIGHT && diff.equals(new Coordinate(1, 0))))
                 selfDestruct();
             else
-                gi.getTextBox().showMessage("The door is locked on the other side");
+                gi.getTextBox().showMessage("The door is locked on this side");
         } else
             gi.getTextBox().showMessage("The one way door has lost its way...");
     }
@@ -50,19 +48,21 @@ public class OneWayDoor extends Entity {
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("direction","\'right\' or \'left\'"));
+        args.add(new EntityArg("createIcon","true"));
         return args;
     }
 
     @Override
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
+        boolean createIcon = readBoolArg(searchForArg(entityStruct.getArgs(), "createIcon"), true);
         String dir = readStrArg(searchForArg(entityStruct.getArgs(), "direction"), "ERROR");
         if (dir.toLowerCase().equals("left")) {
             direction = DIR_LEFT;
-            getSprite().editLayer(0, 0, createIcon('{', entityStruct));
+            if (createIcon) getSprite().editLayer(0, 0, createIcon('{', entityStruct));
         } else if (dir.toLowerCase().equals("right")) {
             direction = DIR_RIGHT;
-            getSprite().editLayer(0, 0, createIcon('}', entityStruct));
+            if (createIcon) getSprite().editLayer(0, 0, createIcon('}', entityStruct));
         }
     }
 
