@@ -3,6 +3,7 @@ package Start;
 import Data.FileIO;
 import Engine.LayerManager;
 import Engine.ViewWindow;
+import Game.Debug.DebugWindow;
 import Game.GameMaster;
 
 import javax.swing.*;
@@ -41,7 +42,7 @@ public class GameStart {
 
         LayerManager lm = new LayerManager(window);
 
-        GameMaster master = new GameMaster(lm);
+        GameMaster master = new GameMaster(lm, gameFrame);
         master.getMainMenu().open();
     }
 

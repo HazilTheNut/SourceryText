@@ -42,6 +42,7 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
     public ViewWindow() {
         recalculate();
         specialGraphicsList = new ArrayList<>();
+        setFocusable(true);
     }
 
     public void drawImage(Layer image){

@@ -5,6 +5,7 @@ import Data.FileIO;
 import Engine.LayerManager;
 import Game.Debug.DebugWindow;
 
+import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -24,7 +25,7 @@ public class GameMaster {
 
     private boolean gameRunning = false;
 
-    public GameMaster(LayerManager layerManager){
+    public GameMaster(LayerManager layerManager, JFrame frame){
         this.layerManager = layerManager;
 
         //Mouse Input
@@ -33,7 +34,11 @@ public class GameMaster {
         this.layerManager.getWindow().addMouseMotionListener(mouseInput);
         this.layerManager.getWindow().addMouseWheelListener(mouseInput);
         this.layerManager.getWindow().addKeyListener(mouseInput);
+        frame.addKeyListener(mouseInput);
         this.layerManager.getWindow().addKeyListener(new DebugWindowOpener());
+        frame.addKeyListener(new DebugWindowOpener());
+
+        this.layerManager.getWindow().requestFocusInWindow();
 
         //Menus
         saveMenu = new GameSaveMenu(this.layerManager, mouseInput, this);
