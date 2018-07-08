@@ -80,7 +80,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         JButton editButton = new JButton("Edit");
         editButton.setAlignmentX(CENTER_ALIGNMENT);
         editButton.setMargin(new Insets(4, 1, 4, 1));
-        editButton.addActionListener(e -> createNewButton(selectedTextButton));
+        editButton.addActionListener(e -> editButton());
 
         JButton removeButton = new JButton("Remove");
         removeButton.setAlignmentX(CENTER_ALIGNMENT);
@@ -104,7 +104,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         System.out.printf("[EditorTextPanel.actionPerformed] Button cmd: %1$s\n", e.getActionCommand());
         if (e.getActionCommand().equals("Add New Btn")) { //Adds new button
-            createNewButton(createBaseButton());
+            createNewButton();
         } else if (e.getActionCommand().equals("Remove Btn")){ //Removes selected button
             if (selectedTextButton != null){
                 textBtnPanel.remove(selectedTextButton);
@@ -112,6 +112,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
                 System.out.printf("[EditorTextPanel.actionPerformed] Btn manifest size: %1$d\n", buttonManifest.size());
                 textBtnPanel.validate();
                 textBtnPanel.repaint();
+                buttonManifest.get(buttonManifest.size()-1).doClick();
             }
         } else if (e.getActionCommand().equals("nulltext")){ //The 'null' button
             selectedSpecialText = null;
@@ -133,7 +134,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
     }
 
     private JButton createBaseButton(){
-        JButton btn = new JButton(new SingleTextRenderer(new SpecialText(' ')));
+        JButton btn = new JButton(new SingleTextRenderer(null));
         btn.setFont(new Font("Monospaced", Font.PLAIN, 12));
         btn.setHorizontalTextPosition(SwingConstants.LEFT);
         btn.setAlignmentX(0.25f);
@@ -149,15 +150,6 @@ public class EditorTextPanel extends JPanel implements ActionListener{
         return btn;
     }
 
-    private void createNewButton(JButton btn){
-        EditorSpecialTextMaker textMaker;
-        if (selectedTextButton == null || selectedTextButton.getIcon() == null)
-            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, new SpecialText(' ', Color.WHITE, Color.BLACK), buttonManifest, true);
-        else
-            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, ((SingleTextRenderer)selectedTextButton.getIcon()).specText, buttonManifest, false);
-        textMaker.setVisible(true);
-    }
-
     public JButton generateNewButton(SpecialText text){
         JButton btn = createBaseButton();
         btn.setIcon(new SingleTextRenderer(text));
@@ -167,50 +159,41 @@ public class EditorTextPanel extends JPanel implements ActionListener{
             btn.setActionCommand("nulltext");
         return btn;
     }
-    
-    private void buildSpecTxtFromButtonClick(String command){
-        System.out.println(command);
-        System.out.println(command.substring(0,1));
-        int[] textData = new int[9];
-        int startIndex = 3;
-        int endingIndex;
-        for (int ii= 0; ii < 4; ii++){
-            endingIndex = Math.min(command.indexOf(",", startIndex),command.indexOf("]", startIndex));
-            String str = command.substring(startIndex, endingIndex);
-            System.out.println(str);
-            textData[ii] = Integer.valueOf(str);
-            startIndex = endingIndex + 1;
+
+    private void createNewButton(){
+        JButton btn = createBaseButton();
+        EditorSpecialTextMaker textMaker;
+        if (selectedTextButton == null || selectedTextButton.getIcon() == null)
+            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, new SpecialText(' ', Color.WHITE, Color.BLACK), buttonManifest);
+        else
+            textMaker = new EditorSpecialTextMaker(textBtnPanel, btn, ((SingleTextRenderer)selectedTextButton.getIcon()).specText, buttonManifest);
+        textMaker.setVisible(true);
+    }
+
+    private void editButton(){
+        if (selectedTextButton != null && selectedTextButton.getIcon() != null) {
+            EditorSpecialTextMaker textMaker = new EditorSpecialTextMaker(textBtnPanel, selectedTextButton, ((SingleTextRenderer) selectedTextButton.getIcon()).specText, buttonManifest);
+            textMaker.setVisible(true);
         }
-        //startIndex = command.indexOf("#")+2;
-        startIndex += 2;
-        for (int ii= 0; ii < 4; ii++){
-            endingIndex = command.indexOf(",", startIndex);
-            if (endingIndex < 0) endingIndex = command.indexOf("]", startIndex);
-            String str = command.substring(startIndex, endingIndex);
-            System.out.println(str);
-            textData[ii+4] = Integer.valueOf(str);
-            startIndex = endingIndex + 1;
-        }
-        System.out.println("----\n");
-        Color fg = new Color(textData[0], textData[1], textData[2], textData[3]);
-        Color bg = new Color(textData[4], textData[5], textData[6], textData[7]);
-        selectedSpecialText = new SpecialText(command.substring(0,1).charAt(0), fg, bg);
-        selectionRender.specText = selectedSpecialText;
-        selectionLabel.repaint();
-        if (toolPanel != null) toolPanel.updateSearchForIcon(selectedSpecialText);
     }
 
     ArrayList<JButton> getButtonManifest() { return buttonManifest; }
 
     void setButtonPanelContents(ArrayList<JButton> btns){
-        for (Component c : textBtnPanel.getComponents()) textBtnPanel.remove(c);
+        for (Component c : textBtnPanel.getComponents()) textBtnPanel.remove(c); //Removes all buttons in the panel
         buttonManifest.clear();
-        for (int ii = btns.size()-1; ii >= 0; ii--) {
-            JButton btn = btns.get(ii);
-            for (ActionListener listener : btn.getActionListeners()) btn.removeActionListener(listener);
-            btn.addActionListener(this);
-            textBtnPanel.add(btn);
-            buttonManifest.add(btn);
+        generateNewButton(null); //Re-adds the null text button
+        for (JButton btn1 : btns) {
+            SpecialText otherText = ((SingleTextRenderer) btn1.getIcon()).specText;
+            if (otherText != null) {
+                JButton btn = createBaseButton();
+                //Creates a new SpecialText that is a copy of the previous button. There must not be any pointer to the input button list.
+                String toAssign = otherText.toString();
+                ((SingleTextRenderer) btn.getIcon()).specText = SpecialText.fromString(toAssign);
+                btn.addActionListener(this);
+                textBtnPanel.add(btn, 0);
+                buttonManifest.add(btn);
+            }
         }
         validate();
     }

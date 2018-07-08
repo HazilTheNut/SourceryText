@@ -17,7 +17,6 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     private JButton openedButton; //The button this SpecialTextMaker is editing
     private ArrayList<JButton> btnManifest;
     private Container buttonContainer;
-    private boolean isNewButton;
 
     private JTextField charField;
 
@@ -29,11 +28,10 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     private float[] fgHSB;
     private float[] bgHSB;
 
-    EditorSpecialTextMaker(Container c, JButton button, SpecialText startingText, ArrayList<JButton> manifest, boolean isNewButton){
+    EditorSpecialTextMaker(Container c, JButton button, SpecialText startingText, ArrayList<JButton> manifest){
         openedButton = button;
         buttonContainer = c;
         btnManifest = manifest;
-        this.isNewButton = isNewButton;
 
         setTitle("SpecialText Creator");
 
@@ -58,6 +56,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         //The 'foreground' button
         fgButton = new JButton("Fg");
         fgButton.setMaximumSize(new Dimension(70, 30));
+        fgButton.setMargin(new Insets(5, 10, 5, 10));
         fgButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         fgButton.setEnabled(false);
         fgButton.addActionListener(this);
@@ -65,6 +64,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         //The 'background' button
         bgButton = new JButton("Bg");
         bgButton.setMaximumSize(new Dimension(70, 30));
+        bgButton.setMargin(new Insets(5, 10, 5, 10));
         bgButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         bgButton.setEnabled(true);
         bgButton.addActionListener(this);
@@ -72,16 +72,18 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         //The finish button
         JButton finishButton = new JButton("Finish");
         finishButton.setMaximumSize(new Dimension(80, 30));
+        finishButton.setMargin(new Insets(5, 10, 5, 10));
         finishButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         finishButton.addActionListener(e -> finish());
         //The cancel button
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setMaximumSize(new Dimension(80, 30));
+        cancelButton.setMargin(new Insets(5, 10, 5, 10));
         cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         cancelButton.addActionListener(e -> cancel());
         //Create JPanel for the left-side stuff
         JPanel selectorPanel = new JPanel();
-        selectorPanel.setPreferredSize(new Dimension(150, 200));
+        selectorPanel.setPreferredSize(new Dimension(120, 200));
         selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.PAGE_AXIS));
 
         selectorPanel.add(Box.createRigidArea(new Dimension(1, 20)));
@@ -91,9 +93,10 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         selectorPanel.add(fgButton);
         selectorPanel.add(bgButton);
 
-        selectorPanel.add(Box.createRigidArea(new Dimension(1, 20)));
-        selectorPanel.add(finishButton);
+        selectorPanel.add(Box.createVerticalGlue());
         selectorPanel.add(cancelButton);
+        selectorPanel.add(finishButton);
+        selectorPanel.add(Box.createRigidArea(new Dimension(1, 20)));
 
         add(selectorPanel, BorderLayout.LINE_START);
 
@@ -191,7 +194,8 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     }
 
     private void cancel(){
-        if (isNewButton) {
+        SingleTextRenderer icon = (SingleTextRenderer)openedButton.getIcon();
+        if (icon.specText == null) {
             buttonContainer.remove(openedButton);
             btnManifest.remove(openedButton);
             buttonContainer.validate();
@@ -288,7 +292,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
                 colorData[1] = ((float)mousePointX)/(getBoxWidth());
                 colorData[2] = ((float)mousePointY)/(getHeight());
             }
-            System.out.printf("Pt: %1$d, %2$d (%3$dx%4$d) sat: %5$.1f%% bri: %6$.1f%%\n", mousePointX, mousePointY, getBoxWidth(), getHeight(), 100 * colorData[1], 100 * colorData[2]);
+            //System.out.printf("Pt: %1$d, %2$d (%3$dx%4$d) sat: %5$.1f%% bri: %6$.1f%%\n", mousePointX, mousePointY, getBoxWidth(), getHeight(), 100 * colorData[1], 100 * colorData[2]);
             generateColor();
         }
 

@@ -109,7 +109,8 @@ public class SpecialText implements Serializable {
         char c = text.charAt(1);
         StringIntParser stringIntParser = new StringIntParser();
         int[] values = stringIntParser.getInts(text);
-        return new SpecialText(c, new Color(values[0], values[1], values[2], values[3]), new Color(values[4], values[5], values[6], values[7]));
+        int adj = (values.length > 8) ? 1 : 0; //If the text component of the SpecialText is a number, we need to shift over what numbers to look at.
+        return new SpecialText(c, new Color(values[adj], values[1+adj], values[2+adj], values[3+adj]), new Color(values[4+adj], values[5+adj], values[6+adj], values[7+adj]));
     }
 
     private static int readInt(String str){
