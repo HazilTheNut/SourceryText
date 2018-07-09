@@ -177,7 +177,8 @@ public class HUD implements MouseInputReceiver, Serializable {
         }
         //Begin drawing
         for (Entity e : entities){
-            drawEntitySynopsis(e);
+            if (e.getName().length() > 0 && e.isVisible())
+                drawEntitySynopsis(e);
         }
         if (t != null){
             synopsisLayer.inscribeString(t.getName(), 1, startRow);

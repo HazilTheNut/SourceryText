@@ -36,6 +36,7 @@ public class PlayerShadow extends CombatEntity implements PlayerActionCollector 
         getSprite().editLayer(0, 0, new SpecialText('@', new Color(65, 75, 65), new Color(0, 0, 0, 25)));
         player = gameInstance.getPlayer();
         player.addPlayerActionCollector(this);
+        offset = getLocation().subtract(player.getLocation());
     }
 
     @Override

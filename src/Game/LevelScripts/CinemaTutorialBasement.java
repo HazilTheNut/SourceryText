@@ -73,7 +73,7 @@ public class CinemaTutorialBasement extends LevelScript {
             didDangerMessage = true;
         }
         if (gi.getPlayer().getLocation().equals(combatMessageAnchor) && !didCombatMessage && gi.getPlayer().getWeapon().getItemData().getItemId() > 0){
-            gi.getTextBox().showMessage("To attack enemies, simply press " + getInput(InputMap.ATTACK) + " in their general direction to attack.<np>When fighting enemies, you and the enemies take turns attacking, so use your time wisely.<nl>Press " + getInput(InputMap.PASS_TURN) + " to pass your turn.");
+            gi.getTextBox().showMessage("To attack enemies, simply press " + getInput(InputMap.ATTACK) + " in their general direction.<np>When fighting enemies, you and the enemies take turns attacking, so use your time wisely.<nl>Press " + getInput(InputMap.PASS_TURN) + " to pass your turn.");
             didCombatMessage = true;
         }
     }

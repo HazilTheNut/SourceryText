@@ -210,6 +210,16 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         item = otherInv.getItemAtCursor(screenPos);
         if (item != null)
             return otherInv.onItemClick(item, actions);
+        if (actions.contains(InputMap.INVENTORY)) {
+            if (playerInv.isShowing()){
+                playerInv.close();
+                otherInv.close();
+            } else {
+                playerInv.changeMode(CONFIG_PLAYER_USE);
+                playerInv.show();
+                updateItemDescription(null);
+            }
+        }
         return isInInvLayers(screenPos);
     }
 

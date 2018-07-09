@@ -273,46 +273,6 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         playerActionCollectors.remove(actionCollector);
     }
 
-    /**
-     * Essentially, what happens when you push the 'Inventory' button (default: E)
-     */
-    private void toggleInventory(){
-        if (inv.getPlayerInv().isShowing()) {
-            inv.getPlayerInv().close();
-            inv.closeOtherInventory();
-        } else {
-            inv.getPlayerInv().changeMode(PlayerInventory.CONFIG_PLAYER_USE);
-            inv.getPlayerInv().show();
-            inv.updateItemDescription(null);
-        }
-        updateHUD();
-    }
-
-    /*
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (!downKeyCodes.contains(e.getExtendedKeyCode())){
-            downKeyCodes.add(e.getExtendedKeyCode());
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_SHIFT){
-            spellMode = false;
-            updateHUD();
-        }
-        int keyCode = e.getKeyCode();
-        if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_D) movementKeyUp(EAST);
-        if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_A)  movementKeyUp(WEST);
-        if (keyCode == KeyEvent.VK_DOWN || keyCode == KeyEvent.VK_S)  movementKeyUp(SOUTH);
-        if (keyCode == KeyEvent.VK_UP || keyCode == KeyEvent.VK_W)    movementKeyUp(NORTH);
-        downKeyCodes.remove(new Integer(e.getExtendedKeyCode()));
-        if (downKeyCodes.size() == 0) movementVector = new Coordinate(0, 0);
-        DebugWindow.reportf(DebugWindow.STAGE, "Player movementVector","%1$s", movementVector);
-    }
-    */
-
     private void movementKeyDown(Coordinate vector){
         movementVector = movementVector.add(vector);
         movementVector = new Coordinate(Math.max(-1, Math.min(1, movementVector.getX())), Math.max(-1, Math.min(1, movementVector.getY()))); //Sanitates the movement vector
@@ -390,7 +350,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         if (!isFrozen() && actions != null && actions.size() > 0) {
             terminatePathing = true;
             if (actions.contains(InputMap.INVENTORY)) {
-                toggleInventory();
+                updateHUD(); //The inventory close and open stuff is handled by PlayerInventory
             }
             if (actions.contains(InputMap.INSPECT)) {
                 inspect(levelPos);

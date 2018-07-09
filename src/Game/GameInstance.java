@@ -133,7 +133,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             currentLevel.removeEntity(getPlayer());
         }
         String zoneName = getFilePathParentFolder(levelFilePath);
-        if (currentZoneName == null || !currentZoneName.equals(zoneName)){
+        if (currentZoneName == null || !currentZoneName.equals(zoneName)){ //If moved to a new zone
             currentZoneName = zoneName;
             levels.clear();
         }
