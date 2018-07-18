@@ -15,7 +15,6 @@ import Game.Tags.Tag;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by Jared on 4/7/2018.
@@ -47,7 +46,7 @@ public class Level implements Serializable {
     private Layer backdrop;
 
     private Tile[][] baseTiles;
-    private ArrayList<Tile> overlayTiles;
+    private Tile[][] overlayTiles;
     private Layer overlayTileLayer;
 
     private ArrayList<WarpZone> warpZones;
@@ -75,7 +74,7 @@ public class Level implements Serializable {
         overlayTileLayer = new Layer(new SpecialText[backdrop.getCols()][backdrop.getRows()], "tile_overlay (" + getName() + ")", 0, 0, LayerImportances.TILE_OVERLAY);
 
         baseTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
-        overlayTiles = new ArrayList<>();
+        overlayTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
 
         ArrayList<Tag> tileTags = new ArrayList<>();
 
@@ -121,7 +120,7 @@ public class Level implements Serializable {
 
     void destroy(){
         baseTiles = new Tile[0][0];
-        overlayTiles.clear();
+        overlayTiles = new Tile[0][0];
         warpZones.clear();
         entities.clear();
         animatedTiles.clear();
@@ -148,14 +147,12 @@ public class Level implements Serializable {
     }
 
     public void addOverlayTile (Tile tile){
-        overlayTiles.add(tile);
+        overlayTiles[tile.getLocation().getX()][tile.getLocation().getY()] = tile;
     }
 
     public void removeOverlayTile (Tile tile ) {
-        if (overlayTiles.contains(tile)) {
-            overlayTiles.remove(tile);
-            overlayTileLayer.editLayer(tile.getLocation().getX(), tile.getLocation().getY(), null);
-        }
+        overlayTiles[tile.getLocation().getX()][tile.getLocation().getY()] = null;
+        overlayTileLayer.editLayer(tile.getLocation().getX(), tile.getLocation().getY(), null);
     }
 
     public boolean isLocationValid(Coordinate loc){
@@ -244,19 +241,13 @@ public class Level implements Serializable {
     }
 
     public Tile getOverlayTileAt(Coordinate loc){
-        for (Tile tile : overlayTiles){
-            if (tile.getLocation().equals(loc))
-                return tile;
-        }
-        return null;
+        return overlayTiles[loc.getX()][loc.getY()];
     }
 
     ArrayList<Tile> getAllTiles(){
         ArrayList<Tile> tiles = new ArrayList<>();
-        for (Tile[] baseTile : baseTiles) {
-            tiles.addAll(Arrays.asList(baseTile).subList(0, baseTiles[0].length));
-        }
-        for (Tile tile : overlayTiles) tiles.add(tile);
+        tiles.addAll(tileMatrixToList(baseTiles));
+        tiles.addAll(tileMatrixToList(overlayTiles));
         return tiles;
     }
 
@@ -265,7 +256,19 @@ public class Level implements Serializable {
     }
 
     public ArrayList<Tile> getOverlayTiles() {
-        return overlayTiles;
+        return tileMatrixToList(overlayTiles);
+    }
+
+    public ArrayList<Tile> tileMatrixToList(Tile[][] matrix) {
+        ArrayList<Tile> tiles = new ArrayList<>();
+        for (Tile[] overlayTile : matrix) {
+            for (int row = 0; row < matrix[0].length; row++) {
+                if (overlayTile[row] != null) {
+                    tiles.add(overlayTile[row]);
+                }
+            }
+        }
+        return tiles;
     }
 
     public String getName(){
