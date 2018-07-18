@@ -26,6 +26,7 @@ public class DebugWindow{
      */
 
     private static JFrame frame;
+    private static JTabbedPane tabbedPane;
     private static DebugLogPane performance;
     private static DebugLogPane stage;
     private static DebugLogPane tags;
@@ -68,7 +69,7 @@ public class DebugWindow{
         layers = new DebugLayerPanel();
 
         //Create UI
-        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Perf",   createScrollPane(tabbedPane, performance));
         tabbedPane.addTab("Stage",  createScrollPane(tabbedPane, stage));
         tabbedPane.addTab("Tags",   createScrollPane(tabbedPane, tags));
@@ -105,17 +106,19 @@ public class DebugWindow{
         timer.scheduleAtFixedRate(new TimerTask() { //Keeping things happy with no co-modification errors.
             @Override
             public void run() {
+                long startTime = System.nanoTime();
                 try {
-                    for (int i = 0; i < entryActions.size();) {
+                    for (int i = 0; i < entryActions.size(); i++) {
                         if (entryActions.get(i) != null) {
                             entryActions.get(i).run();
-                            entryActions.remove(i);
                         }
                     }
+                    entryActions.clear();
                 } catch (NullPointerException | ConcurrentModificationException e){
                     e.printStackTrace();
                 }
-
+                double ms = (double)(System.nanoTime() - startTime) / 1000000;
+                if (ms > 50) System.out.printf("[DebugWindow] update time: %1$.2fms\n", ms);
             }
         }, 10, 100);
     }
@@ -155,7 +158,12 @@ public class DebugWindow{
             DebugLogPane logPane = getDebugLog(screen);
             assert logPane != null;
             logPane.addEntry(caption, String.format(value, args));
-            for (TextDispenseUpdate update : dispenseUpdates) update.update();
+            Component selected = tabbedPane.getSelectedComponent();
+            if (selected instanceof JScrollPane) {
+                Component inView = ((JScrollPane)selected).getViewport().getView();
+                if (inView.equals(logPane))
+                    for (TextDispenseUpdate update : dispenseUpdates) update.update();
+            }
         });
     }
 

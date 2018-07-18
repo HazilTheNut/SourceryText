@@ -165,10 +165,17 @@ public class GameMaster {
     }
 
     private class DebugWindowOpener extends KeyAdapter{
+        int n;
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_F8)
                 DebugWindow.open();
+            else if (e.getKeyCode() == KeyEvent.VK_F10){
+                for (int i = 0; i < 50; i++) {
+                    DebugWindow.reportf(DebugWindow.MISC, "FILLER", "%1$d", n);
+                    n++;
+                }
+            }
         }
     }
 }

@@ -3,7 +3,7 @@ package Game.Entities.PuzzleElements;
 import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
-import Engine.SpecialText;
+import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.GameInstance;
 import Game.Registries.TagRegistry;
@@ -45,7 +45,6 @@ public class RoomCover extends Entity implements Powerable {
         if (bounds.size() >= 2){
             buildCoverLayer(bounds.get(0), bounds.get(1));
             coverLayer.setVisible(true);
-            getSprite().editLayer(0, 0, null);
         }
         includeWalls = readBoolArg(searchForArg(entityStruct.getArgs(), "includeWalls"), true);
         ignoreWalls = readBoolArg(searchForArg(entityStruct.getArgs(), "ignoreWalls"), false);
@@ -76,8 +75,10 @@ public class RoomCover extends Entity implements Powerable {
         }
         coverLayer.clearLayer();
         for (Coordinate loc : locs){
-            coverLayer.editLayer(loc.subtract(coverLayer.getPos()), new SpecialText(' ', Color.WHITE, Color.BLACK));
+            coverLayer.editLayer(loc.subtract(coverLayer.getPos()), getSprite().getSpecialText(0,0));
         }
+        if (!getSprite().getSpecialText(0,0).getBkgColor().equals(Color.BLACK))
+            DebugWindow.reportf(DebugWindow.STAGE, "RoomCover.createCover","txt: %1$s", getSprite().getSpecialText(0,0));
     }
 
     private void attemptPoint(Coordinate origin, Coordinate attempt, ArrayList<Coordinate> locs){

@@ -89,7 +89,7 @@ public class InputMap implements Serializable {
     ArrayList<Integer> getAction(InputType inputType){
         if (primaryInputMap.containsKey(inputType)) return primaryInputMap.get(inputType);
         if (secondaryInputMap.containsKey(inputType)) return secondaryInputMap.get(inputType);
-        return null;
+        return new ArrayList<>();
     }
 
     public HashMap<InputType, ArrayList<Integer>> getPrimaryInputMap() {

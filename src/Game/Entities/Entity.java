@@ -112,7 +112,7 @@ public class Entity extends TagHolder implements Serializable {
 
     @Override
     public void onLevelEnter(GameInstance gameInstance){
-        gi.getLayerManager().addLayer(sprite);
+        if (isVisible()) gi.getLayerManager().addLayer(sprite);
         super.onLevelEnter(gi);
     }
 
@@ -121,7 +121,7 @@ public class Entity extends TagHolder implements Serializable {
     }
 
     public void onLevelExit(){
-        gi.getLayerManager().removeLayer(sprite);
+        if (isVisible()) gi.getLayerManager().removeLayer(sprite);
         DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' - - -", getName());
     }
 
