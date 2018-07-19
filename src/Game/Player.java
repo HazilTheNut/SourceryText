@@ -320,7 +320,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
         mouseScreenPos = screenPos;
         if (gi.getCurrentLevel().isLocationValid(levelPos)) {
-            DebugWindow.reportf(DebugWindow.CURSOR, "BASE TILE", "Tags: %1$s", gi.getCurrentLevel().getBaseTiles()[levelPos.getX()][levelPos.getY()].getTagList());
+            DebugWindow.reportf(DebugWindow.CURSOR, "BASE TILE", "Tags: %1$s", gi.getCurrentLevel().getBaseTileAt(levelPos).getTagList());
             Tile overlay = gi.getCurrentLevel().getOverlayTileAt(levelPos);
             if (overlay != null) {
                 DebugWindow.reportf(DebugWindow.CURSOR, "OVERLAY TILE", "Tags: %1$s", overlay.getTagList());

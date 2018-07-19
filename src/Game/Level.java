@@ -45,6 +45,9 @@ public class Level implements Serializable {
 
     private Layer backdrop;
 
+    private int[][] tileIdMatrix;
+    private ArrayList<Tag> tileGenerationTags; //Tags are pre-generated to save on time needed to create a tile.
+
     private Tile[][] baseTiles;
     private Tile[][] overlayTiles;
     private Layer overlayTileLayer;
@@ -57,6 +60,8 @@ public class Level implements Serializable {
     private ArrayList<AnimatedTile> animatedTiles;
 
     private ArrayList<LevelScript> levelScripts;
+
+
 
     public Level(String path){
 
@@ -76,7 +81,8 @@ public class Level implements Serializable {
         baseTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
         overlayTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
 
-        ArrayList<Tag> tileTags = new ArrayList<>();
+        tileGenerationTags = new ArrayList<>();
+        tileIdMatrix = ldata.getTileData();
 
         DebugWindow.reportf(DebugWindow.STAGE, "Level.initialize","Columns: %1$d", backdrop.getCols());
         for (int col = 0; col < backdrop.getCols(); col++){
@@ -84,9 +90,10 @@ public class Level implements Serializable {
             for (int row = 0; row < backdrop.getRows(); row++){
                 TileStruct struct = TileRegistry.getTileStruct(ldata.getTileId(col, row));
                 Tile tile = new Tile(new Coordinate(col, row), struct.getTileName(), this);
+                baseTiles[col][row] = tile;
                 for (int id : struct.getTagIDs()){
                     boolean tagAlreadyGenerated = false; //Generating new tags is resource-expensive if done in bulk, so a shortcut is made by remembering which tags are already generated and just re-use them.
-                    for (Tag tag : tileTags){
+                    for (Tag tag : tileGenerationTags){
                         if (tag.getId() == id){
                             tile.addTag(tag, tile); //This may have pointer-y issues later, but it probably won't.
                             tagAlreadyGenerated = true;
@@ -94,11 +101,10 @@ public class Level implements Serializable {
                     }
                     if (!tagAlreadyGenerated){
                         Tag newTag = TagRegistry.getTag(id);
-                        tileTags.add(newTag);
+                        tileGenerationTags.add(newTag);
                         tile.addTag(newTag, tile);
                     }
                 }
-                baseTiles[col][row] = tile;
             }
         }
 
@@ -114,7 +120,7 @@ public class Level implements Serializable {
         }
     }
 
-    public ArrayList<LevelScript> getLevelScripts() {
+    ArrayList<LevelScript> getLevelScripts() {
         return levelScripts;
     }
 
@@ -198,6 +204,7 @@ public class Level implements Serializable {
 
     void onTurnEnd(){
         for (LevelScript ls : levelScripts) ls.onTurnEnd();
+        cleanupBaseTiles();
     }
 
     void onLevelLoad(){
@@ -212,7 +219,7 @@ public class Level implements Serializable {
         if (loc != null && isLocationValid(loc)) {
             Tile overlay = getOverlayTileAt(loc);
             if (overlay == null)
-                return baseTiles[loc.getX()][loc.getY()];
+                return getBaseTileAt(loc);
             else
                 return overlay;
         } else
@@ -220,9 +227,73 @@ public class Level implements Serializable {
     }
 
     public Tile getBaseTileAt(Coordinate loc){
-        if (loc != null && isLocationValid(loc))
+        if (loc != null && isLocationValid(loc)) {
+            if (baseTiles[loc.getX()][loc.getY()] == null) {
+                return generateBaseTile(loc);
+            }
             return baseTiles[loc.getX()][loc.getY()];
+        }
         return null;
+    }
+
+    /**
+     * Generates a Tile at a given location, using the tile id matrix loaded from the LevelData this level is derived from.
+     * It then assigns that tile to the baseTiles matrix.
+     *
+     * @param loc The location of the base tile
+     * @return The newly generated base tile
+     */
+    private Tile generateBaseTile(Coordinate loc){
+        TileStruct tileStruct = TileRegistry.getTileStruct(tileIdMatrix[loc.getX()][loc.getY()]);
+        Tile baseTile = new Tile(loc, tileStruct.getTileName(), this);
+        baseTiles[loc.getX()][loc.getY()] = baseTile;
+        //Add all tags from tileGenerationTags that match id's to the TileStruct
+        for (int id : tileStruct.getTagIDs()){
+            for (Tag tag : tileGenerationTags){
+                if (tag.getId() == id) baseTile.addTag(tag, baseTile);
+            }
+        }
+        return baseTile;
+    }
+
+    private void cleanupBaseTiles(){
+        int num = 0;
+        for (int col = 0; col < baseTiles.length; col++) {
+            for (int row = 0; row < baseTiles[0].length; row++) {
+                if (baseTiles[col][row] != null && isBaseTileCleanable(baseTiles[col][row])){
+                    baseTiles[col][row] = null;
+                    num++;
+                }
+            }
+        }
+        DebugWindow.reportf(DebugWindow.STAGE, "Level.cleanupBaseTiles","Tiles cleaned: %1$d", num);
+    }
+
+    /**
+     * Tests a Tile to see if should be removed, by comparing it to a theoretical Tile created in its same location at the loading of this level.
+     *
+     * @param baseTile The Tile to test for removal
+     * @return Whether or not the tile should be removed.
+     */
+    private boolean isBaseTileCleanable(Tile baseTile){
+        ArrayList<Tag> tileTags = baseTile.getTags();
+        //Check to see if any tags do not want the tile to be removed.
+        for (Tag tag : tileTags){
+            if (!tag.isTileRemovable()) return false;
+        }
+        //Create list of template tag ids
+        TileStruct template = TileRegistry.getTileStruct(tileIdMatrix[baseTile.getLocation().getX()][baseTile.getLocation().getY()]);
+        int[] templateIds = template.getTagIDs();
+        ArrayList<Integer> templateIdList = new ArrayList<>();
+        for (int id : templateIds) templateIdList.add(id);
+        //Start comparison
+        if (tileTags.size() != templateIdList.size())
+            return false; //If the list lengths are different, then the two sets of tags must be different
+        for (Tag tag : tileTags){
+            if (!templateIdList.contains(tag.getId())) //If base tile has a tag whose id does match any from the template
+                return false;
+        }
+        return true; //True if the tile has a different set of tags than its template
     }
 
     public Entity getSolidEntityAt(Coordinate loc){
@@ -255,8 +326,8 @@ public class Level implements Serializable {
         return baseTiles;
     }
 
-    public ArrayList<Tile> getOverlayTiles() {
-        return tileMatrixToList(overlayTiles);
+    Tile[][] getOverlayTiles() {
+        return overlayTiles;
     }
 
     public ArrayList<Tile> tileMatrixToList(Tile[][] matrix) {

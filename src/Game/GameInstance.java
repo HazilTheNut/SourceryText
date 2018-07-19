@@ -356,7 +356,8 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "","");
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "LEVEL", " \'%1$s\':", currentLevel.getName());
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "Level Dimensions"," %1$d x %2$d", currentLevel.getBaseTiles().length, currentLevel.getBaseTiles()[0].length);
-            DebugWindow.reportf(DebugWindow.PERFORMANCE, "Overlay Tiles","    %1$d", currentLevel.getOverlayTiles().size());
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "Base Tiles","       %1$d", currentLevel.tileMatrixToList(currentLevel.getBaseTiles()).size());
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "Overlay Tiles","    %1$d", currentLevel.tileMatrixToList(currentLevel.getOverlayTiles()).size());
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "Total Entities","   %1$d", currentLevel.getEntities().size());
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "Animated Tiles","   %1$d", currentLevel.getAnimatedTiles().size());
             DebugWindow.updateLayerInfo();

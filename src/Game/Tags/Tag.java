@@ -116,6 +116,9 @@ public class Tag implements Serializable {
     //Ran when this tag is removed. Cannot be canceled
     public void onRemove(TagHolder owner){}
 
+    //Ran to figure if the owning Tile can be cleaned up by the level.
+    public boolean isTileRemovable(){ return true; }
+
     //Useful for coloring things that are frozen, on fire, etc.
     public Color getTagColor(){ return new Color(255, 255, 255, 0); }
 }

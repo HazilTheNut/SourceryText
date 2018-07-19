@@ -44,4 +44,9 @@ public class SplashySurface extends Tag {
     protected void playSplash(Coordinate loc, GameInstance gi){
         //Override this
     }
+
+    @Override
+    public boolean isTileRemovable() {
+        return splashLocs.size() < 1;
+    }
 }
