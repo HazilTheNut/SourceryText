@@ -320,7 +320,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
         mouseScreenPos = screenPos;
         if (gi.getCurrentLevel().isLocationValid(levelPos)) {
-            DebugWindow.reportf(DebugWindow.CURSOR, "BASE TILE", "Tags: %1$s", gi.getCurrentLevel().getBaseTileAt(levelPos).getTagList());
+            DebugWindow.reportf(DebugWindow.CURSOR, "BASE TILE", "Age: %1$d Tags: %2$s", gi.getCurrentLevel().getBaseTileAt(levelPos).getAge(), gi.getCurrentLevel().getBaseTileAt(levelPos).getTagList());
             Tile overlay = gi.getCurrentLevel().getOverlayTileAt(levelPos);
             if (overlay != null) {
                 DebugWindow.reportf(DebugWindow.CURSOR, "OVERLAY TILE", "Tags: %1$s", overlay.getTagList());
@@ -331,6 +331,8 @@ public class Player extends CombatEntity implements MouseInputReceiver{
             for (int i = 0; i < entities.size(); i++) {
                 DebugWindow.reportf(DebugWindow.CURSOR, "ENTTIY " + (i+1), "Tags: %1$s", entities.get(i).getTagList());
             }
+            DebugWindow.reportf(DebugWindow.CURSOR, "LEVEL POS", "%1$s", levelPos);
+            DebugWindow.reportf(DebugWindow.CURSOR, "MOUES POS", "%1$s", mouseScreenPos);
         }
         return false;
     }

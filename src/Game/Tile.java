@@ -31,6 +31,8 @@ public class Tile extends TagHolder implements Serializable {
 
     private Level level;
 
+    private int age;
+
     public Tile(Coordinate loc, String name, Level level){
         location = loc;
         this.name = name;
@@ -58,6 +60,7 @@ public class Tile extends TagHolder implements Serializable {
         if (event.eventPassed()){
             event.doCancelableActions();
         }
+        age++;
     }
 
     public Tile copy(Coordinate newLoc){
@@ -73,4 +76,7 @@ public class Tile extends TagHolder implements Serializable {
     }
 
 
+    public int getAge() {
+        return age;
+    }
 }

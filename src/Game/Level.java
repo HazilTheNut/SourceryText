@@ -61,8 +61,6 @@ public class Level implements Serializable {
 
     private ArrayList<LevelScript> levelScripts;
 
-
-
     public Level(String path){
 
         filePath = path;
@@ -224,6 +222,12 @@ public class Level implements Serializable {
                 return overlay;
         } else
             return null;
+    }
+
+    public int getTileIDAt(Coordinate loc){
+        if (isLocationValid(loc))
+            return tileIdMatrix[loc.getX()][loc.getY()];
+        return 0;
     }
 
     public Tile getBaseTileAt(Coordinate loc){
