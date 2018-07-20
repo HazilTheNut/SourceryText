@@ -20,6 +20,14 @@ public class EntityRegistry {
 
     public static final int LOOT_PILE = 7;
     public static final int PLAYER_SHADOW = 10;
+    public static final int MAGIC_BOMB = 17;
+
+    /*
+    * Some Notes:
+    *
+    * Adding the NO_PATHING tag to an entity effectively does nothing. It's only there to communicate whether or not the object is solid.
+    *
+    * */
 
     static {
         //Registering stuff starts here
@@ -42,6 +50,7 @@ public class EntityRegistry {
         registerEntity(14, "Toggle Switch",new SpecialText('*', new Color(42,  42,  86),  new Color(20, 20, 51, 100)),   ToggleSwitch.class, TagRegistry.IMMOVABLE);
         registerEntity(15, "Room Cover",   new SpecialText(' ', new Color(42,  42,  86),  Color.BLACK),                  RoomCover.class,   TagRegistry.IMMOVABLE);
         registerEntity(16, "Wall Torch",   new SpecialText('*', new Color(212, 195, 140), new Color(142, 120, 50, 50)),  Paperweight.class, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER, TagRegistry.ON_FIRE, TagRegistry.BRIGHT);
+        registerEntity(MAGIC_BOMB, "MagicBomb", new SpecialText('b'),                                                    MagicBomb.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING, TagRegistry.NO_PATHING);
 
         //Registering stuff ends here
     }

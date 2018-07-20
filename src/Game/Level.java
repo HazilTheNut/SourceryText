@@ -29,7 +29,9 @@ public class Level implements Serializable {
      * It contains the following:
      *  > filePath              : The String file path that points to the .lda file this Level is generated from.
      *  > backdrop              : The Level's art.
-     *  > baseTiles             : The base-level Tiles that should be unchanging.
+     *  > tileIdMatrix          : The matrix of integers stored by the LevelData this Level is derived from
+     *  > tileGenerationTags    : A list of already-generated Tags useful for generating new tiles.
+     *  > baseTiles             : The base-level Tiles that should be mostly unchanging.
      *  > overlayTiles          : Tiles that override the properties of the base Tiles
      *  > overlayTileLayer      : The Layer that visually describes the existence of an overlay Tile.
      *  > warpZones             : The list of Warp Zones in the Level
@@ -224,7 +226,7 @@ public class Level implements Serializable {
             return null;
     }
 
-    public String getTileNameAt(Coordinate loc){
+    String getTileNameAt(Coordinate loc){
         if (getOverlayTileAt(loc) != null){
             return getOverlayTileAt(loc).getName();
         } else {
@@ -232,7 +234,7 @@ public class Level implements Serializable {
         }
     }
 
-    public int getTileIDAt(Coordinate loc){
+    private int getTileIDAt(Coordinate loc){
         if (isLocationValid(loc))
             return tileIdMatrix[loc.getX()][loc.getY()];
         return 0;
@@ -374,7 +376,7 @@ public class Level implements Serializable {
         return output;
     }
 
-    public ArrayList<AnimatedTile> getAnimatedTiles() {
+    ArrayList<AnimatedTile> getAnimatedTiles() {
         return animatedTiles;
     }
 
