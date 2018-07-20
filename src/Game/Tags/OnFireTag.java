@@ -148,14 +148,14 @@ public class OnFireTag extends Tag {
         e.getTarget().addTag(TagRegistry.ON_FIRE, e.getSource());
     }
 
-    private Tile createAshTile(Coordinate loc, Level level){
+    Tile createAshTile(Coordinate loc, Level level){
         Tile tile = new Tile(loc, "Ash", level);
         if (random.nextDouble() < 0.25){
             level.getOverlayTileLayer().editLayer(loc.getX(), loc.getY(), new SpecialText('.', new Color(81, 77, 77), new Color(60, 58, 55)));
         } else {
             level.getOverlayTileLayer().editLayer(loc.getX(), loc.getY(), new SpecialText(' ', new Color(81, 77, 77), new Color(60, 58, 55)));
         }
-        tile.addTag(TagRegistry.SAND, tile);
+        tile.addTag(TagRegistry.ASH, tile);
         return tile;
     }
 

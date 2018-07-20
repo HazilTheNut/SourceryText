@@ -30,4 +30,9 @@ public class MagicBombSpell extends Spell {
         else
             return 0;
     }
+
+    @Override
+    public Spell copy() {
+        return new MagicBombSpell();
+    }
 }

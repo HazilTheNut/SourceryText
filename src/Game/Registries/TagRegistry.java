@@ -60,7 +60,8 @@ public class TagRegistry {
     public final static int WEAPON_BOW    = 204;
     public final static int ARROW         = 205;
     public final static int KEY           = 210;
-    public final static int SPECIAL_ITEM  = 211;
+    public final static int UNLIMITED_USAGE = 211;
+    public final static int DIGGING       = 212;
 
     public final static int LEVEL_UP        = 388;
     public final static int SPELL_BEAD      = 399;
@@ -70,6 +71,7 @@ public class TagRegistry {
     public final static int LEARN_THUNDER   = 393;
     public final static int LEARN_SHADOWMANCY = 394;
     public final static int LEARN_MAGICBOMB = 395;
+    public final static int LEARN_SANDWALL  = 396;
 
     public final static int TILE_WALL     = 400;
     public final static int SAND          = 401;
@@ -77,6 +79,8 @@ public class TagRegistry {
     public final static int DEEP_WATER    = 403;
     public final static int NO_PATHING    = 404; //Tag not found.
     public final static int SLIDING       = 405;
+    public final static int DIGGABLE      = 406;
+    public final static int ASH           = 407;
 
     public final static int LIVING        = 600;
     public final static int MAGNETIC      = 601;
@@ -118,7 +122,8 @@ public class TagRegistry {
         registerTag(WEAPON_BOW, "Bow",                 BowWeaponTag.class);
         registerTag(ARROW, "Arrow",                    ArrowTag.class);
         registerTag(KEY, "Key", KeyTag.class);
-        registerTag(SPECIAL_ITEM, "Special Item", SpecialItemTag.class);
+        registerTag(UNLIMITED_USAGE, "Unlimited Usage", UnlimitedUsageTag.class);
+        registerTag(DIGGING, "Can Dig", DiggingTag.class);
         registerTag(LEVEL_UP, "Level up!", LevelUpTag.class);
         registerTag(SPELL_BEAD, "Spell Bead", SpellBeadTag.class);
         registerTag(LEARN_FIRE, "Teaches Fire Bolt", LearnFireBoltTag.class);
@@ -127,6 +132,7 @@ public class TagRegistry {
         registerTag(LEARN_THUNDER, "Teaches ThunderBolt", LearnThunderBoltTag.class);
         registerTag(LEARN_SHADOWMANCY, "Teaches Shadowmancy", LearnShadowmancyTag.class);
         registerTag(LEARN_MAGICBOMB, "Teaches Magic Bomb", LearnMagicBombTag.class);
+        registerTag(LEARN_SANDWALL, "Teaches Petramancy", LearnSandWallTag.class);
 
         //Tile related
         registerTag(TILE_WALL, "Wall", WallTag.class);
@@ -135,6 +141,8 @@ public class TagRegistry {
         registerTag(DEEP_WATER,    "Deep Water", DeepWaterTag.class);
         registerTag(NO_PATHING, "Impassable", NoPathingTag.class);
         registerTag(SLIDING, "Sliding", SlidingSurfaceTag.class);
+        registerTag(DIGGABLE, "Diggable", DiggableTag.class);
+        registerTag(ASH, "Ash", AshTag.class);
 
         //Entity related
         registerTag(LIVING, "Living", LivingTag.class);

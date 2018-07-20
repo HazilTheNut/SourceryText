@@ -97,6 +97,7 @@ public class ItemRegistry {
         registerItem(1903, "Thunder Scroll",   0, TagRegistry.LEARN_THUNDER);
         registerItem(1904, "Shadow Scroll",    0, TagRegistry.LEARN_SHADOWMANCY);
         registerItem(1905, "Bomb Scroll",      0, TagRegistry.LEARN_MAGICBOMB);
+        registerItem(1906, "Sand Scroll",      0, TagRegistry.LEARN_SANDWALL);
 
         //Keys
         registerItem(2000, "Key",          0, TagRegistry.KEY);
@@ -110,7 +111,7 @@ public class ItemRegistry {
         registerItem(2008, "Secret Key",   0, TagRegistry.KEY);
 
         //Important items
-        registerItem(2500, "Shovel",       1, TagRegistry.WEAPON_STRIKE, TagRegistry.SPECIAL_ITEM);
+        registerItem(2500, "Shovel",       1, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_STRIKE, TagRegistry.UNLIMITED_USAGE, TagRegistry.DIGGING);
 
         //Registering stuff ends here
     }

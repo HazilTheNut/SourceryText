@@ -8,9 +8,9 @@ import Game.Tags.Tag;
 /**
  * Created by Jared on 5/18/2018.
  */
-public class SpecialItemTag extends Tag {
+public class UnlimitedUsageTag extends Tag {
     /**
-     * SpecialItemTag:
+     * UnlimitedUsageTag:
      *
      * Declares in item to be "special," which currently just makes an item non-stacking and list no quantity.
      * Items that should not degrade with usage are perfect candidates for making them "special"

@@ -9,6 +9,7 @@ import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.Registries.TagRegistry;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -105,7 +106,8 @@ public class HUD implements MouseInputReceiver, Serializable {
                 tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(33, 33, 33)));
             }
             tempLayer.inscribeString(player.getWeapon().getItemData().getName(), pos, 0, player.getWeapon().colorateWithTags(Color.WHITE));
-            tempLayer.inscribeString(String.valueOf(player.getWeapon().getItemData().getQty()), pos + player.getInv().ITEM_STRING_LENGTH, 0, new Color(240, 255, 200));
+            if (!player.getWeapon().hasTag(TagRegistry.UNLIMITED_USAGE))
+                tempLayer.inscribeString(String.valueOf(player.getWeapon().getItemData().getQty()), pos + player.getInv().ITEM_STRING_LENGTH, 0, new Color(240, 255, 200));
             pos += player.getInv().ITEM_STRING_LENGTH + 2;
         }
 
