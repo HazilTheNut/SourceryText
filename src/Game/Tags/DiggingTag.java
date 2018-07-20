@@ -28,10 +28,14 @@ public class DiggingTag extends Tag {
                 Tile ashTile = onFireTag.createAshTile(tile.getLocation(), gi.getCurrentLevel());
                 gi.getCurrentLevel().addOverlayTile(ashTile);
             } else {
-                Tile sandTile = new Tile(tile.getLocation(), "Sand", gi.getCurrentLevel());
-                sandTile.addTag(TagRegistry.SAND, sandTile);
-                gi.getCurrentLevel().addOverlayTile(sandTile);
-                gi.getCurrentLevel().getOverlayTileLayer().editLayer(sandTile.getLocation(), new SpecialText(' ', Color.WHITE, new Color(181, 162, 138)));
+                if (gi.getCurrentLevel().getOverlayTileAt(tile.getLocation()) != null)
+                    gi.getCurrentLevel().removeOverlayTile(tile);
+                else {
+                    Tile sandTile = new Tile(tile.getLocation(), "Sand", gi.getCurrentLevel());
+                    sandTile.addTag(TagRegistry.SAND, sandTile);
+                    gi.getCurrentLevel().addOverlayTile(sandTile);
+                    gi.getCurrentLevel().getOverlayTileLayer().editLayer(sandTile.getLocation(), new SpecialText(' ', Color.WHITE, new Color(189, 182, 153)));
+                }
             }
         }
     }

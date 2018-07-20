@@ -9,6 +9,7 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.GameInstance;
 import Game.TagHolder;
+import Game.Tags.DiggingTag;
 import Game.Tags.Tag;
 
 import java.awt.*;
@@ -58,8 +59,8 @@ public class MagicBomb extends CombatEntity {
 
     @Override
     public void selfDestruct() {
-        explode();
         super.selfDestruct();
+        explode();
     }
 
     private void explode(){
@@ -107,12 +108,17 @@ public class MagicBomb extends CombatEntity {
         for (int col = 0; col < explosionLayer.getCols(); col++) {
             for (int row = 0; row < explosionLayer.getRows(); row++) {
                 if (explosionLayer.getSpecialText(col, row) != null) {
+                    //Damage
                     Coordinate levelPos = explosionLayer.getPos().add(new Coordinate(col, row));
                     ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(levelPos);
+                    //Copy tags
                     for (Entity e : entities) {
                         e.onReceiveDamage(amount, this, gi);
                         transmitTags(e);
                     }
+                    //Break diggable tiles
+                    DiggingTag diggingTag = new DiggingTag();
+                    diggingTag.dig(gi.getTileAt(levelPos), gi);
                 }
             }
         }

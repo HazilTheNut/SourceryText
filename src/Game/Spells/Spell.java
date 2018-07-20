@@ -25,6 +25,15 @@ public class Spell implements Serializable {
     public void readySpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower){}
 
     /**
+     * Occurs when the spell button is held down and the mouse cursor moves
+     *
+     * @param targetLoc Target location for spell (aiming, etc.)
+     * @param spellCaster The one doing the spell casting
+     * @param gi The Game Instance
+     */
+    public void spellDrag(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower){}
+
+    /**
      * Performs spell cast, when the button is released
      *
      * @param targetLoc Target location for spell (aiming, etc.)

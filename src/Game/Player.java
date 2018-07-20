@@ -38,10 +38,11 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     private Spell equippedSpell;
     private int numberSpellBeads = 1;
     private ArrayList<Integer> cooldowns = new ArrayList<>();
+    private boolean castingSpell = false;
 
     private ArrayList<PlayerActionCollector> playerActionCollectors;
 
-    private int magicPower = 0;
+    private int magicPower = 80;
     private double weightCapacity = 20;
 
     private int noEnterWarpZoneTimer = 0;
@@ -333,6 +334,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
             }
             DebugWindow.reportf(DebugWindow.CURSOR, "LEVEL POS", "%1$s", levelPos);
             DebugWindow.reportf(DebugWindow.CURSOR, "MOUES POS", "%1$s", mouseScreenPos);
+            if (castingSpell) equippedSpell.spellDrag(levelPos, this, gi, magicPower);
         }
         return false;
     }
@@ -446,6 +448,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     private void readySpell(Coordinate levelPos){
         if (isSpellReady()) {
             equippedSpell.readySpell(levelPos, this, getGameInstance(), magicPower);
+            castingSpell = true;
             for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerReadySpell(levelPos, equippedSpell);
         }
     }
@@ -462,6 +465,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
                 } else {
                     unfreeze();
                 }
+                castingSpell = false;
             }
         });
         spellThread.start();
