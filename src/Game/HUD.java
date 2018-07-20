@@ -3,14 +3,12 @@ package Game;
 import Data.Coordinate;
 import Data.LayerImportances;
 import Data.SerializationVersion;
-import Data.TileStruct;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
-import Game.Registries.TileRegistry;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -150,9 +148,9 @@ public class HUD implements MouseInputReceiver, Serializable {
      */
     public void updateSynopsis(Coordinate levelPos){
         ArrayList<Entity> entities = player.getGameInstance().getCurrentLevel().getEntitiesAt(levelPos);
-        TileStruct t = null;
+        String tilename = null;
         try {
-            t = TileRegistry.getTileStruct(player.getGameInstance().getCurrentLevel().getTileIDAt(levelPos));
+            tilename = player.getGameInstance().getCurrentLevel().getTileNameAt(levelPos);
         } catch (NullPointerException e1){
             e1.printStackTrace();
             DebugWindow.reportf(DebugWindow.MISC, "HUD.updateSynopsis","ERROR: %1$s", e1.getMessage());
@@ -163,8 +161,8 @@ public class HUD implements MouseInputReceiver, Serializable {
         boxHeight = 0;
         boxLength = 0;
         //Calculate box height
-        if (t != null) {
-            boxLength = Math.max(boxLength, t.getTileName().length() + 2);
+        if (tilename != null) {
+            boxLength = Math.max(boxLength, tilename.length() + 2);
             boxHeight++;
         }
         for (Entity e : entities){
@@ -182,8 +180,8 @@ public class HUD implements MouseInputReceiver, Serializable {
             if (e.getName().length() > 0 && e.isVisible())
                 drawEntitySynopsis(e);
         }
-        if (t != null){
-            synopsisLayer.inscribeString(t.getTileName(), 1, startRow);
+        if (tilename != null){
+            synopsisLayer.inscribeString(tilename, 1, startRow);
         }
         synopsisLayer.setPos(59 - boxLength, 31 - boxHeight);
     }

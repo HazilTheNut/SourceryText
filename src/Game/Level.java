@@ -224,6 +224,14 @@ public class Level implements Serializable {
             return null;
     }
 
+    public String getTileNameAt(Coordinate loc){
+        if (getOverlayTileAt(loc) != null){
+            return getOverlayTileAt(loc).getName();
+        } else {
+            return TileRegistry.getTileStruct(getTileIDAt(loc)).getTileName();
+        }
+    }
+
     public int getTileIDAt(Coordinate loc){
         if (isLocationValid(loc))
             return tileIdMatrix[loc.getX()][loc.getY()];
@@ -316,7 +324,9 @@ public class Level implements Serializable {
     }
 
     public Tile getOverlayTileAt(Coordinate loc){
-        return overlayTiles[loc.getX()][loc.getY()];
+        if (isLocationValid(loc))
+            return overlayTiles[loc.getX()][loc.getY()];
+        return null;
     }
 
     ArrayList<Tile> getAllTiles(){
