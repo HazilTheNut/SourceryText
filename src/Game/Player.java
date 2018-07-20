@@ -334,7 +334,10 @@ public class Player extends CombatEntity implements MouseInputReceiver{
             }
             DebugWindow.reportf(DebugWindow.CURSOR, "LEVEL POS", "%1$s", levelPos);
             DebugWindow.reportf(DebugWindow.CURSOR, "MOUES POS", "%1$s", mouseScreenPos);
-            if (castingSpell) equippedSpell.spellDrag(levelPos, this, gi, magicPower);
+            if (castingSpell) {
+                equippedSpell.spellDrag(levelPos, this, gi, magicPower);
+                for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerDragSpell(levelPos, equippedSpell);
+            }
         }
         return false;
     }

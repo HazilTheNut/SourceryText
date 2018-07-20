@@ -64,14 +64,16 @@ public class TagRegistry {
     public final static int DIGGING       = 212;
 
     public final static int LEVEL_UP        = 388;
-    public final static int SPELL_BEAD      = 399;
+    public final static int SPELL_BEAD      = 389;
     public final static int LEARN_FIRE      = 390;
     public final static int LEARN_ICE       = 391;
     public final static int LEARN_LOCUMANCY = 392;
     public final static int LEARN_THUNDER   = 393;
-    public final static int LEARN_SHADOWMANCY = 394;
+    public final static int LEARN_SHADOW    = 394;
     public final static int LEARN_MAGICBOMB = 395;
     public final static int LEARN_SANDWALL  = 396;
+    public final static int LEARN_MAGIC     = 397;
+    public final static int LEARN_AQUAMANCY = 398;
 
     public final static int TILE_WALL     = 400;
     public final static int SAND          = 401;
@@ -130,9 +132,11 @@ public class TagRegistry {
         registerTag(LEARN_ICE, "Teaches Ice Bolt", LearnIceBoltTag.class);
         registerTag(LEARN_LOCUMANCY, "Teaches Locumancy", LearnLocumancyTag.class);
         registerTag(LEARN_THUNDER, "Teaches ThunderBolt", LearnThunderBoltTag.class);
-        registerTag(LEARN_SHADOWMANCY, "Teaches Shadowmancy", LearnShadowmancyTag.class);
+        registerTag(LEARN_SHADOW, "Teaches Shadowmancy", LearnShadowmancyTag.class);
         registerTag(LEARN_MAGICBOMB, "Teaches Magic Bomb", LearnMagicBombTag.class);
         registerTag(LEARN_SANDWALL, "Teaches Petramancy", LearnSandWallTag.class);
+        registerTag(LEARN_MAGIC, "Teaches Magic Bolt", LearnMagicBoltTag.class);
+        registerTag(LEARN_AQUAMANCY, "Teaches Aquamancy", LearnAquamancyTag.class);
 
         //Tile related
         registerTag(TILE_WALL, "Wall", WallTag.class);

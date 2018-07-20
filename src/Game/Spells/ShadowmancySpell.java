@@ -26,10 +26,10 @@ public class ShadowmancySpell extends Spell {
                 EntityStruct shadowStruct = new EntityStruct(EntityRegistry.PLAYER_SHADOW, "Shadow", null);
                 PlayerShadow playerShadow = (PlayerShadow) gi.instantiateEntity(shadowStruct, targetLoc, gi.getCurrentLevel());
                 playerShadow.onLevelEnter();
-                return 10;
+                return calculateCooldown(18, magicPower);
             } else {
                 ps.setOffset(targetLoc.subtract(spellCaster.getLocation()));
-                return 4;
+                return calculateCooldown(10, magicPower);
             }
         }
         return 0;

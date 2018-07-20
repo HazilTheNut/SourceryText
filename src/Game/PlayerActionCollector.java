@@ -26,6 +26,13 @@ public interface PlayerActionCollector {
     void onPlayerReadySpell(Coordinate loc, Spell spell);
 
     /**
+     * Runs when the player drags the mouse around while readying a spell
+     * @param loc The position aimed at
+     * @param spell The spell being readied
+     */
+    void onPlayerDragSpell(Coordinate loc, Spell spell);
+
+    /**
      * Runs when the player casts a spell
      * @param loc The position aimed at
      * @param spell The spell being casted

@@ -114,6 +114,12 @@ public class PlayerShadow extends CombatEntity implements PlayerActionCollector 
     }
 
     @Override
+    public void onPlayerDragSpell(Coordinate loc, Spell spell) {
+        if (copiedSpell != null)
+            copiedSpell.spellDrag(loc.add(offset), this, gi, player.getMagicPower());
+    }
+
+    @Override
     public void onPlayerCastSpell(Coordinate loc, Spell spell) {
         if (copiedSpell != null)
             copiedSpell.castSpell(loc.add(offset), this, gi, player.getMagicPower());
