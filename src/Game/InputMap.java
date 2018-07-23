@@ -26,12 +26,13 @@ public class InputMap implements Serializable {
     public static final int INVENTORY      = 6;
     public static final int INSPECT        = 7;
     public static final int CAST_SPELL     = 8;
-    public static final int INV_USE        = 9;
-    public static final int INV_DROP       = 10;
-    public static final int INV_MOVE_WHOLE = 11;
-    public static final int INV_MOVE_ONE   = 12;
-    public static final int PASS_TURN      = 13;
-    public static final int OPEN_MENU      = 14;
+    public static final int CHANGE_SPELL   = 9;
+    public static final int INV_USE        = 10;
+    public static final int INV_DROP       = 11;
+    public static final int INV_MOVE_WHOLE = 12;
+    public static final int INV_MOVE_ONE   = 13;
+    public static final int PASS_TURN      = 14;
+    public static final int OPEN_MENU      = 15;
 
     /*
     Each input is mapped to a list of actions. For example, the mouse left-click can both be mapped to using an item and attacking enemies.
@@ -120,6 +121,8 @@ public class InputMap implements Serializable {
                 return "Inspect";
             case CAST_SPELL:
                 return "Cast Spell";
+            case CHANGE_SPELL:
+                return "Change Spell";
             case INV_USE:
                 return "Inv: Use Item";
             case INV_DROP:

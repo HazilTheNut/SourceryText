@@ -27,6 +27,11 @@ public class LocumancySpell extends Spell {
     }
 
     @Override
+    public Color getColor() {
+        return new Color(200, 181, 255);
+    }
+
+    @Override
     public void readySpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         validLocations = new ArrayList<>();
         int range = 5 + (magicPower / 16); //At 80 (max) magic power, range doubles.

@@ -9,6 +9,8 @@ import Game.Player;
 import Game.PlayerShadow;
 import Game.Registries.EntityRegistry;
 
+import java.awt.*;
+
 public class ShadowmancySpell extends Spell {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
@@ -16,6 +18,11 @@ public class ShadowmancySpell extends Spell {
     @Override
     public String getName() {
         return "Shadowmancy";
+    }
+
+    @Override
+    public Color getColor() {
+        return new Color(179, 204, 173);
     }
 
     @Override

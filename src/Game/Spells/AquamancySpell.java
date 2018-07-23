@@ -22,6 +22,11 @@ public class AquamancySpell extends Spell {
     }
 
     @Override
+    public Color getColor() {
+        return new Color(181, 255, 255);
+    }
+
+    @Override
     public Spell copy() {
         return new AquamancySpell();
     }
@@ -29,7 +34,9 @@ public class AquamancySpell extends Spell {
     @Override
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         if (gi.getTileAt(targetLoc).hasTag(TagRegistry.WET) && gi.isSpaceAvailable(targetLoc, TagRegistry.NO_PATHING)) {
+            spellCaster.getSprite().setVisible(false);
             playTeleportAnimation(targetLoc, gi.getLayerManager());
+            spellCaster.getSprite().setVisible(true);
             spellCaster.teleport(targetLoc);
             return calculateCooldown(25, magicPower);
         }

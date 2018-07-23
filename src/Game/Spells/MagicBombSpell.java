@@ -9,6 +9,8 @@ import Game.GameInstance;
 import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
 
+import java.awt.*;
+
 public class MagicBombSpell extends Spell {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
@@ -16,6 +18,11 @@ public class MagicBombSpell extends Spell {
     @Override
     public String getName() {
         return "Magic Bomb";
+    }
+
+    @Override
+    public Color getColor() {
+        return new Color(115, 173, 255);
     }
 
     @Override

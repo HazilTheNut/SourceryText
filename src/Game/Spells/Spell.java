@@ -6,6 +6,7 @@ import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.GameInstance;
 
+import java.awt.*;
 import java.io.Serializable;
 
 /**
@@ -44,6 +45,8 @@ public class Spell implements Serializable {
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower){ return 0; }
 
     public String getName(){ return "~";}
+
+    public Color getColor(){ return Color.WHITE; }
 
     int calculateCooldown(int baseCooldown, int magicPower){
         int result = (int)(baseCooldown * ((100 - (float)magicPower) / 100));

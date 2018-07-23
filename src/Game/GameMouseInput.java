@@ -129,6 +129,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_E, InputType.TYPE_KEY), InputMap.INVENTORY);
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_Q, InputType.TYPE_KEY), InputMap.INSPECT);
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_F, InputType.TYPE_KEY), InputMap.CAST_SPELL);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_C, InputType.TYPE_KEY), InputMap.CHANGE_SPELL);
             defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON1, InputType.TYPE_MOUSE), InputMap.INV_USE);
             defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON3, InputType.TYPE_MOUSE), InputMap.INV_DROP);
             defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON3, InputType.TYPE_MOUSE), InputMap.INV_MOVE_ONE);

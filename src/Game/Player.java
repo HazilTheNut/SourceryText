@@ -368,6 +368,9 @@ public class Player extends CombatEntity implements MouseInputReceiver{
             if (actions.contains(InputMap.CAST_SPELL)){
                 readySpell(levelPos);
             }
+            if (actions.contains(InputMap.CHANGE_SPELL)){
+                spellMenu();
+            }
             if (actions.contains(InputMap.ATTACK)){
                 playerAttack(levelPos);
             }
@@ -446,6 +449,18 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         quickMenu.addMenuItem("Quit to Menu", new Color(255, 171, 171), () -> gi.getGameMaster().exitGameToMainMenu());
         quickMenu.addMenuItem("Close",        () -> {});
         quickMenu.showMenu("Options", true);
+    }
+
+    private void spellMenu(){
+        QuickMenu quickMenu = gi.getQuickMenu();
+        quickMenu.clearMenu();
+        for (Spell spell : spells){
+            quickMenu.addMenuItem(spell.getName(), spell.getColor(), () -> {
+                setEquippedSpell(spell);
+                updateHUD();
+            });
+        }
+        quickMenu.showMenu("Spells", true);
     }
 
     private void readySpell(Coordinate levelPos){

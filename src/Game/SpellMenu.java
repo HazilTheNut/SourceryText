@@ -82,7 +82,7 @@ public class SpellMenu implements Serializable {
             drawBand(new Color(37, 34, 43), 0);
         else
             drawBand(new Color(28, 25, 32), 0);
-        menuLayer.inscribeString(player.getEquippedSpell().getName(), 0, 0, new Color(237, 235, 247));
+        menuLayer.inscribeString(player.getEquippedSpell().getName(), 0, 0, player.getEquippedSpell().getColor());
     }
 
     private void drawBand(Color color, int row){

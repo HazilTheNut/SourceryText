@@ -25,6 +25,11 @@ public class MagicBoltSpell extends Spell {
     }
 
     @Override
+    public Color getColor() {
+        return new Color(115, 220, 255);
+    }
+
+    @Override
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         Projectile magicBolt = new Projectile(spellCaster, targetLoc, icon);
         magicBolt.addTag(TagRegistry.DAMAGE_START + calculateDamage(4, magicPower), spellCaster);

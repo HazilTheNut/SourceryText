@@ -22,6 +22,11 @@ public class SandWallSpell extends Spell {
         return "Petramancy";
     }
 
+    @Override
+    public Color getColor() {
+        return new Color(255, 255, 181);
+    }
+
     private Coordinate spreadOrigin;
     private Layer preview;
 

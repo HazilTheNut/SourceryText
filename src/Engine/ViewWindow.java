@@ -99,7 +99,7 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
             }
         }
 
-        g.setColor(Color.GRAY); //Draw margin borders
+        g.setColor(new Color(50, 50, 50)); //Draw margin borders
         g.drawLine(HOR_MARGIN, 0, HOR_MARGIN, getHeight());
         g.drawLine(getWidth() - HOR_MARGIN, 0, getWidth() - HOR_MARGIN, getHeight());
         g.drawLine(0, VER_MARGIN, getWidth(), VER_MARGIN);

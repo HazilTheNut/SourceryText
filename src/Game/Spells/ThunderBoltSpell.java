@@ -25,6 +25,11 @@ public class ThunderBoltSpell extends Spell {
     }
 
     @Override
+    public Color getColor() {
+        return new Color(255, 255, 153);
+    }
+
+    @Override
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         Projectile thunderBolt = new Projectile(spellCaster, targetLoc, icon);
         thunderBolt.addTag(TagRegistry.DAMAGE_START + calculateDamage(15, magicPower), spellCaster);
