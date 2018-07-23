@@ -76,7 +76,7 @@ public class PoisonTag extends Tag{
         }
     }
 
-    void transmit(TagHolder target){
+    public void transmit(TagHolder target){
         PoisonTag poisonTag = (PoisonTag)target.getTag(TagRegistry.POISON);
         if (poisonTag != null)
             poisonTag.lifetime = Math.max(poisonTag.lifetime, lifetime);

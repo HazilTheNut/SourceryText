@@ -3,8 +3,9 @@ package Game.Registries;
 import Data.Coordinate;
 import Game.Debug.DebugWindow;
 import Game.Tags.*;
-import Game.Tags.MagicTags.*;
+import Game.Tags.EnchantmentTags.*;
 import Game.Tags.PropertyTags.*;
+import Game.Tags.SpellLearningTags.*;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -63,6 +64,8 @@ public class TagRegistry {
     public final static int UNLIMITED_USAGE = 211;
     public final static int DIGGING       = 212;
 
+    public final static int FIREBURST_ENCH = 230;
+
     public final static int LEVEL_UP        = 388;
     public final static int SPELL_BEAD      = 389;
     public final static int LEARN_FIRE      = 390;
@@ -101,19 +104,19 @@ public class TagRegistry {
         registerTag(ON_FIRE,   "On Fire",   OnFireTag.class);
         registerTag(BURN_SLOW, "Slow Burning", BurnSlowTag.class);
         registerTag(BURN_FAST, "Fast Burning", BurnFastTag.class);
-        registerTag(FLAME_ENCHANT, "Fire Enchantment", FlameEnchantTag.class);
+        registerTag(FLAME_ENCHANT, "Flame Enchantment", FlameEnchantmentTag.class);
         registerTag(BURN_FOREVER, "Burns Forever", BurnForeverTag.class);
         registerTag(IMMOVABLE, "Immovable", ImmovableTag.class);
         registerTag(METALLIC, "Metallic", MetallicTag.class);
         registerTag(SHARP, "Sharp", SharpTag.class);
-        registerTag(ELECTRIC, "Electric", ElectricTag.class);
+        registerTag(ELECTRIC, "Electric Ench.", ElectricEnchantmentTag.class);
         registerTag(POISON, "Poison", PoisonTag.class);
-        registerTag(VENOMOUS, "Venomous", VenomousTag.class);
+        registerTag(VENOMOUS, "Venom Enchantment", VenomEnchantmentTag.class);
 
         registerTag(FROZEN, "Frozen", FrozenTag.class);
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);
         registerTag(WET, "Wet", WetTag.class);
-        registerTag(NO_REFREEZE, "No Refreeze", NoRefreezeTag.class);
+        registerTag(NO_REFREEZE, "Cannot Refreeze", NoRefreezeTag.class);
         registerTag(BURN_SPREAD, "Fast Fire-Spreading", BurnSpreadingTag.class);
 
         //Item related
@@ -126,6 +129,9 @@ public class TagRegistry {
         registerTag(KEY, "Key", KeyTag.class);
         registerTag(UNLIMITED_USAGE, "Unlimited Usage", UnlimitedUsageTag.class);
         registerTag(DIGGING, "Can Dig", DiggingTag.class);
+
+        registerTag(FIREBURST_ENCH, "Fireburst Ench.", FireburstEnchantmentTag.class);
+
         registerTag(LEVEL_UP, "Level up!", LevelUpTag.class);
         registerTag(SPELL_BEAD, "Spell Bead", SpellBeadTag.class);
         registerTag(LEARN_FIRE, "Teaches Fire Bolt", LearnFireBoltTag.class);

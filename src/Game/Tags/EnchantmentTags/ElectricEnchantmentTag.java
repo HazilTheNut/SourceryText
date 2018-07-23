@@ -1,21 +1,21 @@
-package Game.Tags;
+package Game.Tags.EnchantmentTags;
 
 import Data.Coordinate;
 import Data.SerializationVersion;
 import Engine.SpecialText;
-import Game.*;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.*;
 import Game.Registries.TagRegistry;
 
 import java.awt.*;
 import java.util.ArrayList;
 
-public class ElectricTag extends Tag {
+public class ElectricEnchantmentTag extends EnchantmentTag {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    public ElectricTag(){
+    public ElectricEnchantmentTag(){
         blacklist = new ArrayList<>();
     }
 
@@ -48,8 +48,8 @@ public class ElectricTag extends Tag {
         if (isEntityConductive(target) && target.isAlive()) {
             Projectile zapProj = new Projectile(origin, target.getLocation(), new SpecialText('+', new Color(255, 255, 50), new Color(255, 255, 50, 50)), target.getGameInstance());
             zapProj.addTag(TagRegistry.DAMAGE_START + 5, null);
-            //Create ElectricTag and blacklist entities that cause the ElectricTag to spread backwards.
-            ElectricTag electricTag = (ElectricTag) TagRegistry.getTag(TagRegistry.ELECTRIC);
+            //Create ElectricEnchantmentTag and blacklist entities that cause the ElectricEnchantmentTag to spread backwards.
+            ElectricEnchantmentTag electricTag = (ElectricEnchantmentTag) TagRegistry.getTag(TagRegistry.ELECTRIC);
             for (Entity e : blacklist) electricTag.addToBlacklist(e);
             for (Entity e : target.getGameInstance().getCurrentLevel().getEntitiesAt(origin)) electricTag.addToBlacklist(e);
             zapProj.addTag(electricTag, null);

@@ -1,16 +1,15 @@
-package Game.Tags.MagicTags;
+package Game.Tags.EnchantmentTags;
 
 import Data.SerializationVersion;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
-import Game.Tags.Tag;
 
 import java.awt.*;
 
 /**
  * Created by Jared on 4/25/2018.
  */
-public class FrostEnchantmentTag extends Tag {
+public class FrostEnchantmentTag extends EnchantmentTag {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 

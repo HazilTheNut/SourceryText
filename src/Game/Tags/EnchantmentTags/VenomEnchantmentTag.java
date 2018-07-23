@@ -1,15 +1,16 @@
-package Game.Tags;
+package Game.Tags.EnchantmentTags;
 
 import Data.SerializationVersion;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
+import Game.Tags.PoisonTag;
 
 import java.awt.*;
 
-public class VenomousTag extends Tag {
+public class VenomEnchantmentTag extends EnchantmentTag {
 
     /**
-     * VenomousTag:
+     * VenomEnchantmentTag:
      *
      * The Tag that unconditionally transmits poison upon contact.
      *

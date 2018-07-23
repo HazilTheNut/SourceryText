@@ -1,4 +1,4 @@
-package Game.Tags.MagicTags;
+package Game.Tags.SpellLearningTags;
 
 import Data.SerializationVersion;
 import Game.Spells.ThunderBoltSpell;
