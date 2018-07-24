@@ -11,6 +11,7 @@ import Game.TagEvent;
 import java.awt.*;
 
 public class FireburstEnchantmentTag extends EnchantmentTag {
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override

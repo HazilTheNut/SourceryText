@@ -81,7 +81,7 @@ public class Magnet extends Entity implements Powerable {
 
         @Override
         public void onContact(TagEvent e) {
-            if (e.getTarget().hasTag(TagRegistry.ELECTRIC)) {
+            if (e.getTarget().hasTag(TagRegistry.ELECTRIC_ENCHANT)) {
                 toggle();
             }
         }

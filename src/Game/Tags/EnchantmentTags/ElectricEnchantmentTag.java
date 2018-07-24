@@ -49,7 +49,7 @@ public class ElectricEnchantmentTag extends EnchantmentTag {
             Projectile zapProj = new Projectile(origin, target.getLocation(), new SpecialText('+', new Color(255, 255, 50), new Color(255, 255, 50, 50)), target.getGameInstance());
             zapProj.addTag(TagRegistry.DAMAGE_START + 5, null);
             //Create ElectricEnchantmentTag and blacklist entities that cause the ElectricEnchantmentTag to spread backwards.
-            ElectricEnchantmentTag electricTag = (ElectricEnchantmentTag) TagRegistry.getTag(TagRegistry.ELECTRIC);
+            ElectricEnchantmentTag electricTag = (ElectricEnchantmentTag) TagRegistry.getTag(TagRegistry.ELECTRIC_ENCHANT);
             for (Entity e : blacklist) electricTag.addToBlacklist(e);
             for (Entity e : target.getGameInstance().getCurrentLevel().getEntitiesAt(origin)) electricTag.addToBlacklist(e);
             zapProj.addTag(electricTag, null);

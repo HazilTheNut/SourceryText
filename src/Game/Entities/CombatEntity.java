@@ -163,8 +163,8 @@ public class CombatEntity extends Entity {
                 tag.onDealDamage(event);
             event.doFutureActions();
             if (event.eventPassed()) {
-                event.doCancelableActions();
                 ce.onReceiveDamage(event.getAmount(), this, gi);
+                event.doCancelableActions();
                 getWeapon().decrementQty();
                 if (getWeapon().getItemData().getQty() <= 0) {
                     setWeapon(null);

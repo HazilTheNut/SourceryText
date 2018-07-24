@@ -76,10 +76,11 @@ public class ItemRegistry {
         registerItem(104, "Combo Sword",     8,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST,  TagRegistry.WEAPON_SWEEP, TagRegistry.SHARP);
         registerItem(127, "Crossbow",        4.5, TagRegistry.DAMAGE_START + 6, TagRegistry.RANGE_START + 10, TagRegistry.WEAPON_BOW, TagRegistry.FLAMMABLE);
         registerItem(128, "Ice Sword",       4,   TagRegistry.DAMAGE_START + 8, TagRegistry.WEAPON_STRIKE, TagRegistry.FROST_ENCHANT, TagRegistry.SHARP);
-        registerItem(129, "Electro Spear",   6,   TagRegistry.DAMAGE_START + 10, TagRegistry.WEAPON_THRUST, TagRegistry.ELECTRIC, TagRegistry.SHARP);
-        registerItem(130, "Venom Bow",       2.5, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_BOW, TagRegistry.VENOMOUS);
+        registerItem(129, "Electro Spear",   6,   TagRegistry.DAMAGE_START + 10, TagRegistry.WEAPON_THRUST, TagRegistry.ELECTRIC_ENCHANT, TagRegistry.SHARP);
+        registerItem(130, "Venom Bow",       2.5, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_BOW, TagRegistry.VENOM_ENCHANT);
         registerItem(131, "Torch",           1,   TagRegistry.DAMAGE_START + 1, TagRegistry.WEAPON_STRIKE, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
-        registerItem(132, "Enchanted Axe",   1,   TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_STRIKE, TagRegistry.FIREBURST_ENCH);
+        registerItem(132, "Enchanted Axe",   1,   TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_STRIKE, TagRegistry.VAMPIRE_ENCHANT);
+        registerItem(133, "Enchanted Bow",   1,   TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_BOW, TagRegistry.BEAM_ENCHANT);
 
         //Healing items / potions with various effects
         registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10);

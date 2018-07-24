@@ -137,6 +137,14 @@ public class Projectile extends TagHolder {
         return ypos;
     }
 
+    public double getXvelocity() {
+        return xvelocity;
+    }
+
+    public double getYvelocity() {
+        return yvelocity;
+    }
+
     //I had an issue earlier where the position rounding was done differently in different places in the code. That's no good!
     private Coordinate getRoundedPos(){
         return new Coordinate((int)Math.round(xpos), (int)Math.round(ypos));
@@ -147,8 +155,8 @@ public class Projectile extends TagHolder {
         for (Tag tag : getTags()) tag.onDealDamage(dmgEvent);
         dmgEvent.doFutureActions();
         if (dmgEvent.eventPassed()){
-            dmgEvent.doCancelableActions();
             other.onReceiveDamage(dmgEvent.getAmount(), this, gi);
+            dmgEvent.doCancelableActions();
             onContact(other, gi);
         }
     }

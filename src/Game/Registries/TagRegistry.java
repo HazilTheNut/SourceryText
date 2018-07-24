@@ -43,7 +43,7 @@ public class TagRegistry {
     public final static int IMMOVABLE     = 6;
     public final static int METALLIC      = 7;
     public final static int SHARP         = 8;
-    public final static int ELECTRIC      = 9;
+    public final static int ELECTRIC_ENCHANT = 9;
 
     public final static int FROZEN        = 10;
     public final static int FROST_ENCHANT = 11;
@@ -52,7 +52,7 @@ public class TagRegistry {
     public final static int BURN_SPREAD   = 14;
 
     public final static int POISON        = 20;
-    public final static int VENOMOUS      = 21;
+    public final static int VENOM_ENCHANT = 21;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -64,7 +64,10 @@ public class TagRegistry {
     public final static int UNLIMITED_USAGE = 211;
     public final static int DIGGING       = 212;
 
-    public final static int FIREBURST_ENCH = 230;
+    public final static int FIREBURST_ENCHANT = 230;
+    public final static int DUELING_ENCHANT   = 231;
+    public final static int BEAM_ENCHANT      = 232;
+    public final static int VAMPIRE_ENCHANT   = 233;
 
     public final static int LEVEL_UP        = 388;
     public final static int SPELL_BEAD      = 389;
@@ -109,9 +112,9 @@ public class TagRegistry {
         registerTag(IMMOVABLE, "Immovable", ImmovableTag.class);
         registerTag(METALLIC, "Metallic", MetallicTag.class);
         registerTag(SHARP, "Sharp", SharpTag.class);
-        registerTag(ELECTRIC, "Electric Ench.", ElectricEnchantmentTag.class);
+        registerTag(ELECTRIC_ENCHANT, "Electric Ench.", ElectricEnchantmentTag.class);
         registerTag(POISON, "Poison", PoisonTag.class);
-        registerTag(VENOMOUS, "Venom Enchantment", VenomEnchantmentTag.class);
+        registerTag(VENOM_ENCHANT, "Venom Enchantment", VenomEnchantmentTag.class);
 
         registerTag(FROZEN, "Frozen", FrozenTag.class);
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);
@@ -130,7 +133,10 @@ public class TagRegistry {
         registerTag(UNLIMITED_USAGE, "Unlimited Usage", UnlimitedUsageTag.class);
         registerTag(DIGGING, "Can Dig", DiggingTag.class);
 
-        registerTag(FIREBURST_ENCH, "Fireburst Ench.", FireburstEnchantmentTag.class);
+        registerTag(FIREBURST_ENCHANT, "Fireburst Ench.", FireburstEnchantmentTag.class);
+        registerTag(DUELING_ENCHANT, "Dueling Enchantment", DuelingEnchantmentTag.class);
+        registerTag(BEAM_ENCHANT, "Beam Enchantment", BeamEnchantmentTag.class);
+        registerTag(VAMPIRE_ENCHANT, "Vampire Enchantment", VampireEnchantmentTag.class);
 
         registerTag(LEVEL_UP, "Level up!", LevelUpTag.class);
         registerTag(SPELL_BEAD, "Spell Bead", SpellBeadTag.class);

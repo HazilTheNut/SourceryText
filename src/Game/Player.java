@@ -42,7 +42,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
 
     private ArrayList<PlayerActionCollector> playerActionCollectors;
 
-    private int magicPower = 80;
+    private int magicPower;
     private double weightCapacity = 20;
 
     private int noEnterWarpZoneTimer = 0;
