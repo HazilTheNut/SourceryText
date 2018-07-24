@@ -79,7 +79,7 @@ public class ItemRegistry {
         registerItem(129, "Electro Spear",   6,   TagRegistry.DAMAGE_START + 10, TagRegistry.WEAPON_THRUST, TagRegistry.ELECTRIC_ENCHANT, TagRegistry.SHARP);
         registerItem(130, "Venom Bow",       2.5, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_BOW, TagRegistry.VENOM_ENCHANT);
         registerItem(131, "Torch",           1,   TagRegistry.DAMAGE_START + 1, TagRegistry.WEAPON_STRIKE, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
-        registerItem(132, "Enchanted Axe",   1,   TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_STRIKE, TagRegistry.VAMPIRE_ENCHANT);
+        registerItem(132, "Enchanted Axe",   1,   TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_SWEEP, TagRegistry.SLOTH_ENCHANT);
         registerItem(133, "Enchanted Bow",   1,   TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_BOW, TagRegistry.BEAM_ENCHANT);
 
         //Healing items / potions with various effects
@@ -134,9 +134,13 @@ public class ItemRegistry {
     public static ItemStruct getItemStruct(int id) { return itemStructMap.get(id).copy(); }
 
     public static Item generateItem(int id, GameInstance gi){
-        ItemStruct struct = getItemStruct(id);
-        Item item = new Item(struct, gi);
-        for (int tagId : struct.getTags()){
+        return generateItem(new ItemStruct(id, 1, "item", 0), gi);
+    }
+
+    public static Item generateItem(ItemStruct itemStruct, GameInstance gi){
+        ItemStruct fromReg = getItemStruct(itemStruct.getItemId());
+        Item item = new Item(fromReg, gi).setQty(itemStruct.getQty());
+        for (int tagId : fromReg.getTags()){
             item.addTag(tagId, item);
         }
         return item;

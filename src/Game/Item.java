@@ -37,7 +37,9 @@ public class Item extends TagHolder implements Serializable {
     }
 
     public void decrementQty(){
-        if (stackability != NO_QUANTITY) itemData.setQty(itemData.getQty()-1);
+        if (stackability != NO_QUANTITY){
+            onReceiveDamage(1, this, null);
+        }
     }
 
     public void incrementQty(){

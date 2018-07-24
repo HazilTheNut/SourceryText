@@ -68,6 +68,10 @@ public class TagRegistry {
     public final static int DUELING_ENCHANT   = 231;
     public final static int BEAM_ENCHANT      = 232;
     public final static int VAMPIRE_ENCHANT   = 233;
+    public final static int WARP_ENCHANT      = 234;
+    public final static int REGEN_ENCHANT     = 235;
+    //TODO: Spooky Enchantment
+    public final static int SLOTH_ENCHANT     = 236;
 
     public final static int LEVEL_UP        = 388;
     public final static int SPELL_BEAD      = 389;
@@ -94,6 +98,7 @@ public class TagRegistry {
     public final static int MAGNETIC      = 601;
     public final static int TOGGLING      = 602;
     public final static int BRIGHT        = 603;
+    public final static int SLOTH         = 604;
 
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
@@ -137,6 +142,9 @@ public class TagRegistry {
         registerTag(DUELING_ENCHANT, "Dueling Enchantment", DuelingEnchantmentTag.class);
         registerTag(BEAM_ENCHANT, "Beam Enchantment", BeamEnchantmentTag.class);
         registerTag(VAMPIRE_ENCHANT, "Vampire Enchantment", VampireEnchantmentTag.class);
+        registerTag(WARP_ENCHANT, "Warp Enchantment", WarpEnchantmentTag.class);
+        registerTag(REGEN_ENCHANT, "Regen Enchantment", RegenEnchantmentTag.class);
+        registerTag(SLOTH_ENCHANT, "Sloth Enchantment", SlothEnchantmentTag.class);
 
         registerTag(LEVEL_UP, "Level up!", LevelUpTag.class);
         registerTag(SPELL_BEAD, "Spell Bead", SpellBeadTag.class);
@@ -163,6 +171,7 @@ public class TagRegistry {
         //Entity related
         registerTag(LIVING, "Living", LivingTag.class);
         registerTag(BRIGHT, "Bright", BrightTag.class);
+        registerTag(SLOTH, "Sloth", SlothTag.class);
 
         //Registering stuff ends here
     }
