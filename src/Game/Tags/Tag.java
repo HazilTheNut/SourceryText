@@ -78,6 +78,11 @@ public class Tag implements Serializable {
     //Target: this
     public void onReceiveDamage(TagEvent e){}
 
+    //Upon an enemy swinging a weapon, useful for causing attacks to miss. Amount is % chance of success
+    //Source: this
+    //Target: held weapon
+    public void onWeaponSwing(TagEvent e){}
+
     //Ran every turn
     //Source: this
     //Target: this. If this is a Tile, then it is instead the solid entity atop this Tile (can be null)

@@ -1,4 +1,4 @@
-package Game.Tags;
+package Game.Tags.TempTags;
 
 import Data.SerializationVersion;
 import Game.Entities.Entity;
@@ -6,10 +6,11 @@ import Game.Item;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
+import Game.Tags.Tag;
 
 import java.awt.*;
 
-public class PoisonTag extends Tag{
+public class PoisonTag extends Tag {
 
     /**
      * PoisonTag:

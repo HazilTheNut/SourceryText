@@ -1,4 +1,4 @@
-package Game.Tags;
+package Game.Tags.TempTags;
 
 import Data.SerializationVersion;
 import Engine.SpecialText;
@@ -7,6 +7,7 @@ import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
+import Game.Tags.Tag;
 import Game.Tile;
 
 import java.awt.*;

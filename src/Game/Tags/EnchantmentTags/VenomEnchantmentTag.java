@@ -3,7 +3,7 @@ package Game.Tags.EnchantmentTags;
 import Data.SerializationVersion;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
-import Game.Tags.PoisonTag;
+import Game.Tags.TempTags.PoisonTag;
 
 import java.awt.*;
 

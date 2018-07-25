@@ -11,6 +11,8 @@ import java.io.Serializable;
  */
 public class LevelScript implements Serializable {
 
+    //TODO: Mats
+
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     GameInstance gi;

@@ -1,7 +1,8 @@
-package Game.Tags;
+package Game.Tags.TempTags;
 
 import Data.SerializationVersion;
 import Game.TagEvent;
+import Game.Tags.Tag;
 
 import java.awt.*;
 

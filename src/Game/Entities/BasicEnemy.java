@@ -7,11 +7,8 @@ import Data.SerializationVersion;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
-import Game.GameInstance;
-import Game.Item;
-import Game.Projectile;
+import Game.*;
 import Game.Registries.TagRegistry;
-import Game.TagHolder;
 import Game.Tags.RangeTag;
 
 import java.awt.*;
@@ -115,7 +112,7 @@ public class BasicEnemy extends CombatEntity {
     }
 
     public void setTarget(CombatEntity target) {
-        if (!target.equals(this))
+        if (!target.equals(this) && !(hasTag(TagRegistry.BERSERK) && target instanceof Player))
             this.target = target;
     }
 

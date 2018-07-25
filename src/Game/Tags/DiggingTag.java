@@ -5,6 +5,7 @@ import Engine.SpecialText;
 import Game.GameInstance;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
+import Game.Tags.TempTags.OnFireTag;
 import Game.Tile;
 
 import java.awt.*;

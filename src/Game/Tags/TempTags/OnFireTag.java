@@ -1,4 +1,4 @@
-package Game.Tags;
+package Game.Tags.TempTags;
 
 import Data.Coordinate;
 import Data.SerializationVersion;
@@ -9,6 +9,7 @@ import Game.Level;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
+import Game.Tags.Tag;
 import Game.Tile;
 
 import java.awt.*;
@@ -148,7 +149,7 @@ public class OnFireTag extends Tag {
         e.getTarget().addTag(TagRegistry.ON_FIRE, e.getSource());
     }
 
-    Tile createAshTile(Coordinate loc, Level level){
+    public Tile createAshTile(Coordinate loc, Level level){
         Tile tile = new Tile(loc, "Ash", level);
         if (random.nextDouble() < 0.25){
             level.getOverlayTileLayer().editLayer(loc.getX(), loc.getY(), new SpecialText('.', new Color(81, 77, 77), new Color(60, 58, 55)));

@@ -157,7 +157,7 @@ public class CombatEntity extends Entity {
      * @param ce CombatEntity to performAttack
      */
     protected void doAttackEvent(CombatEntity ce){
-        if (getWeapon() != null) {
+        if (getWeapon() != null && doSwingEvent()) {
             TagEvent event = new TagEvent(strength, true, this, ce, getGameInstance());
             for (Tag tag : getWeapon().getTags())
                 tag.onDealDamage(event);
@@ -175,6 +175,23 @@ public class CombatEntity extends Entity {
                     onContact(ce, getGameInstance());
             }
         }
+    }
+
+    private boolean doSwingEvent(){
+        TagEvent swingEvent = new TagEvent(100, true, this, getWeapon(), getGameInstance());
+        for (Tag tag : getTags())
+            tag.onWeaponSwing(swingEvent);
+        swingEvent.doFutureActions();
+        if (swingEvent.eventPassed()){
+            swingEvent.doCancelableActions();
+            if (swingEvent.getAmount() < 100){
+                Random random = new Random();
+                int val = random.nextInt(101);
+                return val <= swingEvent.getAmount();
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
