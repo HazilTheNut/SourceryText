@@ -50,7 +50,7 @@ public class EntityRegistry {
         registerEntity(14, "Toggle Switch",new SpecialText('*', new Color(42,  42,  86),  new Color(20, 20, 51, 100)),   ToggleSwitch.class, TagRegistry.IMMOVABLE);
         registerEntity(15, "Room Cover",   new SpecialText(' ', new Color(42,  42,  86),  Color.BLACK),                  RoomCover.class,   TagRegistry.IMMOVABLE);
         registerEntity(16, "Wall Torch",   new SpecialText('*', new Color(212, 195, 140), new Color(142, 120, 50, 50)),  Paperweight.class, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER, TagRegistry.ON_FIRE, TagRegistry.BRIGHT);
-        registerEntity(MAGIC_BOMB, "MagicBomb", new SpecialText('b'),                                                    MagicBomb.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING, TagRegistry.NO_PATHING);
+        registerEntity(MAGIC_BOMB, "MagicBomb", new SpecialText('b'),                                                    MagicBomb.class, TagRegistry.NO_PATHING);
 
         //Registering stuff ends here
     }

@@ -189,6 +189,8 @@ public class Entity extends TagHolder implements Serializable {
         gi.removeEntity(this);
         gi.getLayerManager().removeLayer(sprite);
         DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' - - -", getName());
+        for (Tag tag : getTags())
+            tag.onEntityDestruct(this);
     }
 
     /**

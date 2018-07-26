@@ -163,6 +163,7 @@ public class TagRegistry {
         registerTag(CLARITY_ENCHANT, "Clarity Enchantment", ClarityEnchantmentTag.class);
         registerTag(BLEED_ENCHANT, "Bleed Enchantment", BleedEnchantmentTag.class);
         registerTag(THORN_ENCHANT, "Thorn Enchantment", ThornEnchantmentTag.class);
+        registerTag(FORCE_ENCHANT, "Force Enchantment", ForceEnchantmentTag.class);
 
         registerTag(LEVEL_UP, "Level up!", LevelUpTag.class);
         registerTag(SPELL_BEAD, "Spell Bead", SpellBeadTag.class);

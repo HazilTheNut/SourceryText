@@ -1,6 +1,7 @@
 package Game.Tags;
 
 import Data.SerializationVersion;
+import Game.Entities.Entity;
 import Game.TagEvent;
 import Game.TagHolder;
 
@@ -120,6 +121,9 @@ public class Tag implements Serializable {
 
     //Ran when this tag is removed. Cannot be canceled
     public void onRemove(TagHolder owner){}
+
+    //Ran when the owner of this is destroyed. Cannot be canceled
+    public void onEntityDestruct(Entity owner){}
 
     //Ran to figure if the owning Tile can be cleaned up by the level.
     public boolean isTileRemovable(){ return true; }
