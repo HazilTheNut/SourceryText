@@ -72,14 +72,14 @@ public class TagRegistry {
     public final static int WARP_ENCHANT      = 234;
     public final static int REGEN_ENCHANT     = 235;
     public final static int SLOTH_ENCHANT     = 236;
-    public final static int BERSERK_ENCHANT   = 237; //TODO: Make this a thing
-    public final static int SPOOKY_ENCHANT    = 238; //TODO: Make this a thing
-    public final static int CLARITY_ENCHANT   = 239; //TODO: Make this a thing
-    public final static int BLEED_ENCHANT     = 240; //TODO: Make this a thing
-    public final static int THORN_ENCHANT     = 241; //TODO: Make this a thing
+    public final static int BERSERK_ENCHANT   = 237;
+    public final static int SPOOKY_ENCHANT    = 238;
+    public final static int CLARITY_ENCHANT   = 239;
+    public final static int BLEED_ENCHANT     = 240;
+    public final static int THORN_ENCHANT     = 241;
     public final static int FORCE_ENCHANT     = 242; //TODO: Make this a thing
     public final static int UNSTABLE_ENCHANT  = 243; //TODO: Make this a thing
-    public final static int DIZZY_ENCHANT     = 244; //TODO: Make this a thing
+    public final static int DIZZY_ENCHANT     = 244;
 
     public final static int LEVEL_UP        = 388;
     public final static int SPELL_BEAD      = 389;
@@ -109,6 +109,8 @@ public class TagRegistry {
     public final static int SLOTH         = 604;
     public final static int BERSERK       = 605;
     public final static int DIZZY         = 606;
+    public final static int SCARED        = 607;
+    public final static int BLEEDING      = 608;
 
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
@@ -157,6 +159,10 @@ public class TagRegistry {
         registerTag(SLOTH_ENCHANT, "Sloth Enchantment", SlothEnchantmentTag.class);
         registerTag(BERSERK_ENCHANT, "Berserk Enchantment", BerserkEnchantmentTag.class);
         registerTag(DIZZY_ENCHANT, "Dizzy Enchantment", DizzyEnchantmentTag.class);
+        registerTag(SPOOKY_ENCHANT, "Spooky Enchantment", SpookyEnchantmentTag.class);
+        registerTag(CLARITY_ENCHANT, "Clarity Enchantment", ClarityEnchantmentTag.class);
+        registerTag(BLEED_ENCHANT, "Bleed Enchantment", BleedEnchantmentTag.class);
+        registerTag(THORN_ENCHANT, "Thorn Enchantment", ThornEnchantmentTag.class);
 
         registerTag(LEVEL_UP, "Level up!", LevelUpTag.class);
         registerTag(SPELL_BEAD, "Spell Bead", SpellBeadTag.class);
@@ -186,6 +192,8 @@ public class TagRegistry {
         registerTag(SLOTH, "Sloth", SlothTag.class);
         registerTag(BERSERK, "Berserk", BerserkTag.class);
         registerTag(DIZZY, "Dizzy", DizzyTag.class);
+        registerTag(SCARED, "Scared", ScaredTag.class);
+        registerTag(BLEEDING, "Bleeding", BleedTag.class);
 
         //Registering stuff ends here
     }

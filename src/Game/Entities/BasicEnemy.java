@@ -76,10 +76,14 @@ public class BasicEnemy extends CombatEntity {
             alertNearbyEntities(); //Let everyone know
         }
         if (target != null) {
-            if (isRanged())
-                doRangedBehavior();
-            else
-                doMeleeBehavior();
+            if (hasTag(TagRegistry.SCARED)) {
+                pathToPosition(target.getLocation());
+            } else {
+                if (isRanged())
+                    doRangedBehavior();
+                else
+                    doMeleeBehavior();
+            }
         }
         super.onTurn();
     }

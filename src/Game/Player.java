@@ -205,8 +205,13 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     @Override
     public void onTurn() {
         super.onTurn();
-        for (int i = 0; i < cooldowns.size(); i++) { //Decrement cooldowns
-            int cd = cooldowns.get(i)-1;
+        decrementCooldowns();
+        if (noEnterWarpZoneTimer > 0) noEnterWarpZoneTimer--;
+    }
+
+    public void decrementCooldowns(){
+        for (int i = 0; i < cooldowns.size(); i++) {
+            int cd = cooldowns.get(i)-1; //The new cooldown amount to assign
             if (cd > 0)
                 cooldowns.set(i, cooldowns.get(i)-1);
             else {
@@ -214,7 +219,6 @@ public class Player extends CombatEntity implements MouseInputReceiver{
                 i--; //To account for the list shifting down
             }
         }
-        if (noEnterWarpZoneTimer > 0) noEnterWarpZoneTimer--;
     }
 
     @Override

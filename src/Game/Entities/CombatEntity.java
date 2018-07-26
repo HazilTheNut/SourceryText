@@ -424,6 +424,15 @@ public class CombatEntity extends Entity {
         if (!getItems().contains(weapon)) weapon = null;
     }
 
+    @Override
+    protected void move(int relativeX, int relativeY) {
+        if (hasTag(TagRegistry.SCARED) && Math.max(Math.abs(relativeX), Math.abs(relativeY)) < 2){
+            super.move(relativeX * -1, relativeY * -1);
+            return;
+        }
+        super.move(relativeX, relativeY);
+    }
+
     //Path-finding stuff below
 
     protected void pathToPosition(Coordinate loc){
