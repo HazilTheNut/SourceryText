@@ -70,7 +70,7 @@ public class MagicBomb extends CombatEntity {
             if (!startingTagIds.contains(tag.getId()))
                 explosion.addTag(tag, this);
         }
-        explosion.explode(explosionDamage, getLocation().copy(), getGameInstance(), getSprite().getSpecialText(0,0).getFgColor());
+        explosion.explode(explosionDamage, getLocation().copy(), getGameInstance(), fgColor);
     }
 
     @Override

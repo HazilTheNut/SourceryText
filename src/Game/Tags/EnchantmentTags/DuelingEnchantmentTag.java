@@ -40,6 +40,6 @@ public class DuelingEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color (255, 56, 79);
+        return new Color (222, 255, 164);
     }
 }

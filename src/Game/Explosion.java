@@ -2,6 +2,7 @@ package Game;
 
 import Data.Coordinate;
 import Data.LayerImportances;
+import Data.SerializationVersion;
 import Engine.Layer;
 import Engine.SpecialText;
 import Game.Entities.Entity;
@@ -11,6 +12,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Explosion extends TagHolder{
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Layer explosionLayer;
     private ArrayList<Integer> transmissionBlacklist = new ArrayList<>();
