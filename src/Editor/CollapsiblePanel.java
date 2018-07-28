@@ -104,6 +104,12 @@ public class CollapsiblePanel extends JPanel{
         isActive = false;
     }
 
+    @Override
+    public Component add(Component comp) {
+        comp.setVisible(isActive);
+        return super.add(comp);
+    }
+
     private class MouseInput extends MouseAdapter{
 
         @Override

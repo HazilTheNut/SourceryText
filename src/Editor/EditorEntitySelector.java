@@ -17,7 +17,7 @@ public class EditorEntitySelector extends JFrame {
     /**
      * EditorEntitySelector:
      *
-     * The Window that pops up when you want to pick as entity to place.
+     * The Window that pops up when you want to pick an entity to place.
      * Could have been a dropdown menu, like the tiles are, but here you get a bigger list.
      *
      * Plus, filters can be added later if the list gets super big.

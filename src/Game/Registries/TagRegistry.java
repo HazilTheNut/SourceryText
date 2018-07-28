@@ -222,7 +222,6 @@ public class TagRegistry {
         ArrayList<Integer> enchantmentIds = new ArrayList<>();
         for (int id : tagMap.keySet()){
             Class tagClass = tagMap.get(id).getTagClass();
-            EnchantmentTag enchantmentTag = new EnchantmentTag();
             if (EnchantmentTag.class.isAssignableFrom(tagClass))
                 enchantmentIds.add(id);
         }

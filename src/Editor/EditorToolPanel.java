@@ -78,6 +78,7 @@ public class EditorToolPanel extends JPanel {
     private LayerManager lm;
 
     private CollapsiblePanel toolOptionsPanel;
+    private CollapsiblePanel levelScriptPanel;
 
     private JLabel searchForIcon;
     private JLabel placeTileIcon;
@@ -122,6 +123,8 @@ public class EditorToolPanel extends JPanel {
         createEntityDataPanel(ldata);
 
         createWarpZonePanel(ldata);
+
+        createLevelScriptPanel(ldata);
 
         add(scrollPane, BorderLayout.CENTER);
 
@@ -222,7 +225,7 @@ public class EditorToolPanel extends JPanel {
         levelMenu.add(findAndReplaceItem);
 
         JMenuItem levelScriptsItem = new JMenuItem("Level Scripts....");
-        levelScriptsItem.addActionListener(e -> new LevelScriptEditor(ldata));
+        levelScriptsItem.addActionListener(e -> new LevelScriptEnabler(ldata));
         levelMenu.add(levelScriptsItem);
 
         menuPanel.add(new LonelyMenu(levelMenu, menuPanel));
@@ -448,6 +451,26 @@ public class EditorToolPanel extends JPanel {
 
         toolsPanel.add(warpZonePanel);
     }
+
+    private JButton selectLevelScriptButton;
+
+    private void createLevelScriptPanel(LevelData ldata){
+
+        levelScriptPanel = new CollapsiblePanel();
+        levelScriptPanel.setBorder(BorderFactory.createTitledBorder("Level Scripts"));
+
+        selectLevelScriptButton = new JButton("Select...");
+        selectLevelScriptButton.addActionListener(e -> new EditorLevelScriptSelector(this, ldata));
+        levelScriptPanel.add(selectLevelScriptButton);
+
+        levelScriptPanel.setLayout(new GridLayout(levelScriptPanel.getComponentCount(), 1, 2, 2));
+        sizeToolsPanel(levelScriptPanel);
+        levelScriptPanel.validate();
+
+        toolsPanel.add(levelScriptPanel);
+    }
+
+
 
     private void sizeToolsPanel(CollapsiblePanel panel){
         panel.setNormalSize(new Dimension(100, panel.getInsets().bottom + panel.getInsets().top + panel.getComponentCount() * 30));

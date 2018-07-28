@@ -27,7 +27,7 @@ public class LevelData implements Serializable {
      *  > entityData    : EntityStruct matrix that maps out the Entities
      *  > warpZones     : ArrayList of WarpZones
      *  > levelScripts  : ArrayList of integers whose values match Id's in LevelScriptRegistry
-     *
+     *  > levelScriptMasks : ArrayList of LevelScriptMasks used for LevelScripts
      */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
@@ -42,6 +42,7 @@ public class LevelData implements Serializable {
     private ArrayList<WarpZone> warpZones;
 
     private ArrayList<Integer> levelScripts = new ArrayList<>();
+    private ArrayList<LevelScriptMask> levelScriptMasks = new ArrayList<>();
 
     /**
      * Resets all data to default, what is shown upon startup of Level Editor
@@ -159,6 +160,10 @@ public class LevelData implements Serializable {
             return null;
     }
 
+    public ArrayList<LevelScriptMask> getLevelScriptMasks() {
+        return levelScriptMasks;
+    }
+
     /**
      * Expands the size of the LevelData.
      *
@@ -180,6 +185,8 @@ public class LevelData implements Serializable {
             warpZoneLayer.resizeLayer(warpZoneLayer.getCols() - c, warpZoneLayer.getRows() - r, -1 * c, -1 * r);
             tileData = resizeTileData(tileData.length         - c, tileData[0].length - r,      -1 * c, -1 * r);
             entityData = resizeEntityData(entityData.length   - c, entityData[0].length - r,    -1 * c, -1 * r);
+            for (LevelScriptMask mask : levelScriptMasks)
+                resizeLevelScriptMask(mask.getMask().length - c,  mask.getMask()[0].length - r, -1 * c, -1 * r, mask);
             translateWarpZones(-1 * c, -1 * r);
             refreshTileDataLayer();
         }
@@ -192,6 +199,8 @@ public class LevelData implements Serializable {
             warpZoneLayer.resizeLayer(w, h, 0, 0);
             tileData = resizeTileData(w, h, 0, 0);
             entityData = resizeEntityData(w, h, 0, 0);
+            for (LevelScriptMask mask : levelScriptMasks)
+                resizeLevelScriptMask(w, h, 0, 0, mask);
             refreshTileDataLayer();
         }
     }
@@ -224,6 +233,20 @@ public class LevelData implements Serializable {
             }
         }
         return newMatrix;
+    }
+
+    private void resizeLevelScriptMask(int width, int height, int startX, int startY, LevelScriptMask mask){
+        boolean[][] newMatrix = new boolean[width][height];
+        for (int col = 0; col < mask.getMask().length; col++){
+            for (int row = 0; row < mask.getMask()[0].length; row++){
+                int x = col + startX;
+                int y = row + startY;
+                if (x >= 0 && x < newMatrix.length && y >= 0 && y < newMatrix[0].length){
+                    newMatrix[x][y] = mask.getMask()[col][row];
+                }
+            }
+        }
+        mask.setMask(newMatrix);
     }
 
     //Carries of the translation of the Warp Zones in resize()
@@ -273,25 +296,28 @@ public class LevelData implements Serializable {
      * Debug function in the case that tile layer may not resemble data
      */
     public void syncDisplayWithData(){
-        tileDataLayer.fillLayer(new SpecialText(' '));
-        for (int col = 0; col < tileData.length; col++){
-            for (int row = 0; row < tileData[0].length; row++){
-                SpecialText text = TileRegistry.getTileStruct(tileData[col][row]).getDisplayChar();
-                System.out.printf("[LevelData] tile sync: col = %1$d row = %2$d char = \'%3$s\' id = %4$d\n", col, row, text.getStr(), tileData[col][row]);
-                tileDataLayer.editLayer(col, row, text);
-            }
-        }
-        entityLayer.fillLayer(new SpecialText(' '));
-        for (int col = 0; col < entityData.length; col++){
-            for (int row = 0; row < entityData[0].length; row++) {
-                if (entityData[col][row] != null) {
-                    SpecialText text = EntityRegistry.getEntityStruct(entityData[col][row].getEntityId()).getDisplayChar();
-                    System.out.printf("[LevelData] ent sync: col = %1$d row = %2$d char = \'%3$s\' id = %4$d\n", col, row, text.getStr(), entityData[col][row].getEntityId());
-                    entityLayer.editLayer(col, row, text);
+        Thread syncThread = new Thread(() -> {
+            tileDataLayer.fillLayer(new SpecialText(' '));
+            for (int col = 0; col < tileData.length; col++){
+                for (int row = 0; row < tileData[0].length; row++){
+                    SpecialText text = TileRegistry.getTileStruct(tileData[col][row]).getDisplayChar();
+                    System.out.printf("[LevelData] tile sync: col = %1$d row = %2$d char = \'%3$s\' id = %4$d\n", col, row, text.getStr(), tileData[col][row]);
+                    tileDataLayer.editLayer(col, row, text);
                 }
             }
-        }
-        updateWarpZoneLayer(-50, -50);
+            entityLayer.fillLayer(new SpecialText(' '));
+            for (int col = 0; col < entityData.length; col++){
+                for (int row = 0; row < entityData[0].length; row++) {
+                    if (entityData[col][row] != null) {
+                        SpecialText text = EntityRegistry.getEntityStruct(entityData[col][row].getEntityId()).getDisplayChar();
+                        System.out.printf("[LevelData] ent sync: col = %1$d row = %2$d char = \'%3$s\' id = %4$d\n", col, row, text.getStr(), entityData[col][row].getEntityId());
+                        entityLayer.editLayer(col, row, text);
+                    }
+                }
+            }
+            updateWarpZoneLayer(-50, -50);
+        });
+        syncThread.start();
     }
 
     public void addLevelScript(int scriptId){

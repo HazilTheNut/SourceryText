@@ -9,15 +9,15 @@ import java.awt.*;
 /**
  * Created by Jared on 4/16/2018.
  */
-public class LevelScriptEditor extends JFrame {
+public class LevelScriptEnabler extends JFrame {
 
     /**
-     * LevelScriptEditor:
+     * LevelScriptEnabler:
      *
      * The Editor for enabling and disabling LevelScripts for a Level.
      */
 
-    public LevelScriptEditor(LevelData ldata){
+    public LevelScriptEnabler(LevelData ldata){
         setTitle("Level Scripts");
         setMinimumSize(new Dimension(350, 300));
 
