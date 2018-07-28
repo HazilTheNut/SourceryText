@@ -69,6 +69,8 @@ public class TextBox implements MouseInputReceiver{
             textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
             textBoxLayer.setVisible(true);
             player.freeze();
+            player.getInv().getPlayerInv().close();
+            player.getInv().getOtherInv().close();
             DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
             Thread writeThread = new Thread(() -> writeMessage(message));
             writeThread.start();

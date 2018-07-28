@@ -34,6 +34,7 @@ public class TagRegistry {
      * 1000  1999  | Damage Tag
      * 2000  2999  | Health Tag
      * 3000  3999  | Range Tag
+     * 4000  4099  | Repair Tag
      */
     public final static int FLAMMABLE     = 0;
     public final static int ON_FIRE       = 1;
@@ -64,6 +65,7 @@ public class TagRegistry {
     public final static int KEY           = 210;
     public final static int UNLIMITED_USAGE = 211;
     public final static int DIGGING       = 212;
+    public final static int ENCHANT_WEAPON = 213;
 
     public final static int FIREBURST_ENCHANT = 230;
     public final static int DUELING_ENCHANT   = 231;
@@ -78,7 +80,7 @@ public class TagRegistry {
     public final static int BLEED_ENCHANT     = 240;
     public final static int THORN_ENCHANT     = 241;
     public final static int FORCE_ENCHANT     = 242;
-    public final static int UNSTABLE_ENCHANT  = 243; //TODO: Make this a thing
+    public final static int UNSTABLE_ENCHANT  = 243;
     public final static int DIZZY_ENCHANT     = 244;
 
     public final static int LEVEL_UP        = 388;
@@ -116,6 +118,7 @@ public class TagRegistry {
     public final static int DAMAGE_START  = 1000;
     public final static int HEALTH_START  = 2000;
     public final static int RANGE_START   = 3000;
+    public final static int REPAIR_START  = 4000;
 
     static {
         //Registering stuff starts here
@@ -150,6 +153,7 @@ public class TagRegistry {
         registerTag(KEY, "Key", KeyTag.class);
         registerTag(UNLIMITED_USAGE, "Unlimited Usage", UnlimitedUsageTag.class);
         registerTag(DIGGING, "Can Dig", DiggingTag.class);
+        registerTag(ENCHANT_WEAPON, "Enchants Weapon", WeaponEnchantTag.class);
 
         //Enchantments
         registerTag(FIREBURST_ENCHANT, "Fireburst Ench.", FireburstEnchantmentTag.class);
@@ -203,7 +207,7 @@ public class TagRegistry {
         //Registering stuff ends here
     }
 
-    public int[] getMapKeys() {
+    public static int[] getMapKeys() {
         Set<Integer> ints = tagMap.keySet();
         int[] output = new int[ints.size()];
         int index = 0;
@@ -212,6 +216,17 @@ public class TagRegistry {
             index++;
         }
         return output;
+    }
+
+    public static ArrayList<Integer> getEnchantmentKeys(){
+        ArrayList<Integer> enchantmentIds = new ArrayList<>();
+        for (int id : tagMap.keySet()){
+            Class tagClass = tagMap.get(id).getTagClass();
+            EnchantmentTag enchantmentTag = new EnchantmentTag();
+            if (EnchantmentTag.class.isAssignableFrom(tagClass))
+                enchantmentIds.add(id);
+        }
+        return enchantmentIds;
     }
 
     /**
@@ -240,6 +255,10 @@ public class TagRegistry {
             RangeTag tag = new RangeTag(id - RANGE_START);
             tag.setId(RANGE_START);
             return tag;
+        } else if (id >= REPAIR_START && id < REPAIR_START + 100) {
+            RepairTag tag = new RepairTag(id - REPAIR_START);
+            tag.setId(REPAIR_START);
+            return tag;
         } else {
             return generateTag(id);
         }
@@ -267,6 +286,13 @@ public class TagRegistry {
         } else {
             return null;
         }
+    }
+
+    public static String getTagName(int id){
+        TagStruct tagStruct = tagMap.get(id);
+        if (tagStruct != null)
+            return tagStruct.getName();
+        return null;
     }
 
     private static void recordTagGenerationData(int id, String tagClassName){

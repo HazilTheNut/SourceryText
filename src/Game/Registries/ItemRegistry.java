@@ -81,7 +81,7 @@ public class ItemRegistry {
         registerItem(129, "Electro Spear",   6,   TagRegistry.DAMAGE_START + 10, TagRegistry.WEAPON_THRUST, TagRegistry.ELECTRIC_ENCHANT, TagRegistry.SHARP);
         registerItem(130, "Venom Bow",       2.5, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_BOW, TagRegistry.VENOM_ENCHANT);
         registerItem(131, "Torch",           1,   TagRegistry.DAMAGE_START + 1, TagRegistry.WEAPON_STRIKE, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
-        registerItem(132, "Enchanted Axe",   1,   TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_SWEEP, TagRegistry.FORCE_ENCHANT);
+        registerItem(132, "Enchanted Axe",   1,   TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_SWEEP, TagRegistry.REGEN_ENCHANT);
         registerItem(133, "Enchanted Bow",   1,   TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_BOW, TagRegistry.FORCE_ENCHANT);
 
         //Healing items / potions with various effects
@@ -90,7 +90,10 @@ public class ItemRegistry {
         registerItem(1002, "Health Flask",    0.25, TagRegistry.HEALTH_START + 40);
         registerItem(1003, "Health Jar",      0.60, TagRegistry.HEALTH_START + 65);
 
-        //TODO: Weapon repair items (like Duct Tape)
+        registerItem(1010, "Molding Clay",   0.5, TagRegistry.REPAIR_START + 3);
+        registerItem(1011, "Duct Tape",      0.6, TagRegistry.REPAIR_START + 7);
+
+        registerItem(1020, "Enchantment Orb", 1, TagRegistry.ENCHANT_WEAPON);
 
         registerItem(ID_ARROW, "Arrow",           0.03, TagRegistry.ARROW, TagRegistry.FLAMMABLE, TagRegistry.METALLIC, TagRegistry.SHARP);
 

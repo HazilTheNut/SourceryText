@@ -69,10 +69,17 @@ public class Coordinate implements Serializable {
     /**
      * Returns a new Coordinate whose values are scaled from this Coordinate's x and y values
      * NOTE: This method does not alter the values of either Coordinate!
-     * @param amount The factor by which the values are multiplied. Results are truncated back into integers before returning
+     * @param amount The factor by which the values are multiplied. Results are rounded back into integers before returning
      * @return A new Coordinate
      */
-    public Coordinate multiply(double amount) { return new Coordinate((int)(x * amount), (int)(y * amount)); }
+    public Coordinate multiply(double amount) { return new Coordinate((int)Math.round(x * amount), (int)Math.round(y * amount)); }
+
+    public Coordinate normalize() {
+        double x = getX();
+        double y = getY();
+        double dist = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+        return multiply(1 / dist);
+    }
 
     /**
      * Returns the minimum number of 'steps' required to reach another coordinate, ignoring all terrain / walls

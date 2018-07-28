@@ -8,9 +8,9 @@ import Data.SerializationVersion;
 public class RangeTag extends Tag{
 
     /**
-     * DamageTag:
+     * RangeTag:
      *
-     * Amplifies damage dealt by an incremental amount.
+     * Defines the range of ranged weapons
      */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;

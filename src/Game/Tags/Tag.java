@@ -65,7 +65,7 @@ public class Tag implements Serializable {
     public void onLevelEnter(TagEvent e){}
 
     //Upon when the TagHolder Item is 'used'
-    //Source: this
+    //Source: the item being used
     //Target: this
     public void onItemUse(TagEvent e) {}
 

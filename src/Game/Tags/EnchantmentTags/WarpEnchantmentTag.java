@@ -19,7 +19,7 @@ public class WarpEnchantmentTag extends EnchantmentTag {
                 if (e.getSource() instanceof Entity) {
                     Entity source = (Entity) e.getSource();
                     Coordinate diff = target.getLocation().subtract(source.getLocation());
-                    source.teleport(source.getLocation().add(diff.multiply(2)));
+                    source.teleport(target.getLocation().add(diff.normalize()));
                 }
             }
         });
