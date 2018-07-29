@@ -84,6 +84,7 @@ public class CollapsiblePanel extends JPanel{
         normalSize = size;
         setMaximumSize(size);
         setPreferredSize(size);
+        setSize(size);
     }
 
     private void activate(){

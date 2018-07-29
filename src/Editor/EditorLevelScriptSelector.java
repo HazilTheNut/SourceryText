@@ -43,6 +43,7 @@ public class EditorLevelScriptSelector extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) { //Handles double-clicking to select the level script
+                    editorToolPanel.assignLevelScriptPanel(LevelScriptRegistry.getLevelScript(scriptList.getSelectedValue().id), ldata);
                     dispose();
                 }
             }
@@ -62,7 +63,8 @@ public class EditorLevelScriptSelector extends JFrame {
 
         JButton finishButton = new JButton("Finish");
         finishButton.addActionListener(e -> {
-            //if (scriptList.getSelectedValue() != null)
+            if (scriptList.getSelectedValue() != null)
+                editorToolPanel.assignLevelScriptPanel(LevelScriptRegistry.getLevelScript(scriptList.getSelectedValue().id), ldata);
             dispose();
         });
         bottomPanel.add(finishButton);

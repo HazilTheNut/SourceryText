@@ -1,5 +1,6 @@
 package Game.LevelScripts;
 
+import Data.LevelScriptMask;
 import Data.SerializationVersion;
 import Game.GameInstance;
 import Game.Level;
@@ -18,9 +19,25 @@ public class LevelScript implements Serializable {
     GameInstance gi;
     Level level;
 
+    private int id;
+    public void setId(int id) {
+        this.id = id;
+    }
+    public int getId() {
+        return id;
+    }
+
     public void initialize(GameInstance gi, Level level){
         this.gi = gi;
         this.level = level;
+    }
+
+    LevelScriptMask getMask(String name){
+        for (LevelScriptMask mask : level.getLevelScriptMasks()){
+            if (mask.getName().equals(name) && mask.getScriptId() == id)
+                return mask;
+        }
+        return new LevelScriptMask(id, name, level.getBackdrop());
     }
 
     //Ran at the end of every AnimatedTile update
@@ -51,5 +68,9 @@ public class LevelScript implements Serializable {
     //Ran after the level is fully constructed
     public void onLevelLoad(){
         //Override this
+    }
+
+    public String[] getMaskNames(){
+        return new String[0];
     }
 }

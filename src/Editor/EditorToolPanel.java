@@ -8,6 +8,7 @@ import Editor.DrawTools.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.LevelScripts.LevelScript;
 import Game.Registries.TileRegistry;
 
 import javax.swing.*;
@@ -459,18 +460,35 @@ public class EditorToolPanel extends JPanel {
         levelScriptPanel = new CollapsiblePanel();
         levelScriptPanel.setBorder(BorderFactory.createTitledBorder("Level Scripts"));
 
-        selectLevelScriptButton = new JButton("Select...");
-        selectLevelScriptButton.addActionListener(e -> new EditorLevelScriptSelector(this, ldata));
-        levelScriptPanel.add(selectLevelScriptButton);
+        levelScriptPanel.setLayout(new BoxLayout(levelScriptPanel, BoxLayout.PAGE_AXIS));
 
-        levelScriptPanel.setLayout(new GridLayout(levelScriptPanel.getComponentCount(), 1, 2, 2));
-        sizeToolsPanel(levelScriptPanel);
-        levelScriptPanel.validate();
+        assignLevelScriptPanel(null, ldata);
 
         toolsPanel.add(levelScriptPanel);
     }
 
+    void assignLevelScriptPanel(LevelScript levelScript, LevelData ldata){
+        levelScriptPanel.removeAll();
 
+        String btnName = (levelScript != null) ? levelScript.getClass().getSimpleName() : "Select...";
+        selectLevelScriptButton = new JButton(btnName);
+        selectLevelScriptButton.addActionListener(e -> new EditorLevelScriptSelector(this, ldata));
+        levelScriptPanel.add(selectLevelScriptButton);
+
+        if (levelScript != null) {
+            String[] masks = levelScript.getMaskNames();
+            if (masks.length > 0) {
+                levelScriptPanel.add(new JLabel("Masks:"));
+                for (String s : masks) {
+                    levelScriptPanel.add(createDrawToolButton(s,  new LevelScriptMaskEdit(ldata.getLevelScriptMask(levelScript.getId(), s), ldata), -1));
+                }
+            }
+        }
+
+        levelScriptPanel.setLayout(new GridLayout(levelScriptPanel.getComponentCount(), 1, 2, 2));
+        sizeToolsPanel(levelScriptPanel);
+        levelScriptPanel.validate();
+    }
 
     private void sizeToolsPanel(CollapsiblePanel panel){
         panel.setNormalSize(new Dimension(100, panel.getInsets().bottom + panel.getInsets().top + panel.getComponentCount() * 30));

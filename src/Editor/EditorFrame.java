@@ -57,6 +57,7 @@ public class EditorFrame extends JFrame {
         manager.addLayer(ldata.getTileDataLayer());
         manager.addLayer(ldata.getEntityLayer());
         manager.addLayer(ldata.getWarpZoneLayer());
+        manager.addLayer(ldata.getLevelScriptLayer());
         manager.addLayer(mouseHighlight);
         //Just to make sure....
         manager.printLayerStack();

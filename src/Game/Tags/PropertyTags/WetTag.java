@@ -58,7 +58,7 @@ public class WetTag extends Tag {
             DebugWindow.reportf(DebugWindow.TAGS, "WetTag.onTurn", "lifetime: %1$d", lifetime);
             lifetime--;
         }
-        if (lifetime == 0) e.addFutureAction(event -> e.getSource().removeTag(TagRegistry.WET));
+        if (lifetime < 1) e.addFutureAction(event -> e.getSource().removeTag(TagRegistry.WET));
     }
 
     @Override

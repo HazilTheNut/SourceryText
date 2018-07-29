@@ -19,6 +19,7 @@ public class LevelScriptRegistry {
         scriptMap.put(2, LightingEffects.class);
         scriptMap.put(3, ResetOnEnter.class);
         scriptMap.put(4, SpaceBackground.class);
+        scriptMap.put(5, GenerateSnow.class);
 
         scriptMap.put(1000, CinemaTutorialBasement.class);
         //Registering stuff ends here
@@ -39,7 +40,9 @@ public class LevelScriptRegistry {
         Class scriptClass = scriptMap.get(id);
         if (scriptClass != null) {
             try {
-                return (LevelScript)scriptClass.newInstance();
+                LevelScript script = (LevelScript)scriptClass.newInstance();
+                script.setId(id);
+                return script;
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
                 return null;

@@ -36,6 +36,7 @@ public class LevelData implements Serializable {
     private transient Layer tileDataLayer;
     private transient Layer warpZoneLayer;
     private transient Layer entityLayer;
+    private transient Layer levelScriptLayer;
 
     private int[][] tileData;
     private EntityStruct[][] entityData;
@@ -73,6 +74,7 @@ public class LevelData implements Serializable {
         tileDataLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "tiledata", 0, 0);
         entityLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "entitydata", 0, 0);
         warpZoneLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "warpzonedata", 0, 0);
+        levelScriptLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "levelscript", 0, 0);
     }
 
     /**
@@ -162,6 +164,18 @@ public class LevelData implements Serializable {
 
     public ArrayList<LevelScriptMask> getLevelScriptMasks() {
         return levelScriptMasks;
+    }
+
+    public LevelScriptMask getLevelScriptMask(int scriptId, String name){
+        if (levelScriptMasks == null) levelScriptMasks = new ArrayList<>();
+        for (LevelScriptMask mask : levelScriptMasks){
+            if (mask.getScriptId() == scriptId && mask.getName().equals(name)){
+                return mask;
+            }
+        }
+        LevelScriptMask newMask = new LevelScriptMask(scriptId, name, backdrop);
+        levelScriptMasks.add(newMask);
+        return newMask;
     }
 
     /**
@@ -334,5 +348,9 @@ public class LevelData implements Serializable {
 
     public ArrayList<Integer> getLevelScripts() {
         return levelScripts;
+    }
+
+    public Layer getLevelScriptLayer() {
+        return levelScriptLayer;
     }
 }

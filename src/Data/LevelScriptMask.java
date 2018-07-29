@@ -1,6 +1,13 @@
 package Data;
 
-public class LevelScriptMask {
+import Engine.Layer;
+
+import java.io.Serializable;
+
+public class LevelScriptMask implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
+
     /**
      * LevelScriptMask:
      *
@@ -16,6 +23,12 @@ public class LevelScriptMask {
     private String name;
     private boolean[][] mask;
 
+    public LevelScriptMask(int scriptId, String name, Layer backdrop){
+        this.scriptId = scriptId;
+        this.name = name;
+        mask = new boolean[backdrop.getCols()][backdrop.getRows()];
+    }
+
     public boolean[][] getMask() {
         return mask;
     }
@@ -30,5 +43,9 @@ public class LevelScriptMask {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getScriptId() {
+        return scriptId;
     }
 }

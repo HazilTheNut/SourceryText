@@ -62,6 +62,7 @@ public class Level implements Serializable {
     private ArrayList<AnimatedTile> animatedTiles;
 
     private ArrayList<LevelScript> levelScripts;
+    private ArrayList<LevelScriptMask> levelScriptMasks;
 
     public Level(String path){
 
@@ -83,6 +84,7 @@ public class Level implements Serializable {
 
         tileGenerationTags = new ArrayList<>();
         tileIdMatrix = ldata.getTileData();
+        levelScriptMasks = ldata.getLevelScriptMasks();
 
         DebugWindow.reportf(DebugWindow.STAGE, "Level.initialize","Columns: %1$d", backdrop.getCols());
         for (int col = 0; col < backdrop.getCols(); col++){
@@ -398,5 +400,9 @@ public class Level implements Serializable {
 
     public Layer getAnimatedTileLayer() {
         return animatedTileLayer;
+    }
+
+    public ArrayList<LevelScriptMask> getLevelScriptMasks() {
+        return levelScriptMasks;
     }
 }
