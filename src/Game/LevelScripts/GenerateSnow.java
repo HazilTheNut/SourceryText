@@ -2,6 +2,7 @@ package Game.LevelScripts;
 
 import Data.Coordinate;
 import Data.LevelScriptMask;
+import Data.SerializationVersion;
 import Engine.SpecialText;
 import Game.Registries.TagRegistry;
 import Game.Tile;
@@ -9,6 +10,8 @@ import Game.Tile;
 import java.awt.*;
 
 public class GenerateSnow extends LevelScript {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
     public String[] getMaskNames() {

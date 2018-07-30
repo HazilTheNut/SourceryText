@@ -13,6 +13,7 @@ import java.util.TreeMap;
 public class ItemRegistry {
 
     private static TreeMap<Integer, ItemStruct> itemStructMap = new TreeMap<>();
+    private static TreeMap<Integer, String> itemFlavorTextMap = new TreeMap<>();
 
      /*
 
@@ -86,6 +87,7 @@ public class ItemRegistry {
 
         //Healing items / potions with various effects
         registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10);
+        itemFlavorTextMap.put(1000, "It has a funny smell");
         registerItem(1001, "Health Potion",   0.10, TagRegistry.HEALTH_START + 25);
         registerItem(1002, "Health Flask",    0.25, TagRegistry.HEALTH_START + 40);
         registerItem(1003, "Health Jar",      0.60, TagRegistry.HEALTH_START + 65);
@@ -139,6 +141,12 @@ public class ItemRegistry {
     }
 
     public static ItemStruct getItemStruct(int id) { return itemStructMap.get(id).copy(); }
+
+    public static String getItemFlavorText(int id) {
+        String s = itemFlavorTextMap.get(id);
+        if (s == null) return "";
+        return s;
+    }
 
     public static Item generateItem(int id, GameInstance gi){
         return generateItem(new ItemStruct(id, 1, "item", 0), gi);

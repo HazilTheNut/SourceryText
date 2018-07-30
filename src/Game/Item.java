@@ -24,6 +24,8 @@ public class Item extends TagHolder implements Serializable {
     private ItemStruct itemData;
     private long uniqueID;
 
+    private String flavorText;
+
     private int stackability;
     public final static int STACKABLE     = 0; //Item can stack
     public final static int NON_STACKABLE = 1; //Item does not stack
@@ -112,5 +114,14 @@ public class Item extends TagHolder implements Serializable {
 
     public long getUniqueID() {
         return uniqueID;
+    }
+
+    public String getFlavorText() {
+        if (flavorText == null) return "";
+        return flavorText;
+    }
+
+    public void setFlavorText(String flavorText) {
+        this.flavorText = flavorText;
     }
 }

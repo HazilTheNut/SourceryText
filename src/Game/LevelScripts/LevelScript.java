@@ -13,8 +13,6 @@ import java.io.Serializable;
  */
 public class LevelScript implements Serializable {
 
-    //TODO: Masks
-
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     GameInstance gi;

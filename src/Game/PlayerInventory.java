@@ -117,12 +117,12 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
      *
      * @param item The item to describe
      */
-    void updateItemDescription(Item item){
+    private void updateItemDescription(Item item){
         Layer descLayer;
         if (item != null) {
             //Create temporary Layer and fill it
-            descLayer = new Layer(new SpecialText[21][item.getTags().size() + 2], "item_description", 0, 0, LayerImportances.MENU);
-            descLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkgDark));
+            descLayer = new Layer(new SpecialText[21][getLM().getWindow().RESOLUTION_HEIGHT - 1], "item_description", 0, 0, LayerImportances.MENU);
+            descLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkgDark), new Coordinate(0, 0), new Coordinate(21, item.getTags().size() + 1));
             for (int col = 0; col < descLayer.getCols(); col++){ //Create top border
                 descLayer.editLayer(col, 0, new SpecialText('#', Color.GRAY, borderBkg));
             }
@@ -141,6 +141,8 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                 descLayer.inscribeString(item.getTags().get(ii).getName(), 2, ii + 2, new Color(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
                 descLayer.editLayer(0, ii + 2, new SpecialText('*', Color.GRAY, bkgDark));
             }
+            //Draw item flavor text
+            descLayer.insert(drawItemFlavorText(item), new Coordinate(0, item.getTags().size() + 2));
             descriptionLayer.setVisible(true);
             if (!player.getItems().contains(item) && otherInv.mode == CONFIG_OTHER_EXCHANGE){ //Therefore must not be in player inventory and is exchanging items
                 //Create weight preview
@@ -156,6 +158,27 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             playerInv.inscribeWeightPercentage(playerInv.invLayer, 100 * calculateTotalWeight() / player.getWeightCapacity(), weightCapNormal);
         }
         descriptionLayer.transpose(descLayer);
+    }
+
+    private Layer drawItemFlavorText(Item item){
+        String flavorText = item.getFlavorText();
+        ArrayList<String> lines = new ArrayList<>();
+        //Parse the flavor text
+        StringBuilder line = new StringBuilder();
+        for (int i = 0; i < flavorText.length(); i++) {
+            line.append(flavorText.charAt(i));
+            if (flavorText.charAt(i) == '\n' || i == flavorText.length()-1){
+                lines.add(line.toString());
+                line = new StringBuilder();
+            }
+        }
+        //Draw layer
+        Layer textLayer = new Layer(21, lines.size(), "flavortext", 0, 0, 0);
+        textLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkgDark));
+        for (int row = 0; row < lines.size(); row++) {
+            textLayer.inscribeString(lines.get(row), 0, row, new Color(185, 185, 185));
+        }
+        return textLayer;
     }
 
     /**

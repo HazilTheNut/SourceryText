@@ -2,6 +2,7 @@ package Game.LevelScripts;
 
 import Data.Coordinate;
 import Data.LayerImportances;
+import Data.SerializationVersion;
 import Engine.Layer;
 import Engine.SpecialText;
 import Game.InputMap;
@@ -10,6 +11,8 @@ import Game.InputType;
 import java.awt.*;
 
 public class CinemaTutorialBasement extends LevelScript {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private Layer wakeUpAnim;
     private boolean doingWakeUpAnim;
