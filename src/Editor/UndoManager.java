@@ -52,7 +52,7 @@ class UndoManager {
         if (historyPointer < 0) historyPointer = 0;
         System.out.printf("[UndoManager.doUndo] Level history pointer: %1$d\n", historyPointer);
         LevelData pastData = pastLevelData.get(historyPointer);
-        currentLevelData.setAllData(pastData.getBackdrop(), pastData.getTileDataLayer(), pastData.getEntityLayer(), pastData.getWarpZoneLayer(), pastData.getTileData(), pastData.getEntityData(), pastData.getWarpZones());
+        currentLevelData.setAllData(pastData);
         addFrameAsterisk();
     }
 
@@ -61,7 +61,7 @@ class UndoManager {
         if (historyPointer > pastLevelData.size()-1) historyPointer = pastLevelData.size()-1;
         System.out.printf("[UndoManager.doRedo] Level history pointer: %1$d\n", historyPointer);
         LevelData pastData = pastLevelData.get(historyPointer);
-        currentLevelData.setAllData(pastData.getBackdrop(), pastData.getTileDataLayer(), pastData.getEntityLayer(), pastData.getWarpZoneLayer(), pastData.getTileData(), pastData.getEntityData(), pastData.getWarpZones());
+        currentLevelData.setAllData(pastData);
         addFrameAsterisk();
     }
 

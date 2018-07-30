@@ -1,5 +1,6 @@
 package Data;
 
+import Editor.DrawTools.LevelScriptMaskEdit;
 import Engine.Layer;
 import Engine.SpecialText;
 import Game.Registries.EntityRegistry;
@@ -37,6 +38,7 @@ public class LevelData implements Serializable {
     private transient Layer warpZoneLayer;
     private transient Layer entityLayer;
     private transient Layer levelScriptLayer;
+    private transient LevelScriptMaskEdit maskEditTool;
 
     private int[][] tileData;
     private EntityStruct[][] entityData;
@@ -80,23 +82,26 @@ public class LevelData implements Serializable {
     /**
      * Re-assigns all the data in this LevelData, used when hitting 'undo' and 'redo'
      */
-    public void setAllData(Layer backdrop, Layer tileDataLayer, Layer entityLayer, Layer warpZoneLayer, int[][] tileData, EntityStruct[][] entityData, ArrayList<WarpZone> warpZones){
-        this.backdrop.transpose(backdrop);
-        this.tileDataLayer.transpose(tileDataLayer);
-        this.entityLayer.transpose(entityLayer);
-        this.warpZoneLayer.transpose(warpZoneLayer);
-        this.tileData = new int[tileData.length][tileData[0].length];
-        for (int col = 0; col < tileData.length; col++){
-            System.arraycopy(tileData[col], 0, this.tileData[col], 0, tileData[0].length);
+    public void setAllData(LevelData other){
+        this.backdrop.transpose(other.getBackdrop());
+        syncDisplayWithData();
+        this.tileData = new int[other.getTileData().length][other.getTileData().length];
+        for (int col = 0; col < other.getTileData().length; col++){
+            System.arraycopy(other.getTileData()[col], 0, this.tileData[col], 0, other.getTileData()[0].length);
         }
-        this.entityData = new EntityStruct[entityData.length][entityData[0].length];
-        for (int col = 0; col < entityData.length; col++){
-            System.arraycopy(entityData[col], 0, this.entityData[col], 0, entityData[0].length);
+        this.entityData = new EntityStruct[other.getEntityData().length][other.getEntityData()[0].length];
+        for (int col = 0; col < other.getEntityData().length; col++){
+            System.arraycopy(other.getEntityData()[col], 0, this.entityData[col], 0, other.getEntityData()[0].length);
         }
         this.warpZones.clear();
-        for (WarpZone wz : warpZones){
+        for (WarpZone wz : other.getWarpZones()){
             this.warpZones.add(wz.copy());
         }
+        levelScriptMasks.clear();
+        for (LevelScriptMask mask : other.getLevelScriptMasks()){
+            getLevelScriptMask(mask.getScriptId(), mask.getName()).setMask(mask.copyMask());
+        }
+        updateMaskEditTool();
     }
 
     /**
@@ -106,7 +111,7 @@ public class LevelData implements Serializable {
     public LevelData copy(){
         LevelData ldata = new LevelData();
         ldata.reset();
-        ldata.setAllData(getBackdrop(), getTileDataLayer(), getEntityLayer(), getWarpZoneLayer(), getTileData(), getEntityData(), getWarpZones());
+        ldata.setAllData(this);
         return ldata;
     }
 
@@ -200,7 +205,8 @@ public class LevelData implements Serializable {
             tileData = resizeTileData(tileData.length         - c, tileData[0].length - r,      -1 * c, -1 * r);
             entityData = resizeEntityData(entityData.length   - c, entityData[0].length - r,    -1 * c, -1 * r);
             for (LevelScriptMask mask : levelScriptMasks)
-                resizeLevelScriptMask(mask.getMask().length - c,  mask.getMask()[0].length - r, -1 * c, -1 * r, mask);
+                resizeLevelScriptMask(mask.getMask().length   - c, mask.getMask()[0].length - r,-1 * c, -1 * r, mask);
+            levelScriptLayer.resizeLayer(levelScriptLayer.getCols() - c, levelScriptLayer.getRows() - r, -1 * c, -1 * r);
             translateWarpZones(-1 * c, -1 * r);
             refreshTileDataLayer();
         }
@@ -211,12 +217,14 @@ public class LevelData implements Serializable {
             tileDataLayer.resizeLayer(w, h, 0, 0);
             entityLayer.resizeLayer(w, h, 0, 0);
             warpZoneLayer.resizeLayer(w, h, 0, 0);
+            levelScriptLayer.resizeLayer(w, h, 0, 0);
             tileData = resizeTileData(w, h, 0, 0);
             entityData = resizeEntityData(w, h, 0, 0);
             for (LevelScriptMask mask : levelScriptMasks)
                 resizeLevelScriptMask(w, h, 0, 0, mask);
             refreshTileDataLayer();
         }
+        updateMaskEditTool();
     }
 
     //Carries out the resizing of the Tile Data in resize()
@@ -311,11 +319,9 @@ public class LevelData implements Serializable {
      */
     public void syncDisplayWithData(){
         Thread syncThread = new Thread(() -> {
-            tileDataLayer.fillLayer(new SpecialText(' '));
             for (int col = 0; col < tileData.length; col++){
                 for (int row = 0; row < tileData[0].length; row++){
                     SpecialText text = TileRegistry.getTileStruct(tileData[col][row]).getDisplayChar();
-                    System.out.printf("[LevelData] tile sync: col = %1$d row = %2$d char = \'%3$s\' id = %4$d\n", col, row, text.getStr(), tileData[col][row]);
                     tileDataLayer.editLayer(col, row, text);
                 }
             }
@@ -324,14 +330,21 @@ public class LevelData implements Serializable {
                 for (int row = 0; row < entityData[0].length; row++) {
                     if (entityData[col][row] != null) {
                         SpecialText text = EntityRegistry.getEntityStruct(entityData[col][row].getEntityId()).getDisplayChar();
-                        System.out.printf("[LevelData] ent sync: col = %1$d row = %2$d char = \'%3$s\' id = %4$d\n", col, row, text.getStr(), entityData[col][row].getEntityId());
                         entityLayer.editLayer(col, row, text);
                     }
                 }
             }
             updateWarpZoneLayer(-50, -50);
+            updateMaskEditTool();
         });
         syncThread.start();
+    }
+
+    private void updateMaskEditTool(){
+        if (maskEditTool != null) {
+            maskEditTool.retrieveMask();
+            maskEditTool.drawLayer();
+        }
     }
 
     public void addLevelScript(int scriptId){
@@ -352,5 +365,9 @@ public class LevelData implements Serializable {
 
     public Layer getLevelScriptLayer() {
         return levelScriptLayer;
+    }
+
+    public void setMaskEditTool(LevelScriptMaskEdit maskEditTool) {
+        this.maskEditTool = maskEditTool;
     }
 }

@@ -33,12 +33,24 @@ public class LevelScriptMask implements Serializable {
         return mask;
     }
 
+    public boolean[][] copyMask(){
+        boolean[][] copy = new boolean[mask.length][mask[0].length];
+        for (int col = 0; col < mask.length; col++) {
+            System.arraycopy(mask[col], 0, copy[col], 0, mask[0].length);
+        }
+        return copy;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setMask(boolean[][] mask) {
         this.mask = mask;
+    }
+
+    public void editMask(int col, int row, boolean value){
+        mask[col][row] = value;
     }
 
     public void setName(String name) {
