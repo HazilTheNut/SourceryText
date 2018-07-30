@@ -168,6 +168,7 @@ public class LevelData implements Serializable {
     }
 
     public ArrayList<LevelScriptMask> getLevelScriptMasks() {
+        if (levelScriptMasks == null) levelScriptMasks = new ArrayList<>();
         return levelScriptMasks;
     }
 

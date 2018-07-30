@@ -16,25 +16,26 @@ public class CinemaTutorialBasement extends LevelScript {
 
     //Interact message
     private boolean didInteractMessage = false;
-    private Coordinate interactMessageAnchor = new Coordinate(42, 36);
 
     //Inventory message
     private boolean didInventoryMessage = false;
-    private Coordinate inventoryMessageAnchor = new Coordinate(71, 36);
 
     //Danger (no weapon) message
     private boolean didDangerMessage = false;
-    private Coordinate dangerMessageAnchor = new Coordinate(24, 19);
 
     //Combat message
     private boolean didCombatMessage = false;
-    private Coordinate combatMessageAnchor = new Coordinate(19, 18);
 
     @Override
     public void onLevelLoad() {
         wakeUpAnim = new Layer(level.getBackdrop().getCols(), level.getBackdrop().getRows(), "", 0, 0, LayerImportances.MENU);
         wakeUpAnim.fillLayer(new SpecialText(' ', Color.WHITE, Color.BLACK));
         doingWakeUpAnim = true;
+    }
+
+    @Override
+    public String[] getMaskNames() {
+        return new String[]{"interact","inventory","danger","combat"};
     }
 
     @Override
@@ -58,21 +59,22 @@ public class CinemaTutorialBasement extends LevelScript {
 
     @Override
     public void onTurnStart() {
-        if (gi.getPlayer().getLocation().equals(interactMessageAnchor) && !didInteractMessage){
+        Coordinate playerLoc = gi.getPlayer().getLocation();
+        if (getMaskDataAt("interact", playerLoc) && !didInteractMessage){
             gi.getTextBox().showMessage("There many things that can be interacted with.<nl>Press " + getInput(InputMap.MOVE_INTERACT) + " to interact with an object.<nl>It also moves the player to the selected tile.");
             didInteractMessage = true;
         }
-        if (gi.getPlayer().getLocation().equals(inventoryMessageAnchor) && !didInventoryMessage){
+        if (getMaskDataAt("inventory", playerLoc) && !didInventoryMessage){
             if (gi.getPlayer().getItems().size() > 0 && gi.getPlayer().getWeapon().getItemData().getItemId() < 0) {
                 gi.getTextBox().showMessage("Items are very useful.<nl>Press " + getInput(InputMap.INVENTORY) + " to open your inventory.<np>Press " + getInput(InputMap.INV_USE) + " to use an item and<nl>press " + getInput(InputMap.INV_DROP) + " to drop an item.");
                 didInventoryMessage = true;
             }
         }
-        if (gi.getPlayer().getLocation().equals(dangerMessageAnchor) && !didDangerMessage && gi.getPlayer().getWeapon().getItemData().getItemId() < 0){
+        if (getMaskDataAt("danger", playerLoc) && !didDangerMessage && gi.getPlayer().getWeapon().getItemData().getItemId() < 0){
             gi.getTextBox().showMessage("Ahead is a bunch of man-eating rats. It is not advisable to tackle them bare-handed.");
             didDangerMessage = true;
         }
-        if (gi.getPlayer().getLocation().equals(combatMessageAnchor) && !didCombatMessage && gi.getPlayer().getWeapon().getItemData().getItemId() > 0){
+        if (getMaskDataAt("combat", playerLoc) && !didCombatMessage && gi.getPlayer().getWeapon().getItemData().getItemId() > 0){
             gi.getTextBox().showMessage("To attack enemies, simply press " + getInput(InputMap.ATTACK) + " in their general direction.<np>When fighting enemies, you and the enemies take turns attacking, so use your time wisely.<nl>Press " + getInput(InputMap.PASS_TURN) + " to pass your turn.");
             didCombatMessage = true;
         }

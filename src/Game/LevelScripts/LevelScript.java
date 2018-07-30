@@ -1,5 +1,6 @@
 package Game.LevelScripts;
 
+import Data.Coordinate;
 import Data.LevelScriptMask;
 import Data.SerializationVersion;
 import Game.GameInstance;
@@ -38,6 +39,10 @@ public class LevelScript implements Serializable {
                 return mask;
         }
         return new LevelScriptMask(id, name, level.getBackdrop());
+    }
+
+    boolean getMaskDataAt(String name, Coordinate loc){
+        return getMask(name).getMask()[loc.getX()][loc.getY()];
     }
 
     //Ran at the end of every AnimatedTile update
