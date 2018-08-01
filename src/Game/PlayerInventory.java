@@ -173,10 +173,13 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             }
         }
         //Draw layer
-        Layer textLayer = new Layer(21, lines.size(), "flavortext", 0, 0, 0);
+        if (lines.size() < 1)
+            return new Layer(1, 1, "flavortext", 0, 0, 0);
+        Layer textLayer = new Layer(21, lines.size() + 1, "flavortext", 0, 0, 0);
         textLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkgDark));
+        textLayer.inscribeString("~~~~~", 7, 0, new Color(125, 125, 125));
         for (int row = 0; row < lines.size(); row++) {
-            textLayer.inscribeString(lines.get(row), 0, row, new Color(185, 185, 185));
+            textLayer.inscribeString(lines.get(row), 0, row+1, new Color(185, 185, 185));
         }
         return textLayer;
     }
