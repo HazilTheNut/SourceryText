@@ -45,7 +45,7 @@ public class ElectricEnchantmentTag extends EnchantmentTag {
     }
 
     private void shootProjectileAt(Coordinate origin, Entity target){
-        if (isEntityConductive(target) && target.isAlive()) {
+        if (target.isAlive()) {
             Projectile zapProj = new Projectile(origin, target.getLocation(), new SpecialText('+', new Color(255, 255, 50), new Color(255, 255, 50, 50)), target.getGameInstance());
             zapProj.addTag(TagRegistry.DAMAGE_START + 5, null);
             //Create ElectricEnchantmentTag and blacklist entities that cause the ElectricEnchantmentTag to spread backwards.

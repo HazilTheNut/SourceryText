@@ -234,6 +234,9 @@ public class CombatEntity extends Entity {
                 case TagRegistry.WEAPON_BOW:
                     doBowAttack(loc);
                     break;
+                case TagRegistry.WEAPON_THROW:
+                    doThrowingWeaponAttack(loc);
+                    break;
             }
         }
     }
@@ -349,6 +352,23 @@ public class CombatEntity extends Entity {
 
     protected void fireArrowProjectile(Projectile arrow){
         //Override by Player, BasicEnemy, etc.
+    }
+
+    private void doThrowingWeaponAttack(Coordinate loc){
+        Projectile projectile = getThrowingWeaponProjectile(loc);
+        projectile.getTags().addAll(getWeapon().getTags());
+        projectile.launchProjectile(10 + getStrength() / 4);
+    }
+
+    private Projectile getThrowingWeaponProjectile(Coordinate target){
+        if (getWeapon().hasTag(TagRegistry.THROW_KNIFE))
+            return new ArrowProjectile(this, target, new SpecialText('/', new Color(165, 165, 165), new Color(45, 45, 45, 45)), getGameInstance().getLayerManager());
+        SpecialText icon = new SpecialText('%');
+        if (getWeapon().hasTag(TagRegistry.THROW_STONE))
+            icon = new SpecialText('o', new Color(143, 148, 143), new Color(45, 45, 45, 45));
+        if (getWeapon().hasTag(TagRegistry.THROW_WATERBALLOON))
+            icon = new SpecialText('o', new Color(70, 70, 153), new Color(66, 66, 140, 45));
+        return new Projectile(this, target, icon);
     }
 
     /**

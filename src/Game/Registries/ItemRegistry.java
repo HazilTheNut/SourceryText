@@ -97,6 +97,11 @@ public class ItemRegistry {
 
         registerItem(1020, "Enchantment Orb", 1, TagRegistry.ENCHANT_WEAPON);
 
+        registerItem(1100, "Stone",          0.75, TagRegistry.DAMAGE_START + 4,  TagRegistry.WEAPON_THROW, TagRegistry.THROW_STONE);
+        registerItem(1101, "Throwing Knife", 0.33, TagRegistry.DAMAGE_START + 10, TagRegistry.WEAPON_THROW, TagRegistry.THROW_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP);
+        registerItem(1102, "Magic Dagger",   0.33, TagRegistry.DAMAGE_START + 9,  TagRegistry.WEAPON_THROW, TagRegistry.THROW_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT);
+        registerItem(1103, "Water Balloon",  0.10, TagRegistry.WEAPON_THROW, TagRegistry.THROW_WATERBALLOON, TagRegistry.WET);
+
         registerItem(ID_ARROW, "Arrow",           0.03, TagRegistry.ARROW, TagRegistry.FLAMMABLE, TagRegistry.METALLIC, TagRegistry.SHARP);
 
         //Upgrades

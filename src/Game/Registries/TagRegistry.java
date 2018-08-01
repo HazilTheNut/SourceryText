@@ -52,6 +52,7 @@ public class TagRegistry {
     public final static int WET           = 12;
     public final static int NO_REFREEZE   = 13;
     public final static int BURN_SPREAD   = 14;
+    public final static int WETTING       = 15;
 
     public final static int POISON        = 20;
     public final static int VENOM_ENCHANT = 21;
@@ -62,10 +63,16 @@ public class TagRegistry {
     public final static int WEAPON_SWEEP  = 203;
     public final static int WEAPON_BOW    = 204;
     public final static int ARROW         = 205;
-    public final static int KEY           = 210;
+
+    public final static int KEY             = 210;
     public final static int UNLIMITED_USAGE = 211;
-    public final static int DIGGING       = 212;
-    public final static int ENCHANT_WEAPON = 213;
+    public final static int DIGGING         = 212;
+    public final static int ENCHANT_WEAPON  = 213;
+
+    public final static int WEAPON_THROW        = 220;
+    public final static int THROW_KNIFE         = 221;
+    public final static int THROW_STONE         = 222;
+    public final static int THROW_WATERBALLOON  = 223;
 
     public final static int FIREBURST_ENCHANT = 230;
     public final static int DUELING_ENCHANT   = 231;
@@ -142,6 +149,7 @@ public class TagRegistry {
         registerTag(WET, "Wet", WetTag.class);
         registerTag(NO_REFREEZE, "Cannot Refreeze", NoRefreezeTag.class);
         registerTag(BURN_SPREAD, "Fast Fire-Spreading", BurnSpreadingTag.class);
+        registerTag(WETTING, "Wetting", WettingTag.class);
 
         //Item related
         registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);
@@ -150,10 +158,15 @@ public class TagRegistry {
         registerTag(WEAPON_SWEEP,  "Sweeping Weapon",  SweepWeaponTypeTag.class);
         registerTag(WEAPON_BOW, "Bow",                 BowWeaponTag.class);
         registerTag(ARROW, "Arrow",                    ArrowTag.class);
+        registerTag(WEAPON_THROW, "Throwing Weapon",   ThrowingWeaponTypeTag.class);
         registerTag(KEY, "Key", KeyTag.class);
         registerTag(UNLIMITED_USAGE, "Unlimited Usage", UnlimitedUsageTag.class);
         registerTag(DIGGING, "Can Dig", DiggingTag.class);
         registerTag(ENCHANT_WEAPON, "Enchants Weapon", WeaponEnchantTag.class);
+        
+        registerTag(THROW_STONE, "Stone", ThrowStoneTag.class);
+        registerTag(THROW_KNIFE, "Knife", ThrowKnifeTag.class);
+        registerTag(THROW_WATERBALLOON, "Water Balloon", ThrowWaterBalloonTag.class);
 
         //Enchantments
         registerTag(FIREBURST_ENCHANT, "Fireburst Ench.", FireburstEnchantmentTag.class);

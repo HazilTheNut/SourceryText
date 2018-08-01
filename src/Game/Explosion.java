@@ -40,10 +40,14 @@ public class Explosion extends TagHolder{
         transmissionBlacklist.add(id);
     }
 
+
     private void doExplosionRing(int dist, Color fgColor){
         int centerX = (explosionLayer.getCols() - 1) / 2;
         int centerY = (explosionLayer.getRows() - 1) / 2;
         SpecialText specText = new SpecialText(' ', Color.WHITE, colorateWithTags(fgColor));
+        if (dist < 2){
+            explosionLayer.editLayer(centerX, centerY, specText);
+        }
         //Northern section
         explosionLayer.editLayer(centerX, centerY - dist, specText);
         explosionLayer.editLayer(centerX - 1, centerY - dist, specText);

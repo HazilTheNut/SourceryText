@@ -19,7 +19,7 @@ public class SandWallSpell extends Spell {
 
     @Override
     public String getName() {
-        return "Petramancy";
+        return "Petramansy";
     }
 
     @Override
