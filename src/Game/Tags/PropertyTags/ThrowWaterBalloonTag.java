@@ -30,6 +30,8 @@ public class ThrowWaterBalloonTag extends Tag {
     private void explodeAt(Coordinate loc, GameInstance gi){
         Explosion explosion = new Explosion();
         explosion.addTag(TagRegistry.WETTING, explosion);
+        explosion.addTag(TagRegistry.WET, explosion);
+        explosion.addToTransmissionBlacklist(TagRegistry.WETTING);
         explosion.explode(0, loc, gi, new Color(150, 150, 255));
     }
 }

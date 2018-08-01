@@ -33,6 +33,6 @@ public class WettingTag extends Tag {
         if (wetTag == null)
             tagHolder.addTag(TagRegistry.WET, null);
         else
-            wetTag.setLifetime(WetTag.LIFETIME_START);
+            wetTag.setLifetime(Math.max(WetTag.LIFETIME_START, wetTag.getLifetime()));
     }
 }

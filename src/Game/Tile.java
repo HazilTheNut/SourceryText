@@ -47,6 +47,10 @@ public class Tile extends TagHolder implements Serializable {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Level getLevel() {
         return level;
     }

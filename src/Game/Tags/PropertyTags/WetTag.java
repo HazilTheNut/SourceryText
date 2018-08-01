@@ -12,6 +12,7 @@ import Game.Tags.Tag;
 import Game.Tile;
 
 import java.awt.*;
+import java.util.Random;
 
 /**
  * Created by Jared on 4/29/2018.
@@ -40,16 +41,23 @@ public class WetTag extends Tag {
     public void onAddThis(TagEvent e) {
         if (e.getTarget() instanceof Entity || e.getTarget() instanceof Item){
             drying = true;
-            lifetime = LIFETIME_START;
+            startLifetime();
         } else if (e.getTarget() instanceof Tile){
             Tile tile = (Tile)e.getTarget();
             Tile baseTile = tile.getLevel().getBaseTileAt(tile.getLocation());
             if (baseTile != null) {
                 if (!baseTile.hasTag(TagRegistry.SHALLOW_WATER) && !baseTile.hasTag(TagRegistry.DEEP_WATER)) {
                     tile.getLevel().getOverlayTileLayer().editLayer(tile.getLocation(), new SpecialText(' ', Color.WHITE, new Color(15, 15, 30, 30)));
+                    drying = true;
+                    startLifetime();
                 }
             }
         }
+    }
+
+    private void startLifetime(){
+        Random random = new Random();
+        lifetime = LIFETIME_START + random.nextInt(10);
     }
 
     @Override
@@ -86,5 +94,9 @@ public class WetTag extends Tag {
 
     public void setLifetime(int lifetime) {
         this.lifetime = lifetime;
+    }
+
+    public int getLifetime() {
+        return lifetime;
     }
 }

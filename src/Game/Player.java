@@ -286,6 +286,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
                 while (!movementVector.equals(new Coordinate(0, 0))){ //Move while movement vector is not zero
                     long loopStartTime = System.nanoTime();
                     if (!isFrozen()) {
+                        freeze();
                         if (movementVector.getX() != 0) {
                             move(movementVector.getX(), 0);
                             gi.doEnemyTurn();
@@ -294,6 +295,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
                             move(0, movementVector.getY());
                             gi.doEnemyTurn();
                         }
+                        unfreeze();
                     }
                     int runTime = (int)((System.nanoTime() - loopStartTime) / 1000000);
                     sleepMoveThread(Math.max(MOVEMENT_INTERVAL - runTime, 0));
@@ -477,7 +479,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
 
     private void castSpell(Coordinate levelPos){
         Thread spellThread = new Thread(() -> {
-            if (isSpellReady()) {
+            if (isSpellReady() && !isFrozen()) {
                 freeze(); //Stop player actions while casting spell
                 int cd = equippedSpell.castSpell(levelPos, this, getGameInstance(), magicPower);
                 for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerCastSpell(levelPos, equippedSpell);

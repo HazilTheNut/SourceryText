@@ -15,7 +15,6 @@ public class LevelScriptRegistry {
     static{
         //Registering stuff starts here
 
-        scriptMap.put(1, WetTileDrying.class);
         scriptMap.put(2, LightingEffects.class);
         scriptMap.put(3, ResetOnEnter.class);
         scriptMap.put(4, SpaceBackground.class);
@@ -45,7 +44,7 @@ public class LevelScriptRegistry {
                 return script;
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
-                return null;
+                return new LevelScript();
             }
         }
         return null;

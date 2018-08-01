@@ -2,6 +2,7 @@ package Game.Tags;
 
 import Data.Coordinate;
 import Data.SerializationVersion;
+import Game.Entities.Entity;
 import Game.GameInstance;
 import Game.TagEvent;
 import Game.Tile;
@@ -31,13 +32,25 @@ public class SplashySurface extends Tag {
         if (e.getSource() instanceof Tile) {
             Tile source = (Tile) e.getSource();
             if (splashLocs.contains(source.getLocation())){ //Checking for places where entities have already been
-                if (e.getGameInstance().getCurrentLevel().getSolidEntityAt(source.getLocation()) == null) { //No entity here, so it's now time to play the animation
+                if (e.getGameInstance().getCurrentLevel().getEntitiesAt(source.getLocation()).size() == 0) { //No entity here, so it's now time to play the animation
                     playSplash(source.getLocation(), e.getGameInstance());
+                    splashLocs.remove(source.getLocation());
                 }
-                splashLocs.remove(source.getLocation());
-            } else if (e.getGameInstance().getCurrentLevel().getSolidEntityAt(source.getLocation()) != null){ //Entities have not been here, there is one now. Better record that to track when they move
+            }
+            /*
+            else if (e.getGameInstance().getCurrentLevel().getSolidEntityAt(source.getLocation()) != null){ //Entities have not been here, there is one now. Better record that to track when they move
                 splashLocs.add(source.getLocation());
             }
+            */
+        }
+    }
+
+    @Override
+    public void onContact(TagEvent e) {
+        if (e.getTarget() instanceof Entity) {
+            Entity target = (Entity) e.getTarget();
+            if (!splashLocs.contains(target.getLocation()))
+                splashLocs.add(target.getLocation().copy());
         }
     }
 
@@ -46,7 +59,7 @@ public class SplashySurface extends Tag {
     }
 
     @Override
-    public boolean isTileRemovable() {
-        return splashLocs.size() < 1;
+    public boolean isTileRemovable(Tile tile) {
+        return !splashLocs.contains(tile.getLocation());
     }
 }

@@ -56,6 +56,7 @@ public class FrozenTag extends Tag {
         iceTile.addTag(TagRegistry.FROZEN, source); //...and here is where onAddThis() is ran.
         iceTile.removeTag(TagRegistry.WET);
         iceTile.addTag(TagRegistry.FLAMMABLE, source); //The ice can't melt if it cannot be set on fire.
+        iceTile.addTag(TagRegistry.SLIDING, iceTile);
         SpecialText iceText;
         int hash = 23 * 113 * iceTile.getLocation().getX() + iceTile.getLocation().getY(); //Could use improvement
         DebugWindow.reportf(DebugWindow.MISC, "FrozenTag","Ice Hash: %1$d", hash);

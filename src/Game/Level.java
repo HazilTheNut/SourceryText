@@ -295,7 +295,7 @@ public class Level implements Serializable {
         ArrayList<Tag> tileTags = baseTile.getTags();
         //Check to see if any tags do not want the tile to be removed.
         for (Tag tag : tileTags){
-            if (!tag.isTileRemovable()) return false;
+            if (!tag.isTileRemovable(baseTile)) return false;
         }
         //Create list of template tag ids
         TileStruct template = TileRegistry.getTileStruct(tileIdMatrix[baseTile.getLocation().getX()][baseTile.getLocation().getY()]);

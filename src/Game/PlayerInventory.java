@@ -449,7 +449,12 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                     if (item.getStackability() != Item.NO_QUANTITY) tempLayer.inscribeString(String.format("%1$02d", item.getItemData().getQty()), ITEM_STRING_LENGTH + 1, ii + 1, qtyColor);
                 }
             }
-            tempLayer.inscribeString(name, 2, 0, labelFg);
+            String invName = name;
+            if (mode == CONFIG_PLAYER_EXCHANGE)
+                invName = "TRADE --->";
+            if (mode == CONFIG_OTHER_EXCHANGE)
+                invName = "<--- TRADE";
+            tempLayer.inscribeString(invName, 2, 0, labelFg);
         }
 
         /**
@@ -619,6 +624,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             otherInv.configure(PLACEMENT_TOP_RIGHT, name, pile, CONFIG_OTHER_EXCHANGE);
             otherInv.show();
             moveWholeItem(selected, playerInv.getOwner(), pile);
+            playerInv.changeMode(CONFIG_PLAYER_EXCHANGE);
             playerInv.updateDisplay();
             otherInv.updateDisplay();
         }
