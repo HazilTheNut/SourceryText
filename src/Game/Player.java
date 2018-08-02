@@ -6,7 +6,9 @@ import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.LevelScripts.WaterFlow;
 import Game.Registries.EntityRegistry;
+import Game.Registries.LevelScriptRegistry;
 import Game.Registries.TagRegistry;
 import Game.Spells.Spell;
 import Game.Tags.RangeTag;
@@ -212,8 +214,10 @@ public class Player extends CombatEntity implements MouseInputReceiver{
                 updateSprite();
             } else {
                 //Check for movement while on raft
-                setPos(nextPos);
-                return false;
+                if (waterFlowAllowsMovement(getLocation(), relativeX, relativeY)) {
+                    setPos(nextPos);
+                    return false;
+                }
             }
         }
         return true;
@@ -226,6 +230,18 @@ public class Player extends CombatEntity implements MouseInputReceiver{
                 return e;
         }
         return null;
+    }
+
+    private boolean waterFlowAllowsMovement(Coordinate loc, int relativeX, int relativeY){
+        WaterFlow waterFlowScript = (WaterFlow)gi.getCurrentLevel().getLevelScript(LevelScriptRegistry.SCRIPT_WATERFLOW);
+        if (waterFlowScript != null) {
+            return !waterFlowScript.getBannedRaftDirections(loc).contains(new Coordinate(relativeX, relativeY));
+        }
+        return true;
+    }
+
+    public boolean isOnRaft() {
+        return onRaft;
     }
 
     @Override
