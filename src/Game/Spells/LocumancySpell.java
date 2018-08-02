@@ -60,7 +60,7 @@ public class LocumancySpell extends Spell {
     private void attemptPoint(Coordinate loc, GameInstance gi, Coordinate startLoc, int range){
         if (gi.isSpaceAvailable(loc, TagRegistry.NO_PATHING) && loc.stepDistance(startLoc) <= range && !validLocations.contains(loc)){
             validLocations.add(loc);
-            Coordinate layerLoc = loc.subtract(startLoc).add(new Coordinate(previewLayer.getCols(), previewLayer.getRows()).multiply(0.5));
+            Coordinate layerLoc = loc.subtract(startLoc).add(new Coordinate(previewLayer.getCols(), previewLayer.getRows()).multiplyTruncated(0.5));
             previewLayer.editLayer(layerLoc, new SpecialText(' ', Color.WHITE, new Color(157, 0, 255, 100)));
         }
     }

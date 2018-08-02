@@ -67,12 +67,20 @@ public class Coordinate implements Serializable {
     }
 
     /**
-     * Returns a new Coordinate whose values are scaled from this Coordinate's x and y values
+     * Returns a new Coordinate whose values are scaled from this Coordinate's x and y values. The non-integer results are rounded.
      * NOTE: This method does not alter the values of either Coordinate!
      * @param amount The factor by which the values are multiplied. Results are rounded back into integers before returning
      * @return A new Coordinate
      */
     public Coordinate multiply(double amount) { return new Coordinate((int)Math.round(x * amount), (int)Math.round(y * amount)); }
+
+    /**
+     * Returns a new Coordinate whose values are scaled from this Coordinate's x and y values. The non-integer results are truncated.
+     * NOTE: This method does not alter the values of either Coordinate!
+     * @param amount The factor by which the values are multiplied. Results are rounded back into integers before returning
+     * @return A new Coordinate
+     */
+    public Coordinate multiplyTruncated(double amount) { return new Coordinate((int)(x * amount), (int)(y * amount)); }
 
     public Coordinate normalize() {
         double x = getX();

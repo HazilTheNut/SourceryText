@@ -196,7 +196,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         //Check for getting onto a raft
         if (!onRaft){
             Entity raft = searchForRaft(nextPos);
-            if (raft != null && nextTile.hasTag(TagRegistry.DEEP_WATER)) {
+            if (raft != null) {
                 onRaft = true;
                 updateSprite();
                 setPos(nextPos);
