@@ -12,6 +12,8 @@ public class LevelScriptRegistry {
 
     private static TreeMap<Integer, Class> scriptMap = new TreeMap<>();
 
+    public static final int SCRIPT_WATERFLOW = 6;
+
     static{
         //Registering stuff starts here
 
@@ -19,6 +21,7 @@ public class LevelScriptRegistry {
         scriptMap.put(3, ResetOnEnter.class);
         scriptMap.put(4, SpaceBackground.class);
         scriptMap.put(5, GenerateSnow.class);
+        scriptMap.put(SCRIPT_WATERFLOW, WaterFlow.class);
 
         scriptMap.put(1000, CinemaTutorialBasement.class);
         //Registering stuff ends here

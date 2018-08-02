@@ -85,7 +85,7 @@ public class LevelData implements Serializable {
     public void setAllData(LevelData other){
         this.backdrop.transpose(other.getBackdrop());
         syncDisplayWithData();
-        this.tileData = new int[other.getTileData().length][other.getTileData().length];
+        this.tileData = new int[other.getTileData().length][other.getTileData()[0].length];
         for (int col = 0; col < other.getTileData().length; col++){
             System.arraycopy(other.getTileData()[col], 0, this.tileData[col], 0, other.getTileData()[0].length);
         }

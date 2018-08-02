@@ -21,6 +21,7 @@ public class LevelScriptMaskEdit extends DrawTool {
 
     @Override
     public void onActivate(JPanel panel) {
+        retrieveMask();
         drawLayer();
         ldata.getLevelScriptLayer().setVisible(true);
         ldata.setMaskEditTool(this);
