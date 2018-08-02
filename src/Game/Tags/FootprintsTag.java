@@ -9,10 +9,10 @@ import Game.GameInstance;
 /**
  * Created by Jared on 4/22/2018.
  */
-public class SandTag extends SplashySurface {
+public class FootprintsTag extends SplashySurface {
 
     /**
-     * SandTag:
+     * FootprintsTag:
      *
      * The Tag that makes Tiles sandy.
      *

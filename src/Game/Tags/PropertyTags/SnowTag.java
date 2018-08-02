@@ -3,6 +3,6 @@ package Game.Tags.PropertyTags;
 import Data.SerializationVersion;
 import Game.Tags.Tag;
 
-public class AshTag extends Tag {
+public class SnowTag extends Tag {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 }

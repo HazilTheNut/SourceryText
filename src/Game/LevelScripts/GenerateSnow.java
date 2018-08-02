@@ -23,16 +23,21 @@ public class GenerateSnow extends LevelScript {
         LevelScriptMask snowMask = getMask("snow");
         for (int col = 0; col < snowMask.getMask().length; col++) {
             for (int row = 0; row < snowMask.getMask()[0].length; row++) {
-                if (snowMask.getMask()[col][row]){
-                    Tile snowTile = new Tile(new Coordinate(col, row), "Snow", level);
-                    level.addOverlayTile(snowTile);
-                    snowTile.addTag(TagRegistry.WET, snowTile);
-                    snowTile.addTag(TagRegistry.FROZEN, snowTile);
-                    snowTile.removeTag(TagRegistry.WET);
-                    snowTile.addTag(TagRegistry.FLAMMABLE, snowTile);
-                    level.getOverlayTileLayer().editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(180, 180, 204)));
-                }
+                if (snowMask.getMask()[col][row])
+                    generateSnow(new Coordinate(col, row));
             }
         }
+    }
+
+    public void generateSnow(Coordinate pos){
+        Tile snowTile = new Tile(pos, "Snow", level);
+        level.addOverlayTile(snowTile);
+        snowTile.addTag(TagRegistry.WET, snowTile);
+        snowTile.addTag(TagRegistry.FROZEN, snowTile);
+        snowTile.removeTag(TagRegistry.WET);
+        snowTile.addTag(TagRegistry.FLAMMABLE, snowTile);
+        snowTile.addTag(TagRegistry.FOOTPRINTS, snowTile);
+        snowTile.addTag(TagRegistry.SNOW, snowTile);
+        level.getOverlayTileLayer().editLayer(pos.getX(), pos.getY(), new SpecialText(' ', Color.WHITE, new Color(149, 149, 161)));
     }
 }

@@ -110,6 +110,8 @@ public class TagRegistry {
     public final static int SLIDING       = 405;
     public final static int DIGGABLE      = 406;
     public final static int ASH           = 407;
+    public final static int FOOTPRINTS    = 408;
+    public final static int SNOW          = 409;
 
     public final static int LIVING        = 600;
     public final static int MAGNETIC      = 601;
@@ -206,6 +208,8 @@ public class TagRegistry {
         registerTag(SLIDING, "Sliding", SlidingSurfaceTag.class);
         registerTag(DIGGABLE, "Diggable", DiggableTag.class);
         registerTag(ASH, "Ash", AshTag.class);
+        registerTag(FOOTPRINTS, "Soft Ground", FootprintsTag.class);
+        registerTag(SNOW, "Snow", SnowTag.class);
 
         //Entity related
         registerTag(LIVING, "Living", LivingTag.class);

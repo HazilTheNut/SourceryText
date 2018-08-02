@@ -18,22 +18,20 @@ public class Tag implements Serializable {
      * Tag:
      *
      * The Backdrop, Tiles, Entities, Warp Zones, and Level Scripts are all essential to the Sourcery Text Level,
-     * but the Tag is the central foundation of Sourcery Text itself.
+     * but without doubt the Tag is the central foundation of Sourcery Text game itself.
      *
-     * The Tag, and its child classes, governs and adds formality the interactions between Entities, Tiles, Items, and Projectiles.
+     * The Tag, and its child classes, governs and adds formality to the interactions between Entities, Tiles, Items, Projectiles, and Explosions.
      *
      * Tags are powerful, partly because they are transferable. For example, the OnFireTag can be added to any TagHolder and still work properly.
      * So that means very general rules can be created with very easily. For example, the OnFireTag has a rule where if two TagHolders contact each other, fire will spread to the other.
      *
-     * These generalities encourage developing universal rules.
+     * These generalities encourage developing universal rules, and thus a sense of world simulation.
      *
      * Coupled with this is the Tag's modularity.
      *
      * Each Tag can be viewed as a singular "behavior" being added to a TagHolder. Any combination of Tags can be added to a TagHolder.
      * This has some great benefits. For example, the ItemRegistry leverages this property to create a registry of Items that can be wildly different from each other.
      * Additionally, this makes describing the properties of any TagHolder very easy to do, as you can just form a list of the Tags is has and get a good description of how it works.
-     *
-     * Altogether, the Tag allows for the creation of rules that make sense and add a sense of simulation to Sourcery Text.
      */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;

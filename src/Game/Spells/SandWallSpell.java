@@ -109,7 +109,7 @@ public class SandWallSpell extends Spell {
 
     private boolean isSandyAt(Coordinate loc, GameInstance gi){
         Tile tile = gi.getTileAt(loc);
-        return tile != null && (tile.hasTag(TagRegistry.SAND) || tile.hasTag(TagRegistry.ASH)) && gi.isSpaceAvailable(loc, TagRegistry.TILE_WALL);
+        return tile != null && tile.hasTag(TagRegistry.FOOTPRINTS) && gi.isSpaceAvailable(loc, TagRegistry.TILE_WALL);
     }
 
     private void createWall(Coordinate pos, GameInstance gi){
@@ -118,6 +118,8 @@ public class SandWallSpell extends Spell {
             createSandWall(pos, gi);
         } else if (tile.hasTag(TagRegistry.ASH)){
             createAshWall(pos, gi);
+        } else if (tile.hasTag(TagRegistry.SNOW)){
+            createSnowWall(pos, gi);
         }
     }
 
@@ -135,6 +137,14 @@ public class SandWallSpell extends Spell {
         for (int id : tags) wallTile.addTag(id, wallTile);
         gi.getCurrentLevel().addOverlayTile(wallTile);
         gi.getCurrentLevel().getOverlayTileLayer().editLayer(wallTile.getLocation(), new SpecialText('^', new Color(140, 135, 135), new Color(102, 99, 94)));
+    }
+
+    private void createSnowWall(Coordinate pos, GameInstance gi){
+        Tile wallTile = new Tile(pos, "Snow Wall", gi.getCurrentLevel());
+        int[] tags = { TagRegistry.NO_PATHING, TagRegistry.TILE_WALL, TagRegistry.SNOW, TagRegistry.DIGGABLE};
+        for (int id : tags) wallTile.addTag(id, wallTile);
+        gi.getCurrentLevel().addOverlayTile(wallTile);
+        gi.getCurrentLevel().getOverlayTileLayer().editLayer(wallTile.getLocation(), new SpecialText('^', new Color(169, 182, 217), new Color(164, 164, 186)));
     }
 
     @Override

@@ -17,7 +17,7 @@ public class SplashySurface extends Tag {
     /**
      * SplashySurface:
      *
-     * Overridden by ShallowWaterTag and SandTag.
+     * Overridden by ShallowWaterTag and FootprintsTag.
      * It detects when an Entity steps off of this Tile (if the owner of this tag is a Tile) and runs the method playSplash().
      *
      * Since the SplashySurface Tag is most likely to be shared amongst multiple Tiles, a whole list of Coordinates of candidate splash locations exists to track entity movement throughout the entire level.
