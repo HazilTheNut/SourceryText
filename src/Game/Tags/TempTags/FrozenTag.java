@@ -63,6 +63,8 @@ public class FrozenTag extends Tag {
             Tile overlay = tile.getLevel().getOverlayTileAt(tile.getLocation());
             if (tile.equals(overlay)){ //If the owning TagHolder is an overlay tile, chances are it is an ice tile.
                 tile.getLevel().removeOverlayTile(overlay);
+                if (tile.hasTag(TagRegistry.ON_FIRE))
+                    tile.getLevel().getBaseTileAt(tile.getLocation()).addTag(TagRegistry.WET, owner);
             }
         }
     }

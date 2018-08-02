@@ -31,7 +31,7 @@ public class LevelScript implements Serializable {
         this.level = level;
     }
 
-    LevelScriptMask getMask(String name){
+    private LevelScriptMask getMask(String name){
         for (LevelScriptMask mask : level.getLevelScriptMasks()){
             if (mask.getName().equals(name) && mask.getScriptId() == id)
                 return mask;

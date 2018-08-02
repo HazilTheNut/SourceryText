@@ -167,6 +167,14 @@ public class Level implements Serializable {
         return !backdrop.isLayerLocInvalid(loc);
     }
 
+    public int getWidth(){
+        return backdrop.getCols();
+    }
+
+    public int getHeight(){
+        return backdrop.getRows();
+    }
+
     void setWarpZones(ArrayList<WarpZone> warpZones) {
         this.warpZones = warpZones;
     }

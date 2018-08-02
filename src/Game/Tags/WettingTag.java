@@ -5,7 +5,6 @@ import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
-import Game.Tags.PropertyTags.WetTag;
 import Game.Tile;
 
 import java.util.ArrayList;
