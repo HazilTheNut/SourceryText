@@ -21,6 +21,7 @@ public class EntityRegistry {
     public static final int LOOT_PILE = 7;
     public static final int PLAYER_SHADOW = 10;
     public static final int MAGIC_BOMB = 17;
+    public static final int RAFT = 18;
 
     /*
     * Some Notes:
@@ -51,6 +52,7 @@ public class EntityRegistry {
         registerEntity(15, "Room Cover",   new SpecialText(' ', new Color(42,  42,  86),  Color.BLACK),                  RoomCover.class,   TagRegistry.IMMOVABLE);
         registerEntity(16, "Wall Torch",   new SpecialText('*', new Color(212, 195, 140), new Color(142, 120, 50, 50)),  Paperweight.class, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER, TagRegistry.ON_FIRE, TagRegistry.BRIGHT);
         registerEntity(MAGIC_BOMB, "MagicBomb", new SpecialText('b'),                                                    MagicBomb.class, TagRegistry.LIVING, TagRegistry.NO_PATHING);
+        registerEntity(RAFT, "Raft",       new SpecialText('=', new Color(142, 94, 60),   new Color(71, 47, 30, 240)),   Marker.class);
 
         //Registering stuff ends here
     }

@@ -6,6 +6,7 @@ import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
 import Game.Spells.Spell;
 import Game.Tags.RangeTag;
@@ -55,7 +56,10 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     private transient Thread movementThread;
     private final int MOVEMENT_INTERVAL = 125;
 
+    private boolean onRaft = false;
+
     private final SpecialText playerSprite = new SpecialText('@', new Color(223, 255, 214));
+    private final SpecialText raftSprite   = new SpecialText('@', new Color(223, 255, 214), new Color(71, 47, 30, 240));
 
     Player(GameInstance gameInstance){
 
@@ -91,7 +95,8 @@ public class Player extends CombatEntity implements MouseInputReceiver{
 
     @Override
     protected void updateSprite() {
-        getSprite().editLayer(0,0, new SpecialText(playerSprite.getCharacter(), colorateWithTags(playerSprite.getFgColor()), playerSprite.getBkgColor()));
+        SpecialText icon = (onRaft) ? raftSprite : playerSprite;
+        getSprite().editLayer(0,0, new SpecialText(icon.getCharacter(), colorateWithTags(icon.getFgColor()), icon.getBkgColor()));
         DebugWindow.reportf(DebugWindow.MISC, "Player.updateSprite","Original sprite %1$s ; Calculated: %2$s", getSprite().getSpecialText(0,0), playerSprite);
     }
 
@@ -157,7 +162,8 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     protected void move(int relativeX, int relativeY) {
         while (gi.getLayerManager().isDrawingFrame())
             turnSleep(2);
-        super.move(relativeX, relativeY);
+        if (doRaftStuff(relativeX, relativeY))
+            super.move(relativeX, relativeY);
         for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerMove(getLocation());
         postMovementCheck();
     }
@@ -177,6 +183,49 @@ public class Player extends CombatEntity implements MouseInputReceiver{
             inv.closeOtherInventory();
             inv.getPlayerInv().close();
         }
+    }
+
+    /**
+     * Does everything that has to do with rafts and flowing water
+     *
+     * @return if regular movement should be processed
+     */
+    private boolean doRaftStuff(int relativeX, int relativeY){
+        Coordinate nextPos = getLocation().copy().add(new Coordinate(relativeX, relativeY));
+        Tile nextTile = gi.getCurrentLevel().getTileAt(nextPos);
+        //Check for getting onto a raft
+        if (!onRaft){
+            Entity raft = searchForRaft(nextPos);
+            if (raft != null && nextTile.hasTag(TagRegistry.DEEP_WATER)) {
+                onRaft = true;
+                updateSprite();
+                setPos(nextPos);
+                raft.selfDestruct();
+                return false;
+            }
+        } else if (gi.isSpaceAvailable(nextPos, TagRegistry.TILE_WALL)){
+            //Check for getting off of a raft
+            if (!nextTile.hasTag(TagRegistry.DEEP_WATER)){
+                Entity raft = gi.instantiateEntity(EntityRegistry.getEntityStruct(EntityRegistry.RAFT), getLocation().copy(), gi.getCurrentLevel());
+                raft.onLevelEnter();
+                onRaft = false;
+                updateSprite();
+            } else {
+                //Check for movement while on raft
+                setPos(nextPos);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Entity searchForRaft(Coordinate loc){
+        ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(loc);
+        for (Entity e : entities){
+            if (e.getName().equals("Raft"))
+                return e;
+        }
+        return null;
     }
 
     @Override
