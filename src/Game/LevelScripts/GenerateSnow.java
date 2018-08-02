@@ -3,11 +3,7 @@ package Game.LevelScripts;
 import Data.Coordinate;
 import Data.LevelScriptMask;
 import Data.SerializationVersion;
-import Engine.SpecialText;
-import Game.Registries.TagRegistry;
-import Game.Tile;
-
-import java.awt.*;
+import Game.OverlayTileGenerator;
 
 public class GenerateSnow extends LevelScript {
 
@@ -30,14 +26,7 @@ public class GenerateSnow extends LevelScript {
     }
 
     public void generateSnow(Coordinate pos){
-        Tile snowTile = new Tile(pos, "Snow", level);
-        level.addOverlayTile(snowTile);
-        snowTile.addTag(TagRegistry.WET, snowTile);
-        snowTile.addTag(TagRegistry.FROZEN, snowTile);
-        snowTile.removeTag(TagRegistry.WET);
-        snowTile.addTag(TagRegistry.FLAMMABLE, snowTile);
-        snowTile.addTag(TagRegistry.FOOTPRINTS, snowTile);
-        snowTile.addTag(TagRegistry.SNOW, snowTile);
-        level.getOverlayTileLayer().editLayer(pos.getX(), pos.getY(), new SpecialText(' ', Color.WHITE, new Color(149, 149, 161)));
+        OverlayTileGenerator tg = new OverlayTileGenerator();
+        tg.createSnowTile(pos, level);
     }
 }

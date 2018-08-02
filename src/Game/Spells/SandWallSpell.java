@@ -8,6 +8,7 @@ import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.GameInstance;
+import Game.OverlayTileGenerator;
 import Game.Registries.TagRegistry;
 import Game.Tile;
 
@@ -114,37 +115,14 @@ public class SandWallSpell extends Spell {
 
     private void createWall(Coordinate pos, GameInstance gi){
         Tile tile = gi.getTileAt(pos);
+        OverlayTileGenerator otg = new OverlayTileGenerator();
         if (tile.hasTag(TagRegistry.SAND)){
-            createSandWall(pos, gi);
+           otg.createSandWallTile(pos, gi.getCurrentLevel());
         } else if (tile.hasTag(TagRegistry.ASH)){
-            createAshWall(pos, gi);
+            otg.createAshWallTile(pos, gi.getCurrentLevel());
         } else if (tile.hasTag(TagRegistry.SNOW)){
-            createSnowWall(pos, gi);
+            otg.createSnowWallTile(pos, gi.getCurrentLevel());
         }
-    }
-
-    private void createSandWall(Coordinate pos, GameInstance gi){
-        Tile wallTile = new Tile(pos, "Sand Wall", gi.getCurrentLevel());
-        int[] tags = { TagRegistry.NO_PATHING, TagRegistry.TILE_WALL, TagRegistry.SAND, TagRegistry.DIGGABLE};
-        for (int id : tags) wallTile.addTag(id, wallTile);
-        gi.getCurrentLevel().addOverlayTile(wallTile);
-        gi.getCurrentLevel().getOverlayTileLayer().editLayer(wallTile.getLocation(), new SpecialText('^', new Color(166, 123, 94), new Color(110, 70, 20)));
-    }
-
-    private void createAshWall(Coordinate pos, GameInstance gi){
-        Tile wallTile = new Tile(pos, "Ash Wall", gi.getCurrentLevel());
-        int[] tags = { TagRegistry.NO_PATHING, TagRegistry.TILE_WALL, TagRegistry.ASH, TagRegistry.DIGGABLE};
-        for (int id : tags) wallTile.addTag(id, wallTile);
-        gi.getCurrentLevel().addOverlayTile(wallTile);
-        gi.getCurrentLevel().getOverlayTileLayer().editLayer(wallTile.getLocation(), new SpecialText('^', new Color(140, 135, 135), new Color(102, 99, 94)));
-    }
-
-    private void createSnowWall(Coordinate pos, GameInstance gi){
-        Tile wallTile = new Tile(pos, "Snow Wall", gi.getCurrentLevel());
-        int[] tags = { TagRegistry.NO_PATHING, TagRegistry.TILE_WALL, TagRegistry.SNOW, TagRegistry.DIGGABLE};
-        for (int id : tags) wallTile.addTag(id, wallTile);
-        gi.getCurrentLevel().addOverlayTile(wallTile);
-        gi.getCurrentLevel().getOverlayTileLayer().editLayer(wallTile.getLocation(), new SpecialText('^', new Color(169, 182, 217), new Color(164, 164, 186)));
     }
 
     @Override

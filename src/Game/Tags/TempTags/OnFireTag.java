@@ -2,15 +2,11 @@ package Game.Tags.TempTags;
 
 import Data.Coordinate;
 import Data.SerializationVersion;
-import Engine.SpecialText;
 import Game.AnimatedTiles.FireAnimation;
 import Game.Entities.Entity;
-import Game.Level;
+import Game.*;
 import Game.Registries.TagRegistry;
-import Game.TagEvent;
-import Game.TagHolder;
 import Game.Tags.Tag;
-import Game.Tile;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -91,7 +87,7 @@ public class OnFireTag extends Tag {
                     if (!burnForever) lifetime--;
                     if (lifetime <= 0) {
                         e.getSource().removeTag(TagRegistry.ON_FIRE);
-                        e.getGameInstance().getCurrentLevel().addOverlayTile(createAshTile(source.getLocation(), level));
+                        createAshTile(source.getLocation(), level);
                     }
                 } else {
                     if (!burnForever) {
@@ -139,7 +135,6 @@ public class OnFireTag extends Tag {
             Tile tile = (Tile) owner;
             if (fireAnimation != null) {
                 tile.getLevel().removeAnimatedTile(fireAnimation.getLocation());
-
             }
         }
     }
@@ -150,15 +145,8 @@ public class OnFireTag extends Tag {
     }
 
     public Tile createAshTile(Coordinate loc, Level level){
-        Tile tile = new Tile(loc, "Ash", level);
-        if (random.nextDouble() < 0.25){
-            level.getOverlayTileLayer().editLayer(loc.getX(), loc.getY(), new SpecialText('.', new Color(81, 77, 77), new Color(60, 58, 55)));
-        } else {
-            level.getOverlayTileLayer().editLayer(loc.getX(), loc.getY(), new SpecialText(' ', new Color(81, 77, 77), new Color(60, 58, 55)));
-        }
-        tile.addTag(TagRegistry.ASH, tile);
-        tile.addTag(TagRegistry.FOOTPRINTS, tile);
-        return tile;
+        OverlayTileGenerator tileGenerator = new OverlayTileGenerator();
+        return tileGenerator.createAshTile(loc, level);
     }
 
     private void spreadToTile(Level level, Coordinate pos, TagHolder source){

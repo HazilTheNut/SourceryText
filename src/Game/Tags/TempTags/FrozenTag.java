@@ -1,9 +1,8 @@
 package Game.Tags.TempTags;
 
 import Data.SerializationVersion;
-import Engine.SpecialText;
-import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
+import Game.OverlayTileGenerator;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
@@ -41,7 +40,7 @@ public class FrozenTag extends Tag {
                 Tile overlay = target.getLevel().getOverlayTileAt(target.getLocation());
                 if (overlay == null) { //This will return false for the new overlay tile, because it will already be added by the time this method is ran again
                     e.cancel();
-                    createIceOverlayTile(target, e.getSource());
+                    createIceOverlayTile(target);
                     e.addFutureAction(event -> target.removeTag(TagRegistry.FROZEN));
                 }
             } else
@@ -49,26 +48,12 @@ public class FrozenTag extends Tag {
         }
     }
 
-    private void createIceOverlayTile(Tile target, TagHolder source){
-        Tile iceTile = new Tile(target.getLocation(), "Ice", target.getLevel());
-        target.getLevel().addOverlayTile(iceTile); //When onAddThis() is reran, there WILL be an overlay tile this time.
-        iceTile.addTag(TagRegistry.WET, source);
-        iceTile.addTag(TagRegistry.FROZEN, source); //...and here is where onAddThis() is ran.
-        iceTile.removeTag(TagRegistry.WET);
-        iceTile.addTag(TagRegistry.FLAMMABLE, source); //The ice can't melt if it cannot be set on fire.
-        iceTile.addTag(TagRegistry.SLIDING, iceTile);
-        SpecialText iceText;
-        int hash = 23 * 113 * iceTile.getLocation().getX() + iceTile.getLocation().getY(); //Could use improvement
-        DebugWindow.reportf(DebugWindow.MISC, "FrozenTag","Ice Hash: %1$d", hash);
-        char tileChar = (hash % 7 == 0) ? '/' : ' ';
-        if (target.hasTag(TagRegistry.TILE_WALL)) {
-            iceTile.addTag(TagRegistry.TILE_WALL, source);
-            iceTile.addTag(TagRegistry.NO_PATHING, source);
-            iceText = new SpecialText(tileChar, Color.WHITE, new Color(147, 166, 199));
-        } else {
-            iceText = new SpecialText(tileChar, Color.WHITE, new Color(109, 133, 166));
-        }
-        target.getLevel().getOverlayTileLayer().editLayer(iceTile.getLocation(), iceText); //Draws the ice tile
+    private void createIceOverlayTile(Tile target){
+        OverlayTileGenerator tileGenerator = new OverlayTileGenerator();
+        if (target.hasTag(TagRegistry.TILE_WALL))
+            tileGenerator.createIceWallTile(target.getLocation(), target.getLevel());
+        else
+            tileGenerator.createIceTile(target.getLocation(), target.getLevel());
     }
 
     @Override
