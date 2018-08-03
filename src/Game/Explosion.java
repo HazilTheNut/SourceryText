@@ -5,6 +5,7 @@ import Data.LayerImportances;
 import Data.SerializationVersion;
 import Engine.Layer;
 import Engine.SpecialText;
+import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.Tags.Tag;
 
@@ -70,16 +71,20 @@ public class Explosion extends TagHolder{
         for (int col = 0; col < explosionLayer.getCols(); col++) {
             for (int row = 0; row < explosionLayer.getRows(); row++) {
                 if (explosionLayer.getSpecialText(col, row) != null) {
+                    long startTime = System.nanoTime();
                     //Damage
                     Coordinate levelPos = explosionLayer.getPos().add(new Coordinate(col, row));
                     ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(levelPos);
+                    DebugWindow.reportf(DebugWindow.STAGE, "Explosion.applyDamage:damage", "time: %1$.03fms", (System.nanoTime() - startTime) / 1000000f);
                     //Copy tags
                     for (Entity e : entities) {
                         e.onReceiveDamage(amount, this, gi);
                         transmitTags(e);
                     }
+                    DebugWindow.reportf(DebugWindow.STAGE, "Explosion.applyDamage:copy", "time: %1$.03fms", (System.nanoTime() - startTime) / 1000000f);
                     //Contact tiles below
                     onContact(gi.getCurrentLevel().getTileAt(levelPos), gi);
+                    DebugWindow.reportf(DebugWindow.STAGE, "Explosion.applyDamage:contact", "time: %1$.03fms", (System.nanoTime() - startTime) / 1000000f);
                 }
             }
         }

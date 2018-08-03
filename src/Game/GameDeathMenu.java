@@ -27,6 +27,8 @@ public class GameDeathMenu implements MouseInputReceiver{
 
     public GameDeathMenu(GameInstance gameInstance){
         gi = gameInstance;
+        shadeLayer = new Layer(gi.getLayerManager().getWindow().RESOLUTION_WIDTH, gi.getLayerManager().getWindow().RESOLUTION_HEIGHT, "deathmenu-shade", 0, 0, LayerImportances.MENU_SUPER);
+        menuLayer = new Layer(gi.getLayerManager().getWindow().RESOLUTION_WIDTH, gi.getLayerManager().getWindow().RESOLUTION_HEIGHT, "deathmenu-menu", 0, 0, LayerImportances.MENU_SUPER);
     }
 
     void show(){
@@ -36,9 +38,9 @@ public class GameDeathMenu implements MouseInputReceiver{
         shadeLayer = new Layer(gi.getLayerManager().getWindow().RESOLUTION_WIDTH, gi.getLayerManager().getWindow().RESOLUTION_HEIGHT, "deathmenu-shade", 0, 0, LayerImportances.MENU_SUPER);
         shadeLayer.fixedScreenPos = true;
         gi.getLayerManager().addLayer(shadeLayer);
-        for (int i = 0; i < 150; i++) {
+        for (int i = 0; i < 175; i++) {
             shadeLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(0, 0, 0, i)));
-            sleep(8);
+            sleep(9);
         }
         sleep(750);
         //Generate menu

@@ -39,6 +39,8 @@ public class ForceEnchantmentTag extends EnchantmentTag {
                 e.teleport(newLoc);
             } else
                 return;
+            if (gi.getTileAt(newLoc).hasTag(TagRegistry.SLIDING))
+                return;
             //Wait a little to simulate the effect of motion
             try {
                 Thread.sleep(100);
