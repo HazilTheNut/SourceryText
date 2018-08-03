@@ -36,7 +36,7 @@ public class LightingEffects extends LevelScript {
     @Override
     public void onLevelLoad() {
         super.onLevelLoad();
-        shadingLayer = new Layer(level.getBackdrop().getCols(), level.getBackdrop().getRows(), "ls_lighting: " + level.getName(), 0, 0, LayerImportances.VFX);
+        shadingLayer = new Layer(level.getBackdrop().getCols(), level.getBackdrop().getRows(), "ls_lighting: " + level.getName(), 0, 0, LayerImportances.VFX + 1);
         lightNodes = new ArrayList<>();
         lightMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
         identifyLightNodes();

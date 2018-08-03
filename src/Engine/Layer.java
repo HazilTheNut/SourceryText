@@ -233,6 +233,10 @@ public class Layer implements Serializable{
         return textMatrix[col][row];
     }
 
+    public SpecialText getSpecialText (Coordinate pos){
+        return getSpecialText(pos.getX(), pos.getY());
+    }
+
     public void editLayer (int col, int row, char text){
         if (isLayerLocInvalid(col, row)) return;
         textMatrix[col][row] = new SpecialText(text);

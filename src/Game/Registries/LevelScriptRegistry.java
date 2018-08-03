@@ -12,12 +12,13 @@ public class LevelScriptRegistry {
 
     private static TreeMap<Integer, Class> scriptMap = new TreeMap<>();
 
+    public static final int SCRIPT_LIGHTING  = 2;
     public static final int SCRIPT_WATERFLOW = 6;
 
     static{
         //Registering stuff starts here
 
-        scriptMap.put(2, LightingEffects.class);
+        scriptMap.put(SCRIPT_LIGHTING, LightingEffects.class);
         scriptMap.put(3, ResetOnEnter.class);
         scriptMap.put(4, SpaceBackground.class);
         scriptMap.put(5, GenerateSnow.class);
