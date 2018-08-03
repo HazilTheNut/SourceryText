@@ -21,6 +21,10 @@ public class WaterFlow extends LevelScript {
     @Override
     public void onLevelLoad() {
         particles = new ArrayList<>();
+        particleLayer = new Layer(level.getWidth(), level.getHeight(), "WaterFlow particles: " + level.getName(), 0, 0, LayerImportances.TILE_ANIM + 1);
+        for (int i = 0; i < 100; i++) {
+            updateParticles();
+        }
     }
 
     @Override

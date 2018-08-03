@@ -255,7 +255,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         super.receiveDamage(amount);
         hud.updateHUD();
         if (pathingThread != null && pathingThread.isAlive()) terminatePathing = true;
-        if (getHealth() <= 0) gi.getGameMaster().exitGameToMainMenu();
+        if (getHealth() <= 0) gi.getDeathMenu().show();
     }
 
     @Override
@@ -515,6 +515,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     private void openMenu(){
         QuickMenu quickMenu = gi.getQuickMenu();
         quickMenu.clearMenu();
+        quickMenu.addMenuItem("Save Game",    new Color(171, 241, 255), () -> gi.getGameMaster().openGameSaveMenu());
         quickMenu.addMenuItem("Load Game",    new Color(255, 230, 170), () -> gi.getGameMaster().openGameLoadMenu());
         quickMenu.addMenuItem("Controls",     new Color(173, 255, 228), () -> gi.getGameMaster().openKeybindMenu());
         quickMenu.addMenuItem("Quit to Menu", new Color(255, 171, 171), () -> gi.getGameMaster().exitGameToMainMenu());

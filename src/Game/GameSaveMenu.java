@@ -199,7 +199,7 @@ public class GameSaveMenu implements MouseInputReceiver{
         Date currentDate = new Date();
         SimpleDateFormat formatter;
         if (currentDate.getTime() - updateDate.getTime() > 1000 * 60 * 60 * 24) {
-            formatter = new SimpleDateFormat("dd/MM/yy");
+            formatter = new SimpleDateFormat("MM/dd/yy");
         } else {
             formatter = new SimpleDateFormat("h:mm a");
         }

@@ -46,6 +46,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private transient LayerManager lm;
     private transient TextBox textBox;
     private transient QuickMenu quickMenu;
+    private transient GameDeathMenu deathMenu;
 
     private long currentUID = 1;
     private long turnCounter = 0;
@@ -86,6 +87,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
 
         textBox = new TextBox(lm, getPlayer());
         quickMenu = new QuickMenu(lm, getPlayer());
+        deathMenu = new GameDeathMenu(this);
 
         pathTestLayer = new Layer(0, 0, "pathtest", 0, 0, LayerImportances.VFX);
         pathTestLayer.setVisible(false);
@@ -118,6 +120,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         textBox.setPlayer(null);
         quickMenu.setPlayer(null);
         quickMenu.clearMenu();
+        deathMenu.close();
     }
 
     /**
@@ -403,6 +406,10 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     @Override
     public void onFrameDrawEnd() {
         DebugWindow.reportf(DebugWindow.PERFORMANCE, "DrawTime"," %1$.3f", lm.getPreviousCompileTime() / 1000000f);
+    }
+
+    public GameDeathMenu getDeathMenu() {
+        return deathMenu;
     }
 
     private interface EntityOperation{

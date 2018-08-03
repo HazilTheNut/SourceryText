@@ -123,7 +123,10 @@ public class GameMaster {
         Thread loadGameThread = new Thread(() -> {
             //Cleanup old GameInstance
             FileIO io = new FileIO();
-            if (gameRunning) exitGame();
+            if (gameRunning) {
+                exitGame();
+                currentGameInstance.getDeathMenu().close();
+            }
             mainMenu.close();
             //Generate new one
             currentGameInstance = io.openGameInstance(gameFile);

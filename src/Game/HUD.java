@@ -76,13 +76,14 @@ public class HUD implements MouseInputReceiver, Serializable {
 
         int pos = 1; //Everything is arranged relative to each other, using this integer as the starting point for the next HUD element.
 
-        double playerHealthPercentage = (double)player.getHealth() / player.getMaxHealth();
+        int hp = Math.max(player.getHealth(), 0);
+        double playerHealthPercentage = (double)hp / player.getMaxHealth();
 
         String hpDisplay;
         if (player.getMaxHealth() < 100)
-            hpDisplay = String.format("[%1$02d", player.getHealth()); //Displaying health
+            hpDisplay = String.format("[%1$02d", hp); //Displaying health
         else
-            hpDisplay = String.format("[%1$03d", player.getHealth());
+            hpDisplay = String.format("[%1$03d", hp);
         Color fontColor = Color.getHSBColor((float)playerHealthPercentage * 0.4f, 0.5f, 0.95f);
         Color hpBkgColor = Color.getHSBColor((float)playerHealthPercentage * 0.4f, 0.5f, 0.1f);
         tempLayer.inscribeString(hpDisplay, pos, 0, fontColor);
