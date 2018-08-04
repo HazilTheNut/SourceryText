@@ -23,7 +23,7 @@ public class StoreItem extends Entity {
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("cost","0"));
-        args.add(new EntityArg("currency","Coin"));
+        args.add(new EntityArg("currency","Coins"));
         return args;
     }
 
@@ -31,7 +31,7 @@ public class StoreItem extends Entity {
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
         cost = readIntArg(searchForArg(entityStruct.getArgs(), "cost"), 0);
-        currencyType = readStrArg(searchForArg(entityStruct.getArgs(), "currency"), "Coin");
+        currencyType = readStrArg(searchForArg(entityStruct.getArgs(), "currency"), "Coins");
     }
 
     @Override

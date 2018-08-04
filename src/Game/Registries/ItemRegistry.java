@@ -131,7 +131,12 @@ public class ItemRegistry {
         //Important items
         registerItem(2500, "Shovel",       1, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_STRIKE, TagRegistry.UNLIMITED_USAGE, TagRegistry.DIGGING);
 
-        registerItem(3000, "Coin", 0, TagRegistry.MONEY);
+        registerItem(3000, "Coins",        0, TagRegistry.MONEY);
+        registerItem(3001, "Fondant Bits", 0, TagRegistry.MONEY);
+        registerItem(3002, "Sand Dollars", 0, TagRegistry.MONEY);
+        registerItem(3003, "Pages",        0, TagRegistry.MONEY);
+        registerItem(3004, "Doubloons",    0, TagRegistry.MONEY);
+        registerItem(3005, "Space Money",  0, TagRegistry.MONEY);
 
         //Registering stuff ends here
     }
