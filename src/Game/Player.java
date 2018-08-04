@@ -47,6 +47,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
 
     private int magicPower;
     private double weightCapacity = 20;
+    private int money;
 
     private int noEnterWarpZoneTimer = 0;
 
@@ -299,6 +300,16 @@ public class Player extends CombatEntity implements MouseInputReceiver{
                 arrow.launchProjectile(rangeTag.getRange());
             getWeapon().decrementQty();
         }
+    }
+
+    @Override
+    public void addItem(Item item) {
+        if (item.hasTag(TagRegistry.MONEY)) {
+            money += item.getItemData().getQty();
+            updateInventory();
+            return;
+        }
+        super.addItem(item);
     }
 
     /**
@@ -665,5 +676,13 @@ public class Player extends CombatEntity implements MouseInputReceiver{
 
     public void setWeightCapacity(double weightCapacity) {
         this.weightCapacity = weightCapacity;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
     }
 }

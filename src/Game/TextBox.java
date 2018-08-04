@@ -35,6 +35,8 @@ public class TextBox implements MouseInputReceiver{
     private final int STATE_END       = 2;
     private int currentState;
 
+    private PostMessageAction postMessageAction;
+
     //Colors!
     public static final Color bkg        = new Color(26, 26, 26);
     public static final Color txt_white  = new Color(225, 225, 225);
@@ -65,6 +67,10 @@ public class TextBox implements MouseInputReceiver{
     }
 
     public void showMessage(String message){
+        showMessage(message, () -> {});
+    }
+
+    public void showMessage(String message, PostMessageAction action){
         if (!textBoxLayer.getVisible()) {
             textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
             textBoxLayer.setVisible(true);
@@ -72,6 +78,7 @@ public class TextBox implements MouseInputReceiver{
             player.getInv().getPlayerInv().close();
             player.getInv().getOtherInv().close();
             DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
+            postMessageAction = action;
             Thread writeThread = new Thread(() -> writeMessage(message));
             writeThread.start();
         }
@@ -208,6 +215,7 @@ public class TextBox implements MouseInputReceiver{
                 case STATE_END:
                     textBoxLayer.setVisible(false);
                     player.unfreeze();
+                    postMessageAction.uponFinish();
                     return true;
                 case STATE_PAGE_END:
                     currentState = STATE_SCROLLING;
@@ -243,5 +251,9 @@ public class TextBox implements MouseInputReceiver{
     @Override
     public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return textBoxLayer.getVisible();
+    }
+
+    public interface PostMessageAction{
+        void uponFinish();
     }
 }

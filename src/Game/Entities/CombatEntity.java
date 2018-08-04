@@ -357,7 +357,7 @@ public class CombatEntity extends Entity {
     private void doThrowingWeaponAttack(Coordinate loc){
         Projectile projectile = getThrowingWeaponProjectile(loc);
         projectile.getTags().addAll(getWeapon().getTags());
-        projectile.launchProjectile(10 + getStrength() / 4);
+        projectile.launchProjectile(7 + getStrength() / 4);
     }
 
     private Projectile getThrowingWeaponProjectile(Coordinate target){

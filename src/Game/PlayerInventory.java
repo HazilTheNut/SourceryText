@@ -285,7 +285,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         return (int)Math.floor(adjustment);
     }
 
-    private double calculateTotalWeight(){
+    public double calculateTotalWeight(){
         double sum = 0;
         for (Item item : player.getItems()){
             sum += item.calculateWeight();
@@ -359,7 +359,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                 height++;
             }
             if (getOwner() instanceof Player) {
-                height++;
+                height+=2;
             }
             return height;
         }
@@ -488,6 +488,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             if (getOwner() instanceof Player) {
                 tempLayer.inscribeString(String.format("Mag: %1$d",   player.getMagicPower()),      xstart - 1, top + i + 2, TextBox.txt_blue.brighter());
                 tempLayer.inscribeString(String.format("Cap: %1$.0f", player.getWeightCapacity()),  xstart + 8, top + i + 2, TextBox.txt_yellow.brighter());
+                tempLayer.inscribeString(String.format("Money: $%1$d", player.getMoney()),          xstart - 1, top + i + 3, new Color(187, 217, 91));
             }
         }
 

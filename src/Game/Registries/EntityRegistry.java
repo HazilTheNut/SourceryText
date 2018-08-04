@@ -53,6 +53,7 @@ public class EntityRegistry {
         registerEntity(16, "Wall Torch",   new SpecialText('*', new Color(212, 195, 140), new Color(142, 120, 50, 50)),  Paperweight.class, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER, TagRegistry.ON_FIRE, TagRegistry.BRIGHT);
         registerEntity(MAGIC_BOMB, "MagicBomb", new SpecialText('b'),                                                    MagicBomb.class, TagRegistry.LIVING, TagRegistry.NO_PATHING);
         registerEntity(RAFT, "Raft",       new SpecialText('=', new Color(142, 94, 60),   new Color(71, 47, 30, 240)),   Marker.class);
+        registerEntity(19, "Store Item",   new SpecialText('$', new Color(171, 201, 75),  new Color(145, 165, 60, 15)),  StoreItem.class);
 
         //Registering stuff ends here
     }
