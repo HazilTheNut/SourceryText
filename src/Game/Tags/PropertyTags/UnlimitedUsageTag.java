@@ -20,8 +20,8 @@ public class UnlimitedUsageTag extends Tag {
 
     @Override
     public void onAddThis(TagEvent e) {
-        if (e.getSource() instanceof Item) {
-            Item source = (Item) e.getSource();
+        if (e.getTarget() instanceof Item) {
+            Item source = (Item) e.getTarget();
             source.setStackable(Item.NO_QUANTITY);
         }
     }

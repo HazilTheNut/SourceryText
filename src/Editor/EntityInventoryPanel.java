@@ -140,7 +140,12 @@ public class EntityInventoryPanel extends JPanel {
         ArrayList<ItemStruct> items = entity.getItems();
         entityInvModel.clear();
         for (ItemStruct i : items) {
-            ItemStruct struct = ItemRegistry.getItemStruct(i.getItemId());
+            ItemStruct struct;
+            try {
+                struct = ItemRegistry.getItemStruct(i.getItemId());
+            } catch (NullPointerException e){
+                struct = new ItemStruct(-1, 1, "MALFORMED - REMOVE ENTITY", 0);
+            }
             struct.setQty(i.getQty());
             entityInvModel.addElement(struct);
         }

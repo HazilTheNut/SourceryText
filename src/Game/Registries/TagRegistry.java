@@ -68,6 +68,7 @@ public class TagRegistry {
     public final static int UNLIMITED_USAGE = 211;
     public final static int DIGGING         = 212;
     public final static int ENCHANT_WEAPON  = 213;
+    public final static int IMPORTANT       = 214;
 
     public final static int WEAPON_THROW        = 220;
     public final static int THROW_KNIFE         = 221;
@@ -167,6 +168,7 @@ public class TagRegistry {
         registerTag(UNLIMITED_USAGE, "Unlimited Usage", UnlimitedUsageTag.class);
         registerTag(DIGGING, "Can Dig", DiggingTag.class);
         registerTag(ENCHANT_WEAPON, "Enchants Weapon", WeaponEnchantTag.class);
+        registerTag(IMPORTANT, "Important", ImportantTag.class);
         
         registerTag(THROW_STONE, "Stone", ThrowStoneTag.class);
         registerTag(THROW_KNIFE, "Knife", ThrowKnifeTag.class);

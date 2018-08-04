@@ -48,6 +48,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     private int magicPower;
     private double weightCapacity = 20;
     private int money;
+    private PlayerWallet wallet;
 
     private int noEnterWarpZoneTimer = 0;
 
@@ -83,6 +84,11 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         addTag(TagRegistry.FLAMMABLE, this);
         addTag(TagRegistry.LIVING, this);
         initNoWeapon();
+
+        wallet = new PlayerWallet(new ItemStruct(10000, 1, "Wallet", 0, TagRegistry.UNLIMITED_USAGE), gi);
+        wallet.addTag(TagRegistry.UNLIMITED_USAGE, this);
+        wallet.addTag(TagRegistry.IMPORTANT, this);
+        addItem(wallet);
 
         playerActionCollectors = new ArrayList<>();
     }
@@ -305,7 +311,7 @@ public class Player extends CombatEntity implements MouseInputReceiver{
     @Override
     public void addItem(Item item) {
         if (item.hasTag(TagRegistry.MONEY)) {
-            money += item.getItemData().getQty();
+            addMoney(item.getItemData().getQty(), item.getItemData().getName());
             updateInventory();
             return;
         }
@@ -678,11 +684,11 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         this.weightCapacity = weightCapacity;
     }
 
-    public int getMoney() {
-        return money;
+    public int getMoney(String currency){
+        return wallet.getMoneyAmount(currency);
     }
 
-    public void setMoney(int money) {
-        this.money = money;
+    public void addMoney(int amount, String currency){
+        wallet.addMoney(amount, currency);
     }
 }

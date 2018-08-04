@@ -34,6 +34,7 @@ public class CinemaTutorialBasement extends LevelScript {
         wakeUpAnim = new Layer(level.getBackdrop().getCols(), level.getBackdrop().getRows(), "", 0, 0, LayerImportances.MENU);
         wakeUpAnim.fillLayer(new SpecialText(' ', Color.WHITE, Color.BLACK));
         doingWakeUpAnim = true;
+        gi.getPlayer().addMoney(4, "Coin");
     }
 
     @Override
@@ -68,7 +69,7 @@ public class CinemaTutorialBasement extends LevelScript {
             didInteractMessage = true;
         }
         if (getMaskDataAt("inventory", playerLoc) && !didInventoryMessage){
-            if (gi.getPlayer().getItems().size() > 0 && gi.getPlayer().getWeapon().getItemData().getItemId() < 0) {
+            if (gi.getPlayer().getItems().size() > 1 && gi.getPlayer().getWeapon().getItemData().getItemId() < 0) {
                 gi.getTextBox().showMessage("Items are very useful.<nl>Press " + getInput(InputMap.INVENTORY) + " to open your inventory.<np>Press " + getInput(InputMap.INV_USE) + " to use an item and<nl>press " + getInput(InputMap.INV_DROP) + " to drop an item.");
                 didInventoryMessage = true;
             }

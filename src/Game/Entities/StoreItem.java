@@ -17,11 +17,13 @@ public class StoreItem extends Entity {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int cost;
+    private String currencyType;
 
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("cost","0"));
+        args.add(new EntityArg("currency","Coin"));
         return args;
     }
 
@@ -29,6 +31,7 @@ public class StoreItem extends Entity {
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
         cost = readIntArg(searchForArg(entityStruct.getArgs(), "cost"), 0);
+        currencyType = readStrArg(searchForArg(entityStruct.getArgs(), "currency"), "Coin");
     }
 
     @Override
@@ -48,14 +51,14 @@ public class StoreItem extends Entity {
             if (i < getItems().size() - 1)
                 builder.append(",<nl>");
         }
-        builder.append("<nl>Cost: <cg>$").append(cost);
+        builder.append("<nl>Cost: <cg>$").append(cost).append(" <cs>").append(currencyType);
         return builder.toString();
     }
 
     private void sellToPlayer(){
         Player player = gi.getPlayer();
         //Check for cost
-        if (player.getMoney() < cost){
+        if (player.getMoney(currencyType) < cost){
             gi.getTextBox().showMessage("You don't have enough money to buy this.");
             return;
         }
@@ -67,7 +70,7 @@ public class StoreItem extends Entity {
             gi.getTextBox().showMessage(String.format("You don't have the weight capacity (<cy>CAP<cw>) required to carry this.<nl><cs>%1$.2f / %2$.2f", totalWeight, player.getWeightCapacity()));
             return;
         }
-        player.setMoney(player.getMoney() - cost);
+        player.addMoney(-1 * cost, currencyType);
         for (Item item : getItems())
             player.addItem(item);
         selfDestruct();

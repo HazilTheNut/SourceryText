@@ -9,6 +9,7 @@ import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Entities.LootPile;
 import Game.Registries.EntityRegistry;
+import Game.Registries.TagRegistry;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -47,6 +48,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
     private final Color stackableFg = new Color(179, 255, 255);
     private final Color descFg      = new Color(201, 255, 224);
     private final Color textFg      = new Color(240, 240, 255);
+    private final Color importantFg = new Color(194, 194, 204);
 
     private final Color selectorActive   = new Color(200, 200, 200, 100);
     private final Color selectorInactive = new Color(200, 200, 200,  50);
@@ -359,7 +361,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                 height++;
             }
             if (getOwner() instanceof Player) {
-                height+=2;
+                height++;
             }
             return height;
         }
@@ -439,12 +441,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                 }
                 if (ii + scrollOffset < items.size()) { //Don't draw null items
                     Item item = items.get(ii + scrollOffset); //Begin drawing the item
-                    Color nameColor = textFg;
-                    if (e instanceof CombatEntity) {
-                        CombatEntity owner = (CombatEntity) getOwner();
-                        nameColor = (owner.getWeapon().equals(item)) ? descFg : nameColor; //Color green if this item is equipped as a weapon
-                    }
-                    tempLayer.inscribeString(item.getItemData().getName(), 1, ii + 1, nameColor);
+                    tempLayer.inscribeString(item.getItemData().getName(), 1, ii + 1, getItemNameColor(item)); //Draw item name
                     Color qtyColor = (item.isStackable()) ? stackableFg : labelFg;
                     if (item.getStackability() != Item.NO_QUANTITY) tempLayer.inscribeString(String.format("%1$02d", item.getItemData().getQty()), ITEM_STRING_LENGTH + 1, ii + 1, qtyColor);
                 }
@@ -455,6 +452,16 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             if (mode == CONFIG_OTHER_EXCHANGE)
                 invName = "<--- TRADE";
             tempLayer.inscribeString(invName, 2, 0, labelFg);
+        }
+
+        private Color getItemNameColor(Item item){
+            if (getOwner() instanceof CombatEntity) {
+                CombatEntity owner = (CombatEntity) getOwner();
+                if (owner.getWeapon().equals(item)) return descFg;
+            }
+            if (item.hasTag(TagRegistry.IMPORTANT))
+                return importantFg;
+            return textFg;
         }
 
         /**
@@ -488,7 +495,6 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             if (getOwner() instanceof Player) {
                 tempLayer.inscribeString(String.format("Mag: %1$d",   player.getMagicPower()),      xstart - 1, top + i + 2, TextBox.txt_blue.brighter());
                 tempLayer.inscribeString(String.format("Cap: %1$.0f", player.getWeightCapacity()),  xstart + 8, top + i + 2, TextBox.txt_yellow.brighter());
-                tempLayer.inscribeString(String.format("Money: $%1$d", player.getMoney()),          xstart - 1, top + i + 3, new Color(187, 217, 91));
             }
         }
 
@@ -578,6 +584,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                 if (to instanceof Player){
                     if (calculateTotalWeight() + selected.getItemData().getRawWeight() > player.getWeightCapacity()) return;
                 }
+                if (from instanceof Player && selected.hasTag(TagRegistry.IMPORTANT)) return;
                 //Remove item from 'from'
                 DebugWindow.reportf(DebugWindow.GAME, "SubInventory.moveOneItem","");
                 selected.decrementQty();
@@ -598,11 +605,13 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                 if (calculateTotalWeight() + selected.calculateWeight() > player.getWeightCapacity()) return;
             }
             DebugWindow.reportf(DebugWindow.GAME, "SubInventory.moveWholeItem","");
+            if (from instanceof Player && selected.hasTag(TagRegistry.IMPORTANT)) return;
             to.addItem(selected);
             from.removeItem(selected);
         }
 
         private void dropItem(Item selected){
+            if (getOwner() instanceof Player && selected.hasTag(TagRegistry.IMPORTANT)) return;
             ArrayList<Entity> entities = player.getGameInstance().getCurrentLevel().getEntitiesAt(player.getLocation());
             for (Entity e : entities){ //Search for a loot pile that already exists
                 if (e instanceof LootPile) {

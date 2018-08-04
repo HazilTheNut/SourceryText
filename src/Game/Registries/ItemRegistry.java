@@ -25,7 +25,7 @@ public class ItemRegistry {
       100   999   | Weapons
       1000  1999  | Consumables
       2000  2999  | Quest Items
-      3000  3999  | Armor?
+      3000  3999  | Money
 
      */
 
@@ -131,7 +131,7 @@ public class ItemRegistry {
         //Important items
         registerItem(2500, "Shovel",       1, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_STRIKE, TagRegistry.UNLIMITED_USAGE, TagRegistry.DIGGING);
 
-        registerItem(2999, "Coin", 0, TagRegistry.MONEY);
+        registerItem(3000, "Coin", 0, TagRegistry.MONEY);
 
         //Registering stuff ends here
     }
