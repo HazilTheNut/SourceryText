@@ -35,7 +35,7 @@ public class Sign extends Entity {
     @Override
     public void onInteract(Player player) {
         if (!text.equals("")){
-            gi.getTextBox().showMessage(text);
+            gi.getTextBox().showMessage(text, getName());
         }
     }
 

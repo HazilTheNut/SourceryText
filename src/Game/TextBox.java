@@ -39,6 +39,7 @@ public class TextBox implements MouseInputReceiver{
 
     //Colors!
     public static final Color bkg        = new Color(26, 26, 26);
+    public static final Color banner     = new Color(51, 51, 51);
     public static final Color txt_white  = new Color(225, 225, 225);
     public static final Color txt_red    = new Color(255, 128, 128);
     public static final Color txt_green  = new Color(130, 255, 130);
@@ -67,10 +68,18 @@ public class TextBox implements MouseInputReceiver{
     }
 
     public void showMessage(String message){
-        showMessage(message, () -> {});
+        showMessage(message, "", () -> {});
+    }
+
+    public void showMessage(String message, String speaker){
+        showMessage(message, speaker, () -> {});
     }
 
     public void showMessage(String message, PostMessageAction action){
+        showMessage(message, "", action);
+    }
+
+    public void showMessage(String message, String speaker, PostMessageAction action){
         if (!textBoxLayer.getVisible()) {
             textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
             textBoxLayer.setVisible(true);
@@ -79,7 +88,7 @@ public class TextBox implements MouseInputReceiver{
             player.getInv().getOtherInv().close();
             DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
             postMessageAction = action;
-            Thread writeThread = new Thread(() -> writeMessage(message));
+            Thread writeThread = new Thread(() -> writeMessage(message, speaker));
             writeThread.start();
         }
     }
@@ -87,7 +96,7 @@ public class TextBox implements MouseInputReceiver{
     private int row = 1;
     private int xpos = 1;
 
-    private void writeMessage(String message){
+    private void writeMessage(String message, String speaker){
         //Starting values
         row = 1;
         xpos = 1;
@@ -99,6 +108,7 @@ public class TextBox implements MouseInputReceiver{
         int SCROLL_SPEED_SKIM = 3;
         //Begin writing
         int scrollSpeed = SCROLL_SPEED_NORMAL;
+        drawSpeakerBanner(speaker);
         currentState = STATE_SCROLLING;
         Color textColor = txt_white;
         while (index < message.length()){
@@ -107,18 +117,18 @@ public class TextBox implements MouseInputReceiver{
                 int nextIndex = getIndexOfNextSpace(message, index + 1);
                 DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","Next Word: \"%1$s\"", message.substring(index, nextIndex));
                 if (xpos + nextIndex - index > width - 1) { //If word needs to wrap
-                    shiftRow();
+                    shiftRow(speaker);
                 } else
                     xpos++;
                 sleep(13); //Somehow, this improves readability
             } else if (message.charAt(index) == '\n'){ //New line character
-                shiftRow();
+                shiftRow(speaker);
             } else if (isFormattedElement(message, index, "<nl>")){ //New line flag
-                shiftRow();
+                shiftRow(speaker);
                 index += 3;
             } else if (isFormattedElement(message, index, "<np>")){ //New page flag
                 row = 3;
-                shiftRow();
+                shiftRow(speaker);
                 index += 3;
             } else if (isFormattedElement(message, index, "<sf>")){ //Fast speed flag
                 if (!isSkimming){
@@ -136,10 +146,12 @@ public class TextBox implements MouseInputReceiver{
                 }
                 index += 3;
             } else if (isFormattedElement(message, index, "<p1>")){ //1 Second Pause Flag
-                sleep(1000);
+                if (!isSkimming)
+                    sleep(1000);
                 index += 3;
             } else if (isFormattedElement(message, index, "<p3>")){ //3 Second Pause Flag
-                sleep(3000);
+                if (!isSkimming)
+                    sleep(3000);
                 index += 3;
             } else if (isFormattedElement(message, index, "<cw>")){ textColor = txt_white;  index += 3; //Color Flags!
             } else if (isFormattedElement(message, index, "<cr>")){ textColor = txt_red;    index += 3;
@@ -163,6 +175,13 @@ public class TextBox implements MouseInputReceiver{
         currentState = STATE_END;
     }
 
+    private void drawSpeakerBanner(String speakerName){
+        if (speakerName.length() > 0){
+            textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, banner), new Coordinate(0, 0), new Coordinate(speakerName.length() + 2, 0));
+            textBoxLayer.inscribeString(speakerName, 1, 0, new Color(220, 220, 250));
+        }
+    }
+
     private boolean isFormattedElement(String message, int index, String element){
         return index <= message.length() - element.length() && message.substring(index, index + element.length()).equals(element);
     }
@@ -183,13 +202,16 @@ public class TextBox implements MouseInputReceiver{
         return message.length();
     }
 
-    private void shiftRow(){
+    private void shiftRow(String speaker){
         xpos = 1;
         row++;
         if (row > 3){
             currentState = STATE_PAGE_END;
+            arrowBrightness = 0;
+            drawNextPageArrow();
             stopUntilState(STATE_SCROLLING);
             textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
+            drawSpeakerBanner(speaker);
             row = 1;
             isSkimming = false;
         }
@@ -206,7 +228,17 @@ public class TextBox implements MouseInputReceiver{
     private void stopUntilState(int expectedState){
         while (currentState != expectedState){
             sleep(30);
+            if (expectedState == STATE_SCROLLING)
+                drawNextPageArrow();
         }
+    }
+
+    private int arrowBrightness;
+
+    private void drawNextPageArrow(){
+        if (arrowBrightness < 4)
+            arrowBrightness++;
+        textBoxLayer.editLayer(textBoxLayer.getCols() - 2, textBoxLayer.getRows() - 1, new SpecialText('>', new Color(63 * arrowBrightness, 63 * arrowBrightness, 30 * arrowBrightness), bkg));
     }
 
     private boolean doClick(){
@@ -245,7 +277,7 @@ public class TextBox implements MouseInputReceiver{
 
     @Override
     public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
-        return doClick();
+        return textBoxLayer.getVisible();
     }
 
     @Override
