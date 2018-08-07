@@ -24,17 +24,13 @@ public class BasicEnemy extends CombatEntity {
      *
      * An Entity with an AI built it to operate enemies.
      * It can:
-     * > Leverage the GameInstance's pathfinding results to move towards the Player
+     * > Leverage a depth-first pathfinding algorithm to move towards the Player
      * > Attack the player if within range of attack
      * > Switch weapons when they break
-     * > Alert nearby entities if they spot the Player
      *
      * BasicEnemies are designed to attack in groups, so the following behaviors exist:
      * > If an enemy spots the player, they will alert nearby BasicEnemies to attack the player
      * > The GameInstance ignores solid entities when calculating the path-finding map. This means even if an enemy blocks a path to the player BasicEnemies will keep approaching the player.
-     *
-     * Although most of the code for BasicEnemy allows for targeting things other than the player, all the pathfinding calculations are done by the GameInstance, which are always centered on the player.
-     * This was done to reduce the performance cost per entity existing in a level.
      */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
@@ -47,10 +43,12 @@ public class BasicEnemy extends CombatEntity {
         alertRadius = readIntArg(searchForArg(entityStruct.getArgs(), "alertRadius"), alertRadius);
     }
 
-    private int detectRange = 15;
-    private int alertRadius = 5;
+    protected int detectRange = 15;
+    protected int alertRadius = 5;
 
     public CombatEntity target;
+
+    protected boolean isAutonomous = true; //Set to false for the Player
 
     //For Ranged Enemies
     private Projectile readyArrow;
@@ -69,11 +67,18 @@ public class BasicEnemy extends CombatEntity {
 
     @Override
     public void onTurn() {
+        if (isAutonomous)
+            doAutonomousAI();
+        super.onTurn();
+    }
+
+    private void doAutonomousAI(){
         if (weapon == null && getItems().size() > 0) pickNewWeapon(); //No Weapon? Try picking new ones if there's something in the inventory
         if (target != null && target.getHealth() <= 0) target = null;
-        if (target == null && gi.getPlayer().getLocation().stepDistance(getLocation()) <= detectRange){ //Target player if nearby and not already targeting something
-            target = gi.getPlayer();
-            alertNearbyEntities(); //Let everyone know
+        CombatEntity nearest = getNearestEnemy();
+        if (target == null && nearest != null){ //Target player if nearby and not already targeting something
+            setTarget(nearest);
+            alertNearbyAllies(); //Let everyone know
         }
         if (target != null) {
             if (hasTag(TagRegistry.SCARED)) {
@@ -85,10 +90,9 @@ public class BasicEnemy extends CombatEntity {
                     doMeleeBehavior();
             }
         }
-        super.onTurn();
     }
 
-    private void alertNearbyEntities(){
+    protected void alertNearbyAllies(){
         ArrayList<Entity> entities = gi.getCurrentLevel().getEntities();
         for (Entity e : entities){
             if (e instanceof BasicEnemy) {
@@ -97,6 +101,14 @@ public class BasicEnemy extends CombatEntity {
             }
         }
     }
+
+    protected CombatEntity getNearestEnemy(){
+        Player player = gi.getPlayer();
+        if (player.getLocation().stepDistance(getLocation()) <= detectRange)
+            return player;
+        return null;
+    }
+
     @Override
     public void onReceiveDamage(int amount, TagHolder source, GameInstance gi) {
         super.onReceiveDamage(amount, source, gi);
@@ -105,12 +117,12 @@ public class BasicEnemy extends CombatEntity {
             if (projectile.getSource() instanceof CombatEntity) {
                 CombatEntity projectileSource = (CombatEntity) projectile.getSource();
                 setTarget(projectileSource);
-                alertNearbyEntities();
+                alertNearbyAllies();
             }
         }
         if (source instanceof CombatEntity) {
             setTarget((CombatEntity)source); //Target the source of the damage
-            alertNearbyEntities();
+            alertNearbyAllies();
         }
         pickNewWeapon();
     }

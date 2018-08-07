@@ -7,6 +7,7 @@ import Engine.SpecialText;
 import Game.AnimatedTiles.AnimatedTile;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
+import Game.Entities.GameCharacter;
 import Game.LevelScripts.LevelScript;
 import Game.Registries.LevelScriptRegistry;
 import Game.Registries.TagRegistry;

@@ -19,7 +19,7 @@ public class EntityRegistry {
     private static TreeMap<Integer, Class> entityObjMap = new TreeMap<>();
 
     public static final int LOOT_PILE = 7;
-    public static final int PLAYER_SHADOW = 10;
+    public static final int PLAYER_SHADOW = 20;
     public static final int MAGIC_BOMB = 17;
     public static final int RAFT = 18;
 
@@ -43,7 +43,7 @@ public class EntityRegistry {
         registerEntity(LOOT_PILE, "Loot",  new SpecialText('%', new Color(191, 191, 75),  new Color(155, 155, 60, 15)),  LootPile.class);
         registerEntity(8,  "One-Way Door", new SpecialText('x', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    OneWayDoor.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(9,  "Magnet",       new SpecialText('M', new Color(145, 145, 145), new Color(45, 45, 45, 45)),    Magnet.class, TagRegistry.METALLIC);
-        registerEntity(PLAYER_SHADOW, "Player Shadow", new SpecialText('@', new Color(65, 75, 65), new Color(0, 0, 0, 25)), PlayerShadow.class);
+        registerEntity(10, "Character",    new SpecialText('C', new Color(130, 255, 225), new Color(180, 255, 225, 15)), GameCharacter.class);
 
         registerEntity(11, "Floor Switch", new SpecialText('o', new Color(165, 165, 135), new Color(70, 70, 50, 75)),    FloorSwitch.class, TagRegistry.IMMOVABLE);
         registerEntity(12, "Powered Door", new SpecialText('-', new Color(143, 123, 80),  new Color(74, 65, 55, 75)),    PoweredDoor.class, TagRegistry.IMMOVABLE);
@@ -54,6 +54,7 @@ public class EntityRegistry {
         registerEntity(MAGIC_BOMB, "MagicBomb", new SpecialText('b'),                                                    MagicBomb.class, TagRegistry.LIVING, TagRegistry.NO_PATHING);
         registerEntity(RAFT, "Raft",       new SpecialText('=', new Color(142, 94, 60),   new Color(71, 47, 30, 240)),   Marker.class);
         registerEntity(19, "Store Item",   new SpecialText('$', new Color(171, 201, 75),  new Color(145, 165, 60, 15)),  StoreItem.class);
+        registerEntity(PLAYER_SHADOW, "Player Shadow", new SpecialText('@', new Color(65, 75, 65), new Color(0, 0, 0, 25)), PlayerShadow.class);
 
         //Registering stuff ends here
     }

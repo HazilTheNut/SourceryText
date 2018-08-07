@@ -26,7 +26,7 @@ public class PoweredDoor extends Entity implements Powerable {
     @Override
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
-        closedIcon = entityStruct.getDisplayChar();
+        closedIcon = getSprite().getSpecialText(0, 0);
         openIcon = new SpecialText(' ', Color.WHITE, closedIcon.getBkgColor().darker());
         defaultClosed = readBoolArg(searchForArg(entityStruct.getArgs(), "defaultClosed"), true);
         onPowerOff();

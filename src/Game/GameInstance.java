@@ -47,6 +47,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private transient TextBox textBox;
     private transient QuickMenu quickMenu;
     private transient GameDeathMenu deathMenu;
+    private transient FactionManager factionManager;
 
     private long currentUID = 1;
     private long turnCounter = 0;
@@ -77,6 +78,9 @@ public class GameInstance implements Serializable, FrameUpdateListener {
      */
     void initialize(){
         entityOperations = new ArrayList<>();
+
+        factionManager = new FactionManager();
+        factionManager.initialize();
 
         if (player == null) {
             player = new Player(this);
@@ -263,6 +267,10 @@ public class GameInstance implements Serializable, FrameUpdateListener {
 
     public GameMaster getGameMaster() {
         return gameMaster;
+    }
+
+    public FactionManager getFactionManager() {
+        return factionManager;
     }
 
     boolean isPlayerTurn() { return isPlayerTurn; }
