@@ -75,10 +75,12 @@ public class BasicEnemy extends CombatEntity {
     private void doAutonomousAI(){
         if (weapon == null && getItems().size() > 0) pickNewWeapon(); //No Weapon? Try picking new ones if there's something in the inventory
         if (target != null && target.getHealth() <= 0) target = null;
-        CombatEntity nearest = getNearestEnemy();
-        if (target == null && nearest != null){ //Target player if nearby and not already targeting something
-            setTarget(nearest);
-            alertNearbyAllies(); //Let everyone know
+        if (target == null){
+            CombatEntity nearest = getNearestEnemy();
+            if ( nearest != null) { //Target player if nearby and not already targeting something
+                setTarget(nearest);
+                alertNearbyAllies(); //Let everyone know
+            }
         }
         if (target != null) {
             if (hasTag(TagRegistry.SCARED)) {
@@ -140,7 +142,7 @@ public class BasicEnemy extends CombatEntity {
         if (targetWithinAttackRange()) { //Can I attack?
             doWeaponAttack(target.getLocation()); //Attack!
         } else if (target.getLocation().stepDistance(getLocation()) <= detectRange * 2){ //Is it close?
-            pathToPosition(target.getLocation(), getPathingSize()); //Get to it!
+            doPathing(); //Get to it!
         }
     }
 
@@ -159,7 +161,7 @@ public class BasicEnemy extends CombatEntity {
                     doWeaponAttack(target.getLocation());
                     break;
                 case RAYCAST_WALL: //A wall tile exists between enemy and target
-                    pathToPosition(target.getLocation(), getPathingSize());
+                    doPathing();
                     break;
                 case RAYCAST_ENTITY:
                     moveTangentToTarget();
@@ -176,13 +178,18 @@ public class BasicEnemy extends CombatEntity {
         readyArrow = arrow;
     }
 
+    private void doPathing(){
+        if (pathToPosition(target.getLocation(), getPathingSize()) == 0)
+            target = null;
+    }
+
     /**
      * Searches through inventory for the best weapon to fight the player with.
      *
      * It evaluates each tag of an item based upon pre-defined biases to calculate the 'value' of an item.
      * Item with highest value wins, becomes equipped as weapon.
      */
-    private void pickNewWeapon(){
+    protected void pickNewWeapon(){
         //Biases; The higher the number, the more valuable it is
         final double MULT_RANGED = (target != null && target.getLocation().boxDistance(getLocation()) <= 1) ? 0 : 3;
         final double MULT_SWEEP = 0.75; //Larger area of attack means accidentally hurting other enemies, so it devalues for enemies.

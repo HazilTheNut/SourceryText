@@ -5,7 +5,6 @@ import Data.StringIntParser;
 
 import java.awt.*;
 import java.io.Serializable;
-import java.util.Scanner;
 
 /**
  * Created by Jared on 2/18/2018.
@@ -82,6 +81,10 @@ public class SpecialText implements Serializable {
                                                                 && text.getBkgColor().getRed() == bkgColor.getRed() && text.getBkgColor().getGreen() == bkgColor.getGreen() && text.getBkgColor().getBlue() == bkgColor.getBlue();
     }
 
+    public SpecialText copy(){
+        return new SpecialText(character, fgColor, bkgColor);
+    }
+
     @Override
     public String toString() {
         return String.format("|%1$c|[%2$03d,%3$03d,%4$03d,%5$03d],[%6$03d,%7$03d,%8$03d,%9$03d]", getCharacter(), fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue(), fgColor.getAlpha(), bkgColor.getRed(), bkgColor.getGreen(), bkgColor.getBlue(), bkgColor.getAlpha());
@@ -111,10 +114,5 @@ public class SpecialText implements Serializable {
         int[] values = stringIntParser.getInts(text);
         int adj = (values.length > 8) ? 1 : 0; //If the text component of the SpecialText is a number, we need to shift over what numbers to look at.
         return new SpecialText(c, new Color(values[adj], values[1+adj], values[2+adj], values[3+adj]), new Color(values[4+adj], values[5+adj], values[6+adj], values[7+adj]));
-    }
-
-    private static int readInt(String str){
-        Scanner sc = new Scanner(str);
-        return sc.nextInt();
     }
 }

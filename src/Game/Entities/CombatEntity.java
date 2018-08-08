@@ -455,11 +455,11 @@ public class CombatEntity extends Entity {
 
     //Path-finding stuff below
 
-    protected void pathToPosition(Coordinate loc){
-        pathToPosition(loc, Integer.MAX_VALUE);
+    protected int pathToPosition(Coordinate loc){
+        return pathToPosition(loc, Integer.MAX_VALUE);
     }
 
-    protected void pathToPosition(Coordinate loc, int maxDistance) {
+    protected int pathToPosition(Coordinate loc, int maxDistance) {
         defineTestColors();
         boolean movementFound = false;
         long startTime = System.nanoTime();
@@ -504,6 +504,7 @@ public class CombatEntity extends Entity {
             teleport(movementOptions.get(random.nextInt(movementOptions.size())));
         }
         DebugWindow.reportf(DebugWindow.STAGE, "pathToPlayer", "Time to solve: %1$fms", (System.nanoTime() - startTime) / 1000000f);
+        return movementOptions.size();
     }
 
     private void updateOpenPoints(){

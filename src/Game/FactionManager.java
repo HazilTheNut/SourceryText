@@ -14,9 +14,9 @@ public class FactionManager {
     void initialize(){
         factions = new ArrayList<>();
 
-        createFaction("stranger");
+        createFaction("player");
         createFaction("blueshirt", new FactionOpinion("redshirt", -1));
-        createFaction("redshirt", new FactionOpinion("blueshirt", -1), new FactionOpinion("stranger", -1));
+        createFaction("redshirt", new FactionOpinion("blueshirt", -1), new FactionOpinion("player", -1));
         createFaction("greenshirt", new FactionOpinion("blueshirt", 1), new FactionOpinion("redshirt", 1));
     }
 

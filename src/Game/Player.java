@@ -6,6 +6,7 @@ import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.Entities.GameCharacter;
 import Game.LevelScripts.WaterFlow;
 import Game.Registries.EntityRegistry;
 import Game.Registries.LevelScriptRegistry;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 /**
  * Created by Jared on 3/27/2018.
  */
-public class Player extends CombatEntity implements MouseInputReceiver{
+public class Player extends GameCharacter implements MouseInputReceiver{
 
     /**
      * Player:
@@ -91,6 +92,10 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         addItem(wallet);
 
         playerActionCollectors = new ArrayList<>();
+
+        isAutonomous = false;
+        factionAlignments = new ArrayList<>();
+        factionAlignments.add("player");
     }
 
     /**
@@ -325,6 +330,16 @@ public class Player extends CombatEntity implements MouseInputReceiver{
         hud.setPlayer(null);
         inv.setPlayer(null);
         gi = null;
+    }
+
+    @Override
+    protected CombatEntity getNearestEnemy() {
+        return null;
+    }
+
+    @Override
+    protected void pickNewWeapon() {
+
     }
 
     @Override
