@@ -176,6 +176,8 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         level.onEnter(lm);
         getPlayer().updateCameraPos();
         getPlayer().unfreeze();
+        Layer pathTestTranspose = new Layer(level.getWidth(), level.getHeight(), "", 0, 0, 0);
+        pathTestLayer.transpose(pathTestTranspose);
     }
 
     /**

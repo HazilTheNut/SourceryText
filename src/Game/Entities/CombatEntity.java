@@ -469,6 +469,7 @@ public class CombatEntity extends Entity {
         nextPoints.add(new PathPoint(loc, loc.stepDistance(getLocation()), 0));
         ArrayList<Coordinate> movementOptions = new ArrayList<>();
         gi.getPathTestLayer().clearLayer();
+        gi.getPathTestLayer().editLayer(getLocation(), new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 200)));
         while(!movementFound){
             //Rebuild the set of open points to process
             updateOpenPoints();

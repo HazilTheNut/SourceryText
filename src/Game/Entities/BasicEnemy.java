@@ -77,7 +77,7 @@ public class BasicEnemy extends CombatEntity {
         if (target != null && target.getHealth() <= 0) target = null;
         if (target == null){
             CombatEntity nearest = getNearestEnemy();
-            if ( nearest != null) { //Target player if nearby and not already targeting something
+            if (nearest != null) { //Target player if nearby and not already targeting something
                 setTarget(nearest);
                 alertNearbyAllies(); //Let everyone know
             }
@@ -99,7 +99,7 @@ public class BasicEnemy extends CombatEntity {
         for (Entity e : entities){
             if (e instanceof BasicEnemy) {
                 BasicEnemy basicEnemy = (BasicEnemy) e;
-                if (getLocation().hypDistance(basicEnemy.getLocation()) <= alertRadius) basicEnemy.setTarget(target);
+                if (getLocation().stepDistance(basicEnemy.getLocation()) <= alertRadius) basicEnemy.setTarget(target);
             }
         }
     }

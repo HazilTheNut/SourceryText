@@ -71,6 +71,22 @@ public class GameCharacter extends BasicEnemy {
     }
 
     @Override
+    protected void alertNearbyAllies() {
+        ArrayList<Entity> entities = gi.getCurrentLevel().getEntities();
+        for (Entity e : entities){
+            int dist = e.getLocation().stepDistance(getLocation());
+            if (e instanceof GameCharacter && dist <= alertRadius) {
+                GameCharacter gc = (GameCharacter) e;
+                byte opinion = gi.getFactionManager().getOpinion(this, gc);
+                DebugWindow.reportf(DebugWindow.GAME, String.format("GameCharacter#%1$05d.alertNearbyAllies", getUniqueID()), "\'%1$-14s\' #%2$05d (%3$ d)", gc.getName(), gc.getUniqueID(), opinion);
+                if (opinion > 0) {
+                    gc.setTarget(target);
+                }
+            }
+        }
+    }
+
+    @Override
     public void onTurn() {
         if (isAutonomous)
             if (target instanceof GameCharacter) {
