@@ -15,9 +15,16 @@ public class FactionManager {
         factions = new ArrayList<>();
 
         createFaction("player");
-        createFaction("blueshirt", new FactionOpinion("redshirt", -1));
-        createFaction("redshirt", new FactionOpinion("blueshirt", -1), new FactionOpinion("player", -1));
-        createFaction("greenshirt", new FactionOpinion("blueshirt", 1), new FactionOpinion("redshirt", 1));
+        createFaction("monster", new FactionOpinion("ALL", -3));
+        createFaction("bandit", new FactionOpinion("player", -1), new FactionOpinion("villager", -1));
+        createFaction("villager", new FactionOpinion("bandit", -2));
+        createFaction("wizard"); //Should go hostile to bandits when launching flare
+        createFaction("termite", new FactionOpinion("spider", -2));
+        createFaction("spider", new FactionOpinion("termite", -2));
+        createFaction("virtuous", new FactionOpinion("vicious", -2));
+        createFaction("vicious", new FactionOpinion("virtuous", -2));
+        createFaction("colorful", new FactionOpinion("player", -1));
+        createFaction("antipirate", new FactionOpinion("vicious", -2));
     }
 
     /**
@@ -46,11 +53,15 @@ public class FactionManager {
     public byte getOpinion(GameCharacter source, GameCharacter target){
         byte totalOpinion = 0;
         for (String factionName : source.getFactionAlignments()){
-            Faction faction = getFaction(factionName);
+            Faction faction = getFaction(factionName); //Gets all factions the source is a member of
             if (faction != null){
-                for (String otherFaction : target.getFactionAlignments()){
-                    totalOpinion += faction.getOpinionOf(otherFaction);
+                for (FactionOpinion factionOpinion : faction.relations){ //Gets all the opinions each faction alignment of the source has
+                    if (factionOpinion.name.equals("ALL") || target.getFactionAlignments().contains(factionOpinion.name)){ //If the target's allegiance matches the opinion
+                        totalOpinion += factionOpinion.opinion;
+                    }
                 }
+                if (target.getFactionAlignments().contains(faction.name))
+                    totalOpinion += 3;
             }
         }
         if (source.hasTag(TagRegistry.BERSERK))

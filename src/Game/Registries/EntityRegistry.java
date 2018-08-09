@@ -48,7 +48,7 @@ public class EntityRegistry {
         registerEntity(11, "Floor Switch", new SpecialText('o', new Color(165, 165, 135), new Color(70, 70, 50, 75)),    FloorSwitch.class, TagRegistry.IMMOVABLE);
         registerEntity(12, "Powered Door", new SpecialText('-', new Color(143, 123, 80),  new Color(74, 65, 55, 75)),    PoweredDoor.class, TagRegistry.IMMOVABLE);
         registerEntity(13, "Large Crate",  new SpecialText('#', new Color(120, 75, 34),   new Color(56, 32, 12, 100)),   MovableCrate.class, TagRegistry.FLAMMABLE, TagRegistry.NO_PATHING);
-        registerEntity(14, "Toggle Switch",new SpecialText('*', new Color(42,  42,  86),  new Color(20, 20, 51, 100)),   ToggleSwitch.class, TagRegistry.IMMOVABLE);
+        registerEntity(14, "Toggle Switch",new SpecialText('*', new Color(42,  42,  86),  new Color(20, 20, 51, 100)),   ToggleSwitch.class, TagRegistry.IMMOVABLE, TagRegistry.NO_PATHING);
         registerEntity(15, "Room Cover",   new SpecialText(' ', new Color(42,  42,  86),  Color.BLACK),                  RoomCover.class,   TagRegistry.IMMOVABLE);
         registerEntity(16, "Wall Torch",   new SpecialText('*', new Color(212, 195, 140), new Color(142, 120, 50, 50)),  Paperweight.class, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER, TagRegistry.ON_FIRE, TagRegistry.BRIGHT);
         registerEntity(MAGIC_BOMB, "MagicBomb", new SpecialText('b'),                                                    MagicBomb.class, TagRegistry.LIVING, TagRegistry.NO_PATHING);
