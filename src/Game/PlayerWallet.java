@@ -3,6 +3,7 @@ package Game;
 import Data.ItemStruct;
 import Data.SerializationVersion;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class PlayerWallet extends Item {
@@ -44,7 +45,8 @@ public class PlayerWallet extends Item {
         return builder.toString();
     }
 
-    private class MoneyType{
+    private class MoneyType implements Serializable {
+        private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
         int qty;
         String name;
         private MoneyType(int qty, String name){

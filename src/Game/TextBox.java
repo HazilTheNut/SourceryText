@@ -86,7 +86,8 @@ public class TextBox implements MouseInputReceiver{
             player.freeze();
             player.getInv().getPlayerInv().close();
             player.getInv().getOtherInv().close();
-            DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
+            if (message.indexOf(' ') > 0)
+                DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
             postMessageAction = action;
             Thread writeThread = new Thread(() -> writeMessage(message, speaker));
             writeThread.start();

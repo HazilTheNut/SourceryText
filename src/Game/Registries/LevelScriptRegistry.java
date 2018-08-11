@@ -25,6 +25,7 @@ public class LevelScriptRegistry {
         scriptMap.put(SCRIPT_WATERFLOW, WaterFlow.class);
 
         scriptMap.put(1000, CinemaTutorialBasement.class);
+        scriptMap.put(1001, CinemaDennisHouse.class);
         //Registering stuff ends here
     }
 

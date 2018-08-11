@@ -130,7 +130,7 @@ public class BasicEnemy extends CombatEntity {
     }
 
     public void setTarget(CombatEntity target) {
-        if (!target.equals(this) && !(hasTag(TagRegistry.BERSERK) && target instanceof Player))
+        if (target != null && !target.equals(this) && !(hasTag(TagRegistry.BERSERK) && target instanceof Player))
             this.target = target;
     }
 
