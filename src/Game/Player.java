@@ -48,7 +48,6 @@ public class Player extends GameCharacter implements MouseInputReceiver{
 
     private int magicPower;
     private double weightCapacity = 20;
-    private int money;
     private PlayerWallet wallet;
 
     private int noEnterWarpZoneTimer = 0;
@@ -86,7 +85,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         addTag(TagRegistry.LIVING, this);
         initNoWeapon();
 
-        wallet = new PlayerWallet(new ItemStruct(10000, 1, "Wallet", 0, TagRegistry.UNLIMITED_USAGE), gi);
+        wallet = new PlayerWallet(new ItemStruct(10000, 1, "Wallet", 0), gi);
         wallet.addTag(TagRegistry.UNLIMITED_USAGE, this);
         wallet.addTag(TagRegistry.IMPORTANT, this);
         addItem(wallet);

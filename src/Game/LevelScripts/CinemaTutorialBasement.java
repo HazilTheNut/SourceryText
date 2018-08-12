@@ -34,7 +34,7 @@ public class CinemaTutorialBasement extends LevelScript {
         wakeUpAnim = new Layer(level.getBackdrop().getCols(), level.getBackdrop().getRows(), "", 0, 0, LayerImportances.MENU);
         wakeUpAnim.fillLayer(new SpecialText(' ', Color.WHITE, Color.BLACK));
         doingWakeUpAnim = true;
-        gi.getPlayer().addMoney(4, "Coin");
+        gi.getPlayer().addMoney(4, "Coins");
     }
 
     @Override
