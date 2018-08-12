@@ -169,7 +169,7 @@ public class HUD implements MouseInputReceiver, Serializable {
             boxHeight++;
         }
         for (Entity e : entities){
-            if (e.getName().length() > 0 && e.isVisible()) { //Entities with blank names should be treated as invisible.
+            if (e.getName().length() > 0 && e.isVisible()) { //Entities with info.txt names should be treated as invisible.
                 boxLength = Math.max(boxLength, e.getName().length() + 2);
                 boxHeight++;
                 if (e instanceof CombatEntity) {

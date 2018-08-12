@@ -21,7 +21,7 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
      * The menu responsible for both saving and loading the game.
      */
 
-    private Layer menuLayer; //The layer containing all the visual info about the save files
+    private Layer menuLayer; //The layer containing all the visual info.txt about the save files
     private Layer selectorLayer; //The layer that shows which save file is being selected
 
     private LayerManager lm;

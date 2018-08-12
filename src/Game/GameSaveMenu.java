@@ -27,7 +27,7 @@ public class GameSaveMenu implements MouseInputReceiver{
      * The menu responsible for both saving and loading the game.
      */
 
-    private Layer menuLayer; //The layer containing all the visual info about the save files
+    private Layer menuLayer; //The layer containing all the visual info.txt about the save files
     private Layer selectorLayer; //The layer that shows which save file is being selected
 
     private LayerManager lm;
@@ -181,7 +181,7 @@ public class GameSaveMenu implements MouseInputReceiver{
         optionLayer.inscribeString(save.file.getName().substring(0, save.file.getName().length() - 4), 1, 0);
         optionLayer.inscribeString(getSaveFileDate(save), 11, 0, TextBox.txt_silver);
         File txtFile = new File(save.file.getPath().substring(0, save.file.getPath().length() - 3).concat("txt"));
-        if (txtFile.exists()){ //Fill in text contents only if there is a text file to get the info from.
+        if (txtFile.exists()){ //Fill in text contents only if there is a text file to get the info.txt from.
             try {
                 FileReader reader = new FileReader(txtFile);
                 BufferedReader bufferedReader = new BufferedReader(reader);

@@ -19,7 +19,7 @@ public class DebugWindow{
      *
      * The master object that controls the debug output of SourceryText.
      *
-     * You can send debug info to any of several tabs, allowing for everything to be nicely sorted.
+     * You can send debug info.txt to any of several tabs, allowing for everything to be nicely sorted.
      *
      * The DebugWindow also has a roster of the Layers currently active while playing SourceryText.
      * You can set each layer in the roster to be visible or invisible individually.
@@ -42,7 +42,7 @@ public class DebugWindow{
     public static final int STAGE       = 1; //'Stage' refers to systems that surround the main game stuff (like simulation, UI, etc.)
     public static final int TAGS        = 2; //For all events and things related to tags
     public static final int GAME        = 3; //The main game stuff that is surrounded by the 'stage'
-    public static final int ENTITY      = 4; //Mainly a spam folder for entity info
+    public static final int ENTITY      = 4; //Mainly a spam folder for entity info.txt
     public static final int MISC        = 5; //Everything else
     public static final int CURSOR      = 6; //For display about stuff under the cursor
 
@@ -148,7 +148,7 @@ public class DebugWindow{
      *
      * The 'f' in 'reportf' stands for "formatted"
      *
-     * @param screen The integer ID of the screen you are sending info to. Use the static constants above for your convenience.
+     * @param screen The integer ID of the screen you are sending info.txt to. Use the static constants above for your convenience.
      * @param caption The String caption for the text. IF the caption matches one of the entries already in there, the text of that entry will be replaced
      * @param value The formatted String being sent as an entry to a DebugLogPane
      * @param args The objects being substituting into the value, according to Java String formatting.

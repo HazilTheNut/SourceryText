@@ -107,7 +107,7 @@ public class Layer implements Serializable{
     }
 
     /**
-     * Fills layer with blank opaque characters in replacement of null SpecialTexts
+     * Fills layer with info.txt opaque characters in replacement of null SpecialTexts
      */
     public void convertNullToOpaque(){
         for (int col = 0; col < textMatrix.length; col++){
