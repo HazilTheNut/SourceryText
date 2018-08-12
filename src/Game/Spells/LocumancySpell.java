@@ -58,17 +58,20 @@ public class LocumancySpell extends Spell {
     }
 
     private void attemptPoint(Coordinate loc, GameInstance gi, Coordinate startLoc, int range){
-        if (gi.isSpaceAvailable(loc, TagRegistry.NO_PATHING) && loc.stepDistance(startLoc) <= range && !validLocations.contains(loc)){
+        if (gi.isSpaceAvailable(loc, TagRegistry.TILE_WALL) && loc.stepDistance(startLoc) <= range && !validLocations.contains(loc)){
             validLocations.add(loc);
             Coordinate layerLoc = loc.subtract(startLoc).add(new Coordinate(previewLayer.getCols(), previewLayer.getRows()).multiplyTruncated(0.5));
-            previewLayer.editLayer(layerLoc, new SpecialText(' ', Color.WHITE, new Color(157, 0, 255, 100)));
+            if (gi.isSpaceAvailable(loc, TagRegistry.NO_PATHING))
+                previewLayer.editLayer(layerLoc, new SpecialText(' ', Color.WHITE, new Color(157, 0, 255, 100)));
+            else
+                previewLayer.editLayer(layerLoc, new SpecialText(' ', Color.WHITE, new Color(187, 0, 155, 50)));
         }
     }
 
     @Override
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         gi.getLayerManager().removeLayer(previewLayer);
-        if (toTransport.size() < 1 || !validLocations.contains(targetLoc))
+        if (toTransport.size() < 1 || !validLocations.contains(targetLoc) || !gi.isSpaceAvailable(targetLoc, TagRegistry.NO_PATHING))
             return 0;
         for (Entity e : toTransport) {
             playTeleportAnimation(targetLoc, gi);
