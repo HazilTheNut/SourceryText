@@ -223,11 +223,11 @@ public class EditorToolPanel extends JPanel {
 
         JMenuItem findAndReplaceItem = new JMenuItem("Find and Replace....");
         findAndReplaceItem.addActionListener(e -> new EditorFindAndReplace(mi.getTextPanel(), ldata, undoManager));
+        keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, "replace");
+        rootPane.getActionMap().put("replace", new MenuAction(() -> new EditorFindAndReplace(mi.getTextPanel(), ldata, undoManager)));
+        findAndReplaceItem.setAccelerator(keyStroke);
         levelMenu.add(findAndReplaceItem);
-
-        JMenuItem levelScriptsItem = new JMenuItem("Level Scripts....");
-        levelScriptsItem.addActionListener(e -> new LevelScriptEnabler(ldata));
-        levelMenu.add(levelScriptsItem);
 
         menuPanel.add(new LonelyMenu(levelMenu, menuPanel));
         menuPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -453,7 +453,7 @@ public class EditorToolPanel extends JPanel {
         toolsPanel.add(warpZonePanel);
     }
 
-    private JButton selectLevelScriptButton;
+    private int selectedScriptId;
 
     private void createLevelScriptPanel(LevelData ldata){
 
@@ -471,7 +471,7 @@ public class EditorToolPanel extends JPanel {
         levelScriptPanel.removeAll();
 
         String btnName = (levelScript != null) ? levelScript.getClass().getSimpleName() : "Select...";
-        selectLevelScriptButton = new JButton(btnName);
+        JButton selectLevelScriptButton = new JButton(btnName);
         selectLevelScriptButton.addActionListener(e -> new EditorLevelScriptSelector(this, ldata));
         levelScriptPanel.add(selectLevelScriptButton);
 
@@ -483,11 +483,16 @@ public class EditorToolPanel extends JPanel {
                     levelScriptPanel.add(createDrawToolButton(s,  new LevelScriptMaskEdit(ldata.getLevelScriptMask(levelScript.getId(), s), ldata), -1));
                 }
             }
+            selectedScriptId = levelScript.getId();
         }
 
         levelScriptPanel.setLayout(new GridLayout(levelScriptPanel.getComponentCount(), 1, 2, 2));
         sizeToolsPanel(levelScriptPanel);
         levelScriptPanel.validate();
+    }
+
+    int getSelectedLevelScript(){
+        return selectedScriptId;
     }
 
     private void sizeToolsPanel(CollapsiblePanel panel){

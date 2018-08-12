@@ -29,8 +29,6 @@ public class ItemRegistry {
 
      */
 
-     //TODO: Item descriptions
-
      public static int ID_ARROW = 1500;
 
     static {

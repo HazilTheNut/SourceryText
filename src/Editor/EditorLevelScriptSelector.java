@@ -26,6 +26,10 @@ public class EditorLevelScriptSelector extends JFrame {
         setTitle("Level Script Selector");
         setSize(new Dimension(400, 300));
 
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        //Create the list
         JList<LevelScriptStruct> scriptList = new JList<>();
         DefaultListModel<LevelScriptStruct> listModel = new DefaultListModel<>();
         for (int id : ldata.getLevelScripts()) {
@@ -43,37 +47,82 @@ public class EditorLevelScriptSelector extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) { //Handles double-clicking to select the level script
-                    editorToolPanel.assignLevelScriptPanel(LevelScriptRegistry.getLevelScript(scriptList.getSelectedValue().id), ldata);
+                    doSelection(scriptList, editorToolPanel, ldata);
                     dispose();
                 }
             }
         });
 
-        add(listPane, BorderLayout.CENTER);
+        //Create the dropdown menu
+        JComboBox<LevelScriptStruct> scriptComboBox = new JComboBox<>();
+        for (int id : LevelScriptRegistry.getMapKeys()){
+            LevelScriptStruct struct = new LevelScriptStruct();
+            struct.id = id;
+            struct.name = LevelScriptRegistry.getLevelScriptClass(id).getSimpleName();
+            scriptComboBox.addItem(struct);
+        }
 
-        //And of course, the panel at the bottom.
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.LINE_AXIS));
+        mainPanel.add(scriptComboBox, BorderLayout.PAGE_START);
+        mainPanel.add(listPane, BorderLayout.CENTER);
 
-        bottomPanel.add(Box.createHorizontalGlue());
+        mainPanel.validate();
 
-        JButton cancelButton = new JButton("Cancel");
+        add(mainPanel, BorderLayout.CENTER);
+
+        //And of course, the panel on the side
+        JPanel sidePanel = new JPanel();
+        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.PAGE_AXIS));
+
+        JButton addButton = new JButton("+");
+        addButton.addActionListener(e -> {
+            if (scriptComboBox.getSelectedItem() instanceof LevelScriptStruct) {
+                LevelScriptStruct selectedItem = (LevelScriptStruct) scriptComboBox.getSelectedItem();
+                if (!ldata.getLevelScripts().contains(selectedItem.id)) {
+                    ldata.addLevelScript(selectedItem.id);
+                    listModel.addElement(selectedItem);
+                }
+            }
+        });
+        addButton.setMaximumSize(new Dimension(65, 38));
+        sidePanel.add(addButton);
+
+        JButton removeButton = new JButton("-");
+        removeButton.addActionListener(e -> {
+            if (scriptList.getSelectedValue() != null) {
+                ldata.removeLevelScript(scriptList.getSelectedValue().id);
+                listModel.removeElementAt(scriptList.getSelectedIndex());
+            }
+        });
+        removeButton.setMaximumSize(new Dimension(65, 38));
+        sidePanel.add(removeButton);
+
+        sidePanel.add(Box.createVerticalGlue());
+
+        JButton cancelButton = new JButton("Exit");
         cancelButton.addActionListener(e -> dispose());
-        bottomPanel.add(cancelButton);
+        cancelButton.setMaximumSize(new Dimension(65, 30));
+        sidePanel.add(cancelButton);
 
-        JButton finishButton = new JButton("Finish");
+        JButton finishButton = new JButton("Select");
         finishButton.addActionListener(e -> {
-            if (scriptList.getSelectedValue() != null)
-                editorToolPanel.assignLevelScriptPanel(LevelScriptRegistry.getLevelScript(scriptList.getSelectedValue().id), ldata);
+            doSelection(scriptList, editorToolPanel, ldata);
             dispose();
         });
-        bottomPanel.add(finishButton);
+        finishButton.setMaximumSize(new Dimension(65, 30));
+        sidePanel.add(finishButton);
 
-        add(bottomPanel, BorderLayout.PAGE_END);
+        add(sidePanel, BorderLayout.LINE_END);
 
         validate();
 
         setVisible(true);
+    }
+
+    private void doSelection(JList<LevelScriptStruct> scriptList, EditorToolPanel editorToolPanel, LevelData ldata){
+        if (scriptList.getSelectedValue() != null && scriptList.getSelectedValue().id != editorToolPanel.getSelectedLevelScript()) {
+            editorToolPanel.assignLevelScriptPanel(LevelScriptRegistry.getLevelScript(scriptList.getSelectedValue().id), ldata);
+            ldata.getLevelScriptLayer().setVisible(false);
+        }
     }
 
     private class LevelScriptStruct {
