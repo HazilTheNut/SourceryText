@@ -181,7 +181,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
 
     void setButtonPanelContents(ArrayList<JButton> btns){
         for (Component c : textBtnPanel.getComponents()) textBtnPanel.remove(c); //Removes all buttons in the panel
-        buttonManifest.clear();
+        buttonManifest = new ArrayList<>();
         generateNewButton(null); //Re-adds the null text button
         for (JButton btn1 : btns) {
             SpecialText otherText = ((SingleTextRenderer) btn1.getIcon()).specText;
@@ -191,8 +191,6 @@ public class EditorTextPanel extends JPanel implements ActionListener{
                 String toAssign = otherText.toString();
                 ((SingleTextRenderer) btn.getIcon()).specText = SpecialText.fromString(toAssign);
                 btn.addActionListener(this);
-                textBtnPanel.add(btn, 0);
-                buttonManifest.add(btn);
             }
         }
         validate();
