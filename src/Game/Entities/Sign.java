@@ -7,6 +7,9 @@ import Data.SerializationVersion;
 import Engine.LayerManager;
 import Game.GameInstance;
 import Game.Player;
+import Game.Registries.TagRegistry;
+import Game.TagHolder;
+import Game.Tags.Tag;
 
 import java.util.ArrayList;
 
@@ -24,11 +27,13 @@ public class Sign extends Entity {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private String text;
+    private int fireLifetime = -1;
 
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("text", ""));
+        args.add(new EntityArg("flammable", "true"));
         return args;
     }
 
@@ -43,5 +48,24 @@ public class Sign extends Entity {
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
         text = readStrArg(searchForArg(entityStruct.getArgs(), "text"), "");
+        if (!readBoolArg(searchForArg(entityStruct.getArgs(), "flammable"), true)){
+            removeTag(TagRegistry.FLAMMABLE);
+        }
+    }
+
+    @Override
+    public void addTag(Tag tag, TagHolder source) {
+        super.addTag(tag, source);
+        if (tag.getId() == TagRegistry.ON_FIRE){
+            fireLifetime = 3;
+        }
+    }
+
+    @Override
+    public void onTurn() {
+        if (fireLifetime > 0)
+            fireLifetime--;
+        if (fireLifetime == 0)
+            selfDestruct();
     }
 }

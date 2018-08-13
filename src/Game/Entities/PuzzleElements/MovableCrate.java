@@ -1,6 +1,7 @@
 package Game.Entities.PuzzleElements;
 
 import Data.Coordinate;
+import Data.EntityArg;
 import Data.EntityStruct;
 import Data.SerializationVersion;
 import Engine.LayerManager;
@@ -8,6 +9,8 @@ import Game.Entities.CombatEntity;
 import Game.GameInstance;
 import Game.Player;
 import Game.Registries.TagRegistry;
+
+import java.util.ArrayList;
 
 public class MovableCrate extends CombatEntity {
 
@@ -18,8 +21,17 @@ public class MovableCrate extends CombatEntity {
     @Override
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
-        setMaxHealth(100);
         fireTimer = 5;
+    }
+
+    @Override
+    public ArrayList<EntityArg> generateArgs() {
+        ArrayList<EntityArg> args = super.generateArgs();
+        EntityArg hpArg = searchForArg(args, "maxHealth");
+        if (hpArg != null) {
+            hpArg.setArgValue("100");
+        }
+        return args;
     }
 
     @Override
@@ -27,7 +39,7 @@ public class MovableCrate extends CombatEntity {
         super.onTurn();
         if (hasTag(TagRegistry.ON_FIRE)){
             fireTimer--;
-            setHealth(getHealth() - 20);
+            setHealth(getMaxHealth() / 5);
         }
         if (fireTimer == 0){
             selfDestruct();
