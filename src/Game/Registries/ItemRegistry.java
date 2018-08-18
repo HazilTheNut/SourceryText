@@ -101,6 +101,9 @@ public class ItemRegistry {
         registerItem(1102, "Magic Dagger",   0.33, TagRegistry.DAMAGE_START + 9,  TagRegistry.WEAPON_THROW, TagRegistry.THROW_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT);
         registerItem(1103, "Water Balloon",  0.10, TagRegistry.WEAPON_THROW, TagRegistry.THROW_WATERBALLOON, TagRegistry.WET);
 
+        registerItem(1200, "Carrot",    0.05, TagRegistry.HEALTH_START + 4);
+        itemFlavorTextMap.put(1200, "A popular veggie\n");
+
         registerItem(ID_ARROW, "Arrow",           0.03, TagRegistry.ARROW, TagRegistry.FLAMMABLE, TagRegistry.METALLIC, TagRegistry.SHARP);
 
         //Upgrades
