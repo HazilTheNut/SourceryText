@@ -21,7 +21,7 @@ public class LevelScriptRegistry {
         scriptMap.put(SCRIPT_LIGHTING, LightingEffects.class);
         scriptMap.put(3, ResetOnEnter.class);
         scriptMap.put(4, SpaceBackground.class);
-        scriptMap.put(5, GenerateSnow.class);
+        scriptMap.put(5, GenerateOverlayTiles.class);
         scriptMap.put(SCRIPT_WATERFLOW, WaterFlow.class);
 
         scriptMap.put(1000, CinemaTutorialBasement.class);

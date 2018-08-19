@@ -7,7 +7,6 @@ import Engine.SpecialText;
 import Game.AnimatedTiles.AnimatedTile;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
-import Game.Entities.GameCharacter;
 import Game.LevelScripts.LevelScript;
 import Game.Registries.LevelScriptRegistry;
 import Game.Registries.TagRegistry;
@@ -160,8 +159,12 @@ public class Level implements Serializable {
     }
 
     public void removeOverlayTile (Tile tile ) {
-        overlayTiles[tile.getLocation().getX()][tile.getLocation().getY()] = null;
-        overlayTileLayer.editLayer(tile.getLocation().getX(), tile.getLocation().getY(), null);
+        removeOverlayTile(tile.getLocation());
+    }
+    
+    public void removeOverlayTile (Coordinate loc){
+        overlayTiles[loc.getX()][loc.getY()] = null;
+        overlayTileLayer.editLayer(loc.getX(), loc.getY(), null);
     }
 
     public boolean isLocationValid(Coordinate loc){

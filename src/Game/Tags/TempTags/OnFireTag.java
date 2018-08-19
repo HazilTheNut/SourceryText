@@ -144,9 +144,13 @@ public class OnFireTag extends Tag {
         e.getTarget().addTag(TagRegistry.ON_FIRE, e.getSource());
     }
 
-    public Tile createAshTile(Coordinate loc, Level level){
-        OverlayTileGenerator tileGenerator = new OverlayTileGenerator();
-        return tileGenerator.createAshTile(loc, level);
+    private void createAshTile(Coordinate loc, Level level){
+        if (level.getOverlayTileAt(loc) == null) {
+            OverlayTileGenerator tileGenerator = new OverlayTileGenerator();
+            tileGenerator.createAshTile(loc, level);
+        } else {
+            level.removeOverlayTile(loc);
+        }
     }
 
     private void spreadToTile(Level level, Coordinate pos, TagHolder source){

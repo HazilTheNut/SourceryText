@@ -4,13 +4,13 @@ import Data.Coordinate;
 import Data.SerializationVersion;
 import Game.OverlayTileGenerator;
 
-public class GenerateSnow extends LevelScript {
+public class GenerateOverlayTiles extends LevelScript {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
     public String[] getMaskNames() {
-        return new String[]{"snow", "ice"};
+        return new String[]{"snow", "ice", "bridge"};
     }
 
     @Override
@@ -23,6 +23,8 @@ public class GenerateSnow extends LevelScript {
                     otg.createSnowTile(loc, level);
                 else if (getMaskDataAt("ice", loc))
                     otg.createIceTile(loc, level);
+                else if (getMaskDataAt("bridge", loc))
+                    otg.createBridgeTile(loc, level);
             }
         }
     }

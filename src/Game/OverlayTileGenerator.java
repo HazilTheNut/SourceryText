@@ -60,6 +60,10 @@ public class OverlayTileGenerator {
         return genericCreateTile(level, pos, "Snow Wall", new SpecialText('^', new Color(169, 182, 217), new Color(164, 164, 186)), TagRegistry.TILE_WALL, TagRegistry.NO_PATHING, TagRegistry.DIGGABLE, TagRegistry.SNOW);
     }
 
+    public Tile createBridgeTile(Coordinate pos, Level level){
+        return genericCreateTile(level, pos, "Bridge", new SpecialText('=', new Color(115, 76, 49),   new Color(77, 50, 33, 240)), TagRegistry.FLAMMABLE);
+    }
+
     private Tile genericCreateTile(Level level, Coordinate pos, String name, SpecialText icon, int... tags){
         Tile tile = new Tile(pos, name, level);
         level.addOverlayTile(tile);

@@ -5,6 +5,8 @@ import Data.LayerImportances;
 import Engine.Layer;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
+import Game.Registries.TagRegistry;
+import Game.Tile;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -115,9 +117,15 @@ public class WaterFlow extends LevelScript {
                 i--; //To account for removing a particle
             } else {
                 particles.set(i, particle.add(totalVector));
-                drawParticle(particle, totalVector);
+                if (isWaterAt(particle))
+                    drawParticle(particle, totalVector);
             }
         }
+    }
+
+    private boolean isWaterAt(Coordinate loc){
+        Tile tile = gi.getTileAt(loc);
+        return tile.hasTag(TagRegistry.SHALLOW_WATER) || tile.hasTag(TagRegistry.DEEP_WATER);
     }
 
     private void drawParticle(Coordinate particle, Coordinate vector){
