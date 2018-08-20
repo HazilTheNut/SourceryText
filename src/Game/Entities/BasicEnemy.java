@@ -94,10 +94,26 @@ public class BasicEnemy extends CombatEntity {
         }
     }
 
+    protected boolean isEnemy(Entity e){
+        return getOpinion(e) < 0;
+    }
+
+    protected boolean isAlly(Entity e){
+        return getOpinion(e) > 0;
+    }
+
+    protected byte getOpinion(Entity e){
+        if (e instanceof Player)
+            return -1;
+        if (e instanceof BasicEnemy)
+            return 1;
+        return 0;
+    }
+
     protected void alertNearbyAllies(){
         ArrayList<Entity> entities = gi.getCurrentLevel().getEntities();
         for (Entity e : entities){
-            if (e instanceof BasicEnemy) {
+            if (isAlly(e)) {
                 BasicEnemy basicEnemy = (BasicEnemy) e;
                 if (getLocation().stepDistance(basicEnemy.getLocation()) <= alertRadius) basicEnemy.setTarget(target);
             }
@@ -130,7 +146,7 @@ public class BasicEnemy extends CombatEntity {
     }
 
     public void setTarget(CombatEntity target) {
-        if (target != null && !target.equals(this) && !(hasTag(TagRegistry.BERSERK) && target instanceof Player))
+        if (target != null && !target.equals(this) && !(hasTag(TagRegistry.BERSERK) && isEnemy(target)))
             this.target = target;
     }
 
@@ -207,7 +223,7 @@ public class BasicEnemy extends CombatEntity {
             if (item.hasTag(TagRegistry.ON_FIRE))       value *= MULT_FIRE;
             if (item.hasTag(TagRegistry.FLAME_ENCHANT)) value *= MULT_FIRE;
             if (item.hasTag(TagRegistry.FROST_ENCHANT)) value *= MULT_ICE;
-            if (item.hasTag(TagRegistry.WEAPON_BOW))    value *= MULT_RANGED;
+            if (item.hasTag(TagRegistry.WEAPON_BOW) || item.hasTag(TagRegistry.WEAPON_THROW)) value *= MULT_RANGED;
             if (value > topScore){
                 topScore = value;
                 bestItem = item;
@@ -261,7 +277,7 @@ public class BasicEnemy extends CombatEntity {
             gi.getPathTestLayer().editLayer(pos, new SpecialText(' ', Color.WHITE, new Color(255, 30, 30, 150)));
             if (gi.getCurrentLevel().getTileAt(pos).hasTag(TagRegistry.TILE_WALL)){
                 return RAYCAST_WALL;
-            } else if (gi.getCurrentLevel().getSolidEntityAt(pos) instanceof BasicEnemy){
+            } else if (isAlly(gi.getCurrentLevel().getSolidEntityAt(pos))){
                 friendExists = true;
             }
         }

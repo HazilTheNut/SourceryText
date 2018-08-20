@@ -12,18 +12,21 @@ import Game.Player;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class StoreItem extends Entity {
+public class StoreItem extends LootPile {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int cost;
     private String currencyType;
+    private long ownerUID = -1;
+    private Coordinate ownerPos = new Coordinate(-1, -1);
 
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("cost","0"));
         args.add(new EntityArg("currency","Coins"));
+        args.add(new EntityArg("ownerPos","[0,0]"));
         return args;
     }
 
@@ -32,10 +35,34 @@ public class StoreItem extends Entity {
         super.initialize(pos, lm, entityStruct, gameInstance);
         cost = readIntArg(searchForArg(entityStruct.getArgs(), "cost"), 0);
         currencyType = readStrArg(searchForArg(entityStruct.getArgs(), "currency"), "Coins");
+        ownerPos = readCoordArg(searchForArg(entityStruct.getArgs(), "ownerPos"), ownerPos);
+        searchForOwner();
+    }
+
+    @Override
+    public void onTurn() {
+        super.onTurn();
+        if (ownerUID == -1 && !ownerPos.equals(new Coordinate(-1, -1))){
+            searchForOwner();
+        }
+    }
+
+    private void searchForOwner(){
+        Entity e = gi.getCurrentLevel().getSolidEntityAt(ownerPos);
+        if (e != null) {
+            ownerUID = e.getUniqueID();
+        }
     }
 
     @Override
     public void onInteract(Player player) {
+        Entity e = gi.getCurrentLevel().getSolidEntityAt(ownerPos);
+        if (ownerUID != -1){
+            if ((e != null && e.getUniqueID() != ownerUID) || e == null){
+                super.onInteract(player);
+                return;
+            }
+        }
         gi.getTextBox().showMessage(generateItemList(), () -> {
             gi.getQuickMenu().clearMenu();
             gi.getQuickMenu().addMenuItem(String.format("Buy (-$%1$d)", cost), new Color(175, 255, 175), this::sellToPlayer);

@@ -86,7 +86,7 @@ public class Entity extends TagHolder implements Serializable {
 
     public boolean isSolid() { return isAlive; }
 
-    //Marking this is false only affects whether the synopsis panel should 'see' it.
+    //Marking this is false will totally conceal the entity
     public boolean isVisible() { return true; }
 
     public boolean isAlive() {
@@ -444,6 +444,33 @@ public class Entity extends TagHolder implements Serializable {
             }
         }
         return coordList;
+    }
+
+    /**
+     * Reads an EntityArg and returns an ArrayList of Strings, using quotation marks (") as wrappers between the strings
+     * @param arg The EntityArg to read
+     * @return The resulting list of strings
+     */
+    protected ArrayList<String> readStringList(EntityArg arg){
+        ArrayList<String> stringList = new ArrayList<>();
+        if (arg != null){
+            StringBuilder builder = new StringBuilder();
+            boolean isBuilding = false;
+            for (int i = 0; i < arg.getArgValue().length(); i++) {
+                if (arg.getArgValue().charAt(i) == '\"'){ //If it finds a quotation mark, that means either building a new string or terminating one
+                    if (isBuilding){ //If it was building a string, terminate
+                        stringList.add(builder.toString());
+                        isBuilding = false;
+                    } else { //Otherwise, must be beginning a new one
+                        isBuilding = true;
+                        builder = new StringBuilder();
+                    }
+                } else {
+                    builder.append(arg.getArgValue().charAt(i));
+                }
+            }
+        }
+        return stringList;
     }
 
     protected EntityArg searchForArg(ArrayList<EntityArg> providedArgs, String name){

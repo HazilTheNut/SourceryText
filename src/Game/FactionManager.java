@@ -16,7 +16,7 @@ public class FactionManager {
 
         createFaction("player");
         createFaction("monster", new FactionOpinion("ALL", -3));
-        createFaction("bandit", new FactionOpinion("player", -1), new FactionOpinion("villager", -1));
+        createFaction("bandit", new FactionOpinion("villager", -1));
         createFaction("villager", new FactionOpinion("bandit", -2));
         createFaction("wizard"); //Should go hostile to bandits when launching flare
         createFaction("termite", new FactionOpinion("spider", -2));

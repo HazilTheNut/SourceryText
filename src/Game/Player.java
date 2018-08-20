@@ -668,6 +668,11 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         }
     }
 
+    @Override
+    public void onInteract(Player player) {
+        //Player should do nothing when trying to interact with itself.
+    }
+
     public void doEnemyTurn(){
         gi.doEnemyTurn();
     }

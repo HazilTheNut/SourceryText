@@ -53,24 +53,27 @@ public class LootPile extends Chest {
     @Override
     public void onInteract(Player player) {
         if (autoPickup){
-            double totalWeight = player.getInv().calculateTotalWeight();
-            for (Item item : getItems())
-                totalWeight += item.calculateWeight();
-            if (player.getWeightCapacity() < totalWeight){
-                gi.getTextBox().showMessage(String.format("You don't have the weight capacity (<cy>CAP<cw>) required to carry this.<nl><cs>%1$.2f / %2$.2f", totalWeight, player.getWeightCapacity()));
-                return;
-            }
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < getItems().size(); i++) {
-                builder.append(String.format("<cy>%1$s x%2$d<cw>", getItems().get(i).getItemData().getName(), getItems().get(i).getItemData().getQty()));
-                if (i < getItems().size() - 1)
-                    builder.append(",<nl>");
-                player.addItem(getItems().get(i));
-            }
-            gi.getTextBox().showMessage("Found " + builder.toString());
-            selfDestruct();
-            return;
+            doAutoPickup(player);
         }
         super.onInteract(player);
+    }
+
+    void doAutoPickup(Player player){
+        double totalWeight = player.getInv().calculateTotalWeight();
+        for (Item item : getItems())
+            totalWeight += item.calculateWeight();
+        if (player.getWeightCapacity() < totalWeight){
+            gi.getTextBox().showMessage(String.format("You don't have the weight capacity (<cy>CAP<cw>) required to carry this.<nl><cs>%1$.2f / %2$.2f", totalWeight, player.getWeightCapacity()));
+            return;
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < getItems().size(); i++) {
+            builder.append(String.format("<cy>%1$s x%2$d<cw>", getItems().get(i).getItemData().getName(), getItems().get(i).getItemData().getQty()));
+            if (i < getItems().size() - 1)
+                builder.append(",<nl>");
+            player.addItem(getItems().get(i));
+        }
+        gi.getTextBox().showMessage("Found " + builder.toString());
+        selfDestruct();
     }
 }

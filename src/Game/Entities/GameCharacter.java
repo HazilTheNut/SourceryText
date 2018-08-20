@@ -8,6 +8,7 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.GameInstance;
+import Game.Player;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -25,10 +26,14 @@ public class GameCharacter extends BasicEnemy {
     protected ArrayList<String> factionAlignments;
     private SpecialText originalSprite;
 
+    private ArrayList<String> interactText;
+    private int interactTextPointer = 0;
+
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("faction", "<faction1>, <faction2>..."));
+        args.add(new EntityArg("interactText", "\"message1\",\"message2\",..."));
         return args;
     }
 
@@ -43,10 +48,22 @@ public class GameCharacter extends BasicEnemy {
             DebugWindow.reportf(DebugWindow.MISC, "GameCharacter.initialize", faction);
         }
         originalSprite = getSprite().getSpecialText(0, 0);
+        interactText = readStringList(searchForArg(entityStruct.getArgs(), "interactText"));
     }
 
     public ArrayList<String> getFactionAlignments() {
         return factionAlignments;
+    }
+
+    @Override
+    protected byte getOpinion(Entity e) {
+        if (e instanceof GameCharacter) {
+            GameCharacter gc = (GameCharacter) e;
+            byte opinion = gi.getFactionManager().getOpinion(this, gc);
+            DebugWindow.reportf(DebugWindow.GAME, String.format("GameCharacter#%1$05d.getOpinion", getUniqueID()), "\'%1$-14s\' #%2$05d (%3$ d) dist: %4$d ", gc.getName(), gc.getUniqueID(), opinion, getLocation().stepDistance(e.getLocation()));
+            return opinion;
+        }
+        return 0;
     }
 
     @Override
@@ -57,14 +74,10 @@ public class GameCharacter extends BasicEnemy {
         ArrayList<Entity> entities = gi.getCurrentLevel().getEntities();
         for (Entity e : entities){
             int dist = e.getLocation().stepDistance(getLocation());
-            if (e instanceof GameCharacter && dist <= Math.min(detectRange, minDistance)) {
+            if (e instanceof GameCharacter && dist <= Math.min(detectRange, minDistance) && isEnemy(e)) {
                 GameCharacter gc = (GameCharacter) e;
-                byte opinion = gi.getFactionManager().getOpinion(this, gc);
-                DebugWindow.reportf(DebugWindow.GAME, String.format("GameCharacter#%1$05d.getNearestEnemy", getUniqueID()), "\'%1$-14s\' #%2$05d (%3$ d) dist: %4$d ", gc.getName(), gc.getUniqueID(), opinion, dist);
-                if (opinion < 0) {
-                    minDistance = dist;
-                    newTarget = gc;
-                }
+                minDistance = dist;
+                newTarget = gc;
             }
         }
         return newTarget;
@@ -75,13 +88,9 @@ public class GameCharacter extends BasicEnemy {
         ArrayList<Entity> entities = gi.getCurrentLevel().getEntities();
         for (Entity e : entities){
             int dist = e.getLocation().stepDistance(getLocation());
-            if (e instanceof GameCharacter && dist <= alertRadius) {
+            if (e instanceof GameCharacter && dist <= alertRadius && isAlly(e)) {
                 GameCharacter gc = (GameCharacter) e;
-                byte opinion = gi.getFactionManager().getOpinion(this, gc);
-                DebugWindow.reportf(DebugWindow.GAME, String.format("GameCharacter#%1$05d.alertNearbyAllies", getUniqueID()), "\'%1$-14s\' #%2$05d (%3$ d)", gc.getName(), gc.getUniqueID(), opinion);
-                if (opinion > 0) {
-                    gc.setTarget(target);
-                }
+                gc.setTarget(target);
             }
         }
     }
@@ -95,6 +104,10 @@ public class GameCharacter extends BasicEnemy {
                     target = null;
             }
         super.onTurn();
+        reportTarget();
+    }
+
+    private void reportTarget(){
         if (isAutonomous)
             if (target != null)
                 DebugWindow.reportf(DebugWindow.ENTITY, String.format("GameCharacter#%1$05d.onTurn", getUniqueID()), "target: %1$s #%2$d", target.getName(), target.getUniqueID());
@@ -110,11 +123,17 @@ public class GameCharacter extends BasicEnemy {
 
     @Override
     protected void updateSprite() {
-        if (gi.getFactionManager().getOpinion(this, gi.getPlayer()) < 0)
+        if (gi.getFactionManager().getOpinion(this, gi.getPlayer()) < 0 || (target != null && target.equals(gi.getPlayer())))
             redifyIcon();
         else
             setIcon(originalSprite);
         super.updateSprite();
+    }
+
+    @Override
+    public void setTarget(CombatEntity target) {
+        super.setTarget(target);
+        updateSprite();
     }
 
     private void redifyIcon(){
@@ -127,5 +146,13 @@ public class GameCharacter extends BasicEnemy {
         hsb[0] = 0;
         Color fromHsb = Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
         return new Color(fromHsb.getRed(), fromHsb.getGreen(), fromHsb.getBlue(), color.getAlpha());
+    }
+
+    @Override
+    public void onInteract(Player player) {
+        if (getOpinion(player) >= 0 && interactText.size() > 0){
+            gi.getTextBox().showMessage(interactText.get(interactTextPointer), getName());
+            interactTextPointer = Math.min(interactText.size() - 1, interactTextPointer + 1); //Increments the pointer, but loops at the maximum value
+        }
     }
 }
