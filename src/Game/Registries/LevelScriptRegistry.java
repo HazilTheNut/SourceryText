@@ -23,6 +23,7 @@ public class LevelScriptRegistry {
         scriptMap.put(4, SpaceBackground.class);
         scriptMap.put(5, GenerateOverlayTiles.class);
         scriptMap.put(SCRIPT_WATERFLOW, WaterFlow.class);
+        scriptMap.put(7, CliffsFalling.class);
 
         scriptMap.put(1000, CinemaTutorialBasement.class);
         scriptMap.put(1001, CinemaDennisHouse.class);

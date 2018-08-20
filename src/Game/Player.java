@@ -266,7 +266,12 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         super.receiveDamage(amount);
         hud.updateHUD();
         if (pathingThread != null && pathingThread.isAlive()) terminatePathing = true;
-        if (getHealth() <= 0) gi.getDeathMenu().show();
+    }
+
+    @Override
+    public void selfDestruct() {
+        super.selfDestruct();
+        gi.getDeathMenu().show();
     }
 
     @Override

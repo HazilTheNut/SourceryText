@@ -192,7 +192,6 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         Color fgColor = tag.getTagColor();
         descLayer.inscribeString(tag.getName(), 2, index + 2, new Color(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
         descLayer.editLayer(0, index + 2, new SpecialText('*', Color.GRAY, bkgDark));
-
         if (owner instanceof CombatEntity) {
             CombatEntity ce = (CombatEntity) owner;
             if (tag.getId() == TagRegistry.DAMAGE_START){
@@ -203,7 +202,6 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                     descLayer.inscribeString(String.format(" (+%1$d)", strengthBonus), tag.getName().length() + 2, index + 2, strengthBonusFg);
             }
         }
-
     }
 
     /**
