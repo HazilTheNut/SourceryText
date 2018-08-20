@@ -10,6 +10,7 @@ import Game.Entities.Entity;
 import Game.Entities.LootPile;
 import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
+import Game.Tags.Tag;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -49,6 +50,8 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
     private final Color descFg      = new Color(201, 255, 224);
     private final Color textFg      = new Color(240, 240, 255);
     private final Color importantFg = new Color(194, 194, 204);
+
+    private final Color strengthBonusFg = new Color(199, 159, 159);
 
     private final Color selectorActive   = new Color(200, 200, 200, 100);
     private final Color selectorInactive = new Color(200, 200, 200,  50);
@@ -119,7 +122,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
      *
      * @param item The item to describe
      */
-    private void updateItemDescription(Item item){
+    private void updateItemDescription(Item item, Entity invOwner){
         Layer descLayer;
         if (item != null) {
             //Create temporary Layer and fill it
@@ -139,15 +142,13 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                 descLayer.inscribeString(String.format("Weight: %1$.2f", item.calculateWeight()), 2, 1, Color.GRAY);
             //Draw each Tag in Item.
             for (int ii = 0; ii < item.getTags().size(); ii++) {
-                Color fgColor = item.getTags().get(ii).getTagColor();
-                descLayer.inscribeString(item.getTags().get(ii).getName(), 2, ii + 2, new Color(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
-                descLayer.editLayer(0, ii + 2, new SpecialText('*', Color.GRAY, bkgDark));
+                drawItemTag(descLayer, item, invOwner, ii);
             }
             //Draw item flavor text
             descLayer.insert(drawItemFlavorText(item), new Coordinate(0, item.getTags().size() + 2));
             descriptionLayer.setVisible(true);
-            if (!player.getItems().contains(item) && otherInv.mode == CONFIG_OTHER_EXCHANGE){ //Therefore must not be in player inventory and is exchanging items
-                //Create weight preview
+            //Draw weight percentage
+            if (!player.equals(invOwner) && otherInv.mode == CONFIG_OTHER_EXCHANGE){ //Therefore must not be in player inventory and is exchanging items
                 double newWeight = calculateTotalWeight() + item.calculateWeight();
                 Color weightColor = (newWeight <= player.getWeightCapacity()) ? weightCapAvailable : weightCapFull;
                 playerInv.inscribeWeightPercentage(playerInv.invLayer, 100 * newWeight / player.getWeightCapacity(), weightColor);
@@ -184,6 +185,25 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             textLayer.inscribeString(lines.get(row), 0, row+1, new Color(185, 185, 185));
         }
         return textLayer;
+    }
+
+    private void drawItemTag(Layer descLayer, Item item, Entity owner, int index){
+        Tag tag = item.getTags().get(index);
+        Color fgColor = tag.getTagColor();
+        descLayer.inscribeString(tag.getName(), 2, index + 2, new Color(fgColor.getRed(), fgColor.getGreen(), fgColor.getBlue()));
+        descLayer.editLayer(0, index + 2, new SpecialText('*', Color.GRAY, bkgDark));
+
+        if (owner instanceof CombatEntity) {
+            CombatEntity ce = (CombatEntity) owner;
+            if (tag.getId() == TagRegistry.DAMAGE_START){
+                int strengthBonus = ce.getStrength();
+                if (item.hasTag(TagRegistry.WEAPON_THROW)) strengthBonus = 0;
+                if (item.hasTag(TagRegistry.WEAPON_BOW)) strengthBonus = ce.getStrength() / 4;
+                if (strengthBonus > 0)
+                    descLayer.inscribeString(String.format(" (+%1$d)", strengthBonus), tag.getName().length() + 2, index + 2, strengthBonusFg);
+            }
+        }
+
     }
 
     /**
@@ -245,7 +265,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             } else {
                 playerInv.changeMode(CONFIG_PLAYER_USE);
                 playerInv.show();
-                updateItemDescription(null);
+                updateItemDescription(null, null);
             }
         }
         return isInInvLayers(screenPos);
@@ -410,6 +430,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         }
 
         void inscribeWeightPercentage(Layer layer, double amount, Color color){
+            layer.fillLayer(new SpecialText(' ', Color.WHITE, bkgLight), new Coordinate(ITEM_STRING_LENGTH, 0), new Coordinate(ITEM_STRING_LENGTH + 3, 0));
             layer.inscribeString(String.format("%1$3.0f%%", amount), ITEM_STRING_LENGTH, 0, color);
         }
 
@@ -423,9 +444,8 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             ArrayList<Item> items = e.getItems();
             int height = getInvHeight();
             for (int row = 0; row < height; row++){ //Draw base inv panel
-                for (int col = 0; col < tempLayer.getCols(); col++){
-                    tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, bkgMedium));
-                }
+                for (int col = 0; col < tempLayer.getCols(); col++)
+                    tempLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkgMedium), new Coordinate(0, row), new Coordinate(tempLayer.getCols(), row));
             }
             for (int col = 0; col < tempLayer.getCols(); col++){ //Create top border
                 tempLayer.editLayer(col, 0, new SpecialText('#', Color.GRAY, borderBkg));
@@ -538,9 +558,9 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             // 1) The selected item changes
             // 2) The mouse enters onto an item
             // 3) The mouse leaves from an item
-            if (previousItem != null && item != null && !previousItem.equals(item)) updateItemDescription(item);
-            if (previousItem == null && item != null)                               updateItemDescription(item);
-            if (previousItem != null && item == null)                               updateItemDescription(null);
+            if (previousItem != null && item != null && !previousItem.equals(item)) updateItemDescription(item, e);
+            if (previousItem == null && item != null)                               updateItemDescription(item, e);
+            if (previousItem != null && item == null)                               updateItemDescription(null, e);
             previousItem = item;
         }
 
