@@ -1,11 +1,8 @@
 package Game.Tags.EnchantmentTags;
 
-import Data.Coordinate;
 import Data.SerializationVersion;
 import Game.Entities.BasicEnemy;
 import Game.Entities.CombatEntity;
-import Game.Entities.Entity;
-import Game.GameInstance;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 
@@ -18,32 +15,13 @@ public class BerserkEnchantmentTag extends EnchantmentTag {
     @Override
     public void onContact(TagEvent e) {
         if (e.getTarget() instanceof CombatEntity) {
+            e.getTarget().addTag(TagRegistry.BERSERK, e.getSource());
             if (e.getTarget() instanceof BasicEnemy) {
                 BasicEnemy target = (BasicEnemy) e.getTarget();
-                BasicEnemy nearest = getNearestBasicEnemy(target.getLocation(), e.getGameInstance());
-                if (nearest != null) {
-                    target.setTarget(nearest);
-                } else
-                    return;
-            }
-            e.getTarget().addTag(TagRegistry.BERSERK, e.getSource());
-        }
-    }
-
-    private BasicEnemy getNearestBasicEnemy(Coordinate pos, GameInstance gi){
-        double lowestDistance = Double.MAX_VALUE;
-        BasicEnemy target = null;
-        for (Entity e : gi.getCurrentLevel().getEntities()){
-            if (e instanceof BasicEnemy) {
-                BasicEnemy basicEnemy = (BasicEnemy) e;
-                double dist = basicEnemy.getLocation().hypDistance(pos);
-                if (dist < lowestDistance && dist > 0.05){
-                    target = basicEnemy;
-                    lowestDistance = dist;
-                }
+                CombatEntity newTarget = target.getNearestEnemy();
+                target.setTarget(newTarget);
             }
         }
-        return target;
     }
 
     @Override

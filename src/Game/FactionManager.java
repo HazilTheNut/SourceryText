@@ -19,16 +19,16 @@ public class FactionManager implements Serializable {
         factions = new ArrayList<>();
 
         createFaction("player");
-        createFaction("monster", new FactionOpinion("ALL", -3));
-        createFaction("bandit", new FactionOpinion("villager", -1));
-        createFaction("villager", new FactionOpinion("bandit", -2));
+        createFaction("monster", new FactionOpinion("ALL", -10));
+        createFaction("bandit", new FactionOpinion("villager", -3));
+        createFaction("villager", new FactionOpinion("bandit", -3));
         createFaction("wizard"); //Should go hostile to bandits when launching flare
-        createFaction("termite", new FactionOpinion("spider", -2));
-        createFaction("spider", new FactionOpinion("termite", -2));
-        createFaction("virtuous", new FactionOpinion("vicious", -2));
-        createFaction("vicious", new FactionOpinion("virtuous", -2));
-        createFaction("colorful", new FactionOpinion("player", -1));
-        createFaction("antipirate", new FactionOpinion("vicious", -2));
+        createFaction("termite", new FactionOpinion("spider", -3));
+        createFaction("spider", new FactionOpinion("termite", -3));
+        createFaction("virtuous", new FactionOpinion("vicious", -3));
+        createFaction("vicious", new FactionOpinion("virtuous", -3));
+        createFaction("colorful", new FactionOpinion("player", -3));
+        createFaction("antipirate", new FactionOpinion("vicious", -3));
     }
 
     /**
@@ -46,7 +46,7 @@ public class FactionManager implements Serializable {
         return output;
     }
 
-    private Faction getFaction(String name){
+    public Faction getFaction(String name){
         for (Faction faction : factions){
             if (name.equals(faction.name))
                 return faction;
@@ -65,7 +65,7 @@ public class FactionManager implements Serializable {
                     }
                 }
                 if (target.getFactionAlignments().contains(faction.name))
-                    totalOpinion += 3;
+                    totalOpinion += 7;
             }
         }
         if (source.hasTag(TagRegistry.BERSERK))
@@ -80,7 +80,7 @@ public class FactionManager implements Serializable {
         DebugWindow.reportf(DebugWindow.MISC, "FactionManager.createFaction", faction.toString());
     }
 
-    private class Faction {
+    public class Faction {
         /**
          * Faction:
          *
@@ -111,6 +111,16 @@ public class FactionManager implements Serializable {
             }
             return 0;
         }
+
+        public void addOpinion(String name, int opinion){
+            for (FactionOpinion relation : relations){
+                if (relation.name.equals(name)){
+                    relation.opinion = (byte)Math.max(-10, Math.min(relation.opinion + opinion, 10));
+                    return;
+                }
+            }
+            relations.add(new FactionOpinion(name, opinion));
+        }
     }
 
     private class FactionOpinion {
@@ -121,13 +131,14 @@ public class FactionManager implements Serializable {
          *
          * Here's a guideline for the opinions:
          *
-         * -3 : Unforgivable, you heathen
-         * -2 : I will attack you, and there is no way you will join us
-         * -1 : I will attack you, but you can join us if you want to
-         * 0  : Who are you again?
-         * +1 : I like you, consider joining us
-         * +2 : You are our friend
-         * +3 : It's as if you are a member of our group
+         * -3 and below: Attacks
+         * +3 and above: Friendly, able to communicate
+         * -2 to +2    : Neutral
+         *
+         * Killing someone = -2 to opinion
+         * Membership of a faction = +7 to opinion
+         *
+         * Opinions stop compounding if the value goes beyond +/-10
          */
         private String name; //The name of the faction this opinion is of; i.e. "I dislike this faction by x amount"
         private byte opinion; //Should generally sit in the -3 to 3 range

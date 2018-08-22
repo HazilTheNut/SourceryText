@@ -6,9 +6,8 @@ import Data.EntityStruct;
 import Data.SerializationVersion;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.*;
 import Game.Debug.DebugWindow;
-import Game.GameInstance;
-import Game.Player;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -25,6 +24,8 @@ public class GameCharacter extends BasicEnemy {
 
     protected ArrayList<String> factionAlignments;
     private SpecialText originalSprite;
+
+    private GameCharacter recentDamageDealer;
 
     private ArrayList<String> interactText;
     private int interactTextPointer = 0;
@@ -67,16 +68,20 @@ public class GameCharacter extends BasicEnemy {
     }
 
     @Override
-    protected CombatEntity getNearestEnemy() {
+    public CombatEntity getNearestEnemy() {
         DebugWindow.reportf(DebugWindow.GAME, String.format("GameCharacter#%1$05d.getNearestEnemy", getUniqueID()), "BEGIN EVAL");
         GameCharacter newTarget = null;
         int minDistance = Integer.MAX_VALUE;
+        byte maxHate = -3;
         ArrayList<Entity> entities = gi.getCurrentLevel().getEntities();
         for (Entity e : entities){
             int dist = e.getLocation().stepDistance(getLocation());
-            if (e instanceof GameCharacter && dist <= Math.min(detectRange, minDistance) && isEnemy(e)) {
+            byte opinion = getOpinion(e);
+            if (e instanceof GameCharacter && opinion <= maxHate && dist <= detectRange && dist > 0 && (dist <= minDistance || opinion < maxHate)) {
                 GameCharacter gc = (GameCharacter) e;
                 minDistance = dist;
+                maxHate = opinion;
+                DebugWindow.reportf(DebugWindow.GAME, String.format("GameCharacter#%1$05d.getNearestEnemy", getUniqueID()), "New Target: dist = %1$d, opinion = %2$d", minDistance, maxHate);
                 newTarget = gc;
             }
         }
@@ -97,12 +102,6 @@ public class GameCharacter extends BasicEnemy {
 
     @Override
     public void onTurn() {
-        if (isAutonomous)
-            if (target instanceof GameCharacter) {
-                GameCharacter gc = (GameCharacter) target;
-                if (gi.getFactionManager().getOpinion(this, gc) > 0)
-                    target = null;
-            }
         super.onTurn();
         reportTarget();
     }
@@ -119,6 +118,35 @@ public class GameCharacter extends BasicEnemy {
     public void onLevelEnter() {
         super.onLevelEnter();
         updateSprite();
+    }
+
+    @Override
+    public void onReceiveDamage(int amount, TagHolder source, GameInstance gi) {
+        if (source instanceof Projectile) {
+            Projectile projectile = (Projectile) source;
+            if (projectile.getSource() instanceof GameCharacter) {
+                recentDamageDealer = (GameCharacter) projectile.getSource();
+            }
+        } else if (source instanceof GameCharacter) {
+            recentDamageDealer = (GameCharacter) source;
+        }
+        super.onReceiveDamage(amount, source, gi);
+    }
+
+    @Override
+    public void selfDestruct() {
+        super.selfDestruct();
+        if (isAutonomous && recentDamageDealer instanceof Player)
+            dislikePlayer();
+    }
+
+    private void dislikePlayer(){
+        for (String factionName : factionAlignments){
+            FactionManager.Faction faction = gi.getFactionManager().getFaction(factionName);
+            if (faction != null) {
+                faction.addOpinion("player", -2);
+            }
+        }
     }
 
     @Override

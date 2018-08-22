@@ -74,7 +74,11 @@ public class BasicEnemy extends CombatEntity {
 
     private void doAutonomousAI(){
         if (weapon == null && getItems().size() > 0) pickNewWeapon(); //No Weapon? Try picking new ones if there's something in the inventory
-        if (target != null && target.getHealth() <= 0) target = null;
+        if (target != null) {
+            int hp = target.getHealth();
+            if (hp <= 0)
+                target = null;
+        }
         if (target == null){
             CombatEntity nearest = getNearestEnemy();
             if (nearest != null) { //Target player if nearby and not already targeting something
@@ -95,19 +99,22 @@ public class BasicEnemy extends CombatEntity {
     }
 
     protected boolean isEnemy(Entity e){
-        return getOpinion(e) < 0;
+        return getOpinion(e) <= -3;
     }
 
     protected boolean isAlly(Entity e){
-        return getOpinion(e) > 0;
+        return getOpinion(e) >= 3;
     }
 
     protected byte getOpinion(Entity e){
+        byte opinion = 0;
         if (e instanceof Player)
-            return -1;
-        if (e instanceof BasicEnemy)
-            return 1;
-        return 0;
+            opinion = -3;
+        else if (e instanceof BasicEnemy)
+            opinion = 3;
+        if (hasTag(TagRegistry.BERSERK))
+            opinion *= -1;
+        return opinion;
     }
 
     protected void alertNearbyAllies(){
@@ -120,11 +127,29 @@ public class BasicEnemy extends CombatEntity {
         }
     }
 
-    protected CombatEntity getNearestEnemy(){
+    public CombatEntity getNearestEnemy(){
+        if (hasTag(TagRegistry.BERSERK))
+            return getNearestBasicEnemy();
         Player player = gi.getPlayer();
         if (player.getLocation().stepDistance(getLocation()) <= detectRange)
             return player;
         return null;
+    }
+
+    private BasicEnemy getNearestBasicEnemy(){
+        double lowestDistance = Double.MAX_VALUE;
+        BasicEnemy target = null;
+        for (Entity e : gi.getCurrentLevel().getEntities()){
+            if (e instanceof BasicEnemy) {
+                BasicEnemy basicEnemy = (BasicEnemy) e;
+                double dist = basicEnemy.getLocation().stepDistance(getLocation());
+                if (dist < lowestDistance && dist > 0){
+                    target = basicEnemy;
+                    lowestDistance = dist;
+                }
+            }
+        }
+        return target;
     }
 
     @Override
@@ -134,20 +159,24 @@ public class BasicEnemy extends CombatEntity {
             Projectile projectile = (Projectile) source;
             if (projectile.getSource() instanceof CombatEntity) {
                 CombatEntity projectileSource = (CombatEntity) projectile.getSource();
-                setTarget(projectileSource);
+                setTarget(projectileSource, true);
                 alertNearbyAllies();
             }
         }
         if (source instanceof CombatEntity) {
-            setTarget((CombatEntity)source); //Target the source of the damage
+            setTarget((CombatEntity)source, true); //Target the source of the damage
             alertNearbyAllies();
         }
         pickNewWeapon();
     }
 
-    public void setTarget(CombatEntity target) {
-        if (target != null && !target.equals(this) && !(hasTag(TagRegistry.BERSERK) && isEnemy(target)))
+    private void setTarget(CombatEntity target, boolean urgent){
+        if (target != null && !target.equals(this) && (isEnemy(target) || urgent))
             this.target = target;
+    }
+
+    public void setTarget(CombatEntity target) {
+        setTarget(target, false);
     }
 
     private boolean isRanged(){

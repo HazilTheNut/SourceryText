@@ -337,7 +337,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     }
 
     @Override
-    protected CombatEntity getNearestEnemy() {
+    public CombatEntity getNearestEnemy() {
         return null;
     }
 

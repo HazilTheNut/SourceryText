@@ -8,7 +8,7 @@ public class BerserkTag extends TempTag {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     public BerserkTag(){
-        LIFETIME_START = 10;
+        LIFETIME_START = 20;
     }
 
     @Override
