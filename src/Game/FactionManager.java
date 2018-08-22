@@ -1,13 +1,17 @@
 package Game;
 
+import Data.SerializationVersion;
 import Game.Debug.DebugWindow;
 import Game.Entities.GameCharacter;
 import Game.Registries.TagRegistry;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class FactionManager {
+public class FactionManager implements Serializable {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private ArrayList<Faction> factions;
 
