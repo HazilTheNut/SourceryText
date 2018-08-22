@@ -19,6 +19,7 @@ public class LayerImportances {
 
     public static final int BACKDROP          = 0;
     public static final int TILE_OVERLAY      = 10;
+    public static final int TILE_TAG          = 13;
     public static final int TILE_ANIM         = 15;
     public static final int ENTITY            = 20;
     public static final int ENTITY_SOLID      = 25;

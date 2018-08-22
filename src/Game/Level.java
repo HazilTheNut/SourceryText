@@ -53,6 +53,7 @@ public class Level implements Serializable {
     private Tile[][] baseTiles;
     private Tile[][] overlayTiles;
     private Layer overlayTileLayer;
+    private Layer tileTagLayer;
 
     private ArrayList<WarpZone> warpZones;
 
@@ -78,6 +79,7 @@ public class Level implements Serializable {
         backdrop = new Layer(ldata.getBackdrop().getCols(), ldata.getBackdrop().getCols(), "backdrop (" + getName() + ")", 0, 0, LayerImportances.BACKDROP);
         backdrop.transpose(ldata.getBackdrop());
         overlayTileLayer = new Layer(new SpecialText[backdrop.getCols()][backdrop.getRows()], "tile_overlay (" + getName() + ")", 0, 0, LayerImportances.TILE_OVERLAY);
+        tileTagLayer = new Layer(new SpecialText[backdrop.getCols()][backdrop.getRows()], "tile_tag (" + getName() + ")", 0, 0, LayerImportances.TILE_TAG);
 
         baseTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
         overlayTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
@@ -200,6 +202,7 @@ public class Level implements Serializable {
         for (Tile t : getAllTiles()) t.onLevelEnter(null);
         lm.addLayer(backdrop);
         lm.addLayer(overlayTileLayer);
+        lm.addLayer(tileTagLayer);
         lm.addLayer(animatedTileLayer);
         for (LevelScript ls : levelScripts) ls.onLevelEnter();
     }
@@ -208,6 +211,7 @@ public class Level implements Serializable {
         for (Entity e : entities) e.onLevelExit();
         lm.removeLayer(backdrop);
         lm.removeLayer(overlayTileLayer);
+        lm.removeLayer(tileTagLayer);
         lm.removeLayer(animatedTileLayer);
         for (LevelScript ls : levelScripts) ls.onLevelExit();
     }
@@ -422,5 +426,9 @@ public class Level implements Serializable {
 
     public ArrayList<LevelScriptMask> getLevelScriptMasks() {
         return levelScriptMasks;
+    }
+
+    public Layer getTileTagLayer() {
+        return tileTagLayer;
     }
 }

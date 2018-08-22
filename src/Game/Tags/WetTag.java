@@ -46,7 +46,7 @@ public class WetTag extends Tag {
             Tile baseTile = tile.getLevel().getBaseTileAt(tile.getLocation());
             if (baseTile != null) {
                 if (!baseTile.hasTag(TagRegistry.SHALLOW_WATER) && !baseTile.hasTag(TagRegistry.DEEP_WATER)) {
-                    tile.getLevel().getOverlayTileLayer().editLayer(tile.getLocation(), new SpecialText(' ', Color.WHITE, new Color(15, 15, 30, 30)));
+                    tile.getLevel().getTileTagLayer().editLayer(tile.getLocation(), new SpecialText(' ', Color.WHITE, new Color(15, 15, 30, 30)));
                     drying = true;
                     startLifetime();
                 }
@@ -80,9 +80,7 @@ public class WetTag extends Tag {
     public void onRemove(TagHolder owner) {
         if (owner instanceof Tile) {
             Tile tile = (Tile) owner;
-            if (tile.getLevel().getOverlayTileAt(tile.getLocation()) == null){
-                tile.getLevel().getOverlayTileLayer().editLayer(tile.getLocation(), null);
-            }
+            tile.getLevel().getTileTagLayer().editLayer(tile.getLocation(), null);
         }
     }
 

@@ -72,6 +72,8 @@ public class LayerManager {
      * @param toAdd The Layer to add
      */
     public void addLayer (Layer toAdd){
+        if (toAdd == null)
+            return;
         if (bufferOneOpen)
             operationBufferOne.add(() -> addLayerOperation(toAdd));
         else
@@ -180,7 +182,9 @@ public class LayerManager {
      * @param toRemove The layer to remove (and potentially others)
      */
     public void removeLayer (Layer toRemove){
-        removeLayer(toRemove.getName());
+        if (toRemove != null) {
+            removeLayer(toRemove.getName());
+        }
     }
 
     /**

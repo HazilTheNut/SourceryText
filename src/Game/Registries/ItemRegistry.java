@@ -83,6 +83,7 @@ public class ItemRegistry {
         registerItem(131, "Torch",           1,   TagRegistry.DAMAGE_START + 1, TagRegistry.WEAPON_STRIKE, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
         registerItem(132, "Pitchfork",       3,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.METALLIC, TagRegistry.SHARP);
         itemFlavorTextMap.put(132,  "Great for farming,\nAmazing for mob riots");
+        registerItem(133, "Rapier",          3.5, TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.METALLIC, TagRegistry.SHARP, TagRegistry.DUELING_ENCHANT);
 
         //Healing items / potions with various effects
         registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10);
