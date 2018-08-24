@@ -13,6 +13,7 @@ import Game.Registries.TagRegistry;
 import Game.Registries.TileRegistry;
 import Game.Tags.Tag;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -65,6 +66,8 @@ public class Level implements Serializable {
     private ArrayList<LevelScript> levelScripts;
     private ArrayList<LevelScriptMask> levelScriptMasks;
 
+    private Layer highContrastFilter;
+
     public Level(String path){
 
         filePath = path;
@@ -87,6 +90,8 @@ public class Level implements Serializable {
         tileGenerationTags = new ArrayList<>();
         tileIdMatrix = ldata.getTileData();
         levelScriptMasks = ldata.getLevelScriptMasks();
+
+        generateHighContrastFilter();
 
         DebugWindow.reportf(DebugWindow.STAGE, "Level.initialize","Columns: %1$d", backdrop.getCols());
         for (int col = 0; col < backdrop.getCols(); col++){
@@ -126,6 +131,26 @@ public class Level implements Serializable {
 
     ArrayList<LevelScript> getLevelScripts() {
         return levelScripts;
+    }
+
+    private void generateHighContrastFilter(){
+        highContrastFilter = new Layer(backdrop.getCols(), backdrop.getRows(), "highcontrast (" + getName() + ")", 0, 0, LayerImportances.BACKDROP + 1);
+        highContrastFilter.setVisible(false);
+        for (int col = 0; col < getWidth(); col++) {
+            for (int row = 0; row < getHeight(); row++) {
+                TileStruct struct = TileRegistry.getTileStruct(tileIdMatrix[col][row]);
+                ArrayList<Integer> tags = new ArrayList<>();
+                for (int tagId : struct.getTagIDs()) tags.add(tagId);
+                if (tags.contains(TagRegistry.TILE_WALL))
+                    highContrastFilter.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 8)));
+                else if (tags.contains(TagRegistry.SHALLOW_WATER))
+                    highContrastFilter.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(204, 255, 255, 8)));
+                else if (tags.contains(TagRegistry.DEEP_WATER)){
+                    highContrastFilter.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(100, 120, 200, 8)));
+                } else
+                    highContrastFilter.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(0, 0, 0, 8)));
+            }
+        }
     }
 
     void destroy(){
@@ -200,10 +225,13 @@ public class Level implements Serializable {
         }
         for (Entity e : entities) e.onLevelEnter();
         for (Tile t : getAllTiles()) t.onLevelEnter(null);
+        if (highContrastFilter == null)
+            generateHighContrastFilter();
         lm.addLayer(backdrop);
         lm.addLayer(overlayTileLayer);
         lm.addLayer(tileTagLayer);
         lm.addLayer(animatedTileLayer);
+        lm.addLayer(highContrastFilter);
         for (LevelScript ls : levelScripts) ls.onLevelEnter();
     }
 
@@ -213,6 +241,7 @@ public class Level implements Serializable {
         lm.removeLayer(overlayTileLayer);
         lm.removeLayer(tileTagLayer);
         lm.removeLayer(animatedTileLayer);
+        lm.removeLayer(highContrastFilter);
         for (LevelScript ls : levelScripts) ls.onLevelExit();
     }
 

@@ -130,6 +130,8 @@ public class TagHolder implements Serializable {
     }
 
     public void onContact(TagHolder other, GameInstance gi){
+        if (other == null)
+            return;
         contactEvent(this, other, gi);
         contactEvent(other, this, gi);
         DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact", "TagHolder \'" + this.getClass().getSimpleName() + "\'");

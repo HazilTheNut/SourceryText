@@ -295,8 +295,8 @@ public class EditorToolPanel extends JPanel {
         artToolsPanel.setBorder(BorderFactory.createTitledBorder("Art Tools"));
 
         //Art tool buttons
-        artToolsPanel.add(createDrawToolButton("Brush",     new ArtBrush(),                    KeyEvent.VK_B));
-        artToolsPanel.add(createDrawToolButton("Eraser",    new ArtEraser(),                   KeyEvent.VK_E));
+        artToolsPanel.add(createDrawToolButton("Brush",     new ArtBrush(lm),                  KeyEvent.VK_B));
+        artToolsPanel.add(createDrawToolButton("Eraser",    new ArtEraser(lm),                 KeyEvent.VK_E));
         artToolsPanel.add(createDrawToolButton("Line",      new ArtLine(lm),                   KeyEvent.VK_L));
         artToolsPanel.add(createDrawToolButton("Rectangle", new ArtRectangle(lm),              KeyEvent.VK_G));
         artToolsPanel.add(createDrawToolButton("Fill",      new ArtFill(),                     KeyEvent.VK_F));

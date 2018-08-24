@@ -1,6 +1,7 @@
 package Editor.DrawTools;
 
 import Engine.Layer;
+import Engine.LayerManager;
 import Engine.SpecialText;
 
 /**
@@ -13,15 +14,13 @@ public class ArtEraser extends ArtBrush {
      * Inherits the ArtBrush class, but instead using null SpecialText's instead of input SpecialText.
      */
 
-    public ArtEraser() { name = "Eraser Tool"; }
-
-    @Override
-    public void onDraw(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        drawBrush(layer, col, row, null);
+    public ArtEraser(LayerManager lm) {
+        super(lm);
+        name = "Eraser Tool";
     }
 
     @Override
-    public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        drawBrush(layer, col, row, null);
+    void drawBrush(Layer layer, int centerCol, int centerRow, SpecialText text) {
+        super.drawBrush(layer, centerCol, centerRow, null);
     }
 }
