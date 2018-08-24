@@ -80,7 +80,10 @@ public class FactionManager implements Serializable {
         DebugWindow.reportf(DebugWindow.MISC, "FactionManager.createFaction", faction.toString());
     }
 
-    public class Faction {
+    public class Faction implements Serializable{
+
+        private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
+
         /**
          * Faction:
          *
@@ -123,7 +126,10 @@ public class FactionManager implements Serializable {
         }
     }
 
-    private class FactionOpinion {
+    private class FactionOpinion implements Serializable {
+
+        private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
+
         /**
          * FactionOpinion:
          *
