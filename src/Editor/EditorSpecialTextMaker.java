@@ -220,6 +220,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
          */
 
         float[] colorData;
+        Color[][] colorMatrix;
 
         void setColorData(float[] data) {
             colorData = data;
@@ -230,7 +231,19 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         //Gets the width of the main box of the color picker, without the hue slider on the side.
         private int getBoxWidth() { return getWidth() - 15; }
 
-        ColorPicker() { colorData = new float[]{0, 0, 0}; }
+        ColorPicker() {
+            colorData = new float[]{0, 0, 0};
+        }
+
+        private void recalculateColorMatrix(){
+            colorMatrix = new Color[getBoxWidth() + 1][getHeight() + 1];
+            for (int y = 1; y < getHeight()-1; y++){
+                for (int x = 1; x < getBoxWidth(); x++) {
+                    Color col = Color.getHSBColor(colorData[0], (float) (x - 1) / (getBoxWidth()), (float) (y - 1) / (getHeight() - 1));
+                    colorMatrix[x][y] = col;
+                }
+            }
+        }
 
         @Override
         public void paintComponent(Graphics g) {
@@ -239,8 +252,11 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             //Draw the main box and hue slider
             for (int y = 1; y < getHeight()-1; y++){
                 for (int x = 1; x < boxWidth; x++) { //Draw stuff in the main box
-                    Color col = Color.getHSBColor(colorData[0], (float) (x - 1) / (boxWidth), (float) (y - 1) / (getHeight() - 1));
-                    g.setColor(col);
+                    try {
+                        g.setColor(colorMatrix[x][y]);
+                    } catch (NullPointerException e){
+                        recalculateColorMatrix();
+                    }
                     g.fillRect(x, y, 1, 1);
                 }
                 //Then draw the hue slider, using the same y value for compactness.
@@ -288,6 +304,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             mousePointY = Math.max(0, Math.min(mousePointY, getHeight()));
             if (mousePointX >= getWidth() - 13){ //Selecting hue
                 colorData[0] = (float)mousePointY / getHeight();
+                recalculateColorMatrix();
             } else {
                 colorData[1] = ((float)mousePointX)/(getBoxWidth());
                 colorData[2] = ((float)mousePointY)/(getHeight());
@@ -331,6 +348,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         @Override
         public void componentResized(ComponentEvent e) {
+            recalculateColorMatrix();
             repaint();
         }
 
