@@ -198,19 +198,24 @@ public class Layer implements Serializable{
             return;
         }
         Random random = new Random();
+        int maxFailures = (int)(150f / chance);
+        int numFailures = 0;
         for (int col = 0; col < textMatrix.length; col++){
             for (int row = 0; row < textMatrix[0].length; row++){
                 SpecialText get = getSpecialText(col, row);
-                if ((int)(random.nextDouble() * 100) < chance) {
-                    if (get != null && get.equals(find))
+                if ((get != null && get.equals(find)) || (get == null && find == null)) {
+                    if ((int) (random.nextDouble() * 100) < chance || numFailures == maxFailures) {
                         editLayer(col, row, replace);
-                    else if (get == null && find == null) {
-                        editLayer(col, row, replace);
+                        numFailures = 0;
+                    } else {
+                        numFailures++;
                     }
                 }
             }
         }
     }
+
+
 
     public void resizeLayer(int width, int height, int startX, int startY){
         SpecialText[][] newMatrix = new SpecialText[width][height];

@@ -180,7 +180,7 @@ public class BasicEnemy extends CombatEntity {
     }
 
     private boolean isRanged(){
-        return getWeapon().hasTag(TagRegistry.WEAPON_BOW);
+        return getWeapon().hasTag(TagRegistry.WEAPON_BOW) || getWeapon().hasTag(TagRegistry.WEAPON_THROW);
     }
 
     private void doMeleeBehavior(){
@@ -283,6 +283,8 @@ public class BasicEnemy extends CombatEntity {
             } else {
                 return target.getLocation().hypDistance(getLocation()) <= RangeTag.RANGE_DEFAULT;
             }
+        } else if (weapon.hasTag(TagRegistry.WEAPON_THROW)){
+            return target.getLocation().hypDistance(getLocation()) <= 7 + (getStrength() / 4);
         }
         return false;
     }
