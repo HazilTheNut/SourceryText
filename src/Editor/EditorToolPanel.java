@@ -191,6 +191,10 @@ public class EditorToolPanel extends JPanel {
         redoMenuItem.setAccelerator(keyStroke);
         levelMenu.add(redoMenuItem);
 
+        JMenuItem exportItem = new JMenuItem("Export to Text");
+        exportItem.addActionListener(e -> new ExportWindow(ldata));
+        levelMenu.add(exportItem);
+
         levelMenu.addSeparator();
 
         JMenuItem syncTileDataItem = new JMenuItem("Sync Data Display"); //Sync option
