@@ -165,6 +165,7 @@ public class Level implements Serializable {
     public void addEntity(Entity e){
         entities.add(e);
         e.onContact(getTileAt(e.getLocation()), e.getGameInstance());
+        for (LevelScript levelScript : levelScripts) levelScript.onAddEntity(e);
     }
 
     public void removeEntity(Entity e){ entities.remove(e); }
@@ -183,6 +184,7 @@ public class Level implements Serializable {
 
     public void addOverlayTile (Tile tile){
         overlayTiles[tile.getLocation().getX()][tile.getLocation().getY()] = tile;
+        for (LevelScript levelScript : levelScripts) levelScript.onAddOverlayTile(tile);
     }
 
     public void removeOverlayTile (Tile tile ) {

@@ -17,7 +17,7 @@ public class CinemaLibraryStorage extends LevelScript {
     @Override
     public void onTurnEnd() {
         if (playerHasFireScroll() && !didMessage){
-            gi.getTextBox().showMessage("Reading the scroll granted you a new magical power:<nl> <co>Fire Bolt!<cw><np>To cast the spell, press " + getInput(InputMap.CAST_SPELL) + ".<nl>Once casted, you must wait a few turns before casting the spell again.<np>If you happen to learn another spell, press " + getInput(InputMap.CHANGE_SPELL) + " switch between the two.");
+            gi.getTextBox().showMessage("Reading the scroll grants you a new magical power:<nl> <co>Fire Bolt!<cw><np>To cast the spell, press " + getInput(InputMap.CAST_SPELL) + ".<nl>Once casted, you must wait a few turns before casting the spell again.<np>If you happen to learn another spell, press " + getInput(InputMap.CHANGE_SPELL) + " switch between the two.");
             didMessage = true;
         }
     }

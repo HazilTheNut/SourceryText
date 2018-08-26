@@ -3,8 +3,10 @@ package Game.LevelScripts;
 import Data.Coordinate;
 import Data.LevelScriptMask;
 import Data.SerializationVersion;
+import Game.Entities.Entity;
 import Game.GameInstance;
 import Game.Level;
+import Game.Tile;
 
 import java.io.Serializable;
 
@@ -72,6 +74,16 @@ public class LevelScript implements Serializable {
 
     //Ran after the level is fully constructed
     public void onLevelLoad(){
+        //Override this
+    }
+
+    //Ran when an overlay tile is added to the level
+    public void onAddOverlayTile(Tile tile){
+        //Override this
+    }
+
+    //Ran when an entity is added to the level
+    public void onAddEntity(Entity e){
         //Override this
     }
 

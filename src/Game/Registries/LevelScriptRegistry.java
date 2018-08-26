@@ -28,6 +28,8 @@ public class LevelScriptRegistry {
         scriptMap.put(1000, CinemaTutorialBasement.class);
         scriptMap.put(1001, CinemaDennisHouse.class);
         scriptMap.put(1002, CinemaLibraryStorage.class);
+
+        scriptMap.put(2000, VillageDetectFires.class);
         //Registering stuff ends here
     }
 
