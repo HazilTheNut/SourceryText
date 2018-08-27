@@ -144,12 +144,16 @@ public class HUD implements MouseInputReceiver, Serializable {
     private final Color txt_entity = new Color(209, 209, 255);
     private final Color txt_weapon = new Color(209, 255, 209);
 
+    private Coordinate prevLevelPos;
+
     /**
      * Updates the synopsis at the bottom-right of screen
      *
      * @param levelPos The level-position of the mouse.
      */
     public void updateSynopsis(Coordinate levelPos){
+        if (prevLevelPos != null && prevLevelPos.equals(levelPos)) return;
+        prevLevelPos = levelPos.copy();
         ArrayList<Entity> entities = player.getGameInstance().getCurrentLevel().getEntitiesAt(levelPos);
         String tilename = null;
         try {
@@ -235,7 +239,6 @@ public class HUD implements MouseInputReceiver, Serializable {
             if (screenPos.getY() <= 1 || (mousePos != null && mousePos.getY() <= 1)) {
                 updateHUD();
             }
-            updateSynopsis(levelPos);
         }
         return player.getSpells().size() > 0 && spellMenu.onMouseMove(screenPos);
     }

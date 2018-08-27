@@ -48,7 +48,7 @@ public class DebugWindow{
 
     static final Color textColor = new Color(191, 244, 255);
 
-    private static ArrayList<Runnable> entryActions = new ArrayList<>();
+    private static ArrayList<LogEntry> entriesToAdd = new ArrayList<>();
 
     static {
         dispenseUpdates = new ArrayList<>(); //Holds a list of actions that moves every scroll bar to its bottom whenever new text is added.
@@ -108,19 +108,39 @@ public class DebugWindow{
             public void run() {
                 long startTime = System.nanoTime();
                 try {
-                    for (int i = 0; i < entryActions.size(); i++) {
-                        if (entryActions.get(i) != null) {
-                            entryActions.get(i).run();
+                    for (int i = 0; i < entriesToAdd.size(); i++) {
+                        if (entriesToAdd.get(i) != null) {
+                            LogEntry entry = entriesToAdd.get(i);
+                            DebugLogPane logPane = getDebugLog(entry.paneID);
+                            if (logPane != null) {
+                                logPane.addEntry(entry.caption, entry.message);
+                            }
                         }
                     }
-                    entryActions.clear();
                 } catch (NullPointerException | ConcurrentModificationException e){
                     e.printStackTrace();
+                }
+                if (entriesToAdd.size() > 0) {
+                    //System.out.printf("[DebugWindow] Total # of entryActions: %1$d\n", entriesToAdd.size());
+                    entriesToAdd.clear();
+                    updateLogPanes();
                 }
                 double ms = (double)(System.nanoTime() - startTime) / 1000000;
                 if (ms > 50) System.out.printf("[DebugWindow] update time: %1$.2fms\n", ms);
             }
         }, 10, 100);
+    }
+
+    private static void updateLogPanes(){
+        int i = 0;
+        DebugLogPane logPane;
+        do {
+            logPane = getDebugLog(i);
+            if (logPane != null) {
+                logPane.update();
+            }
+            i++;
+        } while( logPane != null);
     }
 
     public static void open(){
@@ -131,6 +151,10 @@ public class DebugWindow{
         JScrollPane scrollPane =  new JScrollPane(screen, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         tabbedPane.addChangeListener(e -> moveScrollBarToBottom(scrollPane, screen));
         dispenseUpdates.add(() -> moveScrollBarToBottom(scrollPane, screen));
+        if (screen instanceof DebugLogPane) {
+            DebugLogPane debugLogPane = (DebugLogPane) screen;
+            debugLogPane.setScrollPane(scrollPane);
+        }
         return scrollPane;
     }
 
@@ -154,17 +178,10 @@ public class DebugWindow{
      * @param args The objects being substituting into the value, according to Java String formatting.
      */
     public static void reportf(int screen, String caption, String value, Object... args){
-        entryActions.add(() -> {
-            DebugLogPane logPane = getDebugLog(screen);
-            assert logPane != null;
-            logPane.addEntry(caption, String.format(value, args));
-            Component selected = tabbedPane.getSelectedComponent();
-            if (selected instanceof JScrollPane) {
-                Component inView = ((JScrollPane)selected).getViewport().getView();
-                if (inView.equals(logPane))
-                    for (TextDispenseUpdate update : dispenseUpdates) update.update();
-            }
-        });
+        entriesToAdd.add(new LogEntry(screen, caption, String.format(value, args)));
+        DebugLogPane logPane = getDebugLog(screen);
+        if (logPane != null)
+            logPane.moveScrollBar();
     }
 
     //Adds a Layer to the Layers pane
@@ -205,5 +222,16 @@ public class DebugWindow{
 
     private interface TextDispenseUpdate {
         void update();
+    }
+
+    private static class LogEntry{
+        int paneID;
+        String caption;
+        String message;
+        private LogEntry(int id, String cap, String mes){
+            paneID = id;
+            caption = cap;
+            message = mes;
+        }
     }
 }

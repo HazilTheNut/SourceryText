@@ -20,6 +20,8 @@ public class DebugLogPane extends JComponent {
 
     private boolean captionSensitive;
 
+    private JScrollPane scrollPane;
+
     public DebugLogPane(boolean captionSensitive){
         this.captionSensitive = captionSensitive;
         setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
@@ -30,13 +32,15 @@ public class DebugLogPane extends JComponent {
             for (int i = 0; i < debugEntries.size(); i++) {
                 if (debugEntries.get(i).caption.equals(caption)) {
                     debugEntries.get(i).text = text;
-                    repaint();
                     return;
                 }
             }
         }
         debugEntries.add(new DebugEntry(caption, text));
-        if (debugEntries.size() > 10000) debugEntries.remove(0); //Prevents memory leaks!
+    }
+
+    public void update(){
+        debugEntries.removeAll(debugEntries.subList(0, Math.max(0, debugEntries.size() - 100000))); //Prevents memory leaks!
         setPreferredSize(new Dimension(calculatePreferredWidth(), VERT_SEP * debugEntries.size()));
         repaint();
     }
@@ -66,6 +70,17 @@ public class DebugLogPane extends JComponent {
             String entryText = String.format("[%1$s] %2$s", entry.caption, entry.text);
             g.drawString(entryText, 1, (i+1) * VERT_SEP - 5);
         }
+    }
+
+    public void setScrollPane(JScrollPane scrollPane) {
+        this.scrollPane = scrollPane;
+    }
+
+    void moveScrollBar(){
+        scrollPane.getViewport().revalidate();
+        revalidate();
+        scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+        scrollPane.repaint();
     }
 
     private class DebugEntry {

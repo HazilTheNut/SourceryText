@@ -126,14 +126,13 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         else
             gi.getLayerManager().setCameraPos(camNewX, camNewY);
         getSprite().setPos(getLocation());
+        updateSynopsis();
     }
-
 
     public void updateHUD() {hud.updateHUD();}
 
     public void updateSynopsis() {
-        if (mouseScreenPos != null)
-            hud.updateSynopsis(mouseScreenPos.subtract(gi.getLayerManager().getCameraPos()));
+        hud.updateSynopsis(gi.getGameMaster().getMouseInput().getMouseScreenPos().add(gi.getLayerManager().getCameraPos()));
     }
 
     /**
@@ -279,7 +278,6 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         /*if (getWeapon() != null && getWeapon().getItemData().getQty() == 1)
             removeItem(getWeapon());*/
         super.doAttackEvent(ce);
-        hud.updateSynopsis(ce.getLocation());
         hud.updateHUD();
     }
 

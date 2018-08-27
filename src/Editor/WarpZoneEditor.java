@@ -93,7 +93,7 @@ public class WarpZoneEditor extends JFrame{
         addMouseListener(mi);
         addMouseMotionListener(mi);
 
-        setMinimumSize(new Dimension(Math.max(wz.getWidth() * 40, 300), Math.max((wz.getHeight() * 50) + 50, 350)));
+        setSize(new Dimension(Math.max(wz.getWidth() * 40, 300), Math.max((wz.getHeight() * 50) + 50, 350)));
         setVisible(true);
 
         requestFocusInWindow();

@@ -42,6 +42,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     private ArrayList<InputType> downInputs; //A List of InputTypes that represent the buttons currently held down.
 
     private Coordinate mousePrevPos;
+    private Coordinate mouseScreenPos;
 
     public GameMouseInput(ViewWindow viewWindow, LayerManager layerManager){
         window = viewWindow;
@@ -86,6 +87,10 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         for (MouseInputReceiver receiver : inputReceivers){
             if (eventAction.doAction(receiver)) return;
         }
+    }
+
+    public Coordinate getMouseScreenPos() {
+        return mouseScreenPos;
     }
 
     public interface InputEventAction {
@@ -192,11 +197,11 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     @Override
     public void mouseMoved(MouseEvent e) {
         mouseRawPos = new Coordinate(e.getX(), e.getY());
-        Coordinate screenPos = getScreenPos(mouseRawPos);
-        if (mousePrevPos == null || !mousePrevPos.equals(screenPos)) {
+        mouseScreenPos = getScreenPos(mouseRawPos);
+        if (mousePrevPos == null || !mousePrevPos.equals(mouseScreenPos)) {
             mouseHighlight.setPos(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()));
             performInputEvent(receiver -> receiver.onMouseMove(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos)));
-            mousePrevPos = screenPos.copy();
+            mousePrevPos = mouseScreenPos.copy();
         }
     }
 
