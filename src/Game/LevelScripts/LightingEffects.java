@@ -13,6 +13,7 @@ import Game.Registries.TagRegistry;
 import Game.TagHolder;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class LightingEffects extends LevelScript {
@@ -59,7 +60,7 @@ public class LightingEffects extends LevelScript {
         double[] calcTimes = new double[3];
         identifyLightNodes();
         calcTimes[0] = (System.nanoTime() - startTime) / 1000000f;
-        compileLightmaps();
+        compileLightmaps(); //Raycasting also done here too
         calcTimes[1] = (System.nanoTime() - startTime) / 1000000f;
         drawShadingLayer();
         calcTimes[2] = (System.nanoTime() - startTime) / 1000000f;
@@ -112,7 +113,7 @@ public class LightingEffects extends LevelScript {
             if (dist <= 0.005) return;
             if (dist <= other.gravity){
                 other.luminance += lightNode.luminance;
-                other.gravity += 0.25;
+                other.gravity += 0.15;
                 return;
             }
         }
@@ -123,7 +124,7 @@ public class LightingEffects extends LevelScript {
         for (int id : lightIDs){
             if (holder.hasTag(id)){
                 if (holder.hasTag(TagRegistry.BRIGHT))
-                    return 25;
+                    return 22;
                 else
                     return 5;
             }
@@ -294,7 +295,10 @@ public class LightingEffects extends LevelScript {
         }
     }
 
-    private class LightNode{
+    private class LightNode implements Serializable {
+
+        private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
+
         int x;
         int y;
         double luminance;
@@ -304,7 +308,7 @@ public class LightingEffects extends LevelScript {
             this.x = x;
             this.y = y;
             this.luminance = luminance;
-            gravity = 1.5;
+            gravity = 1.25;
             lightMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
         }
 

@@ -54,8 +54,8 @@ public class LootPile extends Chest {
     public void onInteract(Player player) {
         if (autoPickup){
             doAutoPickup(player);
-        }
-        super.onInteract(player);
+        } else
+            super.onInteract(player);
     }
 
     void doAutoPickup(Player player){

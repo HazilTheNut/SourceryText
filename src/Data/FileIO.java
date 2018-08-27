@@ -257,9 +257,7 @@ public class FileIO {
 
     public String serializeLevelData(LevelData ldata) {return serializeLevelData(ldata, getRootFilePath()); }
 
-    public GameInstance openGameInstance(File gameFile){
-        return (GameInstance)openSerializedFile(gameFile);
-    }
+    public GameInstance openGameInstance(File gameFile){ return (GameInstance)openSerializedFile(gameFile); }
 
     public InputMap openInputMap(File mapFile){
         return (InputMap)openSerializedFile(mapFile);

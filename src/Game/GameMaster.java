@@ -100,7 +100,8 @@ public class GameMaster {
      * 'Closes' a GameInstance, shutting down all processes and clearing all Layers in the LayerManager.
      */
     void exitGame(){
-        currentGameInstance.dispose();
+        if (currentGameInstance != null)
+            currentGameInstance.dispose();
         layerManager.clearLayers();
         mouseInput.clearInputReceivers();
         gameRunning = false;
@@ -130,15 +131,20 @@ public class GameMaster {
             mainMenu.close();
             //Generate new one
             currentGameInstance = io.openGameInstance(gameFile);
-            currentGameInstance.assignLayerManager(layerManager);
-            currentGameInstance.assignMouseInput(mouseInput);
-            currentGameInstance.assignGameMaster(this);
-            currentGameInstance.initialize();
-            currentGameInstance.establishMouseInput();
-            currentGameInstance.enterLevel(currentGameInstance.getCurrentLevel().getFilePath(), currentGameInstance.getPlayer().getLocation());
-            gameRunning = true;
-            layerManager.addLayer(mouseInput.getMouseHighlight());
-            DebugWindow.reportf(DebugWindow.STAGE, "GameMaster.loadGame","Successful load of game!");
+            if (currentGameInstance != null) {
+                currentGameInstance.assignLayerManager(layerManager);
+                currentGameInstance.assignMouseInput(mouseInput);
+                currentGameInstance.assignGameMaster(this);
+                currentGameInstance.initialize();
+                currentGameInstance.establishMouseInput();
+                currentGameInstance.enterLevel(currentGameInstance.getCurrentLevel().getFilePath(), currentGameInstance.getPlayer().getLocation());
+                gameRunning = true;
+                layerManager.addLayer(mouseInput.getMouseHighlight());
+                DebugWindow.reportf(DebugWindow.STAGE, "GameMaster.loadGame","Successful load of game!");
+            } else {
+                exitGameToMainMenu();
+            }
+
         });
         loadGameThread.start();
     }

@@ -85,6 +85,7 @@ public class ItemRegistry {
         itemFlavorTextMap.put(132,  "Great for farming,\nAmazing for mob riots");
         registerItem(133, "Rapier",          3.5, TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.METALLIC, TagRegistry.SHARP, TagRegistry.DUELING_ENCHANT);
         registerItem(134, "Maddening Bow",   2,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_BOW, TagRegistry.FLAMMABLE, TagRegistry.BERSERK_ENCHANT);
+        registerItem(135, "Vine Spear",      3,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT, TagRegistry.VENOM_ENCHANT);
 
         //Healing items / potions with various effects
         registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10);
