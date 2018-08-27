@@ -565,7 +565,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         private boolean onItemClick(Item selected, ArrayList<Integer> actions){
             switch (mode){
                 case CONFIG_PLAYER_USE:
-                    if (!player.isFrozen()){
+                    if (player.isNotFrozen()){
                         if (actions.contains(InputMap.INV_USE)) {
                             Thread itemUseThread = new Thread(() -> useItem(selectedItem));
                             itemUseThread.start();

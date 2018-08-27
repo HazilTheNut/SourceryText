@@ -39,7 +39,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     private ArrayList<MouseInputReceiver> inputReceivers = new ArrayList<>();
     private Coordinate mouseRawPos;
     private InputMap inputMap;
-    private ArrayList<InputType> downInputs; //A List of InputTypes that represent the buttons currently held down.
+    private ArrayList<DownInput> downInputs; //A List of InputTypes that represent the buttons currently held down.
 
     private Coordinate mousePrevPos;
     private Coordinate mouseScreenPos;
@@ -63,7 +63,10 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     }
 
     public ArrayList<InputType> getDownInputs() {
-        return downInputs;
+        ArrayList<InputType> inputTypes = new ArrayList<>();
+        for (DownInput downInput : downInputs)
+            inputTypes.add(downInput.type);
+        return inputTypes;
     }
 
     private Coordinate getTiledMousePos(Coordinate mousePos){
@@ -220,11 +223,15 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     @Override
     public void keyPressed(KeyEvent e) {
         InputType input = new InputType(e.getKeyCode(), InputType.TYPE_KEY);
-        if (inputMap != null && !downInputs.contains(input)) { //keyPressed() gets ran a bunch of times in a row if the button is held down long enough, which is not desired.
-            downInputs.add(input);
+        if (inputMap != null && !getDownInputs().contains(input)) { //keyPressed() gets ran a bunch of times in a row if the button is held down long enough, which is not desired.
             performInputEvent(receiver -> {
                 ArrayList<Integer> actions = inputMap.getAction(input);
-                return receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), actions);
+                boolean inputCaught = receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), actions);
+                if (inputCaught) {
+                    downInputs.add(new DownInput(input, receiver));
+                    reportDownInputs();
+                }
+                return inputCaught;
             });
         }
     }
@@ -232,8 +239,35 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     @Override
     public void keyReleased(KeyEvent e) {
         if (inputMap != null) {
-            downInputs.remove(new InputType(e.getKeyCode(), InputType.TYPE_KEY));
-            performInputEvent(receiver -> receiver.onInputUp(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getKeyCode(), InputType.TYPE_KEY))));
+            DownInput downInput = getDownInput(new InputType(e.getKeyCode(), InputType.TYPE_KEY));
+            if (downInput != null) {
+                downInputs.remove(downInput);
+                reportDownInputs();
+                downInput.receiver.onInputUp(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getKeyCode(), InputType.TYPE_KEY)));
+            }
+        }
+    }
+
+    private DownInput getDownInput(InputType inputType){
+        for (DownInput downInput : downInputs){
+            if (downInput.type.equals(inputType))
+                return downInput;
+        }
+        return null;
+    }
+
+    private void reportDownInputs(){
+        StringBuilder builder = new StringBuilder();
+        for (DownInput downInput : downInputs) builder.append(downInput.type.toString()).append(':').append(downInput.receiver.getClass().getSimpleName()).append(' ');
+        DebugWindow.reportf(DebugWindow.STAGE, "GameMouseInput.reportDownInputs", builder.toString());
+    }
+
+    private class DownInput{
+        InputType type;
+        MouseInputReceiver receiver;
+        private DownInput(InputType inputType, MouseInputReceiver mouseInputReceiver){
+            type = inputType;
+            receiver = mouseInputReceiver;
         }
     }
 }

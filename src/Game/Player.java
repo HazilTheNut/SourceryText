@@ -52,12 +52,13 @@ public class Player extends GameCharacter implements MouseInputReceiver{
 
     private int noEnterWarpZoneTimer = 0;
 
-    private Coordinate movementVector = new Coordinate(0, 0);
     private final Coordinate NORTH    = new Coordinate(0, -1);
     private final Coordinate EAST     = new Coordinate(1, 0);
     private final Coordinate SOUTH    = new Coordinate(0, 1);
     private final Coordinate WEST     = new Coordinate(-1, 0);
-    private transient Thread movementThread;
+    private final Coordinate PASS     = new Coordinate(0, 0);
+    private transient ArrayList<Coordinate> movementVectorList;
+    private boolean terminateMovement;
     private final int MOVEMENT_INTERVAL = 125;
 
     private boolean onRaft = false;
@@ -104,6 +105,8 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         inv = new PlayerInventory(gi.getLayerManager(), this);
         hud = new HUD(gi.getLayerManager(), this);
         initSwooshLayer();
+        movementVectorList = new ArrayList<>();
+        startMovementThread();
     }
 
     @Override
@@ -377,31 +380,52 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         playerActionCollectors.remove(actionCollector);
     }
 
+    private Coordinate compileMovementVectors(){
+        Coordinate result = new Coordinate(0, 0);
+        for (Coordinate vector : movementVectorList)
+            if (vector != null) result = result.add(vector);
+        return result;
+    }
+
     private void movementKeyDown(Coordinate vector){
-        movementVector = movementVector.add(vector);
-        movementVector = new Coordinate(Math.max(-1, Math.min(1, movementVector.getX())), Math.max(-1, Math.min(1, movementVector.getY()))); //Sanitates the movement vector
-        if (movementThread == null || !movementThread.isAlive()) { //Probably should not rudely interrupt movement thread.
-            movementThread = new Thread(() -> {
-                while (!movementVector.equals(new Coordinate(0, 0))){ //Move while movement vector is not zero
-                    long loopStartTime = System.nanoTime();
-                    if (!isFrozen()) {
-                        freeze();
-                        if (movementVector.getX() != 0) {
-                            move(movementVector.getX(), 0);
-                            gi.doEnemyTurn();
-                        }
-                        if (movementVector.getY() != 0) {
-                            move(0, movementVector.getY());
-                            gi.doEnemyTurn();
-                        }
-                        unfreeze();
+        movementVectorList.add(vector);
+    }
+
+    private void reportMovementVector(){
+        DebugWindow.reportf(DebugWindow.STAGE, "Player.movementVector", "%1$s", compileMovementVectors());
+        StringBuilder builder = new StringBuilder();
+        for (Coordinate vector : movementVectorList) builder.append(String.format("%1$s ", vector));
+        DebugWindow.reportf(DebugWindow.STAGE, "Player.movementVectorList", builder.toString());
+    }
+
+    private void startMovementThread(){
+        Thread movementThread = new Thread(() -> {
+            while (!terminateMovement) {
+                while (movementVectorList.size() < 1)
+                    sleepMoveThread(10); //Wait for input
+                Coordinate totalVector = compileMovementVectors();
+                long loopStartTime = System.nanoTime();
+                if (isNotFrozen()) {
+                    freeze();
+                    if (totalVector.getX() != 0) {
+                        move(totalVector.getX(), 0);
+                        gi.doEnemyTurn();
                     }
-                    int runTime = (int)((System.nanoTime() - loopStartTime) / 1000000);
-                    sleepMoveThread(Math.max(MOVEMENT_INTERVAL - runTime, 0));
+                    if (totalVector.getY() != 0) {
+                        move(0, totalVector.getY());
+                        gi.doEnemyTurn();
+                    }
+                    if (totalVector.equals(new Coordinate(0, 0)))
+                        gi.doEnemyTurn();
+                    unfreeze();
                 }
-            });
-            movementThread.start();
-        }
+                int runTime = (int) ((System.nanoTime() - loopStartTime) / 1000000);
+                int interval = (!totalVector.equals(new Coordinate(0, 0))) ? MOVEMENT_INTERVAL : MOVEMENT_INTERVAL * 2;
+                sleepMoveThread(Math.max(interval - runTime, 0));
+                reportMovementVector();
+            }
+        });
+        movementThread.start();
     }
 
     /**
@@ -419,7 +443,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     }
 
     private void movementKeyUp(Coordinate vector){
-        movementVector = movementVector.subtract(vector);
+        movementVectorList.remove(vector);
     }
 
     @Override
@@ -459,7 +483,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
 
     @Override
     public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
-        if (!isFrozen() && actions != null && actions.size() > 0) {
+        if (actions != null && actions.size() > 0) {
             terminatePathing = true;
             if (actions.contains(InputMap.INVENTORY)) {
                 updateHUD(); //The inventory close and open stuff is handled by PlayerInventory
@@ -480,11 +504,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
                 playerAttack(levelPos);
             }
             if (actions.contains(InputMap.PASS_TURN)){
-                Thread passTurnThread = new Thread(() -> {
-                    freeze();
-                    gi.doEnemyTurn();
-                });
-                passTurnThread.start();
+                movementKeyDown(PASS);
             }
             if (actions.contains(InputMap.MOVE_INTERACT)){
                 moveAndInteract(levelPos);
@@ -502,7 +522,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
                 movementKeyDown(WEST);
             }
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -520,14 +540,14 @@ public class Player extends GameCharacter implements MouseInputReceiver{
             if (actions.contains(InputMap.MOVE_WEST)) {
                 movementKeyUp(WEST);
             }
+            if (actions.contains(InputMap.PASS_TURN)) {
+                movementKeyUp(PASS);
+            }
             if (actions.contains(InputMap.CAST_SPELL)){
                 castSpell(levelPos);
             }
-            if (gi.getGameMaster().getMouseInput().getDownInputs().size() == 0){
-                movementVector = new Coordinate(0, 0);
-            }
         }
-        return false;
+        return true;
     }
 
     private void inspect(Coordinate levelPos){
@@ -579,10 +599,14 @@ public class Player extends GameCharacter implements MouseInputReceiver{
 
     private void castSpell(Coordinate levelPos){
         Thread spellThread = new Thread(() -> {
-            if (isSpellReady() && !isFrozen()) {
+            if (isSpellReady() && isNotFrozen()) {
                 freeze(); //Stop player actions while casting spell
-                int cd = equippedSpell.castSpell(levelPos, this, getGameInstance(), magicPower);
-                for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerCastSpell(levelPos, equippedSpell);
+                int cd = 0;
+                if (shouldDoAction()) {
+                    cd = equippedSpell.castSpell(levelPos, this, getGameInstance(), magicPower);
+                    for (PlayerActionCollector actionCollector : playerActionCollectors)
+                        actionCollector.onPlayerCastSpell(levelPos, equippedSpell);
+                }
                 if (cd > 0) {
                     cooldowns.add(cd);
                     gi.doEnemyTurn();
@@ -596,13 +620,16 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     }
 
     private void playerAttack(Coordinate levelPos){
-        Thread attackThread = new Thread(() -> {
-            freeze();
-            for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerAttack(levelPos, getWeapon());
-            doWeaponAttack(levelPos);
-            gi.doEnemyTurn();
-        });
-        attackThread.start();
+        if (isNotFrozen()) {
+            Thread attackThread = new Thread(() -> {
+                freeze();
+                for (PlayerActionCollector actionCollector : playerActionCollectors)
+                    actionCollector.onPlayerAttack(levelPos, getWeapon());
+                doWeaponAttack(levelPos);
+                gi.doEnemyTurn();
+            });
+            attackThread.start();
+        }
     }
 
     private boolean isSpellReady(){
@@ -624,7 +651,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     private void moveAndInteract(Coordinate levelPos){
         if (pathingThread != null && pathingThread.isAlive())
             terminatePathing = true;
-        else {
+        else if (isNotFrozen()){
             terminatePathing = false;
             pathingThread = new Thread(() -> {
                 Coordinate prevPos = null;
@@ -688,7 +715,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         }
     }
 
-    boolean isFrozen() {return !gi.isPlayerTurn(); }
+    boolean isNotFrozen() { return gi.isPlayerTurn(); }
 
     public int getMagicPower() {
         return magicPower;
