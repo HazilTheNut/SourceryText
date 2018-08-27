@@ -98,12 +98,13 @@ public class Layer implements Serializable{
      * @param layer The other layer to transpose from.
      */
     public void transpose(Layer layer){
-        textMatrix = new SpecialText[layer.getCols()][layer.getRows()];
-        for (int col = 0; col < textMatrix.length; col++){
-            for (int row = 0; row < textMatrix[0].length; row++){
-                textMatrix[col][row] = layer.getSpecialText(col, row);
+        SpecialText[][] tempMatrix = new SpecialText[layer.getCols()][layer.getRows()];
+        for (int col = 0; col < tempMatrix.length; col++){
+            for (int row = 0; row < tempMatrix[0].length; row++){
+                tempMatrix[col][row] = layer.getSpecialText(col, row);
             }
         }
+        textMatrix = tempMatrix;
     }
 
     /**

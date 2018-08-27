@@ -11,6 +11,7 @@ import Game.GameInstance;
 import Game.Player;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
+import Game.TagHolder;
 import Game.Tags.Tag;
 
 import java.awt.*;
@@ -71,6 +72,14 @@ public class ToggleSwitch extends Entity {
     @Override
     public void onInteract(Player player) {
         toggle();
+        updateBrightTag(this);
+    }
+    
+    private void updateBrightTag(TagHolder tagHolder){
+        if (isOn)
+            tagHolder.addTag(TagRegistry.BRIGHT, tagHolder);
+        else
+            tagHolder.removeTag(TagRegistry.BRIGHT);
     }
 
     private class TogglingTag extends Tag {
@@ -79,6 +88,7 @@ public class ToggleSwitch extends Entity {
         @Override
         public void onContact(TagEvent e) {
             toggle();
+            e.addFutureAction(event -> updateBrightTag(e.getSource()));
         }
 
         @Override

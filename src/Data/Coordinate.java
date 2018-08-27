@@ -90,6 +90,28 @@ public class Coordinate implements Serializable {
     }
 
     /**
+     * Returns a new Coordinate whose values are the smaller values of this and the other coordinate, for each x and y respectively.
+     * For example, flooring by [0,0] will set any negative x and y values to just zero.
+     * NOTE: This method does not alter the values of either Coordinate!
+     * @param other The other Coordinate to floor with.
+     * @return A new Coordinate
+     */
+    public Coordinate floor(Coordinate other){
+        return new Coordinate(Math.max(getX(), other.getX()), Math.max(getY(), other.getY()));
+    }
+
+    /**
+     * Returns a new Coordinate whose values are the larger values of this and the other coordinate, for each x and y respectively.
+     * For example, flooring by [100,100] will set any x and y values above 100 to 100
+     * NOTE: This method does not alter the values of either Coordinate!
+     * @param other The other Coordinate to ceil with.
+     * @return A new Coordinate
+     */
+    public Coordinate ceil(Coordinate other){
+        return new Coordinate(Math.min(getX(), other.getX()), Math.min(getY(), other.getY()));
+    }
+
+    /**
      * Returns the minimum number of 'steps' required to reach another coordinate, ignoring all terrain / walls
      * A 'step' is defined by a movement towards an adjacent space
      * @param other The target position to calculate the number of 'steps' required to reach it

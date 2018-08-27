@@ -31,14 +31,14 @@ public class LightingEffects extends LevelScript {
     private Color lightingCold = new Color(10, 10, 20);
     private Color lightingWarm = new Color(255, 181, 107);
 
-    private double[][] lightMap;
+    private double[][] masterLightMap;
 
     @Override
     public void onLevelLoad() {
         super.onLevelLoad();
         shadingLayer = new Layer(level.getBackdrop().getCols(), level.getBackdrop().getRows(), "ls_lighting: " + level.getName(), 0, 0, LayerImportances.VFX + 1);
         lightNodes = new ArrayList<>();
-        lightMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
+        masterLightMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
         identifyLightNodes();
         drawShadingLayer();
     }
@@ -55,13 +55,19 @@ public class LightingEffects extends LevelScript {
 
     @Override
     public void onTurnEnd() {
+        long startTime = System.nanoTime();
+        double[] calcTimes = new double[3];
         identifyLightNodes();
+        calcTimes[0] = (System.nanoTime() - startTime) / 1000000f;
         compileLightmaps();
+        calcTimes[1] = (System.nanoTime() - startTime) / 1000000f;
         drawShadingLayer();
+        calcTimes[2] = (System.nanoTime() - startTime) / 1000000f;
+        DebugWindow.reportf(DebugWindow.STAGE, "LightingEffects.onTurnEnd", "times: id %1$.3fms | compile %2$.3fms | draw %3$.3fms | total %4$.3f", calcTimes[0], calcTimes[1] - calcTimes[0], calcTimes[2] - calcTimes[1], calcTimes[2]);
     }
 
-    public double[][] getLightMap() {
-        return lightMap;
+    public double[][] getMasterLightMap() {
+        return masterLightMap;
     }
 
     /**
@@ -72,25 +78,25 @@ public class LightingEffects extends LevelScript {
         for (int col = 0; col < level.getBackdrop().getCols(); col++) {
             for (int row = 0; row < level.getBackdrop().getRows(); row++) {
                 //Test tile
-                addLightNode(new LightNode(col, row, testForLightTag(level.getTileAt(new Coordinate(col, row)))));
-                //Test entities
-                ArrayList<Entity> atLoc = level.getEntitiesAt(new Coordinate(col, row));
-                for (Entity e : atLoc){
-                    //Test entity's own tags
-                    addLightNode(new LightNode(col, row, testForLightTag(e)));
-                    //Test if Entity is CombatEntity and is holding a light-emitting Item.
-                    if (e instanceof CombatEntity) {
-                        CombatEntity ce = (CombatEntity) e;
-                        addLightNode(new LightNode(col, row, testForLightTag(ce.getWeapon())));
-                    }
-                }
+                double luminance = testForLightTag(level.getTileAt(new Coordinate(col, row)));
+                if (luminance > 0)
+                    addLightNode(new LightNode(col, row, luminance));
+            }
+        }
+        for (Entity e : level.getEntities()){
+            //Test entity's own tags
+            addLightNode(new LightNode(e.getLocation().getX(), e.getLocation().getY(), testForLightTag(e)));
+            //Test if Entity is CombatEntity and is holding a light-emitting Item.
+            if (e instanceof CombatEntity) {
+                CombatEntity ce = (CombatEntity) e;
+                addLightNode(new LightNode(e.getLocation().getX(), e.getLocation().getY(), testForLightTag(ce.getWeapon())));
             }
         }
         Player player = gi.getPlayer();
         if (level.getEntities().contains(player)){
             addLightNode(new LightNode(player.getLocation().getX(), player.getLocation().getY(), 0.125));
         }
-        reportLightNodes();
+        //reportLightNodes();
     }
 
     /**
@@ -103,6 +109,7 @@ public class LightingEffects extends LevelScript {
         if (lightNode.luminance == 0) return;
         for (LightNode other : lightNodes){
             double dist = dist(other, lightNode);
+            if (dist <= 0.005) return;
             if (dist <= other.gravity){
                 other.luminance += lightNode.luminance;
                 other.gravity += 0.25;
@@ -129,15 +136,15 @@ public class LightingEffects extends LevelScript {
      */
     private void drawShadingLayer(){
         Layer tempLayer = new Layer(shadingLayer.getCols(), shadingLayer.getRows(), "shandingtemp", 0, 0, 0);
-        for (int col = 0; col < level.getBackdrop().getCols(); col++) { //Iterate over every part of the level. //TODO: Clip range to just the screen.
+        for (int col = 0; col < level.getBackdrop().getCols(); col++) { //Iterate over every part of the level.
             for (int row = 0; row < level.getBackdrop().getRows(); row++) {
-                double lightness = lightMap[col][row];
-                double warmLightingCutoff = 4;
+                double lightness = masterLightMap[col][row];
+                double warmLightingCutoff = 3.75;
                 if (lightness < 1){ //Draw the cold colors if it is dim.
                     int opacity = (int)(255 - (225 * lightness));
                     tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(lightingCold.getRed(), lightingCold.getGreen(), lightingCold.getBlue(), opacity)));
                 } else if (lightness > warmLightingCutoff){ //Draw the warm colors if it is bright.
-                    int opacity = Math.min((int)(10 * (lightness - warmLightingCutoff)), 70);
+                    int opacity = Math.min((int)(12 * (lightness - warmLightingCutoff)), 50);
                     tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(lightingWarm.getRed(), lightingWarm.getGreen(), lightingWarm.getBlue(), opacity)));
                 }
             }
@@ -188,14 +195,15 @@ public class LightingEffects extends LevelScript {
             lightNode.assignLightMapValue(lightNode.x, lightNode.y, lightNode.luminance);
         }
         //Assemble the lightmaps
-        lightMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
+        masterLightMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
         Coordinate start = getLightmapCalculationStart();
         Coordinate end = getLightmapCalculationEnd();
         for (int col = start.getX(); col < end.getX(); col++) {
             for (int row = start.getY(); row < end.getY(); row++) {
-                for (LightNode node : lightNodes) lightMap[col][row] += node.lightMap[col][row];
+                for (LightNode node : lightNodes) masterLightMap[col][row] += node.lightMap[col][row];
             }
         }
+        DebugWindow.reportf(DebugWindow.STAGE, "LightingEffects.compileLightmaps", "calculation window: %1$d x %2$d", end.getX() - start.getX(), end.getY() - start.getY());
         //Apply smoothing
         smoothLightMap();
         smoothLightMap(); //Run a second pass to smooth things out further.
@@ -225,25 +233,39 @@ public class LightingEffects extends LevelScript {
                     total += getLightMapAmount(new Coordinate(col + 1, row));
                     numPoints++;
                 }
-                smoothedMap[col][row] = (total + (lightMap[col][row] * numPoints)) / (numPoints * 2);
+                smoothedMap[col][row] = (total + (masterLightMap[col][row] * numPoints)) / (numPoints * 2);
             }
         }
-        lightMap = smoothedMap;
+        masterLightMap = smoothedMap;
     }
 
     private double getLightMapAmount(Coordinate pos){
         if (level.getBackdrop().isLayerLocInvalid(pos))
             return -1;
-        return lightMap[pos.getX()][pos.getY()];
+        return masterLightMap[pos.getX()][pos.getY()];
+    }
+
+    private int getCalcMarginX(){
+        int playerDiff = gi.getPlayer().getLocation().getX() - gi.getLayerManager().getCameraPos().getX();
+        return Math.max(gi.getLayerManager().getWindow().RESOLUTION_WIDTH - playerDiff, playerDiff);
+    }
+
+    private int getCalcMarginY(){
+        int playerDiff = gi.getPlayer().getLocation().getY() - gi.getLayerManager().getCameraPos().getY();
+        return Math.max(gi.getLayerManager().getWindow().RESOLUTION_HEIGHT - playerDiff, playerDiff);
+    }
+
+    private Coordinate getCalcPlayerOffset(){
+        int margin = 2;
+        return new Coordinate(getCalcMarginX() + margin, getCalcMarginY() + margin);
     }
 
     private Coordinate getLightmapCalculationStart(){
-        return new Coordinate(Math.max(0, gi.getLayerManager().getCameraPos().getX() - 1), Math.max(0, gi.getLayerManager().getCameraPos().getY() - 1));
+        return gi.getPlayer().getLocation().subtract(getCalcPlayerOffset()).floor(new Coordinate(0, 0));
     }
 
     private Coordinate getLightmapCalculationEnd(){
-        Coordinate start = getLightmapCalculationStart();
-        return new Coordinate(Math.min(level.getBackdrop().getCols(), start.getX() + gi.getLayerManager().getWindow().RESOLUTION_WIDTH + 1), Math.min(level.getBackdrop().getRows(), start.getY() + gi.getLayerManager().getWindow().RESOLUTION_HEIGHT + 1));
+        return gi.getPlayer().getLocation().add(getCalcPlayerOffset()).ceil(new Coordinate(level.getWidth(), level.getHeight()));
     }
 
     /**

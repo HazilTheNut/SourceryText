@@ -10,13 +10,10 @@ import Game.Tile;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class WaterFlow extends LevelScript {
 
     private ArrayList<Coordinate> particles;
-    private Timer particleUpdateTimer;
     private int particleSpawnCountdown;
     private Layer particleLayer;
 
@@ -31,23 +28,23 @@ public class WaterFlow extends LevelScript {
 
     @Override
     public void onLevelEnter() {
-        if (particleUpdateTimer != null)
-            particleUpdateTimer.cancel();
-        particleUpdateTimer = new Timer();
-        particleUpdateTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                updateParticles();
-            }
-        }, 150, 150);
-
         particleLayer = new Layer(level.getWidth(), level.getHeight(), "WaterFlow particles: " + level.getName(), 0, 0, LayerImportances.TILE_ANIM + 1);
         gi.getLayerManager().addLayer(particleLayer);
     }
 
+    private int updateTimer = 3;
+
+    @Override
+    public void onAnimatedTileUpdate() {
+        updateTimer--;
+        if (updateTimer < 1){
+            updateParticles();
+            updateTimer = 0;
+        }
+    }
+
     @Override
     public void onLevelExit() {
-        particleUpdateTimer.cancel();
         gi.getLayerManager().removeLayer(particleLayer);
     }
 

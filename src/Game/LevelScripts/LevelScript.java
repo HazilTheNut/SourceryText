@@ -9,6 +9,7 @@ import Game.Level;
 import Game.Tile;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by Jared on 4/15/2018.
@@ -38,13 +39,30 @@ public class LevelScript implements Serializable {
             if (mask.getName().equals(name) && mask.getScriptId() == id)
                 return mask;
         }
-        return new LevelScriptMask(id, name, level.getBackdrop());
+        LevelScriptMask newMask = new LevelScriptMask(id, name, level.getBackdrop());
+        level.getLevelScriptMasks().add(newMask);
+        return newMask;
     }
 
     boolean getMaskDataAt(String name, Coordinate loc){
         if (loc.getX() < 0 || loc.getX() >= getMask(name).getMask().length || loc.getY() < 0 || loc.getY() >= getMask(name).getMask()[0].length)
             return false;
         return getMask(name).getMask()[loc.getX()][loc.getY()];
+    }
+
+    /**
+     * Scans a mask and generates a list of points where the mask is active.
+     */
+    ArrayList<Coordinate> getMaskPoints(String name){
+        ArrayList<Coordinate> locs = new ArrayList<>();
+        LevelScriptMask mask = getMask(name);
+        for (int col = 0; col < mask.getMask().length; col++) {
+            for (int row = 0; row < mask.getMask()[0].length; row++) {
+                if (mask.getMask()[col][row])
+                    locs.add(new Coordinate(col, row));
+            }
+        }
+        return locs;
     }
 
     //Ran at the end of every AnimatedTile update
