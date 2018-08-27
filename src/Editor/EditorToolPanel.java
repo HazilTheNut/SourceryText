@@ -314,6 +314,7 @@ public class EditorToolPanel extends JPanel {
 
         //Art tool options panel
         toolOptionsPanel = new CollapsiblePanel();
+        toolOptionsPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         toolOptionsPanel.setAlignmentX(CENTER_ALIGNMENT);
         toolOptionsPanel.setNormalSize(new Dimension(100, 50));
         toolOptionsPanel.setMinimumSize(new Dimension(100, 30));
@@ -556,6 +557,7 @@ public class EditorToolPanel extends JPanel {
             toolOptionsPanel.remove(comp);
         }
         toolOptionsPanel.setVisible(false);
+        toolOptionsPanel.setNormalSize(new Dimension(100, 50));
         mi.setDrawTool(tool);
         tool.onActivate(toolOptionsPanel);
         switch (tool.TOOL_TYPE){

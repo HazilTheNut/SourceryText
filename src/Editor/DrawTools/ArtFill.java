@@ -1,5 +1,7 @@
 package Editor.DrawTools;
 
+import Data.Coordinate;
+import Editor.CollapsiblePanel;
 import Engine.Layer;
 import Engine.SpecialText;
 
@@ -19,16 +21,23 @@ public class ArtFill extends DrawTool {
      */
 
     private JSpinner fillSizeBox;
+    private JCheckBox edgesOnlyBox;
     
     @Override
     public void onActivate(JPanel panel) {
+        if (panel instanceof CollapsiblePanel) {
+            CollapsiblePanel collapsiblePanel = (CollapsiblePanel) panel;
+            collapsiblePanel.setNormalSize(new Dimension(100, 75));
+        }
         fillSizeBox = new JSpinner(new SpinnerNumberModel(150, 1, 999, 1));
         fillSizeBox.setMaximumSize(new Dimension(45, 20));
+        edgesOnlyBox = new JCheckBox();
         panel.setBorder(BorderFactory.createTitledBorder("Fill Tool"));
         JLabel boxLabel = new JLabel("Max: ");
-        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
         panel.add(boxLabel);
         panel.add(fillSizeBox);
+        panel.add(new JLabel("Edge Only:"));
+        panel.add(edgesOnlyBox);
         panel.validate();
         panel.setVisible(true);
 
@@ -37,57 +46,45 @@ public class ArtFill extends DrawTool {
 
     @Override
     public void onDrawStart(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        Thread fillThread = new Thread(() -> {
-            futurePoints.clear(); //Future points linger after previous uses.
-            futurePoints.add(new SpreadPoint(col, row)); //We add the first point to the future points list because the fill function will wipe the current points before beginning the first cycle.
-            doFill(layer, layer.getSpecialText(col, row), text, 0);
-        }, "fill");
+        Thread fillThread = new Thread(() -> doFill(layer, layer.getSpecialText(col, row), text, col, row), "fill");
         fillThread.start();
     }
 
-    /**
-     * This could very well be a Coordinate.
-     * But it's old code, and it works. So whatever.
-     */
-    private class SpreadPoint{
-        int x;
-        int y;
-        private SpreadPoint(int x, int y){
-            this.x = x;
-            this.y = y;
-        }
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof SpreadPoint){
-                SpreadPoint other = (SpreadPoint)obj;
-                return x == other.x && y == other.y;
-            }
-            return false;
-        }
-    }
-
-    private ArrayList<SpreadPoint> currentPoints = new ArrayList<>();
-    private ArrayList<SpreadPoint> futurePoints = new ArrayList<>();
+    private ArrayList<Coordinate> currentPoints = new ArrayList<>();
+    private ArrayList<Coordinate> futurePoints = new ArrayList<>();
+    private ArrayList<Coordinate> processedPoints = new ArrayList<>();
 
     /**
-     * The recursive function used to spread points out to fill an area.
+     * The function used to spread points out to fill an area.
      * @param layer The layer to draw on (the backdrop)
      * @param fillOn The SpecialText to fill on top of.
      * @param fillWith The SpecialText to fill onto the fillOn SpecialText
-     * @param n The current iteration of the function. Once n > (max distance), the function stops to prevent StackOverflowErrors
      */
-    private void doFill(Layer layer, SpecialText fillOn, SpecialText fillWith, int n){
-        if (n > ((SpinnerNumberModel)fillSizeBox.getModel()).getNumber().intValue()) return;
+    private void doFill(Layer layer, SpecialText fillOn, SpecialText fillWith, int col, int row){
         if (areTwoSpecTxtsEqual(fillOn, fillWith)) return;
-        moveFutureToPresentPoints();
-        for (SpreadPoint point : currentPoints){
-            layer.editLayer(point.x, point.y, fillWith);
-            attemptFuturePoint(layer, point.x+1, point.y, fillOn);
-            attemptFuturePoint(layer, point.x-1, point.y, fillOn);
-            attemptFuturePoint(layer, point.x, point.y+1, fillOn);
-            attemptFuturePoint(layer, point.x, point.y-1, fillOn);
-        }
-        doFill(layer, fillOn, fillWith, n+1);
+        int maxDist = ((SpinnerNumberModel)fillSizeBox.getModel()).getNumber().intValue();
+        futurePoints.clear();
+        processedPoints.clear();
+        currentPoints.clear();
+        futurePoints.add(new Coordinate(col, row));
+        do {
+            moveFutureToPresentPoints();
+            for (int i = 0; i < currentPoints.size();) {
+                Coordinate point = currentPoints.get(i);
+                if (point.stepDistance(new Coordinate(col, row)) <= maxDist) {
+                    boolean failed;
+                    failed =  !attemptFuturePoint(layer, point.getX() + 1, point.getY(), fillOn);
+                    failed |= !attemptFuturePoint(layer, point.getX() - 1, point.getY(), fillOn);
+                    failed |= !attemptFuturePoint(layer, point.getX(), point.getY() + 1, fillOn);
+                    failed |= !attemptFuturePoint(layer, point.getX(), point.getY() - 1, fillOn);
+                    processedPoints.add(point);
+                    currentPoints.remove(i);
+                    if (failed || !edgesOnlyBox.isSelected())
+                        layer.editLayer(point, fillWith);
+                }
+            }
+        } while (futurePoints.size() > 0);
+        System.out.println("[ArtFill.doFill] process completed!");
     }
 
     /**
@@ -98,7 +95,7 @@ public class ArtFill extends DrawTool {
      */
     private void moveFutureToPresentPoints(){
         currentPoints.clear();
-        for (SpreadPoint point : futurePoints) if (!currentPoints.contains(point)) currentPoints.add(point);
+        for (Coordinate point : futurePoints) if (!currentPoints.contains(point)) currentPoints.add(point);
         futurePoints.clear();
     }
 
@@ -109,7 +106,7 @@ public class ArtFill extends DrawTool {
      * @return If either they are equal or both are null.
      */
     private boolean areTwoSpecTxtsEqual(SpecialText text1, SpecialText text2){
-        return (text1 == null && text2 == null) || (text1 != null && text2 != null && text1.equals(text2));
+        return (text1 == null && text2 == null) || (text1 != null && text1.equals(text2));
     }
 
     private boolean isPointFillable (Layer layer, int col, int row, SpecialText fillOn){
@@ -118,7 +115,21 @@ public class ArtFill extends DrawTool {
         return areTwoSpecTxtsEqual(txtAtLoc, fillOn);
     }
 
-    private void attemptFuturePoint(Layer layer, int col, int row, SpecialText fillOn){
-        if (isPointFillable(layer, col, row, fillOn)) futurePoints.add(new SpreadPoint(col, row));
+    /*
+    The boolean return of this method may seem a little counter-intuitive, so let me explain.
+
+    The boolean return, in a general sense, returns true if a future point was created and false if it did not.
+    The return value is used to detect if a spreading point hits the edge of a region, causing a failure in adding a point.
+    However, failures also occur when spreading itself backwards -- it fails because the newly filled in area does not match the SpecialText the function is looking for.
+    To account for this, the algorithm keeps a record of points it filled and whenever the fill is heading backwards, it can catch that and treat the result as "successful" even though it fails to add a point.
+    If that kind of hurts your brain, it might be a little comfortable to think that the algorithm is "borrowing results from previous iterations"
+     */
+    private boolean attemptFuturePoint(Layer layer, int col, int row, SpecialText fillOn){
+        if (isPointFillable(layer, col, row, fillOn)) {
+            if (!processedPoints.contains(new Coordinate(col, row)))
+                futurePoints.add(new Coordinate(col, row));
+            return true;
+        }
+        return processedPoints.contains(new Coordinate(col, row));
     }
 }

@@ -45,7 +45,7 @@ public class ArtLine extends DrawTool {
         brushSizeBox.setMaximumSize(new Dimension(50, 20));
         panel.setBorder(BorderFactory.createTitledBorder(name));
         JLabel boxLabel = new JLabel(label);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+        //panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
         panel.add(boxLabel);
         panel.add(brushSizeBox);
         panel.validate();
