@@ -1,4 +1,4 @@
-package Game.Tags;
+package Game.Tags.TempTags;
 
 import Data.SerializationVersion;
 import Engine.SpecialText;
@@ -8,6 +8,7 @@ import Game.Item;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
+import Game.Tags.Tag;
 import Game.Tile;
 
 import java.awt.*;
@@ -55,8 +56,12 @@ public class WetTag extends Tag {
     }
 
     private void startLifetime(){
+        lifetime = getStartLifetime();
+    }
+
+    public int getStartLifetime(){
         Random random = new Random();
-        lifetime = LIFETIME_START + random.nextInt(10);
+        return LIFETIME_START + random.nextInt(10);
     }
 
     @Override

@@ -39,7 +39,7 @@ public class WaterFlow extends LevelScript {
         updateTimer--;
         if (updateTimer < 1){
             updateParticles();
-            updateTimer = 0;
+            updateTimer = 3;
         }
     }
 

@@ -105,6 +105,8 @@ public class CombatEntity extends Entity {
     protected void initNoWeapon(){
         noWeapon = new Item(new ItemStruct(-1, 1, "no_weapon", 0), gi);
         noWeapon.addTag(TagRegistry.WEAPON_STRIKE, noWeapon);
+        for (Tag tag : getTags())
+            noWeapon.addTag(tag, this);
     }
 
     @Override
@@ -131,6 +133,8 @@ public class CombatEntity extends Entity {
      */
     private void performAttack(Coordinate loc){
         if (shouldDoAction()){
+            if (getWeapon().getItemData().getItemId() < 0)
+                initNoWeapon();
             swooshLayer.setVisible(true);
             swooshLayer.setPos(loc);
             turnSleep(75);
@@ -163,8 +167,8 @@ public class CombatEntity extends Entity {
                 tag.onDealDamage(event);
             event.doFutureActions();
             if (event.eventPassed()) {
-                ce.onReceiveDamage(event.getAmount(), this, gi);
                 event.doCancelableActions();
+                ce.onReceiveDamage(event.getAmount(), this, gi);
                 getWeapon().decrementQty();
                 if (getWeapon().getItemData().getQty() <= 0) {
                     setWeapon(null);

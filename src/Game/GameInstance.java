@@ -340,6 +340,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             turnCounter++;
             DebugWindow.reportf(DebugWindow.STAGE, "GameInstace:turnCounter", "%1$d", turnCounter);
             DebugWindow.reportf(DebugWindow.GAME,  "GameInstace", "TURN %1$d", turnCounter);
+            getPlayer().updateSynopsis();
             isPlayerTurn = true;
         //});
         //enemyTurnThread.start();

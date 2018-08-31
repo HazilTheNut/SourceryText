@@ -103,7 +103,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
      */
     void playerInit(){
         inv = new PlayerInventory(gi.getLayerManager(), this);
-        hud = new HUD(gi.getLayerManager(), this);
+        hud = new HUD(gi);
         initSwooshLayer();
         movementVectorList = new ArrayList<>();
         startMovementThread();
@@ -135,7 +135,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     public void updateHUD() {hud.updateHUD();}
 
     public void updateSynopsis() {
-        hud.updateSynopsis(gi.getGameMaster().getMouseInput().getMouseScreenPos().add(gi.getLayerManager().getCameraPos()));
+        hud.updateSynopsis();
     }
 
     /**

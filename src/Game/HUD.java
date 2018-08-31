@@ -10,6 +10,7 @@ import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
+import Game.Tags.Tag;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -36,21 +37,25 @@ public class HUD implements MouseInputReceiver, Serializable {
 
     private SpellMenu spellMenu;
 
-    public HUD (LayerManager lm, Player player){
+    private GameMouseInput gameMouseInput;
 
-        this.player = player;
+    public HUD (GameInstance gi){
+
+        player = gi.getPlayer();
 
         HUDLayer = new Layer(new SpecialText[59][1], "HUD", 0, 0, LayerImportances.HUD);
         HUDLayer.fixedScreenPos = true;
-        lm.addLayer(HUDLayer);
+        gi.getLayerManager().addLayer(HUDLayer);
 
         synopsisLayer = new Layer(new SpecialText[59][20], "Synopsis", 0, 26, LayerImportances.HUD_SYNOPSIS);
         synopsisLayer.fixedScreenPos = true;
-        lm.addLayer(synopsisLayer);
+        gi.getLayerManager().addLayer(synopsisLayer);
 
         spellMenu = new SpellMenu(player);
 
         updateHUD();
+
+        gameMouseInput = gi.getGameMaster().getMouseInput();
     }
 
     public void setPlayer(Player player) {
@@ -148,12 +153,9 @@ public class HUD implements MouseInputReceiver, Serializable {
 
     /**
      * Updates the synopsis at the bottom-right of screen
-     *
-     * @param levelPos The level-position of the mouse.
      */
-    public void updateSynopsis(Coordinate levelPos){
-        if (prevLevelPos != null && prevLevelPos.equals(levelPos)) return;
-        prevLevelPos = levelPos.copy();
+    public void updateSynopsis(){
+        Coordinate levelPos = gameMouseInput.getMouseScreenPos().add(player.getGameInstance().getLayerManager().getCameraPos());
         ArrayList<Entity> entities = player.getGameInstance().getCurrentLevel().getEntitiesAt(levelPos);
         String tilename = null;
         try {
@@ -173,7 +175,7 @@ public class HUD implements MouseInputReceiver, Serializable {
             boxHeight++;
         }
         for (Entity e : entities){
-            if (e.getName().length() > 0 && e.isVisible()) { //Entities with info.txt names should be treated as invisible.
+            if (e.getName().length() > 0 && e.isVisible()) { //Entities with blank names should be treated as invisible.
                 boxLength = Math.max(boxLength, e.getName().length() + 2);
                 boxHeight++;
                 if (e instanceof CombatEntity) {
@@ -181,6 +183,11 @@ public class HUD implements MouseInputReceiver, Serializable {
                     if (((CombatEntity) e).getWeapon().getItemData().getItemId() > 0) boxHeight++; //Item ID is -1 if no weapon
                 }
             }
+            for (Tag tag : e.getTags())
+                if (isTagImportant(tag)) {
+                    boxHeight++;
+                    boxLength = Math.max(boxLength, tag.getName().length() + 2);
+                }
         }
         //Begin drawing
         for (Entity e : entities){
@@ -188,7 +195,7 @@ public class HUD implements MouseInputReceiver, Serializable {
                 drawEntitySynopsis(e);
         }
         if (tilename != null){
-            synopsisLayer.inscribeString(tilename, 1, startRow);
+            synopsisLayer.inscribeString(tilename, 1, startRow, new Color(255, 255, 230));
         }
         synopsisLayer.setPos(59 - boxLength, 31 - boxHeight);
     }
@@ -205,6 +212,13 @@ public class HUD implements MouseInputReceiver, Serializable {
         DebugWindow.reportf(DebugWindow.MISC, "HUD.drawEntitySynopsis","Entity name: \"%1$s\"", e.getName());
         boxLength = Math.max(boxLength, e.getName().length() + 2);
         synopsisLayer.inscribeString(e.getName(), 1, startRow, txt_entity);
+        //Draw Important Tags
+        for (Tag tag : e.getTags())
+            if (isTagImportant(tag)){
+                startRow++;
+                synopsisLayer.inscribeString(tag.getName(), 2, startRow, tag.getTagColor());
+                synopsisLayer.inscribeString("*", 1, startRow, Color.GRAY);
+            }
         if (e instanceof CombatEntity){
             startRow++;
             CombatEntity ce = (CombatEntity)e;
@@ -230,6 +244,10 @@ public class HUD implements MouseInputReceiver, Serializable {
             synopsisLayer.inscribeString(hpDisplay, (int)Math.floor(((double)boxLength - hpDisplay.length()) / 2), startRow);
         }
         startRow++;
+    }
+
+    private boolean isTagImportant(Tag tag){
+        return !tag.getTagColor().equals(Color.WHITE);
     }
 
     @Override

@@ -54,16 +54,23 @@ public class OnFireTag extends Tag {
                 target.getLevel().addAnimatedTile(fireAnimation);
             }
         });
-        if (e.getTarget().hasTag(TagRegistry.BURN_FOREVER)){
+        defineFireBehavior(e.getTarget());
+    }
+    
+    private void defineFireBehavior(TagHolder owner){
+        if (owner.hasTag(TagRegistry.BURN_FOREVER)){
             burnForever = true;
-        } else if (e.getTarget().hasTag(TagRegistry.BURN_FAST)){
+        } else if (owner.hasTag(TagRegistry.BURN_FAST)){
             lifetime = 3;
             spreadLikelihood = 0.65;
-        } else if (e.getTarget().hasTag(TagRegistry.BURN_SLOW)){
+        } else if (owner.hasTag(TagRegistry.BURN_SLOW)){
             lifetime = 12;
             spreadLikelihood = 0.2;
+        } else {
+            lifetime = 6;
+            spreadLikelihood = 0.4;
         }
-        if (e.getTarget().hasTag(TagRegistry.BURN_SPREAD)){
+        if (owner.hasTag(TagRegistry.BURN_SPREAD)){
             spreadLikelihood = 1;
         }
     }
@@ -141,7 +148,16 @@ public class OnFireTag extends Tag {
 
     @Override
     public void onContact(TagEvent e) {
-        e.getTarget().addTag(TagRegistry.ON_FIRE, e.getSource());
+        setOnFire(e.getTarget(), e.getSource());
+    }
+    
+    private void setOnFire(TagHolder holder, TagHolder source){
+        if (holder.hasTag(TagRegistry.ON_FIRE)){
+            OnFireTag onFireTag = (OnFireTag) holder.getTag(TagRegistry.ON_FIRE);
+            onFireTag.defineFireBehavior(holder); //Resets the lifetime of the other OnFireTag based on the characteristics of its owner, just like when it initializes
+        } else {
+            holder.addTag(TagRegistry.ON_FIRE, source);
+        }
     }
 
     private void createAshTile(Coordinate loc, Level level){
@@ -156,11 +172,11 @@ public class OnFireTag extends Tag {
     private void spreadToTile(Level level, Coordinate pos, TagHolder source){
         if (random.nextDouble() <= spreadLikelihood) {
             if (!level.getBackdrop().isLayerLocInvalid(pos)) {
-                level.getTileAt(pos).addTag(TagRegistry.ON_FIRE, source);
+                setOnFire(level.getTileAt(pos), source);
             }
             ArrayList<Entity> entites = level.getEntitiesAt(pos);
             for (Entity e : entites) {
-                e.addTag(TagRegistry.ON_FIRE, source);
+                setOnFire(e, source);
             }
         }
     }

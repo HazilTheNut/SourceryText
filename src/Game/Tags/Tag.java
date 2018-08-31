@@ -69,13 +69,13 @@ public class Tag implements Serializable {
     public void onItemUse(TagEvent e) {}
 
     //Upon dealing damage, useful for calculating the total damage of an attack
-    //Source: this
+    //Source: dealer of damage, either Entity or Projectile
     //Target: receiving damage
     public void onDealDamage(TagEvent e) {}
 
     //Upon receiving damage, useful for calculating the total damage of an attack
     //Source: damage dealer
-    //Target: this
+    //Target: damage receiver
     public void onReceiveDamage(TagEvent e){}
 
     //Upon an enemy swinging a weapon, useful for causing attacks to miss. Amount is % chance of success
@@ -128,5 +128,5 @@ public class Tag implements Serializable {
     public boolean isTileRemovable(Tile tile){ return true; }
 
     //Useful for coloring things that are frozen, on fire, etc.
-    public Color getTagColor(){ return new Color(255, 255, 255, 0); }
+    public Color getTagColor(){ return Color.WHITE; }
 }

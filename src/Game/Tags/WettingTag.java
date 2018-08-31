@@ -5,6 +5,7 @@ import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
+import Game.Tags.TempTags.WetTag;
 import Game.Tile;
 
 import java.util.ArrayList;
@@ -32,6 +33,6 @@ public class WettingTag extends Tag {
         if (wetTag == null)
             tagHolder.addTag(TagRegistry.WET, null);
         else
-            wetTag.setLifetime(Math.max(WetTag.LIFETIME_START, wetTag.getLifetime()));
+            wetTag.setLifetime(Math.max(wetTag.getStartLifetime(), wetTag.getLifetime()));
     }
 }

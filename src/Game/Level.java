@@ -362,7 +362,7 @@ public class Level implements Serializable {
             if (!templateIdList.contains(tag.getId())) //If base tile has a tag whose id does match any from the template
                 return false;
         }
-        return true; //True if the tile has a different set of tags than its template
+        return getEntitiesAt(baseTile.getLocation()).size() == 0; //If no entities exist at baseTile's location and its tags match the template, then it can be removed.
     }
 
     public Entity getSolidEntityAt(Coordinate loc){
