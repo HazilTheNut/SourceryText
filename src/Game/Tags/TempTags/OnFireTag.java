@@ -171,7 +171,7 @@ public class OnFireTag extends Tag {
 
     private void spreadToTile(Level level, Coordinate pos, TagHolder source){
         if (random.nextDouble() <= spreadLikelihood) {
-            if (!level.getBackdrop().isLayerLocInvalid(pos)) {
+            if (!level.getBackdrop().isLayerLocInvalid(pos) && !level.getTileAt(pos).hasTag(TagRegistry.ON_FIRE)) {
                 setOnFire(level.getTileAt(pos), source);
             }
             ArrayList<Entity> entites = level.getEntitiesAt(pos);
