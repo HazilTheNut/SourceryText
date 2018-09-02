@@ -72,6 +72,8 @@ public class OnFireTag extends Tag {
         }
         if (owner.hasTag(TagRegistry.BURN_SPREAD)){
             spreadLikelihood = 1;
+        } else if (owner.hasTag(TagRegistry.BURN_NOSPREAD)){
+            spreadLikelihood = 0;
         }
     }
 

@@ -8,6 +8,7 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.*;
+import Game.LevelScripts.LightingEffects;
 import Game.Registries.TagRegistry;
 import Game.Tags.RangeTag;
 
@@ -133,7 +134,16 @@ public class BasicEnemy extends CombatEntity {
     }
 
     protected boolean isWithinDetectRange(Coordinate loc, int range){
-        return getLocation().stepDistance(loc) <= range;
+        return getLocation().stepDistance(loc) <= getDetectRangeAt(loc, range);
+    }
+
+    int getDetectRangeAt(Coordinate loc, int range){
+        if (lightingEffects == null) //If script is inactive, assume normal behavior for judging distances to targets.
+            return range;
+        double lightValue = Math.min(lightingEffects.getMasterLightMap()[loc.getX()][loc.getY()], 1); //Being in very bright areas caused guards to see you from a mile away, so multiplier is capped at 1.
+        int reducedRange = (int) ((double)range * lightValue);
+        DebugWindow.reportf(DebugWindow.GAME, "PatrollingCharacter.isWithinDetectRange", "loc %1$s range %2$d id: %3$d", loc, reducedRange, getUniqueID());
+        return reducedRange;
     }
 
     public CombatEntity getNearestEnemy(){
@@ -338,5 +348,13 @@ public class BasicEnemy extends CombatEntity {
             clockwiseOrbit = !clockwiseOrbit;
         else
             teleport(getLocation().add(relativePos));
+    }
+
+    protected LightingEffects lightingEffects;
+
+    @Override
+    public ArrayList<LightingEffects.LightNode> provideLightNodes(LightingEffects lightingEffects) {
+        this.lightingEffects = lightingEffects;
+        return super.provideLightNodes(lightingEffects);
     }
 }

@@ -104,9 +104,8 @@ public class CombatEntity extends Entity {
 
     protected void initNoWeapon(){
         noWeapon = new Item(new ItemStruct(-1, 1, "no_weapon", 0), gi);
+        noWeapon.setTags(getTags());
         noWeapon.addTag(TagRegistry.WEAPON_STRIKE, noWeapon);
-        for (Tag tag : getTags())
-            noWeapon.addTag(tag, this);
     }
 
     @Override

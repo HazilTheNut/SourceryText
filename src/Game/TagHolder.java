@@ -28,6 +28,10 @@ public class TagHolder implements Serializable {
 
     public ArrayList<Tag> getTags() { return tags; }
 
+    public void setTags(ArrayList<Tag> tags) {
+        this.tags = tags;
+    }
+
     public void addTag(int tagID, TagHolder source){
         Tag tag = TagRegistry.getTag(tagID);
         if (tag != null) {

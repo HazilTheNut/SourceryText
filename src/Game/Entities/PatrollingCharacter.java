@@ -18,8 +18,6 @@ public class PatrollingCharacter extends GameCharacter {
     private ArrayList<Coordinate> patrolPath;
     private int patrolPathPointer;
 
-    private LightingEffects lightingEffects;
-
     private double direction;
     private final double NORTH = Math.PI * -0.5;
     private final double SOUTH = Math.PI * 0.5;
@@ -92,20 +90,6 @@ public class PatrollingCharacter extends GameCharacter {
         super.onTurn();
     }
 
-    @Override
-    protected boolean isWithinDetectRange(Coordinate loc, int range) {
-        return super.isWithinDetectRange(loc, getDetectRangeAt(loc, range));
-    }
-
-    private int getDetectRangeAt(Coordinate loc, int range){
-        if (lightingEffects == null) //If script is inactive, assume normal behavior for judging distances to targets.
-            return range;
-        double lightValue = Math.min(lightingEffects.getMasterLightMap()[loc.getX()][loc.getY()], 1); //Being in very bright areas caused guards to see you from a mile away, so multiplier is capped at 1.
-        int reducedRange = (int) ((double)range * lightValue);
-        DebugWindow.reportf(DebugWindow.GAME, "PatrollingCharacter.isWithinDetectRange", "loc %1$s range %2$d id: %3$d", loc, reducedRange, getUniqueID());
-        return reducedRange;
-    }
-
     private double getDirection(){
         if (target != null){
             Coordinate diff = target.getLocation().subtract(getLocation());
@@ -117,7 +101,6 @@ public class PatrollingCharacter extends GameCharacter {
 
     @Override
     public ArrayList<LightingEffects.LightNode> provideLightNodes(LightingEffects lightingEffects) {
-        this.lightingEffects = lightingEffects;
         ArrayList<LightingEffects.LightNode> nodes = super.provideLightNodes(lightingEffects);
         nodes.add(lightingEffects.createLightNode(getLocation(), 15, getDirection(), Math.PI / 2.5));
         return nodes;
