@@ -40,15 +40,15 @@ public class GameCharacter extends BasicEnemy {
 
     @Override
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
-        super.initialize(pos, lm, entityStruct, gameInstance);
         factionAlignments = new ArrayList<>();
         String factionInput = readStrArg(searchForArg(entityStruct.getArgs(), "faction"), "");
-        factionAlignments = gi.getFactionManager().extractFactionList(factionInput);
+        factionAlignments = gameInstance.getFactionManager().extractFactionList(factionInput);
         DebugWindow.reportf(DebugWindow.MISC, "GameCharacter.initialize","uid: %1$d", getUniqueID());
         for (String faction : factionAlignments){
             DebugWindow.reportf(DebugWindow.MISC, "GameCharacter.initialize", faction);
         }
-        originalSprite = getSprite().getSpecialText(0, 0);
+        originalSprite = readSpecTxtArg(searchForArg(entityStruct.getArgs(), "icon"), entityStruct.getDisplayChar());
+        super.initialize(pos, lm, entityStruct, gameInstance);
         interactText = readStringList(searchForArg(entityStruct.getArgs(), "interactText"));
     }
 
@@ -77,7 +77,7 @@ public class GameCharacter extends BasicEnemy {
         for (Entity e : entities){
             int dist = e.getLocation().stepDistance(getLocation());
             byte opinion = getOpinion(e);
-            if (e instanceof GameCharacter && opinion <= maxHate && dist <= detectRange && dist > 0 && (dist <= minDistance || opinion < maxHate)) {
+            if (isWithinDetectRange(e.getLocation(), detectRange) && e instanceof GameCharacter && opinion <= maxHate && dist > 0 && (dist <= minDistance || opinion < maxHate)) {
                 GameCharacter gc = (GameCharacter) e;
                 minDistance = dist;
                 maxHate = opinion;

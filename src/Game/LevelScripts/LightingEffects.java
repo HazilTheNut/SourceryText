@@ -11,6 +11,7 @@ import Game.Entities.Entity;
 import Game.Player;
 import Game.Registries.TagRegistry;
 import Game.TagHolder;
+import Game.Tags.PropertyTags.BrightTag;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -23,7 +24,7 @@ public class LightingEffects extends LevelScript {
     private ArrayList<LightNode> lightNodes;
     private Layer shadingLayer;
 
-    private int[] lightIDs = {
+    private int[] lightTagIDs = {
             TagRegistry.ON_FIRE,
             TagRegistry.FLAME_ENCHANT,
             TagRegistry.BRIGHT
@@ -71,6 +72,10 @@ public class LightingEffects extends LevelScript {
         return masterLightMap;
     }
 
+    public int[] getLightTagIDs() {
+        return lightTagIDs;
+    }
+
     /**
      * Clears the list of LightNodes and recalculates them.
      */
@@ -86,7 +91,8 @@ public class LightingEffects extends LevelScript {
         }
         for (Entity e : level.getEntities()){
             //Test entity's own tags
-            addLightNode(new LightNode(e.getLocation().getX(), e.getLocation().getY(), testForLightTag(e)));
+            ArrayList<LightNode> nodes = e.provideLightNodes(this);
+            for (LightNode node : nodes) addLightNode(node);
             //Test if Entity is CombatEntity and is holding a light-emitting Item.
             if (e instanceof CombatEntity) {
                 CombatEntity ce = (CombatEntity) e;
@@ -107,7 +113,7 @@ public class LightingEffects extends LevelScript {
      * @param lightNode The LightNode to add.
      */
     private void addLightNode(LightNode lightNode){
-        if (lightNode.luminance == 0) return;
+        if (lightNode == null || lightNode.luminance == 0) return;
         for (LightNode other : lightNodes){
             double dist = dist(other, lightNode);
             if (dist <= 0.005) return;
@@ -120,13 +126,13 @@ public class LightingEffects extends LevelScript {
         lightNodes.add(lightNode);
     }
 
-    private double testForLightTag(TagHolder holder){
-        for (int id : lightIDs){
+    public double testForLightTag(TagHolder holder){
+        for (int id : lightTagIDs){
             if (holder.hasTag(id)){
                 if (holder.hasTag(TagRegistry.BRIGHT))
-                    return 22;
+                    return BrightTag.BRIGHT;
                 else
-                    return 5;
+                    return BrightTag.DIM;
             }
         }
         return 0;
@@ -190,7 +196,9 @@ public class LightingEffects extends LevelScript {
         for (LightNode lightNode : lightNodes){
             //dTheta is multiplied by the Math.min(...) function in order to increase its accuracy for low-luminance LightNodes, which can appear kinda grainy.
             double dTheta = Math.atan(Math.sqrt(lightingCutoff / lightNode.luminance)) * Math.min(lightNode.luminance, 0.65);
-            for (double angle = 0; angle < Math.PI * 2; angle += dTheta) {
+            double angleMin = lightNode.direction - (lightNode.coneWidth / 2);
+            double angleMax = lightNode.direction + (lightNode.coneWidth / 2);
+            for (double angle = angleMin; angle < angleMax; angle += dTheta) {
                 performRaycast(lightNode, new Coordinate(lightNode.getX(), lightNode.getY()), angle);
             }
             lightNode.assignLightMapValue(lightNode.x, lightNode.y, lightNode.luminance);
@@ -208,6 +216,7 @@ public class LightingEffects extends LevelScript {
         //Apply smoothing
         smoothLightMap();
         smoothLightMap(); //Run a second pass to smooth things out further.
+        //curveLightmap();
     }
 
     private void smoothLightMap(){
@@ -238,6 +247,21 @@ public class LightingEffects extends LevelScript {
             }
         }
         masterLightMap = smoothedMap;
+    }
+
+    private void curveLightmap(){
+        double[][] curvedLightMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
+        Coordinate start = getLightmapCalculationStart();
+        Coordinate end = getLightmapCalculationEnd();
+        for (int col = start.getX(); col < end.getX(); col++) {
+            for (int row = start.getY(); row < end.getY(); row++) {
+                if (masterLightMap[col][row] < 1)
+                    curvedLightMap[col][row] = Math.sqrt(masterLightMap[col][row]);
+                else
+                    curvedLightMap[col][row] = masterLightMap[col][row];
+            }
+        }
+        masterLightMap = curvedLightMap;
     }
 
     private double getLightMapAmount(Coordinate pos){
@@ -295,7 +319,11 @@ public class LightingEffects extends LevelScript {
         }
     }
 
-    private class LightNode implements Serializable {
+    public LightNode createLightNode(Coordinate loc, double luminance, double direction, double coneWidth){
+        return new LightNode(loc.getX(), loc.getY(), luminance, direction, coneWidth);
+    }
+
+    public class LightNode implements Serializable {
 
         private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
@@ -304,12 +332,22 @@ public class LightingEffects extends LevelScript {
         double luminance;
         double gravity;
         double[][] lightMap;
-        private LightNode(int x, int y, double luminance){
+
+        double direction;
+        double coneWidth;
+
+        public LightNode(int x, int y, double luminance){
+            this(x, y, luminance, 0, Math.PI * 2);
+        }
+
+        public LightNode(int x, int y, double luminance, double direction, double coneWidth){
             this.x = x;
             this.y = y;
             this.luminance = luminance;
             gravity = 1.25;
             lightMap = new double[level.getBackdrop().getCols()][level.getBackdrop().getRows()];
+            this.direction = direction;
+            this.coneWidth = coneWidth;
         }
 
         public int getX() {

@@ -128,5 +128,5 @@ public class Tag implements Serializable {
     public boolean isTileRemovable(Tile tile){ return true; }
 
     //Useful for coloring things that are frozen, on fire, etc.
-    public Color getTagColor(){ return Color.WHITE; }
+    public Color getTagColor(){ return new Color(255, 255, 255, 0); }
 }

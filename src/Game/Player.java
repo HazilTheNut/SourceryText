@@ -420,7 +420,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
                     unfreeze();
                 }
                 int runTime = (int) ((System.nanoTime() - loopStartTime) / 1000000);
-                int interval = (!totalVector.equals(new Coordinate(0, 0))) ? MOVEMENT_INTERVAL : MOVEMENT_INTERVAL * 2;
+                int interval = (!totalVector.equals(new Coordinate(0, 0))) ? MOVEMENT_INTERVAL : MOVEMENT_INTERVAL * 1;
                 sleepMoveThread(Math.max(interval - runTime, 0));
                 reportMovementVector();
             }

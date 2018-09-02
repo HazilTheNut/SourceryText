@@ -43,7 +43,7 @@ public class EntityRegistry {
         registerEntity(LOOT_PILE, "Loot",  new SpecialText('%', new Color(191, 191, 75),  new Color(155, 155, 60, 15)),  LootPile.class);
         registerEntity(8,  "One-Way Door", new SpecialText('x', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    OneWayDoor.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(9,  "Magnet",       new SpecialText('M', new Color(145, 145, 145), new Color(45, 45, 45, 45)),    Magnet.class, TagRegistry.METALLIC);
-        registerEntity(10, "Character",    new SpecialText('C', new Color(130, 255, 225), new Color(180, 255, 225, 15)), GameCharacter.class);
+        registerEntity(10, "Character",    new SpecialText('C', new Color(130, 255, 225), new Color(180, 255, 225, 15)), GameCharacter.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING, TagRegistry.NO_PATHING);
 
         registerEntity(11, "Floor Switch", new SpecialText('o', new Color(165, 165, 135), new Color(70, 70, 50, 75)),    FloorSwitch.class, TagRegistry.IMMOVABLE);
         registerEntity(12, "Powered Door", new SpecialText('-', new Color(143, 123, 80),  new Color(74, 65, 55, 75)),    PoweredDoor.class, TagRegistry.IMMOVABLE);
@@ -55,6 +55,8 @@ public class EntityRegistry {
         registerEntity(RAFT, "Raft",       new SpecialText('=', new Color(142, 94, 60),   new Color(71, 47, 30, 240)),   Marker.class);
         registerEntity(19, "Store Item",   new SpecialText('$', new Color(171, 201, 75),  new Color(145, 165, 60, 15)),  StoreItem.class);
         registerEntity(PLAYER_SHADOW, "Player Shadow", new SpecialText('@', new Color(65, 75, 65), new Color(0, 0, 0, 25)), PlayerShadow.class);
+
+        registerEntity(21, "Patrolling Character", new SpecialText('G', new Color(130, 255, 225), new Color(180, 255, 225, 15)), PatrollingCharacter.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING, TagRegistry.NO_PATHING);
 
         //Registering stuff ends here
     }

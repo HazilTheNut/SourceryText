@@ -80,6 +80,7 @@ public class BasicEnemy extends CombatEntity {
                 target = null;
         }
         if (target == null){
+            doIdleBehavior();
             CombatEntity nearest = getNearestEnemy();
             if (nearest != null) { //Target player if nearby and not already targeting something
                 setTarget(nearest);
@@ -96,6 +97,10 @@ public class BasicEnemy extends CombatEntity {
                     doMeleeBehavior();
             }
         }
+    }
+
+    protected void doIdleBehavior(){
+        //Override this
     }
 
     protected boolean isEnemy(Entity e){
@@ -127,11 +132,15 @@ public class BasicEnemy extends CombatEntity {
         }
     }
 
+    protected boolean isWithinDetectRange(Coordinate loc, int range){
+        return getLocation().stepDistance(loc) <= range;
+    }
+
     public CombatEntity getNearestEnemy(){
         if (hasTag(TagRegistry.BERSERK))
             return getNearestBasicEnemy();
         Player player = gi.getPlayer();
-        if (player.getLocation().stepDistance(getLocation()) <= detectRange)
+        if (isWithinDetectRange(player.getLocation(), detectRange))
             return player;
         return null;
     }
@@ -186,7 +195,7 @@ public class BasicEnemy extends CombatEntity {
     private void doMeleeBehavior(){
         if (targetWithinAttackRange()) { //Can I attack?
             doWeaponAttack(target.getLocation()); //Attack!
-        } else if (target.getLocation().stepDistance(getLocation()) <= detectRange * 2){ //Is it close?
+        } else if (isWithinDetectRange(target.getLocation(), detectRange * 2)){ //Is it close?
             doPathing(); //Get to it!
         }
     }
@@ -212,7 +221,7 @@ public class BasicEnemy extends CombatEntity {
                     moveTangentToTarget();
                     break;
             }
-        } else if (target.getLocation().stepDistance(getLocation()) <= detectRange * 2){
+        } else if (isWithinDetectRange(target.getLocation(), detectRange * 2)){
             pathToPosition(target.getLocation(), getPathingSize());
         }
     }

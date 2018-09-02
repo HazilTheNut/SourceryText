@@ -149,12 +149,10 @@ public class HUD implements MouseInputReceiver, Serializable {
     private final Color txt_entity = new Color(209, 209, 255);
     private final Color txt_weapon = new Color(209, 255, 209);
 
-    private Coordinate prevLevelPos;
-
     /**
      * Updates the synopsis at the bottom-right of screen
      */
-    public void updateSynopsis(){
+    void updateSynopsis(){
         Coordinate levelPos = gameMouseInput.getMouseScreenPos().add(player.getGameInstance().getLayerManager().getCameraPos());
         ArrayList<Entity> entities = player.getGameInstance().getCurrentLevel().getEntitiesAt(levelPos);
         String tilename = null;
@@ -247,7 +245,8 @@ public class HUD implements MouseInputReceiver, Serializable {
     }
 
     private boolean isTagImportant(Tag tag){
-        return !tag.getTagColor().equals(Color.WHITE);
+        Tag genericTag = new Tag();
+        return !(tag.getTagColor().equals(genericTag.getTagColor()));
     }
 
     @Override

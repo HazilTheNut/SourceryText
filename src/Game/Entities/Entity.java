@@ -6,9 +6,11 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.*;
 import Game.Debug.DebugWindow;
+import Game.LevelScripts.LightingEffects;
 import Game.Registries.EntityRegistry;
 import Game.Registries.ItemRegistry;
 import Game.Registries.TagRegistry;
+import Game.Tags.PropertyTags.BrightTag;
 import Game.Tags.Tag;
 
 import java.io.Serializable;
@@ -479,5 +481,14 @@ public class Entity extends TagHolder implements Serializable {
                 return arg;
         }
         return null;
+    }
+
+    public ArrayList<LightingEffects.LightNode> provideLightNodes(LightingEffects lightingEffects){
+        double luminance = lightingEffects.testForLightTag(this);
+        ArrayList<LightingEffects.LightNode> nodes = new ArrayList<>();
+        if (luminance > 0){
+            nodes.add(lightingEffects.createLightNode(getLocation(), luminance, 0, Math.PI * 2));
+        }
+        return nodes;
     }
 }
