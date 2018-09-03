@@ -16,6 +16,7 @@ import Game.Tags.RangeTag;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 /**
  * Created by Jared on 3/27/2018.
@@ -381,10 +382,15 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     }
 
     private Coordinate compileMovementVectors(){
-        Coordinate result = new Coordinate(0, 0);
-        for (Coordinate vector : movementVectorList)
-            if (vector != null) result = result.add(vector);
-        return result;
+        try {
+            Coordinate result = new Coordinate(0, 0);
+            for (Coordinate vector : movementVectorList)
+                if (vector != null) result = result.add(vector);
+            return result;
+        } catch (ConcurrentModificationException e){
+            e.printStackTrace();
+        }
+        return new Coordinate(0,0);
     }
 
     private void movementKeyDown(Coordinate vector){
@@ -393,9 +399,6 @@ public class Player extends GameCharacter implements MouseInputReceiver{
 
     private void reportMovementVector(){
         DebugWindow.reportf(DebugWindow.STAGE, "Player.movementVector", "%1$s", compileMovementVectors());
-        StringBuilder builder = new StringBuilder();
-        for (Coordinate vector : movementVectorList) builder.append(String.format("%1$s ", vector));
-        DebugWindow.reportf(DebugWindow.STAGE, "Player.movementVectorList", builder.toString());
     }
 
     private void startMovementThread(){

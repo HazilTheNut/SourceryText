@@ -37,7 +37,7 @@ public class HUD implements MouseInputReceiver, Serializable {
 
     private SpellMenu spellMenu;
 
-    private GameMouseInput gameMouseInput;
+    private transient GameMouseInput gameMouseInput;
 
     public HUD (GameInstance gi){
 
@@ -172,6 +172,7 @@ public class HUD implements MouseInputReceiver, Serializable {
             boxLength = Math.max(boxLength, tilename.length() + 2);
             boxHeight++;
         }
+        //Increasing the boxHeight adds another row to the synopsis display, which will be filled it shortly after calculating the height.
         for (Entity e : entities){
             if (e.getName().length() > 0 && e.isVisible()) { //Entities with blank names should be treated as invisible.
                 boxLength = Math.max(boxLength, e.getName().length() + 2);
