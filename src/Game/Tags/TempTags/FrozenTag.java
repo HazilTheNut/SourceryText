@@ -31,6 +31,7 @@ public class FrozenTag extends Tag {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int duration = 4;
+    private boolean isAttachedToIceOverlay = false;
 
     @Override
     public void onAddThis(TagEvent e) {
@@ -42,6 +43,8 @@ public class FrozenTag extends Tag {
                     e.cancel();
                     createIceOverlayTile(target);
                     e.addFutureAction(event -> target.removeTag(TagRegistry.FROZEN));
+                } else {
+                    isAttachedToIceOverlay = true;
                 }
             } else
                 e.cancel();
@@ -61,10 +64,8 @@ public class FrozenTag extends Tag {
         if (owner instanceof Tile) {
             Tile tile = (Tile) owner;
             Tile overlay = tile.getLevel().getOverlayTileAt(tile.getLocation());
-            if (tile.equals(overlay)){ //If the owning TagHolder is an overlay tile, chances are it is an ice tile.
+            if (isAttachedToIceOverlay){ //If the owning TagHolder is an overlay tile, chances are it is an ice tile.
                 tile.getLevel().removeOverlayTile(overlay);
-                if (tile.hasTag(TagRegistry.ON_FIRE))
-                    tile.getLevel().getBaseTileAt(tile.getLocation()).addTag(TagRegistry.WET, owner);
             }
         }
     }
@@ -73,9 +74,18 @@ public class FrozenTag extends Tag {
     public void onAdd(TagEvent e) {
         if (e.getTarget().hasTag(TagRegistry.ON_FIRE)) e.addFutureAction(event -> {
             e.getTarget().removeTag(getId());
-            e.getTarget().addTag(TagRegistry.WET, e.getTarget());
-            e.getTarget().addTag(TagRegistry.NO_REFREEZE, e.getTarget());
+            if (e.getTarget() instanceof Tile) {
+                Tile target = (Tile) e.getTarget();
+                meltOnto(target.getLevel().getBaseTileAt(target.getLocation()));
+            } else {
+                meltOnto(e.getTarget());
+            }
         });
+    }
+
+    private void meltOnto(TagHolder holder){
+        holder.addTag(TagRegistry.WET, holder);
+        holder.addTag(TagRegistry.NO_REFREEZE, holder);
     }
 
     @Override

@@ -117,6 +117,8 @@ public class HUD implements MouseInputReceiver, Serializable {
             pos += player.getInv().ITEM_STRING_LENGTH + 2;
         }
 
+        pos += drawArrowCounter(tempLayer, pos);
+
         //Draw equipped spell
         if (player.getSpells().size() > 0) {
             pos++;
@@ -141,6 +143,24 @@ public class HUD implements MouseInputReceiver, Serializable {
 
         HUDLayer.transpose(tempLayer);
     }
+
+    private int drawArrowCounter(Layer tempLayer, int pos){
+        if (player.getWeapon().hasTag(TagRegistry.WEAPON_BOW)){
+            //Get arrow count
+            int arrowCount = 0;
+            for (Item item : player.getItems())
+                if (item.hasTag(TagRegistry.ARROW))
+                    arrowCount += item.getItemData().getQty();
+            //Draw element
+            String countStr = String.valueOf(arrowCount);
+            tempLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(47, 47, 47)), new Coordinate(pos, 0), new Coordinate(pos + countStr.length(), 0));
+            tempLayer.inscribeString(countStr, pos + 1, 0, new Color(200, 225, 250));
+            return countStr.length() + 1;
+        }
+        return 0;
+    }
+
+    //Synopsis stuff below
 
     private int boxLength = 0;
     private int boxHeight = 0;

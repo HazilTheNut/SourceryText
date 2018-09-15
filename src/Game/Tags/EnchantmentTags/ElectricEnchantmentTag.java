@@ -23,7 +23,10 @@ public class ElectricEnchantmentTag extends EnchantmentTag {
 
     @Override
     public void onContact(TagEvent e) {
-        e.getTarget().onReceiveDamage(5, e.getSource(), e.getGameInstance());
+        int dmg = 1;
+        if (isTagHolderConductive(e.getTarget()))
+            dmg = (e.getTarget().getCurrentHealth() / 10) + 5;
+        e.getTarget().onReceiveDamage(dmg, e.getSource(), e.getGameInstance());
         Coordinate startLoc = null;
         if (e.getTarget() instanceof Entity) {
             startLoc = ((Entity) e.getTarget()).getLocation();
@@ -45,9 +48,8 @@ public class ElectricEnchantmentTag extends EnchantmentTag {
     }
 
     private void shootProjectileAt(Coordinate origin, Entity target){
-        if (target.isAlive()) {
+        if (target.isAlive() && !blacklist.contains(target)) {
             Projectile zapProj = new Projectile(origin, target.getLocation(), new SpecialText('+', new Color(255, 255, 50), new Color(255, 255, 50, 50)), target.getGameInstance());
-            zapProj.addTag(TagRegistry.DAMAGE_START + 5, null);
             //Create ElectricEnchantmentTag and blacklist entities that cause the ElectricEnchantmentTag to spread backwards.
             ElectricEnchantmentTag electricTag = (ElectricEnchantmentTag) TagRegistry.getTag(TagRegistry.ELECTRIC_ENCHANT);
             for (Entity e : blacklist) electricTag.addToBlacklist(e);
@@ -66,7 +68,7 @@ public class ElectricEnchantmentTag extends EnchantmentTag {
     }
 
     private boolean isEntityConductive(Entity e){
-        return (testConductivity(e) || (e instanceof CombatEntity && testConductivity( ((CombatEntity)e).getWeapon() ))) && !blacklist.contains(e);
+        return (testConductivity(e) || (e instanceof CombatEntity && testConductivity( ((CombatEntity)e).getWeapon() )));
     }
 
     private boolean testConductivity(TagHolder holder){
