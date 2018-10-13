@@ -178,7 +178,6 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             charField.setText(endText);
             charField.setCaretPosition(1);
         }
-        colorPicker.repaint();
     }
 
     private void finish(){
@@ -224,6 +223,8 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         void setColorData(float[] data) {
             colorData = data;
+            recalculateColorMatrix();
+            repaint();
         }
 
         float[] getColorData() { return colorData; }
@@ -236,6 +237,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         }
 
         private void recalculateColorMatrix(){
+            if (getBoxWidth() <= 0 || getHeight() <= 0) return;
             colorMatrix = new Color[getBoxWidth() + 1][getHeight() + 1];
             for (int y = 1; y < getHeight()-1; y++){
                 for (int x = 1; x < getBoxWidth(); x++) {
@@ -245,8 +247,12 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             }
         }
 
+        private long repaintTimestamp = 0;
+
         @Override
         public void paintComponent(Graphics g) {
+            repaintTimestamp = System.currentTimeMillis();
+
             int boxWidth = getBoxWidth();
 
             //Draw the main box and hue slider
@@ -254,7 +260,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
                 for (int x = 1; x < boxWidth; x++) { //Draw stuff in the main box
                     try {
                         g.setColor(colorMatrix[x][y]);
-                    } catch (NullPointerException e){
+                    } catch (NullPointerException | ArrayIndexOutOfBoundsException e){
                         recalculateColorMatrix();
                     }
                     g.fillRect(x, y, 1, 1);
@@ -309,6 +315,8 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
                 colorData[1] = ((float)mousePointX)/(getBoxWidth());
                 colorData[2] = ((float)mousePointY)/(getHeight());
             }
+            if (System.currentTimeMillis() - repaintTimestamp > 25)
+                repaint();
             //System.out.printf("Pt: %1$d, %2$d (%3$dx%4$d) sat: %5$.1f%% bri: %6$.1f%%\n", mousePointX, mousePointY, getBoxWidth(), getHeight(), 100 * colorData[1], 100 * colorData[2]);
             generateColor();
         }

@@ -13,6 +13,11 @@ import java.util.ArrayList;
 
 public class SpecialTextList extends JComponent implements MouseInputListener, MouseWheelListener {
 
+    /**
+     * This class defines a custom version of the Text Panel on the left side of the level editor. It work mirror the function of the scroll pane of buttons currently in use.
+     * After creating it, I found very little benefit in fully implementing it.
+     */
+
     private ArrayList<SpecialText> textList;
     private int listWidth;
     private final float HEIGHT_WIDTH_RATIO = 9f / 13;
