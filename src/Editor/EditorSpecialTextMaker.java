@@ -92,9 +92,12 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         selectorPanel.add(Box.createRigidArea(new Dimension(1, 20)));
         selectorPanel.add(fgButton);
         selectorPanel.add(bgButton);
+        selectorPanel.add(Box.createRigidArea(new Dimension(1, 5)));
+        selectorPanel.add(generateQuickColorPanel());
 
         selectorPanel.add(Box.createVerticalGlue());
         selectorPanel.add(cancelButton);
+        selectorPanel.add(Box.createRigidArea(new Dimension(1, 5)));
         selectorPanel.add(finishButton);
         selectorPanel.add(Box.createRigidArea(new Dimension(1, 20)));
 
@@ -102,7 +105,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         selectorPanel.setBorder(BorderFactory.createEtchedBorder());
 
-        //Right side panel with color and opacity ui
+        //Right side panel with color ui
         JPanel colorPickerPanel = new JPanel();
         GridLayout gridLayout = new GridLayout(1, 1);
         gridLayout.setHgap(5);
@@ -152,6 +155,34 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
                 updateElements();
             }
         }, 10, 75);
+    }
+
+    private JPanel generateQuickColorPanel(){
+        JPanel masterPanel = new JPanel();
+        masterPanel.setLayout(new GridLayout(3, 3, 1, 1));
+        masterPanel.add(createQuickColorButton(Color.WHITE));
+        masterPanel.add(createQuickColorButton(Color.BLACK));
+        masterPanel.add(createQuickColorButton(Color.GRAY));
+        masterPanel.add(createQuickColorButton(new Color(255, 64, 64)));
+        masterPanel.add(createQuickColorButton(new Color(66, 255, 66)));
+        masterPanel.add(createQuickColorButton(new Color(66, 66, 255)));
+        masterPanel.add(createQuickColorButton(new Color(169, 100, 45)));
+        masterPanel.add(createQuickColorButton(new Color(219, 200, 162)));
+        masterPanel.add(createQuickColorButton(new Color(61, 194, 219)));
+        masterPanel.setMaximumSize(new Dimension(80, 80));
+        masterPanel.validate();
+        return masterPanel;
+    }
+
+    private JButton createQuickColorButton(Color color){
+        JButton btn = new JButton(new SingleTextRenderer(new SpecialText(' ', Color.WHITE, color)));
+        btn.addActionListener(e -> {
+            float[] hsb = new float[3];
+            hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
+            colorPicker.setColorData(hsb);
+            colorPicker.generateColor();
+        });
+        return btn;
     }
 
     @Override
@@ -230,7 +261,9 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         float[] getColorData() { return colorData; }
 
         //Gets the width of the main box of the color picker, without the hue slider on the side.
-        private int getBoxWidth() { return getWidth() - 15; }
+        private int getBoxWidth() { return getWidth() - 16; }
+
+        private int BOX_SLIDER_MARGIN = 5;
 
         ColorPicker() {
             colorData = new float[]{0, 0, 0};
@@ -267,18 +300,18 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
                 }
                 //Then draw the hue slider, using the same y value for compactness.
                 g.setColor(Color.getHSBColor(((float)y)/getHeight(), 0.9f, 0.9f));
-                g.drawLine(boxWidth + 2, y, getWidth(), y);
+                g.drawLine(boxWidth + BOX_SLIDER_MARGIN, y, getWidth(), y);
             }
 
             //Draw white line on the hue slider
             int lineY = (int)(getHeight() * colorData[0]);
             g.setColor(Color.WHITE);
-            g.fillRect(boxWidth, lineY - 2, getWidth() - boxWidth, 4);
+            g.fillRect(boxWidth, lineY - 2, getBoxWidth() + BOX_SLIDER_MARGIN, 4);
 
             //Draw black line boundary
             g.setColor(Color.black);
-            g.drawRect(0,0,boxWidth,getHeight()-1);
-            g.drawRect(boxWidth + 2,0,getWidth()-boxWidth-3,getHeight()-1);
+            g.drawRect(0 ,0, boxWidth, getHeight()-1);
+            g.drawRect(boxWidth + BOX_SLIDER_MARGIN ,0 , getWidth() - boxWidth - BOX_SLIDER_MARGIN - 1, getHeight() - 1);
 
             //if (mousePointX < getBoxWidth() + 2) { //Don't move Sat-Bri point if hue is changing.
             int satBriPointX = (int)(getBoxWidth() * colorData[1]);
@@ -297,8 +330,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             Color col = Color.getHSBColor(colorData[0], colorData[1], colorData[2]);
             if (settingForeground) {
                 charField.setForeground(col);
-            }
-            else {
+            } else {
                 charField.setBackground(col);
             }
         }
@@ -308,10 +340,10 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             int mousePointY = e.getY() - getY() - 1;
             mousePointX = Math.max(0, Math.min(mousePointX, getWidth()));
             mousePointY = Math.max(0, Math.min(mousePointY, getHeight()));
-            if (mousePointX >= getWidth() - 13){ //Selecting hue
+            if (mousePointX >= getBoxWidth() + BOX_SLIDER_MARGIN){ //Selecting hue
                 colorData[0] = (float)mousePointY / getHeight();
                 recalculateColorMatrix();
-            } else {
+            } else if (mousePointX <= getBoxWidth() + 1){
                 colorData[1] = ((float)mousePointX)/(getBoxWidth());
                 colorData[2] = ((float)mousePointY)/(getHeight());
             }
