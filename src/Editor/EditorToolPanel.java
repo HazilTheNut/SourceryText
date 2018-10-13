@@ -235,6 +235,10 @@ public class EditorToolPanel extends JPanel {
         findAndReplaceItem.setAccelerator(keyStroke);
         levelMenu.add(findAndReplaceItem);
 
+        JMenuItem inscribeItem = new JMenuItem("Inscribe Text...");
+        inscribeItem.addActionListener(e -> new TextInsctiptionWindow(ldata, undoManager));
+        levelMenu.add(inscribeItem);
+
         menuPanel.add(new LonelyMenu(levelMenu, menuPanel));
         menuPanel.setBorder(BorderFactory.createEtchedBorder());
         menuPanel.setMaximumSize(new Dimension(PANEL_WIDTH, 20));

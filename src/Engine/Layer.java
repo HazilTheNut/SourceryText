@@ -308,12 +308,25 @@ public class Layer implements Serializable{
     }
 
     public void inscribeString (String str, int col, int row, Color fontColor){
+        inscribeString(str, col, row, fontColor, false);
+    }
+
+    public void inscribeString (String str, int col, int row, Color fontColor, boolean wrapping){
+        int drawX = col;
+        int drawY = row;
         for (int index = 0; index < str.length(); index++){
-            if (isLayerLocInvalid(col + index, row)) return;
-            if (getSpecialText(col + index, row) != null)
-                editLayer(col + index, row, new SpecialText(str.charAt(index), fontColor, getSpecialText(col + index, row).getBkgColor()));
+            if (isLayerLocInvalid(drawX, drawY)){ //If reached past the border of the layer
+                if (wrapping && drawY < getRows()) { //If wrapping, move to next line (unless you hit the bottom of the layer, which should then terminate the process
+                    drawX = col; //Reset to input x coordinate
+                    drawY++; //move down one
+                } else
+                    return;
+            }
+            if (getSpecialText(drawX, drawY) != null)
+                editLayer(drawX, drawY, new SpecialText(str.charAt(index), fontColor, getSpecialText(drawX, drawY).getBkgColor()));
             else
-                editLayer(col + index, row, new SpecialText(str.charAt(index), fontColor));
+                editLayer(drawX, drawY, new SpecialText(str.charAt(index), fontColor));
+            drawX++;
         }
     }
 
