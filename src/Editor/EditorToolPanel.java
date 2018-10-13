@@ -91,6 +91,8 @@ public class EditorToolPanel extends JPanel {
 
     private CameraManager cm;
 
+    private final int PANEL_WIDTH = 105;
+
     public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher, UndoManager undoManager, JRootPane rootPane, JFrame jFrame){
 
         this.mi = mi;
@@ -100,7 +102,7 @@ public class EditorToolPanel extends JPanel {
         editorFrame = jFrame;
 
         setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(110, 400));
+        setPreferredSize(new Dimension(120, 400));
 
         toolsPanel = new JPanel();
         toolsPanel.setLayout(new BoxLayout(toolsPanel, BoxLayout.PAGE_AXIS));
@@ -235,7 +237,7 @@ public class EditorToolPanel extends JPanel {
 
         menuPanel.add(new LonelyMenu(levelMenu, menuPanel));
         menuPanel.setBorder(BorderFactory.createEtchedBorder());
-        menuPanel.setMaximumSize(new Dimension(100, 20));
+        menuPanel.setMaximumSize(new Dimension(PANEL_WIDTH, 20));
 
         add(menuPanel, BorderLayout.PAGE_START);
     }
@@ -245,7 +247,7 @@ public class EditorToolPanel extends JPanel {
         JPanel cameraPanel = new JPanel();
         cameraPanel.setBorder(BorderFactory.createTitledBorder("Camera"));
         cameraPanel.setLayout(new GridLayout(2, 3, 0, 5));
-        cameraPanel.setMaximumSize(new Dimension(100, 65));
+        cameraPanel.setMaximumSize(new Dimension(PANEL_WIDTH, 65));
 
         //Tells CameraManager what layers it should be working with
         cm.artLayer = ldata.getBackdrop();
@@ -299,12 +301,12 @@ public class EditorToolPanel extends JPanel {
         artToolsPanel.setBorder(BorderFactory.createTitledBorder("Art Tools"));
 
         //Art tool buttons
-        artToolsPanel.add(createDrawToolButton("Brush",     new ArtBrush(lm),                  KeyEvent.VK_B));
-        artToolsPanel.add(createDrawToolButton("Eraser",    new ArtEraser(lm),                 KeyEvent.VK_E));
-        artToolsPanel.add(createDrawToolButton("Line",      new ArtLine(lm),                   KeyEvent.VK_L));
-        artToolsPanel.add(createDrawToolButton("Rectangle", new ArtRectangle(lm),              KeyEvent.VK_G));
-        artToolsPanel.add(createDrawToolButton("Fill",      new ArtFill(),                     KeyEvent.VK_F));
-        artToolsPanel.add(createDrawToolButton("Pick",      new ArtPick(mi.getTextPanel()),    KeyEvent.VK_K));
+        artToolsPanel.add(createDrawToolButton("Brush",     new ArtBrush(lm),                  KeyEvent.VK_B, "brush.png"));
+        artToolsPanel.add(createDrawToolButton("Eraser",    new ArtEraser(lm),                 KeyEvent.VK_E, "eraser.png"));
+        artToolsPanel.add(createDrawToolButton("Line",      new ArtLine(lm),                   KeyEvent.VK_L, "line.png"));
+        artToolsPanel.add(createDrawToolButton("Rectangle", new ArtRectangle(lm),              KeyEvent.VK_G, "rectangle.png"));
+        artToolsPanel.add(createDrawToolButton("Fill",      new ArtFill(),                     KeyEvent.VK_F, "fill.png"));
+        artToolsPanel.add(createDrawToolButton("Pick",      new ArtPick(mi.getTextPanel()),    KeyEvent.VK_K, "pick.png"));
 
         int numberCells = artToolsPanel.getComponentCount();
         artToolsPanel.setLayout(new GridLayout(numberCells,1,2,2));
@@ -316,8 +318,8 @@ public class EditorToolPanel extends JPanel {
         toolOptionsPanel = new CollapsiblePanel();
         toolOptionsPanel.setLayout(new FlowLayout(FlowLayout.LEADING));
         toolOptionsPanel.setAlignmentX(CENTER_ALIGNMENT);
-        toolOptionsPanel.setNormalSize(new Dimension(100, 50));
-        toolOptionsPanel.setMinimumSize(new Dimension(100, 30));
+        toolOptionsPanel.setNormalSize(new Dimension(PANEL_WIDTH, 50));
+        toolOptionsPanel.setMinimumSize(new Dimension(PANEL_WIDTH, 30));
         toolOptionsPanel.setVisible(false);
 
         toolsPanel.add(toolOptionsPanel);
@@ -336,7 +338,7 @@ public class EditorToolPanel extends JPanel {
             tileSelectBox.addItem(TileRegistry.getTileStruct(i));
         }
 
-        tileSelectBox.setMaximumSize(new Dimension(100, 25));
+        tileSelectBox.setMaximumSize(new Dimension(PANEL_WIDTH, 25));
 
         //Tile Pencil Tool
         TilePencil tilePencil = new TilePencil(ldata.getTileDataLayer(), ldata);
@@ -364,7 +366,7 @@ public class EditorToolPanel extends JPanel {
 
         //Putting it all together
         tileDataPanel.add(tileSelectBox);
-        tileDataPanel.add(createDrawToolButton("Tile Pencil", tilePencil, KeyEvent.VK_T));
+        tileDataPanel.add(createDrawToolButton("Tile Pencil", tilePencil, KeyEvent.VK_T, "tilepencil.png"));
         tileDataPanel.add(tileScanPanel);
 
         tileDataPanel.setLayout(new GridLayout(tileDataPanel.getComponentCount(), 1, 2, 2));
@@ -400,19 +402,19 @@ public class EditorToolPanel extends JPanel {
         entityDataPanel.add(entitySelectPanel);
 
         //Now for the Tools
-        JButton placeEntityButton = createDrawToolButton("Place Entity", entityPlaceTool, KeyEvent.VK_P);
+        JButton placeEntityButton = createDrawToolButton("Place Entity", entityPlaceTool, KeyEvent.VK_P, "entityplace.png");
         placeEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(placeEntityButton);
         
-        JButton removeEntityButton = createDrawToolButton("Remove Entity", new EntityRemove(ldata), KeyEvent.VK_R);
+        JButton removeEntityButton = createDrawToolButton("Remove Entity", new EntityRemove(ldata), KeyEvent.VK_R, "entityremove.png");
         removeEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(removeEntityButton);
 
-        JButton editEntityButton = createDrawToolButton("Edit Entity", new EntityEdit(ldata), KeyEvent.VK_D);
+        JButton editEntityButton = createDrawToolButton("Edit Entity", new EntityEdit(ldata), KeyEvent.VK_D, "entityedit.png");
         editEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(editEntityButton);
 
-        JButton copyEntityButton = createDrawToolButton("Copy Entity", new EntityCopy(lm, ldata), KeyEvent.VK_C);
+        JButton copyEntityButton = createDrawToolButton("Copy Entity", new EntityCopy(lm, ldata), KeyEvent.VK_C, "entitycopy.png");
         copyEntityButton.setMaximumSize(new Dimension(90, 20));
         entityDataPanel.add(copyEntityButton);
 
@@ -445,10 +447,10 @@ public class EditorToolPanel extends JPanel {
         warpZonePanel.setBorder(BorderFactory.createTitledBorder("Warp Zones"));
 
         //The tools
-        warpZonePanel.add(createDrawToolButton("Create Zone", new WarpZoneCreate(lm, ldata), KeyEvent.VK_Z));
-        warpZonePanel.add(createDrawToolButton("Define Zone", new WarpZoneDefine(ldata),     KeyEvent.VK_I));
-        warpZonePanel.add(createDrawToolButton("Move Zone",   new WarpZoneMove(lm, ldata),   KeyEvent.VK_M));
-        warpZonePanel.add(createDrawToolButton("Destroy Zone",new WarpZoneDestroy(ldata),    KeyEvent.VK_Y));
+        warpZonePanel.add(createDrawToolButton("Create Zone", new WarpZoneCreate(lm, ldata), KeyEvent.VK_Z, "warpzonecreate.png"));
+        warpZonePanel.add(createDrawToolButton("Define Zone", new WarpZoneDefine(ldata),     KeyEvent.VK_I, "warpzonedefine.png"));
+        warpZonePanel.add(createDrawToolButton("Move Zone",   new WarpZoneMove(lm, ldata),   KeyEvent.VK_M, "warpzonemove.png"));
+        warpZonePanel.add(createDrawToolButton("Destroy Zone",new WarpZoneDestroy(ldata),    KeyEvent.VK_Y, "warpzonedestroy.png"));
 
         //Putting it all together
         warpZonePanel.setLayout(new GridLayout(warpZonePanel.getComponentCount(), 1, 2, 2));
@@ -501,8 +503,8 @@ public class EditorToolPanel extends JPanel {
     }
 
     private void sizeToolsPanel(CollapsiblePanel panel){
-        panel.setNormalSize(new Dimension(100, panel.getInsets().bottom + panel.getInsets().top + panel.getComponentCount() * 30));
-        panel.setMinimumSize(new Dimension(100, 30));
+        panel.setNormalSize(new Dimension(PANEL_WIDTH, panel.getInsets().bottom + panel.getInsets().top + panel.getComponentCount() * 30));
+        panel.setMinimumSize(new Dimension(PANEL_WIDTH, 30));
     }
 
     void updateSearchForIcon(SpecialText text) {
@@ -539,6 +541,13 @@ public class EditorToolPanel extends JPanel {
         return btn;
     }
 
+    private JButton createDrawToolButton(String name, DrawTool tool, int mnemonic, String iconName){
+        JButton btn = createDrawToolButton(name, tool, mnemonic);
+        FileIO io = new FileIO();
+        btn.setIcon(new ImageIcon(io.getRootFilePath().concat("EditorIcons/").concat(iconName)));
+        return btn;
+    }
+
     private void setButtonMnemonic(JButton btn, int mnemonic){
         String mnemonicText = KeyEvent.getKeyText(mnemonic);
         btn.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(mnemonic, 0), mnemonicText);
@@ -557,7 +566,7 @@ public class EditorToolPanel extends JPanel {
             toolOptionsPanel.remove(comp);
         }
         toolOptionsPanel.setVisible(false);
-        toolOptionsPanel.setNormalSize(new Dimension(100, 50));
+        toolOptionsPanel.setNormalSize(new Dimension(PANEL_WIDTH, 50));
         mi.setDrawTool(tool);
         tool.onActivate(toolOptionsPanel);
         switch (tool.TOOL_TYPE){

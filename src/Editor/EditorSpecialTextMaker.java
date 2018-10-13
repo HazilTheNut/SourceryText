@@ -92,10 +92,11 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         selectorPanel.add(Box.createRigidArea(new Dimension(1, 20)));
         selectorPanel.add(fgButton);
         selectorPanel.add(bgButton);
-        selectorPanel.add(Box.createRigidArea(new Dimension(1, 5)));
+        selectorPanel.add(Box.createRigidArea(new Dimension(1, 10)));
         selectorPanel.add(generateQuickColorPanel());
 
         selectorPanel.add(Box.createVerticalGlue());
+        selectorPanel.add(Box.createRigidArea(new Dimension(1, 5)));
         selectorPanel.add(cancelButton);
         selectorPanel.add(Box.createRigidArea(new Dimension(1, 5)));
         selectorPanel.add(finishButton);
