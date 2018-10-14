@@ -343,20 +343,18 @@ public class EditorToolPanel extends JPanel {
         }
 
         tileSelectBox.setMaximumSize(new Dimension(PANEL_WIDTH, 25));
+        tileSelectBox.setSelectedIndex(0);
 
         //Tile Pencil Tool
         TilePencil tilePencil = new TilePencil(ldata.getTileDataLayer(), ldata);
         tilePencil.setTileData((TileStruct)tileSelectBox.getSelectedItem());
-        tileSelectBox.addActionListener(e -> {
-            tilePencil.setTileData((TileStruct)tileSelectBox.getSelectedItem());
-            ((SingleTextRenderer)placeTileIcon.getIcon()).specText = ((TileStruct)tileSelectBox.getSelectedItem()).getDisplayChar();
-            selectedTileStruct = (TileStruct)tileSelectBox.getSelectedItem();
-        });
+        tileSelectBox.addActionListener(e -> selectTile(tilePencil, tileSelectBox));
 
         JPanel tileScanPanel = new JPanel();
 
-        searchForIcon = new JLabel(new SingleTextRenderer(new SpecialText(' ')));
+        searchForIcon = new JLabel(new SingleTextRenderer(null));
         placeTileIcon = new JLabel(new SingleTextRenderer(((TileStruct)tileSelectBox.getSelectedItem()).getDisplayChar()));
+        selectTile(tilePencil, tileSelectBox);
 
         //Scan button & associated panel
         JButton scanButton = new JButton("Scan");
@@ -377,6 +375,15 @@ public class EditorToolPanel extends JPanel {
         sizeToolsPanel(tileDataPanel);
         tileDataPanel.validate();
         toolsPanel.add(tileDataPanel);
+    }
+
+    private void selectTile(TilePencil tilePencil, JComboBox<TileStruct> tileSelectBox){
+        tilePencil.setTileData((TileStruct)tileSelectBox.getSelectedItem());
+        if (tileSelectBox.getSelectedItem() != null)
+            ((SingleTextRenderer) placeTileIcon.getIcon()).specText = ((TileStruct) tileSelectBox.getSelectedItem()).getDisplayChar();
+        else
+            ((SingleTextRenderer) placeTileIcon.getIcon()).specText = null;
+        selectedTileStruct = (TileStruct)tileSelectBox.getSelectedItem();
     }
 
     private EntityPlace entityPlaceTool;
@@ -519,13 +526,13 @@ public class EditorToolPanel extends JPanel {
     //Does the 'Scan' function of the Scan button
     private void scanForTileData(LevelData ldata, Layer tileDataLayer){
         SpecialText searchFor = ((SingleTextRenderer)searchForIcon.getIcon()).specText;
-        if (searchFor == null || selectedTileStruct == null) return;
+        TileStruct struct = (selectedTileStruct == null) ? TileRegistry.getTileStruct(0) : selectedTileStruct;
         for (int col = 0; col < ldata.getBackdrop().getCols(); col++){
             for (int row = 0; row < ldata.getBackdrop().getRows(); row++){
                 SpecialText get = ldata.getBackdrop().getSpecialText(col, row);
-                if (searchFor.similar(get)){
-                    ldata.setTileData(col, row, selectedTileStruct.getTileId());
-                    tileDataLayer.editLayer(col, row, selectedTileStruct.getDisplayChar());
+                if ((searchFor == null && get == null) || (searchFor != null && searchFor.similar(get))){
+                    ldata.setTileData(col, row, struct.getTileId());
+                    tileDataLayer.editLayer(col, row, struct.getDisplayChar());
                 }
             }
         }

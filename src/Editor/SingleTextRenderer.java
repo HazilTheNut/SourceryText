@@ -30,7 +30,13 @@ class SingleTextRenderer implements Icon {
             g.setColor(specText.getFgColor());
             g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 17));
             g.drawString(specText.getStr(), x + (getIconWidth() / 2) - 5, y + (getIconHeight() - 4));
+        } /*else {
+            g.setColor(Color.WHITE);
+            g.fillRect(x, y, getIconWidth(), getIconHeight());
+            g.setColor(Color.BLACK);
+            g.drawRect(x, y, getIconWidth() - 1, getIconHeight() - 1);
         }
+        /**/
     }
 
     @Override

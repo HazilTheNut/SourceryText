@@ -118,6 +118,7 @@ public class EditorTextPanel extends JPanel implements ActionListener{
             selectedSpecialText = null;
             selectionRender.specText = null;
             selectionLabel.repaint();
+            if (toolPanel != null) toolPanel.updateSearchForIcon(selectedSpecialText);
         } else if (e.getActionCommand().equals("settext")){ //Any button in the middle panel.
             if (e.getSource() instanceof JButton) {
                 JButton btn = (JButton) e.getSource();
