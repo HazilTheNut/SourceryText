@@ -300,23 +300,28 @@ public class LightingEffects extends LevelScript {
      * @param angle The angle the raycast is pointed
      */
     private void performRaycast(LightNode node, Coordinate startPos, double angle){
-        double xPerCycle = 0.9 * Math.cos(angle);
-        double yPerCycle = 0.9 * Math.sin(angle);
+        double distPerCycle = 0.90;
+        double xPerCycle = distPerCycle * Math.cos(angle);
+        double yPerCycle = distPerCycle * Math.sin(angle);
         float x = (float)startPos.getX();
         float y = (float)startPos.getY();
-        double distPerCycle = Math.sqrt(Math.pow(xPerCycle, 2) + Math.pow(yPerCycle, 2));
         int numberCycles = (int)(Math.ceil(Math.sqrt(node.luminance / lightingCutoff)) / distPerCycle);
         for (int i = 0; i < numberCycles; i++) {
+            if (checkRaycastAt(node, x, y, (float)xPerCycle, 0) || checkRaycastAt(node, x, y, 0, (float)yPerCycle)) //Checks movement along both axis simultaneously, but separately.
+                return;
             x += xPerCycle;
             y += yPerCycle;
-            Coordinate toCheck = new Coordinate(Math.round(x), Math.round(y));
-            double dist = Math.sqrt(Math.pow(node.x - x, 2) + Math.pow(node.y - y, 2));
-            double lightness = node.luminance / Math.max(Math.pow(dist, 2), 1);
-            node.assignLightMapValue(toCheck.getX(), toCheck.getY(), lightness);
-            if (level.isLocationValid(toCheck) && level.getTileAt(toCheck).hasTag(TagRegistry.TILE_WALL)){
-                return;
-            }
         }
+    }
+
+    private boolean checkRaycastAt(LightNode node, float xPos, float yPos, float dx, float dy){
+        float newX = xPos + dx;
+        float newY = yPos + dy;
+        Coordinate toCheck = new Coordinate(Math.round(newX), Math.round(newY));
+        double dist = Math.sqrt(Math.pow(node.x - newX, 2) + Math.pow(node.y - newY, 2));
+        double lightness = node.luminance / Math.max(Math.pow(dist, 2), 1);
+        node.assignLightMapValue(toCheck.getX(), toCheck.getY(), lightness);
+        return (level.isLocationValid(toCheck) && level.getTileAt(toCheck).hasTag(TagRegistry.TILE_WALL));
     }
 
     public LightNode createLightNode(Coordinate loc, double luminance, double direction, double coneWidth){
