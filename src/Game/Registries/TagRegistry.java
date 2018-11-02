@@ -8,6 +8,7 @@ import Game.Tags.PropertyTags.*;
 import Game.Tags.SpellLearningTags.*;
 import Game.Tags.TempTags.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeMap;
@@ -294,8 +295,8 @@ public class TagRegistry {
             recordTagGenerationData(id, tagClass.getSimpleName());
             Object obj;
             try {
-                obj = tagClass.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
+                obj = tagClass.getDeclaredConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 e.printStackTrace();
                 return null;
             }

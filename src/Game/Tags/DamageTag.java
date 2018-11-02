@@ -35,4 +35,9 @@ public class DamageTag extends Tag{
     public void setDamageAmount(int damageAmount) {
         this.damageAmount = damageAmount;
     }
+
+    @Override
+    public Tag copy() {
+        return new DamageTag(damageAmount);
+    }
 }

@@ -96,7 +96,7 @@ public class PlayerShadow extends CombatEntity implements PlayerActionCollector 
     public void onPlayerAttack(Coordinate loc, Item weapon) {
         ItemStruct copyStruct = new ItemStruct(weapon.getItemData().getItemId(), 1, weapon.getItemData().getName(), weapon.calculateWeight());
         Item copy = new Item(copyStruct, gi);
-        for (Tag tag : weapon.getTags()) copy.addTag(tag.getId(), copy);
+        for (Tag tag : weapon.getTags()) copy.addTag(tag.copy(), copy);
         setWeapon(copy);
         if (copy.hasTag(TagRegistry.WEAPON_BOW)) addItem(ItemRegistry.generateItem(ItemRegistry.ID_ARROW, gi));
         doWeaponAttack(loc.add(offset));

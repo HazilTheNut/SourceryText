@@ -27,4 +27,9 @@ public class RangeTag extends Tag{
     }
 
     public static final int RANGE_DEFAULT = 15;
+
+    @Override
+    public Tag copy() {
+        return new RangeTag(range);
+    }
 }

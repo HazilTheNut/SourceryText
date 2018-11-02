@@ -34,4 +34,9 @@ public class HealthTag extends Tag{
     public int getHealthAmount() {
         return healthAmount;
     }
+
+    @Override
+    public Tag copy() {
+        return new HealthTag(healthAmount);
+    }
 }

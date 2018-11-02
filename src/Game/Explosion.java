@@ -93,7 +93,7 @@ public class Explosion extends TagHolder{
     private void transmitTags(TagHolder other){
         for (Tag tag : getTags()){
             if (!transmissionBlacklist.contains(tag.getId()))
-                other.addTag(tag.getId(), this);
+                other.addTag(tag.copy(), this);
         }
     }
 
