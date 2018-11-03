@@ -250,8 +250,8 @@ public class EditorToolPanel extends JPanel {
     private void createCameraPanel(LevelData ldata){
         JPanel cameraPanel = new JPanel();
         cameraPanel.setBorder(BorderFactory.createTitledBorder("Camera"));
-        cameraPanel.setLayout(new GridLayout(2, 3, 0, 5));
-        cameraPanel.setMaximumSize(new Dimension(PANEL_WIDTH, 65));
+        cameraPanel.setLayout(new GridBagLayout());
+        cameraPanel.setMaximumSize(new Dimension(PANEL_WIDTH, 85));
 
         //Tells CameraManager what layers it should be working with
         cm.artLayer = ldata.getBackdrop();
@@ -259,13 +259,26 @@ public class EditorToolPanel extends JPanel {
         cm.entityLayer = ldata.getEntityLayer();
         cm.warpZoneLayer = ldata.getWarpZoneLayer();
 
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.weightx = 0.5;
+        c.weighty = 0.5;
+
+        Dimension elementSize = new Dimension(PANEL_WIDTH / 3, 20);
+
         String[] buttonNames = {"A","T","E","+","-"};
-        for (String str : buttonNames){
+        for (int i = 0; i < buttonNames.length; i++){
+            String str = buttonNames[i];
             JButton btn = new JButton(str);
             btn.setActionCommand(str);
             btn.addActionListener(cm);
             btn.setMargin(new Insets(1, 1, 1, 1));
-            cameraPanel.add(btn);
+            btn.setMinimumSize(elementSize);
+            c.gridx = i % 3;
+            c.gridy = i / 3;
+            System.out.printf("[Camera Panel] x = %1$d, y = %2$d\n", c.gridx, c.gridy);
+            cameraPanel.add(btn, c);
             switch (str){
                 case "A":
                     cm.artButton = btn;
@@ -290,10 +303,20 @@ public class EditorToolPanel extends JPanel {
             }
         }
 
+        c.gridx = 2;
+        c.gridy = 1;
         JLabel zoomLabel = new JLabel("");
-        cameraPanel.add(zoomLabel);
+        zoomLabel.setPreferredSize(elementSize);
+        cameraPanel.add(zoomLabel, c);
         cm.zoomAmountLabel = zoomLabel;
         cm.updateLabel();
+
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 3;
+        JButton moveViewBtn = createDrawToolButton("Move View", new MoveView(lm), KeyEvent.VK_F4);
+        moveViewBtn.setMinimumSize(new Dimension(elementSize.width * 3, elementSize.height));
+        cameraPanel.add(moveViewBtn, c);
 
         toolsPanel.add(cameraPanel);
     }
@@ -541,12 +564,17 @@ public class EditorToolPanel extends JPanel {
 
     private JButton selectedToolButton;
 
-    private JButton createDrawToolButton(String name, DrawTool tool, int mnemonic){
+    private JButton createDrawToolButton(String name, DrawTool tool){
         JButton btn = new JButton(name);
         btn.addActionListener(e -> setNewArtTool(btn, tool));
         btn.setHorizontalAlignment(SwingConstants.CENTER);
         btn.setAlignmentX(CENTER_ALIGNMENT);
         btn.setMargin(new Insets(2, 2, 2, 2));
+        return btn;
+    }
+
+    private JButton createDrawToolButton(String name, DrawTool tool, int mnemonic){
+        JButton btn = createDrawToolButton(name, tool);
         btn.setMnemonic(mnemonic);
         setButtonMnemonic(btn, mnemonic);
         return btn;

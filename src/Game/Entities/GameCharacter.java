@@ -28,6 +28,7 @@ public class GameCharacter extends BasicEnemy {
     private GameCharacter recentDamageDealer;
 
     private ArrayList<String> interactText;
+    private String rawInteractText;
     private int interactTextPointer = 0;
 
     @Override
@@ -50,6 +51,7 @@ public class GameCharacter extends BasicEnemy {
         originalSprite = readSpecTxtArg(searchForArg(entityStruct.getArgs(), "icon"), entityStruct.getDisplayChar());
         super.initialize(pos, lm, entityStruct, gameInstance);
         interactText = readStringList(searchForArg(entityStruct.getArgs(), "interactText"));
+        rawInteractText = readStrArg(searchForArg(entityStruct.getArgs(), "interactText"), "");
     }
 
     public ArrayList<String> getFactionAlignments() {
@@ -181,6 +183,7 @@ public class GameCharacter extends BasicEnemy {
         if (getOpinion(player) >= 0 && interactText.size() > 0){
             gi.getTextBox().showMessage(interactText.get(interactTextPointer), getName());
             interactTextPointer = Math.min(interactText.size() - 1, interactTextPointer + 1); //Increments the pointer, but loops at the maximum value
+            DebugWindow.reportf(DebugWindow.MISC, "GameCharacter.onInteract", "Raw Interaction Text: %1$s", rawInteractText);
         }
     }
 }
