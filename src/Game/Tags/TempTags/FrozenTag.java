@@ -21,11 +21,13 @@ public class FrozenTag extends Tag {
      *
      * The Tag that defines a frozen TagHolder
      *
+     * If the target is not qet or living, this tag will cancel itself upon addition
+     *
      * For Entities:
      *  > Prevents all actions until a timer reaches zero (starts at 4)
      *
      * For Tiles:
-     *  > If the tile is wet, cancels adding this tag. It then creates an overlay tile.
+     *  >  It creates an overlay tile.
      */
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
@@ -35,8 +37,8 @@ public class FrozenTag extends Tag {
 
     @Override
     public void onAddThis(TagEvent e) {
-        if (e.getTarget() instanceof Tile) {
-            if (e.getTarget().hasTag(TagRegistry.WET)) { //If it is a wet Tile
+        if (e.getTarget().hasTag(TagRegistry.WET) || e.getTarget().hasTag(TagRegistry.LIVING)) {
+            if (e.getTarget() instanceof Tile) {
                 Tile target = (Tile) e.getTarget();
                 Tile overlay = target.getLevel().getOverlayTileAt(target.getLocation());
                 if (overlay == null) { //This will return false for the new overlay tile, because it will already be added by the time this method is ran again
@@ -46,9 +48,9 @@ public class FrozenTag extends Tag {
                 } else {
                     isAttachedToIceOverlay = true;
                 }
-            } else
-                e.cancel();
-        }
+            }
+        } else
+            e.cancel();
     }
 
     private void createIceOverlayTile(Tile target){

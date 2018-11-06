@@ -52,6 +52,7 @@ public class GameCharacter extends BasicEnemy {
         super.initialize(pos, lm, entityStruct, gameInstance);
         interactText = readStringList(searchForArg(entityStruct.getArgs(), "interactText"));
         rawInteractText = readStrArg(searchForArg(entityStruct.getArgs(), "interactText"), "");
+        dialogueParser = new DialogueParser(getGameInstance(), rawInteractText);
     }
 
     public ArrayList<String> getFactionAlignments() {
@@ -178,12 +179,17 @@ public class GameCharacter extends BasicEnemy {
         return new Color(fromHsb.getRed(), fromHsb.getGreen(), fromHsb.getBlue(), color.getAlpha());
     }
 
+    private DialogueParser dialogueParser;
+
     @Override
     public void onInteract(Player player) {
+        /*
         if (getOpinion(player) >= 0 && interactText.size() > 0){
             gi.getTextBox().showMessage(interactText.get(interactTextPointer), getName());
             interactTextPointer = Math.min(interactText.size() - 1, interactTextPointer + 1); //Increments the pointer, but loops at the maximum value
             DebugWindow.reportf(DebugWindow.MISC, "GameCharacter.onInteract", "Raw Interaction Text: %1$s", rawInteractText);
         }
+        */
+        dialogueParser.startParser(getName());
     }
 }

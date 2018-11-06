@@ -154,7 +154,7 @@ public class TextBox implements MouseInputReceiver{
                 if (!isSkimming)
                     sleep(3000);
                 index += 3;
-            } else if (isFormattedElement(message, index, "<cw>")){ textColor = txt_white;  index += 3; //Color Flags!
+            } else if (isFormattedElement(message, index, "<cw>")){ textColor = txt_white;  index += 3; //Color Flags
             } else if (isFormattedElement(message, index, "<cr>")){ textColor = txt_red;    index += 3;
             } else if (isFormattedElement(message, index, "<cg>")){ textColor = txt_green;  index += 3;
             } else if (isFormattedElement(message, index, "<cb>")){ textColor = txt_blue;   index += 3;
