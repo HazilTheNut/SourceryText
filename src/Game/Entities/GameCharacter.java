@@ -190,6 +190,6 @@ public class GameCharacter extends BasicEnemy {
             DebugWindow.reportf(DebugWindow.MISC, "GameCharacter.onInteract", "Raw Interaction Text: %1$s", rawInteractText);
         }
         */
-        dialogueParser.startParser(getName());
+        dialogueParser.startParser(this);
     }
 }

@@ -1,5 +1,7 @@
 package Game;
 
+import Game.Entities.GameCharacter;
+
 import java.util.HashMap;
 
 public class DialogueParser {
@@ -31,7 +33,7 @@ public class DialogueParser {
         moduleStartPos = 0;
     }
 
-    public void startParser(String defaultSpeakerName){
+    public void startParser(GameCharacter speaker){
         boolean stopping = false;
         System.out.println("[DialogueParser] PARSE BEGIN:");
         System.out.printf( "[DialogueParser] FULL STRING: \"%1$s\"\n\n", dialogueText);
@@ -48,13 +50,13 @@ public class DialogueParser {
             if (charAt == '"'){
                 String containedText = getContainedString('"', true);
                 System.out.printf("[DialogueParser] TEXT:        \"%1$s\"\n", containedText);
-                processText(containedText, defaultSpeakerName);
+                processText(containedText, speaker);
                 stopping = true;
             }
             if (charAt == '['){
                 String containedText = getContainedString(']', true);
                 System.out.printf("[DialogueParser] CONDITIONAL: \"%1$s\"\n", containedText);
-                processConditional(containedText);
+                processConditional(containedText, speaker);
             }
             if (charAt == '{'){
                 String containedText = getContainedString('}', true);
@@ -95,9 +97,9 @@ public class DialogueParser {
         return dialogueText.substring(Math.min(parserPos + 1, dialogueText.length()));
     }
 
-    private void processText(String text, String speaker){
+    private void processText(String text, GameCharacter speaker){
         int restartPos = parserPos + 1;
-        gi.getTextBox().showMessage(text, speaker, () -> {
+        gi.getTextBox().showMessage(text, speaker.getName(), () -> {
             parserPos = restartPos; //If the parser reaches the end of the string, the parserPos will move somewhere and cause looping behaviors. This is unwanted, so the parserPos is forcibly relocated to the end of the string being displayed.
             startParser(speaker);
         });
@@ -107,7 +109,7 @@ public class DialogueParser {
         try {
             return Integer.valueOf(str);
         } catch (NumberFormatException ignored){
-            return -1;
+            return Integer.MIN_VALUE;
         }
     }
 
@@ -120,9 +122,9 @@ public class DialogueParser {
             parserPos = gotoMapping.get(number);
     }
 
-    private void processConditional(String text){
+    private void processConditional(String text, GameCharacter speaker){
         if (text.indexOf(':') == -1 || text.indexOf('?') == -1) return; //Contained string is improperly formatted, gives up immediately.
-        String condStatement = text.substring(0, text.indexOf(':')); //Get the full conditional statement
+        String condStatement = text.substring(0, text.indexOf('?')); //Get the full conditional statement
         //Begin cutting up the conditional statement into its pieces: the keyword, the arguments, and the goto
         int separatorLoc = text.indexOf('|');
         //keyword and arguments segments
@@ -136,18 +138,27 @@ public class DialogueParser {
         }
         System.out.printf("[DialogueParser.processConditional] -- \n keyword: \"%1$s\"\n arguments: \"%2$s\"\n ---\n", keyword, arguments);
         //Goto segment
-        if (performConditional(keyword, arguments)){
-            processGoto(text.substring(text.indexOf(':') + 1, text.indexOf('?'))); //Go to marker # between ':' and '?' (If true)
+        if (performConditional(keyword, arguments, speaker)){
+            processGoto(text.substring(text.indexOf('?') + 1, text.indexOf(':'))); //Go to marker # between '?' and ':' (If true)
         } else {
-            processGoto(text.substring(text.indexOf('?') + 1)); //Go to marker # between '?' and end of string (If false)
+            processGoto(text.substring(text.indexOf(':') + 1)); //Go to marker # between ':' and end of string (If false)
         }
     }
 
-    private boolean performConditional(String keyword, String arguments){
+    private boolean performConditional(String keyword, String arguments, GameCharacter speaker){
         switch (keyword){
             case "ifdebug":
                 int amount = getIntFromStr(arguments);
                 return gi.getPlayer().getItems().size() > amount;
+            case "ifm":
+                for (String factionName : speaker.getFactionAlignments())
+                    if (gi.getPlayer().getFactionAlignments().contains(factionName))
+                        return true;
+                return false;
+            case "ifop":
+                int minOpinion = getIntFromStr(arguments);
+                int opinion =  gi.getFactionManager().getOpinion(speaker, gi.getPlayer());
+                return opinion >= minOpinion;
             default:
                 return true;
         }
