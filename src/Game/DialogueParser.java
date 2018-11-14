@@ -1,6 +1,7 @@
 package Game;
 
 import Data.ItemStruct;
+import Game.Entities.Entity;
 import Game.Entities.GameCharacter;
 import Game.Registries.ItemRegistry;
 
@@ -8,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DialogueParser implements Serializable {
 
@@ -70,6 +72,10 @@ public class DialogueParser implements Serializable {
                 String containedText = getContainedString(']', true);
                 System.out.printf("[DialogueParser] CONDITIONAL: \"%1$s\"\n", containedText);
                 processConditional(containedText, speaker);
+            } else if (charAt == '$'){
+                String containedText = getContainedString('$', true);
+                System.out.printf("[DialogueParser] TRADE:     \"%1$s\"\n", containedText);
+                processTrade(containedText, speaker);
             } else if (charAt == '{'){
                 String containedText = getContainedString('}', true);
                 System.out.printf("[DialogueParser] OPTIONS:     \"%1$s\"\n", containedText);
@@ -165,47 +171,75 @@ public class DialogueParser implements Serializable {
                 int minOpinion = getIntFromStr(arguments);
                 int opinion =  gi.getFactionManager().getOpinion(speaker, gi.getPlayer());
                 return opinion >= minOpinion;
-            case "trade":
-                int sepIndex = arguments.indexOf('|');
-                if (sepIndex == -1) return processTrade(arguments, "", speaker);
-                return processTrade(arguments.substring(0, sepIndex), arguments.substring(Math.min(sepIndex + 1, arguments.length())), speaker);
             default:
                 return true;
         }
     }
 
-    private boolean processTrade(String toGive, String toReceive, GameCharacter speaker){
-        //Debug stuff
-        System.out.printf("[DialogueParser.processTrade] TRADE:\n toGive: \"%1$s\"\n", toGive);
-        for (String s : divideStringList(toGive)) System.out.printf("ITEM: %1$s\n", s);
-        System.out.printf(" toReceive: \"%1$s\"\n", toReceive);
-        for (String s : divideStringList(toReceive)) System.out.printf("ITEM: %1$s\n", s);
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    private enum TradeResult {
+        TRADE_SUCCESS,
+        TRADE_NPC_NO_ITEMS,
+        TRADE_REFUSAL
+    }
+
+    private void processTrade(String text, GameCharacter speaker){
+        //Split the text into a bunch of strings separated by |'s
+        ArrayList<String> args = divideStringList(text, '|');
+        if (args.size() < 6) return; //Hello, input sanitation
+        switch (performTrade(args, speaker)){
+            case TRADE_SUCCESS:
+                gotoMarker(getIntFromStr(args.get(3)));
+                break;
+            case TRADE_NPC_NO_ITEMS:
+                gotoMarker(getIntFromStr(args.get(4)));
+                break;
+            case TRADE_REFUSAL:
+                gotoMarker(getIntFromStr(args.get(5)));
+                break;
         }
+    }
+
+    /*
+    * Here is how args should be split up:
+    * 0: Items to Give
+    * 1: Items to Receive
+    * 2: Favor gained by trading
+    * 3: GOTO: If successful
+    * 4: GOTO: If NPC does not have required items
+    * 5: GOTO: If trade refused
+     */
+
+    private TradeResult performTrade(ArrayList<String> args, GameCharacter speaker){
+        String toGive = args.get(0);
+        String toReceive = args.get(1);
+        //Debug stuff
+        System.out.printf("[DialogueParser.performTrade] TRADE:\n toGive: \"%1$s\"\n", toGive);
+        for (String s : divideStringList(toGive, ',')) System.out.printf("ITEM: %1$s\n", s);
+        System.out.printf(" toReceive: \"%1$s\"\n", toReceive);
+        for (String s : divideStringList(toReceive, ',')) System.out.printf("ITEM: %1$s\n", s);
+
         //Begin actual trade code
-        ArrayList<ItemStruct> itemsToGive = getItemsFromStringList(divideStringList(toGive)); //Get the list of items to give away
-        ArrayList<ItemStruct> itemsToGet  = getItemsFromStringList(divideStringList(toReceive)); //Get the list of items to get back
+        ArrayList<Item> itemsToGive = getItemsFromStringList(divideStringList(toGive, ',')); //Get the list of items to give away
+        ArrayList<Item> itemsToGet  = getItemsFromStringList(divideStringList(toReceive, ',')); //Get the list of items to get back
+        if (!hasItems(speaker, itemsToGet)) return TradeResult.TRADE_NPC_NO_ITEMS;
         AtomicBoolean keepWaiting = new AtomicBoolean(true);
-        AtomicBoolean tradeSuccessful = new AtomicBoolean(false);
         gi.getTextBox().showMessage(buildTradePrompt(itemsToGive), "", () -> keepWaiting.set(false)); //Builds and displays message based on item list
         waitForPlayerInput(keepWaiting); //Wait until the stopWaiting becomes true (when text box finishes)
         keepWaiting.set(true); //Reset keepWaiting boolean so that we can use it again
+        AtomicInteger tradeResult = new AtomicInteger(TradeResult.TRADE_REFUSAL.ordinal());
         //Ask the player if they want to conduct the trade (after text box finishes)
         gi.getQuickMenu().clearMenu();
         gi.getQuickMenu().addMenuItem("Yes", () -> { //This whole quick menu thing could be put into the lambda expression for the text box, but I'm afraid it might be a little buggy
-            tradeSuccessful.set(trade(itemsToGive, itemsToGet, speaker)); // ^ "Nested lambda expressions" just doesn't sound like responsibly developed code
+            tradeResult.set((trade(itemsToGive, itemsToGet, speaker)).ordinal()); // ^ "Nested lambda expressions" just doesn't sound like responsibly developed code
             keepWaiting.set(false);
         });
         gi.getQuickMenu().addMenuItem("No", () -> {
-            tradeSuccessful.set(false);
+            tradeResult.set(TradeResult.TRADE_REFUSAL.ordinal());
             keepWaiting.set(false);
         });
         gi.getQuickMenu().showMenu("Complete Trade?", false);
         waitForPlayerInput(keepWaiting);
-        return tradeSuccessful.get();
+        return TradeResult.values()[tradeResult.get()];
     }
 
     private void waitForPlayerInput(AtomicBoolean atomicBoolean){
@@ -218,11 +252,11 @@ public class DialogueParser implements Serializable {
         }
     }
 
-    private ArrayList<String> divideStringList(String str){
+    private ArrayList<String> divideStringList(String str, char separator){
         int i = 0;
         ArrayList<String> output = new ArrayList<>();
         while (i < str.length()){
-            int nextIndex = str.indexOf(',', i);
+            int nextIndex = str.indexOf(separator, i);
             if (nextIndex > -1){
                 output.add(str.substring(i, nextIndex));
                 i = nextIndex + 1; //Adding 1 prevents indexOf() from finding the previous ','
@@ -234,49 +268,46 @@ public class DialogueParser implements Serializable {
         return output;
     }
 
-    private ArrayList<ItemStruct> getItemsFromStringList(ArrayList<String> items){
-        ArrayList<ItemStruct> itemStructs = new ArrayList<>();
+    private ArrayList<Item> getItemsFromStringList(ArrayList<String> items){
+        ArrayList<Item> itemList = new ArrayList<>();
         for (String item : items){
             int index = item.indexOf('x'); //'x' is used to separate item id from quantity
             if (index > 0 && index != item.length() - 1){ //If the string is formatted correctly, indicative of the position of the 'x' character
                 int id = getIntFromStr(item.substring(0, index));
                 int q  = getIntFromStr(item.substring(index + 1));
-                ItemStruct struct = ItemRegistry.getItemStruct(id);
-                struct.setQty(q);
-                itemStructs.add(struct);
+                itemList.add(ItemRegistry.generateItem(id, gi).setQty(q));
             }
         }
-        return itemStructs;
+        return itemList;
     }
 
-    private String buildTradePrompt(ArrayList<ItemStruct> structs){
+    private String buildTradePrompt(ArrayList<Item> items){
         StringBuilder builder = new StringBuilder("Give ");
-        for (int i = 0; i < structs.size(); i++) {
-            ItemStruct struct = structs.get(i);
+        for (int i = 0; i < items.size(); i++) {
+            ItemStruct struct = items.get(i).getItemData();
             builder.append(String.format("<cy>%1$s x %2$d", struct.getName(), struct.getQty()));
-            if (i < structs.size() - 1) builder.append("<cw>, ");
+            if (i < items.size() - 1) builder.append("<cw>, ");
         }
         return builder.append("<cw>?").toString();
     }
 
-    private boolean trade(ArrayList<ItemStruct> toGive, ArrayList<ItemStruct> toReceive, GameCharacter tradingPartner){
+    private boolean hasItems(Entity e, ArrayList<Item> items){
+        for (Item item : items)
+            if (!e.hasItem(item)) return false;
+        return true;
+    }
+
+    private TradeResult trade(ArrayList<Item> playerItems, ArrayList<Item> npcItems, GameCharacter tradingPartner){
         //Set up ArrayLists of Items to give and receive
-        ArrayList<Item> givingItems = new ArrayList<>();
-        for (ItemStruct struct : toGive)
-            givingItems.add(ItemRegistry.generateItem(struct, gi));
-        ArrayList<Item> receivingItems = new ArrayList<>();
-        for (ItemStruct struct : toReceive)
-            receivingItems.add(ItemRegistry.generateItem(struct, gi));
         //Test to see if trade will succeed
-        for (Item item : givingItems){
-            if (!gi.getPlayer().hasItem(item)) return false; //Don't do the trade if the player doesn't have the necessary items
-        }
-        for (Item item : givingItems){
+        if (!hasItems(gi.getPlayer(), playerItems)) return TradeResult.TRADE_REFUSAL; //Don't do the trade if the player doesn't have the necessary items
+        if (!hasItems(tradingPartner, npcItems))    return TradeResult.TRADE_NPC_NO_ITEMS; //Don't do the trade if the player doesn't have the necessary items
+        for (Item item : playerItems){
             tradingPartner.takeItem(item, gi.getPlayer());
         }
-        for (Item item : receivingItems){ //Give items back as a reward
-            gi.getPlayer().addItem(item);
+        for (Item item : npcItems){ //Give items back as a reward
+            gi.getPlayer().takeItem(item, tradingPartner);
         }
-        return true;
+        return TradeResult.TRADE_SUCCESS;
     }
 }
