@@ -89,7 +89,7 @@ public class TextBox implements MouseInputReceiver{
             if (message.indexOf(' ') > 0)
                 DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
             postMessageAction = action;
-            Thread writeThread = new Thread(() -> writeMessage(message, speaker));
+            Thread writeThread = new Thread(() -> writeMessage(message, speaker), "TextBox Write");
             writeThread.start();
         }
     }

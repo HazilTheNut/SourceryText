@@ -17,7 +17,7 @@ public class PlayerWallet extends Item {
         moneyList = new ArrayList<>();
     }
 
-    int getMoneyAmount(String name){
+    public int getMoneyAmount(String name){
         for (MoneyType moneyType : moneyList){
             if (moneyType.name.toLowerCase().equals(name.toLowerCase()))
                 return moneyType.qty;

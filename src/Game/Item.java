@@ -53,11 +53,23 @@ public class Item extends TagHolder implements Serializable {
         return this;
     }
 
-    public double calculateWeight(){
+    /**
+     * Gets the 'literal' quantity of the item. If it is stackable, it's simply the item's quantity number.
+     * However, if it cannot be stacked, then the item is considered quantity 1 regardless of the actual value.
+     *
+     * This quantity is called 'literal' because, for example, a wooden sword is still a singular wooden sword regardless how much durability it has.
+     *
+     * @return The 'literal' quantity of the item
+     */
+    public int getLiteralQty(){
         if (stackability == STACKABLE)
-            return itemData.getRawWeight() * itemData.getQty();
+            return itemData.getQty();
         else
-            return itemData.getRawWeight();
+            return 1;
+    }
+
+    public double calculateWeight(){
+        return itemData.getRawWeight() * getLiteralQty();
     }
 
     TagEvent onItemUse(TagHolder target){

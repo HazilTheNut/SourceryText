@@ -249,6 +249,71 @@ public class Entity extends TagHolder implements Serializable {
     }
 
     /**
+     * Checks for the existence of an item in an inventory, in a more literal sense.
+     * This means that all non-stacking items are treated as if they have quantity 1, even if their durability states otherwise.
+     *
+     * To check for n non-stacking items, simply set the quantity of other to n
+     *
+     * @param toCheck The item to check this inventory for
+     * @return Whether or not the entity has enough of the items in their list
+     */
+    public boolean hasItem(Item toCheck){
+        int remainingQty = toCheck.getItemData().getQty(); //"Wooden Sword x 2" should mean checking for two wooden swords, so the 'non-literal' quantity is used
+        for (Item item : items) {
+            if (item instanceof PlayerWallet){
+                remainingQty -= ((PlayerWallet)item).getMoneyAmount(toCheck.getItemData().getName());
+            } else if (item.getItemData().getItemId() == toCheck.getItemData().getItemId()){
+                remainingQty -= item.getLiteralQty();
+                //Subtract by 1 instead of item quantity if non-stacking (like a weapon).
+                //So, searching for 3 carrots requires finding an item whose id matches carrots and has quantity >= 3,
+                //But searching for 3 wooden swords requires finding 3 separate instances of Item that match the desired id, regardless of durability
+            }
+            if (remainingQty <= 0) return true;
+        }
+        return false;
+    }
+
+    public void subtractItem(Item toRemove){
+        int remainingQty = toRemove.getItemData().getQty(); //"Wooden Sword x 2" should mean removing two wooden swords, so the 'non-literal' quantity is used
+        for (int i = 0; i < items.size(); ) {
+            Item item = items.get(i);
+            if (item.getItemData().getItemId() == toRemove.getItemData().getItemId()) {
+                if (item.getLiteralQty() <= remainingQty) {
+                    removeItem(item);
+                    i--; //Moves iterator back one step so that it doesn't miss any elements in the list (as the future elements shift down a spot)
+                    remainingQty -= item.getLiteralQty();
+                } else {
+                    item.getItemData().setQty(item.getItemData().getQty() - remainingQty);
+                    remainingQty = 0;
+                }
+            }
+            if (remainingQty <= 0) return; //remainingQty should never be negative, but it's checked for anyway in case an error occurred
+            i++; //This gets IntelliJ to shut up about foreach loops, which are more error-prone with regards to co-modification
+        }
+    }
+
+    public void takeItem(Item toTake, Entity itemOwner){
+        int remainingQty = toTake.getItemData().getQty(); //"Wooden Sword x 2" should mean removing two wooden swords, so the 'non-literal' quantity is used
+        for (int i = 0; i < itemOwner.getItems().size(); ) {
+            Item item = itemOwner.getItems().get(i);
+            if (item.getItemData().getItemId() == toTake.getItemData().getItemId()) {
+                if (item.getLiteralQty() <= remainingQty) {
+                    itemOwner.removeItem(item);
+                    addItem(item);
+                    i--; //Moves iterator back one step so that it doesn't miss any elements in the list (as the future elements shift down a spot)
+                    remainingQty -= item.getLiteralQty();
+                } else {
+                    item.getItemData().setQty(item.getItemData().getQty() - remainingQty); //This might have issues with weapon durability, but luckily these statements will never run if the item being exchanged actually is one.
+                    addItem(ItemRegistry.generateItem(item.getItemData().getItemId(), gi).setQty(remainingQty));
+                    remainingQty = 0;
+                }
+            }
+            if (remainingQty <= 0) return; //remainingQty should never be negative, but it's checked for anyway in case an error occurred
+            i++; //This gets IntelliJ to shut up about foreach loops, which are more error-prone with regards to co-modification
+        }
+    }
+
+    /**
      * Performs the actions of scanInventory(), but also performs onTurn() for each item as well
      */
     public void updateInventory(){

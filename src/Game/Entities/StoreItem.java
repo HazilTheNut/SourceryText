@@ -58,7 +58,7 @@ public class StoreItem extends LootPile {
     public void onInteract(Player player) {
         Entity e = gi.getCurrentLevel().getSolidEntityAt(ownerPos);
         if (ownerUID != -1){
-            if ((e != null && e.getUniqueID() != ownerUID) || e == null){
+            if (e == null || e.getUniqueID() != ownerUID){
                 super.onInteract(player);
                 return;
             }
