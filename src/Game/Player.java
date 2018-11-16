@@ -743,4 +743,16 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     public void addMoney(int amount, String currency){
         wallet.addMoney(amount, currency);
     }
+
+    public boolean dropItemsUntilUnderCapacity(){
+        int dropIndex = 0; //The index of item list to drop. Although the list shifts down every time the items are removed, if it encounters an un-droppable item, it has to move to the next item.
+        boolean droppedAnything = false;
+        while(getInv().calculateTotalWeight() > weightCapacity && dropIndex < getItems().size()){
+            if (dropItem(getItems().get(dropIndex)) == null)
+                dropIndex++;
+            else
+                droppedAnything = true;
+        }
+        return droppedAnything;
+    }
 }

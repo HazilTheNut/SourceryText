@@ -273,25 +273,6 @@ public class Entity extends TagHolder implements Serializable {
         return false;
     }
 
-    public void subtractItem(Item toRemove){
-        int remainingQty = toRemove.getItemData().getQty(); //"Wooden Sword x 2" should mean removing two wooden swords, so the 'non-literal' quantity is used
-        for (int i = 0; i < items.size(); ) {
-            Item item = items.get(i);
-            if (item.getItemData().getItemId() == toRemove.getItemData().getItemId()) {
-                if (item.getLiteralQty() <= remainingQty) {
-                    removeItem(item);
-                    i--; //Moves iterator back one step so that it doesn't miss any elements in the list (as the future elements shift down a spot)
-                    remainingQty -= item.getLiteralQty();
-                } else {
-                    item.getItemData().setQty(item.getItemData().getQty() - remainingQty);
-                    remainingQty = 0;
-                }
-            }
-            if (remainingQty <= 0) return; //remainingQty should never be negative, but it's checked for anyway in case an error occurred
-            i++; //This gets IntelliJ to shut up about foreach loops, which are more error-prone with regards to co-modification
-        }
-    }
-
     public void takeItem(Item toTake, Entity itemOwner){
         int remainingQty = toTake.getItemData().getQty(); //"Wooden Sword x 2" should mean removing two wooden swords, so the 'non-literal' quantity is used
         for (int i = 0; i < itemOwner.getItems().size(); ) {
@@ -311,6 +292,27 @@ public class Entity extends TagHolder implements Serializable {
             if (remainingQty <= 0) return; //remainingQty should never be negative, but it's checked for anyway in case an error occurred
             i++; //This gets IntelliJ to shut up about foreach loops, which are more error-prone with regards to co-modification
         }
+    }
+    
+    public LootPile dropItem(Item toDrop){
+        if (toDrop.hasTag(TagRegistry.IMPORTANT)) return null;
+        ArrayList<Entity> entities = getGameInstance().getCurrentLevel().getEntitiesAt(getLocation());
+        for (Entity e : entities){ //Search for a loot pile that already exists
+            if (e instanceof LootPile) {
+                LootPile lootPile = (LootPile) e;
+                lootPile.addItem(toDrop);
+                removeItem(toDrop);
+                return lootPile;
+            }
+        }
+        //Create a new loot pile, since one obviously doesn't exist
+        DebugWindow.reportf(DebugWindow.GAME, "SubInventory.dropItem","Creating new loot pile");
+        EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot", null);
+        LootPile pile = (LootPile)getGameInstance().instantiateEntity(lootPileStruct, getLocation(), getGameInstance().getCurrentLevel());
+        pile.addItem(toDrop);
+        removeItem(toDrop);
+        pile.onLevelEnter();
+        return pile;
     }
 
     /**

@@ -309,6 +309,7 @@ public class DialogueParser implements Serializable {
         for (Item item : npcItems){ //Give items back as a reward
             gi.getPlayer().takeItem(item, tradingPartner);
         }
+        gi.getPlayer().dropItemsUntilUnderCapacity();
         return TradeResult.TRADE_SUCCESS;
     }
 

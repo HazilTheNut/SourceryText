@@ -630,28 +630,10 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
 
         private void dropItem(Item selected){
             if (getOwner() instanceof Player && selected.hasTag(TagRegistry.IMPORTANT)) return;
-            ArrayList<Entity> entities = player.getGameInstance().getCurrentLevel().getEntitiesAt(player.getLocation());
-            for (Entity e : entities){ //Search for a loot pile that already exists
-                if (e instanceof LootPile) {
-                    LootPile lootPile = (LootPile) e;
-                    moveWholeItem(selected, playerInv.getOwner(), lootPile);
-                    otherInv.configure(PLACEMENT_TOP_RIGHT, name, lootPile, CONFIG_OTHER_EXCHANGE);
-                    otherInv.show();
-                    playerInv.changeMode(CONFIG_PLAYER_EXCHANGE);
-                    playerInv.updateDisplay();
-                    otherInv.updateDisplay();
-                    return;
-                }
-            }
-            //Create a new loot pile, since one obviously doesn't exist
-            DebugWindow.reportf(DebugWindow.GAME, "SubInventory.dropItem","Creating new loot pile");
-            EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot", null);
-            LootPile pile = (LootPile)player.getGameInstance().instantiateEntity(lootPileStruct, player.getLocation(), player.getGameInstance().getCurrentLevel());
-            pile.onLevelEnter();
-            player.getGameInstance().addEntity(lootPileStruct, player.getLocation());
+            LootPile pile = getOwner().dropItem(selected);
+            if (pile == null) return;
             otherInv.configure(PLACEMENT_TOP_RIGHT, name, pile, CONFIG_OTHER_EXCHANGE);
             otherInv.show();
-            moveWholeItem(selected, playerInv.getOwner(), pile);
             playerInv.changeMode(CONFIG_PLAYER_EXCHANGE);
             playerInv.updateDisplay();
             otherInv.updateDisplay();
