@@ -46,6 +46,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private transient LayerManager lm;
     private transient TextBox textBox;
     private transient QuickMenu quickMenu;
+    private transient DialogueOptionsMenu dialogueOptions;
     private transient GameDeathMenu deathMenu;
     private FactionManager factionManager;
 
@@ -93,6 +94,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
 
         textBox = new TextBox(lm, getPlayer());
         quickMenu = new QuickMenu(lm, getPlayer());
+        dialogueOptions = new DialogueOptionsMenu(lm, getPlayer());
         deathMenu = new GameDeathMenu(this);
 
         pathTestLayer = new Layer(0, 0, "pathtest", 0, 0, LayerImportances.VFX);
@@ -301,6 +303,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     public void establishMouseInput(){
         mi.addInputReceiver(textBox);
         mi.addInputReceiver(quickMenu);
+        mi.addInputReceiver(dialogueOptions);
         getPlayer().assignMouseInput(mi);
     }
 
@@ -423,6 +426,10 @@ public class GameInstance implements Serializable, FrameUpdateListener {
 
     public GameDeathMenu getDeathMenu() {
         return deathMenu;
+    }
+
+    public DialogueOptionsMenu getDialogueOptions() {
+        return dialogueOptions;
     }
 
     private interface EntityOperation{

@@ -314,7 +314,7 @@ public class DialogueParser implements Serializable {
 
     private void processDialogueOptions(String text){
         ArrayList<String> options = divideStringList(text, '|');
-        gi.getQuickMenu().clearMenu();
+        gi.getDialogueOptions().clearMenu();
         AtomicBoolean keepWaiting = new AtomicBoolean(true);
         for (int i = 0; i < options.size(); i++) {
             String s = options.get(i);
@@ -323,13 +323,13 @@ public class DialogueParser implements Serializable {
             if (sepIndex >= 0 && sepIndex < s.length() - 1){
                 String answer = s.substring(0, sepIndex);
                 int gotoValue = getIntFromStr(s.substring(sepIndex + 1));
-                gi.getQuickMenu().addMenuItem(answer, () -> {
+                gi.getDialogueOptions().addMenuItem(answer, () -> {
                     gotoMarker(gotoValue);
                     keepWaiting.set(false);
                 });
             }
         }
-        gi.getQuickMenu().showMenu("Respond:", false);
+        gi.getDialogueOptions().showMenu("Respond:", false);
         waitForPlayerInput(keepWaiting);
     }
 }
