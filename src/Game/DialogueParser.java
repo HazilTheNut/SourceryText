@@ -79,6 +79,7 @@ public class DialogueParser implements Serializable {
             } else if (charAt == '{'){
                 String containedText = getContainedString('}', true);
                 System.out.printf("[DialogueParser] OPTIONS:     \"%1$s\"\n", containedText);
+                processDialogueOptions(containedText);
             } else if (charAt == '<'){
                 String containedText = getContainedString('>', true);
                 processGoto(containedText);
@@ -309,5 +310,26 @@ public class DialogueParser implements Serializable {
             gi.getPlayer().takeItem(item, tradingPartner);
         }
         return TradeResult.TRADE_SUCCESS;
+    }
+
+    private void processDialogueOptions(String text){
+        ArrayList<String> options = divideStringList(text, '|');
+        gi.getQuickMenu().clearMenu();
+        AtomicBoolean keepWaiting = new AtomicBoolean(true);
+        for (int i = 0; i < options.size(); i++) {
+            String s = options.get(i);
+            System.out.printf("[DialogueParser.processDialogueOptions] Opt. %1$d \"%2$s\"\n", i, s);
+            int sepIndex = s.indexOf('=');
+            if (sepIndex >= 0 && sepIndex < s.length() - 1){
+                String answer = s.substring(0, sepIndex);
+                int gotoValue = getIntFromStr(s.substring(sepIndex + 1));
+                gi.getQuickMenu().addMenuItem(answer, () -> {
+                    gotoMarker(gotoValue);
+                    keepWaiting.set(false);
+                });
+            }
+        }
+        gi.getQuickMenu().showMenu("Respond:", false);
+        waitForPlayerInput(keepWaiting);
     }
 }
