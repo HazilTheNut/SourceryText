@@ -172,6 +172,8 @@ public class DialogueParser implements Serializable {
                 int minOpinion = getIntFromStr(arguments);
                 int opinion =  gi.getFactionManager().getOpinion(speaker, gi.getPlayer());
                 return opinion >= minOpinion;
+            case "ifevent":
+                return gi.getGameEvents().contains(arguments);
             default:
                 return true;
         }
@@ -222,23 +224,23 @@ public class DialogueParser implements Serializable {
         //Begin actual trade code
         ArrayList<Item> itemsToGive = getItemsFromStringList(divideStringList(toGive, ',')); //Get the list of items to give away
         ArrayList<Item> itemsToGet  = getItemsFromStringList(divideStringList(toReceive, ',')); //Get the list of items to get back
-        if (!hasItems(speaker, itemsToGet)) return TradeResult.TRADE_NPC_NO_ITEMS;
+        if (itemsAbsent(speaker, itemsToGet)) return TradeResult.TRADE_NPC_NO_ITEMS;
         AtomicBoolean keepWaiting = new AtomicBoolean(true);
         gi.getTextBox().showMessage(buildTradePrompt(itemsToGive), "", () -> keepWaiting.set(false)); //Builds and displays message based on item list
         waitForPlayerInput(keepWaiting); //Wait until the stopWaiting becomes true (when text box finishes)
         keepWaiting.set(true); //Reset keepWaiting boolean so that we can use it again
         AtomicInteger tradeResult = new AtomicInteger(TradeResult.TRADE_REFUSAL.ordinal());
         //Ask the player if they want to conduct the trade (after text box finishes)
-        gi.getQuickMenu().clearMenu();
-        gi.getQuickMenu().addMenuItem("Yes", () -> { //This whole quick menu thing could be put into the lambda expression for the text box, but I'm afraid it might be a little buggy
+        gi.getDialogueOptions().clearMenu();
+        gi.getDialogueOptions().addMenuItem(getPlayerTradeResponse(itemsToGive), () -> { //This whole quick menu thing could be put into the lambda expression for the text box, but I'm afraid it might be a little buggy
             tradeResult.set((trade(itemsToGive, itemsToGet, speaker)).ordinal()); // ^ "Nested lambda expressions" just doesn't sound like responsibly developed code
             keepWaiting.set(false);
         });
-        gi.getQuickMenu().addMenuItem("No", () -> {
+        gi.getDialogueOptions().addMenuItem("Sorry, not interested.", () -> {
             tradeResult.set(TradeResult.TRADE_REFUSAL.ordinal());
             keepWaiting.set(false);
         });
-        gi.getQuickMenu().showMenu("Complete Trade?", false);
+        gi.getDialogueOptions().showMenu("Respond:", false);
         waitForPlayerInput(keepWaiting);
         return TradeResult.values()[tradeResult.get()];
     }
@@ -292,17 +294,21 @@ public class DialogueParser implements Serializable {
         return builder.append("<cw>?").toString();
     }
 
-    private boolean hasItems(Entity e, ArrayList<Item> items){
+    private String getPlayerTradeResponse(ArrayList<Item> toGive){
+        return (itemsAbsent(gi.getPlayer(), toGive)) ? "Sorry, I don't seem to have that on me." : "Sure, here you go.";
+    }
+
+    private boolean itemsAbsent(Entity e, ArrayList<Item> items){
         for (Item item : items)
-            if (!e.hasItem(item)) return false;
-        return true;
+            if (!e.hasItem(item)) return true;
+        return false;
     }
 
     private TradeResult trade(ArrayList<Item> playerItems, ArrayList<Item> npcItems, GameCharacter tradingPartner){
         //Set up ArrayLists of Items to give and receive
         //Test to see if trade will succeed
-        if (!hasItems(gi.getPlayer(), playerItems)) return TradeResult.TRADE_REFUSAL; //Don't do the trade if the player doesn't have the necessary items
-        if (!hasItems(tradingPartner, npcItems))    return TradeResult.TRADE_NPC_NO_ITEMS; //Don't do the trade if the player doesn't have the necessary items
+        if (itemsAbsent(gi.getPlayer(), playerItems)) return TradeResult.TRADE_REFUSAL; //Don't do the trade if the player doesn't have the necessary items
+        if (itemsAbsent(tradingPartner, npcItems))    return TradeResult.TRADE_NPC_NO_ITEMS; //Don't do the trade if the player doesn't have the necessary items
         for (Item item : playerItems){
             tradingPartner.takeItem(item, gi.getPlayer());
         }

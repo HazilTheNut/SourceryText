@@ -399,6 +399,11 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         return gameEvents;
     }
 
+    public void recordEvent(String event){
+        if (!gameEvents.contains(event))
+            gameEvents.add(event);
+    }
+
     @Override
     public void onFrameDrawStart() {
         if (player != null){
