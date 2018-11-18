@@ -5,6 +5,7 @@ import Data.LevelData;
 import Editor.WindowWatcher;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,6 +21,8 @@ public class EditorStart {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
+
+        UIManager.put( "text", new Color( 230, 230, 230) );
 
         UIManager.getDefaults().put("Button.showMnemonics", true);
 

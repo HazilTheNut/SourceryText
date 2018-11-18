@@ -23,6 +23,7 @@ public class LonelyMenu extends JComponent implements MouseInputListener {
     private JPopupMenu menu;
 
     LonelyMenu(JPopupMenu popupMenu, Container c){
+        setAlignmentX(CENTER_ALIGNMENT);
         menu = popupMenu;
         setPreferredSize(new Dimension(100, 15));
         c.addMouseListener(this);

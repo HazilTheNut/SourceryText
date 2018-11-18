@@ -4,6 +4,7 @@ import Data.EntityStruct;
 import Data.FileIO;
 import Data.LevelData;
 import Data.TileStruct;
+import Editor.DialogueGenerator.DialogueCreatorFrame;
 import Editor.DrawTools.*;
 import Engine.Layer;
 import Engine.LayerManager;
@@ -116,6 +117,7 @@ public class EditorToolPanel extends JPanel {
         toolsPanel.add(Box.createRigidArea(new Dimension(1, 2)));
         JButton expandButton = createDrawToolButton("Expand Room", new ExpandRoom(ldata, lm), KeyEvent.VK_X);
         expandButton.setMaximumSize(new Dimension(90, 20));
+        expandButton.setAlignmentX(CENTER_ALIGNMENT);
         toolsPanel.add(expandButton);
         toolsPanel.add(Box.createRigidArea(new Dimension(1, 2)));
 
@@ -239,9 +241,14 @@ public class EditorToolPanel extends JPanel {
         inscribeItem.addActionListener(e -> new TextInsctiptionWindow(ldata, undoManager));
         levelMenu.add(inscribeItem);
 
+        JMenuItem dialogueGenerate = new JMenuItem("Dialogue Generator"); //Dialogue Generate option
+        dialogueGenerate.addActionListener(e -> new DialogueCreatorFrame());
+        levelMenu.add(dialogueGenerate);
+
         menuPanel.add(new LonelyMenu(levelMenu, menuPanel));
         menuPanel.setBorder(BorderFactory.createEtchedBorder());
         menuPanel.setMaximumSize(new Dimension(PANEL_WIDTH, 20));
+        menuPanel.setAlignmentX(CENTER_ALIGNMENT);
 
         add(menuPanel, BorderLayout.PAGE_START);
     }
@@ -316,6 +323,7 @@ public class EditorToolPanel extends JPanel {
         c.gridwidth = 3;
         JButton moveViewBtn = createDrawToolButton("Move View", new MoveView(lm), KeyEvent.VK_F4);
         moveViewBtn.setMinimumSize(new Dimension(elementSize.width * 3, elementSize.height));
+        cameraPanel.setAlignmentX(CENTER_ALIGNMENT);
         cameraPanel.add(moveViewBtn, c);
 
         toolsPanel.add(cameraPanel);
@@ -348,6 +356,8 @@ public class EditorToolPanel extends JPanel {
         toolOptionsPanel.setNormalSize(new Dimension(PANEL_WIDTH, 50));
         toolOptionsPanel.setMinimumSize(new Dimension(PANEL_WIDTH, 30));
         toolOptionsPanel.setVisible(false);
+
+        artToolsPanel.setAlignmentX(CENTER_ALIGNMENT);
 
         toolsPanel.add(toolOptionsPanel);
     }
@@ -397,6 +407,7 @@ public class EditorToolPanel extends JPanel {
         tileDataPanel.setLayout(new GridLayout(tileDataPanel.getComponentCount(), 1, 2, 2));
         sizeToolsPanel(tileDataPanel);
         tileDataPanel.validate();
+        tileDataPanel.setAlignmentX(CENTER_ALIGNMENT);
         toolsPanel.add(tileDataPanel);
     }
 
@@ -456,6 +467,7 @@ public class EditorToolPanel extends JPanel {
         entityDataPanel.setLayout(new GridLayout(entityDataPanel.getComponentCount(), 1, 2, 2));
         sizeToolsPanel(entityDataPanel);
         entityDataPanel.validate();
+        entityDataPanel.setAlignmentX(CENTER_ALIGNMENT);
         toolsPanel.add(entityDataPanel);
     }
 
@@ -490,6 +502,7 @@ public class EditorToolPanel extends JPanel {
         warpZonePanel.setLayout(new GridLayout(warpZonePanel.getComponentCount(), 1, 2, 2));
         sizeToolsPanel(warpZonePanel);
         warpZonePanel.validate();
+        warpZonePanel.setAlignmentX(CENTER_ALIGNMENT);
 
         toolsPanel.add(warpZonePanel);
     }
@@ -504,6 +517,7 @@ public class EditorToolPanel extends JPanel {
         levelScriptPanel.setLayout(new BoxLayout(levelScriptPanel, BoxLayout.PAGE_AXIS));
 
         assignLevelScriptPanel(null, ldata);
+        levelScriptPanel.setAlignmentX(CENTER_ALIGNMENT);
 
         toolsPanel.add(levelScriptPanel);
     }

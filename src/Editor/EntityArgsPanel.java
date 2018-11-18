@@ -143,7 +143,7 @@ public class EntityArgsPanel extends JPanel {
                 }
             });
 
-            setMaximumSize(new Dimension(9001, 30)); //Supports most screen resolutions!
+            setMaximumSize(new Dimension(9001, 30)); //Supports most screen resolutions
             add(argNameLabel, BorderLayout.LINE_START);
             add(argValueField, BorderLayout.CENTER);
             setBorder(BorderFactory.createEtchedBorder());
