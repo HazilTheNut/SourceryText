@@ -1,6 +1,11 @@
-package Editor.DialogueGenerator;
+package Editor;
+
+import Data.ItemStruct;
+import Game.Registries.ItemRegistry;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 
 public class DialogueCreatorFrame extends JFrame {
@@ -12,19 +17,13 @@ public class DialogueCreatorFrame extends JFrame {
         Container c = getContentPane();
         c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));
 
-        JTabbedPane utilitiesPanel = new JTabbedPane();
-        utilitiesPanel.setMaximumSize(new Dimension(400, 200));
-        utilitiesPanel.setAlignmentX(LEFT_ALIGNMENT);
-        utilitiesPanel.setBorder(BorderFactory.createTitledBorder("Utilities"));
-
-        c.add(utilitiesPanel);
-
         JTextArea dialoguePanel = new JTextArea("#0#");
 
         JScrollPane scrollPane = new JScrollPane(dialoguePanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Content"));
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Editor"));
         scrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        c.add(createUtilitiesPanel(dialoguePanel));
         c.add(scrollPane);
         c.add(createToolsPanel(dialoguePanel));
 
@@ -101,4 +100,59 @@ public class DialogueCreatorFrame extends JFrame {
         return btn;
     }
 
+    private JTabbedPane createUtilitiesPanel(JTextArea editorPanel){
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setMaximumSize(new Dimension(450, 200));
+        tabbedPane.setAlignmentX(LEFT_ALIGNMENT);
+        tabbedPane.setBorder(BorderFactory.createTitledBorder("Utilities"));
+
+        tabbedPane.addTab("Items", createItemUtilityPanel());
+
+        return tabbedPane;
+    }
+
+    private JPanel createItemUtilityPanel(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+
+        JLabel infoLabel = new JLabel("?");
+        infoLabel.setToolTipText("NOTE: Item quantities are in \'literal quantities.\' \"3 x Weapon\" means \"3 Weapons of any durability\" and not \"1 Weapon of durability 3\".");
+        infoLabel.setFont(new Font(Font.MONOSPACED, Font.BOLD, 12));
+        infoLabel.setForeground(Color.BLUE);
+
+        Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+
+        JSpinner qtyField = new JSpinner(new SpinnerNumberModel(1, 1, 99, 1));
+        qtyField.setFont(font);
+
+        JComboBox<ItemStruct> itemSelect = new JComboBox<>();
+        for (int key : ItemRegistry.getMapKeys()) itemSelect.addItem(ItemRegistry.getItemStruct(key));
+        itemSelect.setMaximumRowCount(20);
+        itemSelect.setFont(font);
+
+        JTextField outputField = new JTextField(10);
+        outputField.setFont(font);
+
+        qtyField.getModel().addChangeListener(e -> outputField.setText(generateItemIxQ(qtyField, itemSelect)));
+        itemSelect.addItemListener(e -> outputField.setText(generateItemIxQ(qtyField, itemSelect)));
+
+        panel.add(Box.createRigidArea(new Dimension(5, 0)));
+        panel.add(infoLabel);
+        panel.add(Box.createRigidArea(new Dimension(5, 0)));
+        panel.add(qtyField);
+        panel.add(new JLabel(" X "));
+        panel.add(itemSelect);
+        panel.add(Box.createRigidArea(new Dimension(5, 0)));
+        panel.add(outputField);
+
+        return panel;
+    }
+
+    private String generateItemIxQ(JSpinner qtySpinner, JComboBox<ItemStruct> itemSelect){
+        ItemStruct selectedStruct = ((ItemStruct)itemSelect.getSelectedItem());
+        if (selectedStruct == null) return "";
+        int id = selectedStruct.getItemId();
+        int qty = (Integer)qtySpinner.getModel().getValue();
+        return String.format("%1$dx%2$d", id, qty);
+    }
 }
