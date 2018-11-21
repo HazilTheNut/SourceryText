@@ -4,6 +4,7 @@ import Data.EntityStruct;
 import Data.FileIO;
 import Data.LevelData;
 import Data.TileStruct;
+import Editor.DialgoueCreator.DialogueCreatorFrame;
 import Editor.DrawTools.*;
 import Engine.Layer;
 import Engine.LayerManager;

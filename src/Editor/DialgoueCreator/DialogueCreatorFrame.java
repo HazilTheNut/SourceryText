@@ -1,12 +1,12 @@
-package Editor;
+package Editor.DialgoueCreator;
 
 import Data.ItemStruct;
 import Game.Registries.ItemRegistry;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 
 public class DialogueCreatorFrame extends JFrame {
 
@@ -103,56 +103,25 @@ public class DialogueCreatorFrame extends JFrame {
     private JTabbedPane createUtilitiesPanel(JTextArea editorPanel){
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setMaximumSize(new Dimension(450, 200));
+        tabbedPane.setPreferredSize(new Dimension(450, 110));
+        tabbedPane.setMinimumSize(new Dimension(450, 50));
         tabbedPane.setAlignmentX(LEFT_ALIGNMENT);
         tabbedPane.setBorder(BorderFactory.createTitledBorder("Utilities"));
 
-        tabbedPane.addTab("Items", createItemUtilityPanel());
+        tabbedPane.addTab("Items", new DialogueItemCreator());
+        tabbedPane.addTab("Conditionals", new DialogueConditionalCreator());
+        tabbedPane.addTab("Options", new DialogueOptionsCreator());
+
+        tabbedPane.addChangeListener(e -> tabbedPane.setPreferredSize(tabbedPane.getSelectedComponent().getPreferredSize()));
+        tabbedPane.setPreferredSize(tabbedPane.getComponentAt(0).getPreferredSize());
+
+        tabbedPane.validate();
 
         return tabbedPane;
     }
 
-    private JPanel createItemUtilityPanel(){
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
 
-        JLabel infoLabel = new JLabel("?");
-        infoLabel.setToolTipText("NOTE: Item quantities are in \'literal quantities.\' \"3 x Weapon\" means \"3 Weapons of any durability\" and not \"1 Weapon of durability 3\".");
-        infoLabel.setFont(new Font(Font.MONOSPACED, Font.BOLD, 12));
-        infoLabel.setForeground(Color.BLUE);
 
-        Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 
-        JSpinner qtyField = new JSpinner(new SpinnerNumberModel(1, 1, 99, 1));
-        qtyField.setFont(font);
 
-        JComboBox<ItemStruct> itemSelect = new JComboBox<>();
-        for (int key : ItemRegistry.getMapKeys()) itemSelect.addItem(ItemRegistry.getItemStruct(key));
-        itemSelect.setMaximumRowCount(20);
-        itemSelect.setFont(font);
-
-        JTextField outputField = new JTextField(10);
-        outputField.setFont(font);
-
-        qtyField.getModel().addChangeListener(e -> outputField.setText(generateItemIxQ(qtyField, itemSelect)));
-        itemSelect.addItemListener(e -> outputField.setText(generateItemIxQ(qtyField, itemSelect)));
-
-        panel.add(Box.createRigidArea(new Dimension(5, 0)));
-        panel.add(infoLabel);
-        panel.add(Box.createRigidArea(new Dimension(5, 0)));
-        panel.add(qtyField);
-        panel.add(new JLabel(" X "));
-        panel.add(itemSelect);
-        panel.add(Box.createRigidArea(new Dimension(5, 0)));
-        panel.add(outputField);
-
-        return panel;
-    }
-
-    private String generateItemIxQ(JSpinner qtySpinner, JComboBox<ItemStruct> itemSelect){
-        ItemStruct selectedStruct = ((ItemStruct)itemSelect.getSelectedItem());
-        if (selectedStruct == null) return "";
-        int id = selectedStruct.getItemId();
-        int qty = (Integer)qtySpinner.getModel().getValue();
-        return String.format("%1$dx%2$d", id, qty);
-    }
 }
