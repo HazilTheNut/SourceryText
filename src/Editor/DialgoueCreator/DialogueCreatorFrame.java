@@ -49,9 +49,20 @@ public class DialogueCreatorFrame extends JFrame {
         generateField.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         generateField.setPreferredSize(new Dimension(330, 25));
 
+        JPanel rightPanel = new JPanel();
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.LINE_AXIS));
+
+        JButton copyButton = new JButton("Copy");
+        copyButton.addActionListener(e -> {
+            StringSelection selection = new StringSelection(generateField.getText());
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
+        });
+
         panel.add(createImportButton(editorPanel, generateField), BorderLayout.LINE_START);
         panel.add(generateField, BorderLayout.CENTER);
-        panel.add(createExportButton(editorPanel, generateField), BorderLayout.LINE_END);
+        rightPanel.add(createExportButton(editorPanel, generateField));
+        rightPanel.add(copyButton);
+        panel.add(rightPanel, BorderLayout.LINE_END);
         panel.validate();
 
         return panel;
