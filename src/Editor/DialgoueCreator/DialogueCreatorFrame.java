@@ -111,6 +111,7 @@ public class DialogueCreatorFrame extends JFrame {
         tabbedPane.addTab("Items", new DialogueItemCreator());
         tabbedPane.addTab("Conditionals", new DialogueConditionalCreator());
         tabbedPane.addTab("Options", new DialogueOptionsCreator());
+        tabbedPane.addTab("Trades", new DialogueTradeCreator());
 
         tabbedPane.addChangeListener(e -> tabbedPane.setPreferredSize(tabbedPane.getSelectedComponent().getPreferredSize()));
         tabbedPane.setPreferredSize(tabbedPane.getComponentAt(0).getPreferredSize());

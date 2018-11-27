@@ -241,7 +241,7 @@ public class EditorToolPanel extends JPanel {
         inscribeItem.addActionListener(e -> new TextInsctiptionWindow(ldata, undoManager));
         levelMenu.add(inscribeItem);
 
-        JMenuItem dialogueGenerate = new JMenuItem("Dialogue Generator"); //Dialogue Generate option
+        JMenuItem dialogueGenerate = new JMenuItem("Dialogue Creator"); //Dialogue Generate option
         dialogueGenerate.addActionListener(e -> new DialogueCreatorFrame());
         levelMenu.add(dialogueGenerate);
 

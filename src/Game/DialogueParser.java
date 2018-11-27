@@ -173,7 +173,7 @@ public class DialogueParser implements Serializable {
                 int opinion =  gi.getFactionManager().getOpinion(speaker, gi.getPlayer());
                 return opinion >= minOpinion;
             case "ifevent":
-                return gi.getGameEvents().contains(arguments);
+                return gi.eventHappened(arguments);
             default:
                 return true;
         }

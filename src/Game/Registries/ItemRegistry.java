@@ -158,7 +158,12 @@ public class ItemRegistry {
         return output;
     }
 
-    public static ItemStruct getItemStruct(int id) { return itemStructMap.get(id).copy(); }
+    public static ItemStruct getItemStruct(int id) {
+        if (itemStructMap.containsKey(id))
+            return itemStructMap.get(id).copy();
+        else
+            return new ItemStruct(-1, 1, "UNREGISTERED", 0);
+    }
 
     public static String getItemFlavorText(int id) {
         String s = itemFlavorTextMap.get(id);

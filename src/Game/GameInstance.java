@@ -399,6 +399,10 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         return gameEvents;
     }
 
+    public boolean eventHappened(String event){
+        return gameEvents.contains(event);
+    }
+
     public void recordEvent(String event){
         if (!gameEvents.contains(event))
             gameEvents.add(event);
