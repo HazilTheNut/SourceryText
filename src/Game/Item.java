@@ -77,9 +77,9 @@ public class Item extends TagHolder implements Serializable {
         TagEvent useEvent;
         if (target instanceof Entity) {
             Entity entity = (Entity) target;
-            useEvent = new TagEvent(0, false, this, target, entity.getGameInstance());
+            useEvent = new TagEvent(0, false, this, target, entity.getGameInstance(), this);
         } else {
-            useEvent = new TagEvent(0, false, this, target, null);
+            useEvent = new TagEvent(0, false, this, target, null, this);
         }
         for (Tag tag : getTags()) {
             DebugWindow.reportf(DebugWindow.GAME, "Item","> %1$s\n", tag.getName());

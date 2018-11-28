@@ -77,7 +77,7 @@ public class MagicBomb extends CombatEntity {
     public void addTag(Tag tag, TagHolder source) {
         if (!hasTag(tag.getId())) {
             getTags().add(tag);
-            TagEvent e = new TagEvent(0, true, source, this, null);
+            TagEvent e = new TagEvent(0, true, source, this, null, this);
             for (int i = 0; i < getTags().size(); i++){
                 getTags().get(i).onAdd(e);
             }
@@ -88,6 +88,7 @@ public class MagicBomb extends CombatEntity {
                     e.doCancelableActions();
                 }
                 //Cancelling the event will not remove the tag. Stuff like flammability shouldn't matter in this context.
+                //This should be the only real difference between this method and the one it overrides
             }
         }
     }

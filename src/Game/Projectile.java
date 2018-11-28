@@ -160,7 +160,7 @@ public class Projectile extends TagHolder {
     }
 
     private void collide(TagHolder other){
-        TagEvent dmgEvent = new TagEvent(0, true, this, other, gi);
+        TagEvent dmgEvent = new TagEvent(0, true, this, other, gi, this);
         for (Tag tag : getTags()) tag.onDealDamage(dmgEvent);
         dmgEvent.doFutureActions();
         if (dmgEvent.eventPassed()){
@@ -189,7 +189,7 @@ public class Projectile extends TagHolder {
     private void doFlyoverEvent(Coordinate loc){
         Tile belowTile = gi.getTileAt(loc);
         if (belowTile != null) {
-            TagEvent e = new TagEvent(0, true, this, belowTile, gi);
+            TagEvent e = new TagEvent(0, true, this, belowTile, gi, this);
             for (Tag tag : getTags()){
                 tag.onFlyOver(e);
             }
