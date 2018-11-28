@@ -21,9 +21,9 @@ public class Projectile extends TagHolder {
      * TagHolders that play a flying animation, hitting the first solid object it finds or until it reaches the target location.
      */
 
-    private double xpos;
+    protected double xpos;
     protected double xvelocity;
-    private double ypos;
+    protected double ypos;
     protected double yvelocity;
 
     private Layer iconLayer;
@@ -32,7 +32,7 @@ public class Projectile extends TagHolder {
     private Entity source;
     private Coordinate targetPos;
     private Coordinate startPos;
-    private GameInstance gi;
+    protected GameInstance gi;
 
     private final double UNITS_PER_CYCLE = 0.9;
 
@@ -155,9 +155,12 @@ public class Projectile extends TagHolder {
     }
 
     //I had an issue earlier where the position rounding was done differently in different places in the code. That's no good!
+    //Therefore, all rounding calculations will be centralized at this method.
     private Coordinate getRoundedPos(double xpos, double ypos){
         return new Coordinate((int)Math.round(xpos), (int)Math.round(ypos));
     }
+
+    Coordinate getRoundedPos(){ return getRoundedPos(xpos, ypos); }
 
     private void collide(TagHolder other){
         TagEvent dmgEvent = new TagEvent(0, true, this, other, gi, this);
@@ -170,7 +173,7 @@ public class Projectile extends TagHolder {
         }
     }
 
-    private void collideWithTerrain(){
+    protected void collideWithTerrain(){
         Tile landingTile = gi.getTileAt(getRoundedPos(xpos, ypos));
         if (landingTile != null) {
             collide(landingTile);

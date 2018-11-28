@@ -225,7 +225,7 @@ public class Entity extends TagHolder implements Serializable {
      * @param item The item to add
      */
     public void addItem(Item item) {
-        if (item.isStackable())
+        if (item.isStackable()) //TODO: Fix stacking bug when going over 100 qty
             for (Item i : items){
                 if (i.getItemData().getItemId() == item.getItemData().getItemId() && item.getItemData().getQty() < 99){
                     int total = i.getItemData().getQty() + item.getItemData().getQty();
@@ -293,25 +293,18 @@ public class Entity extends TagHolder implements Serializable {
             i++; //This gets IntelliJ to shut up about foreach loops, which are more error-prone with regards to co-modification
         }
     }
-    
+
+    /**
+     * Drops an Item onto the ground where this Entity is standing.
+     *
+     * @param toDrop The Item to drop onto the ground
+     * @return The LootPile the Item was added to. Returns null if operation fails.
+     */
     public LootPile dropItem(Item toDrop){
-        if (toDrop.hasTag(TagRegistry.IMPORTANT)) return null;
-        ArrayList<Entity> entities = getGameInstance().getCurrentLevel().getEntitiesAt(getLocation());
-        for (Entity e : entities){ //Search for a loot pile that already exists
-            if (e instanceof LootPile) {
-                LootPile lootPile = (LootPile) e;
-                lootPile.addItem(toDrop);
-                removeItem(toDrop);
-                return lootPile;
-            }
+        LootPile pile = gi.dropItem(toDrop, getLocation());
+        if (pile != null) {
+            removeItem(toDrop);
         }
-        //Create a new loot pile, since one obviously doesn't exist
-        DebugWindow.reportf(DebugWindow.GAME, "SubInventory.dropItem","Creating new loot pile");
-        EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot", null);
-        LootPile pile = (LootPile)getGameInstance().instantiateEntity(lootPileStruct, getLocation(), getGameInstance().getCurrentLevel());
-        pile.addItem(toDrop);
-        removeItem(toDrop);
-        pile.onLevelEnter();
         return pile;
     }
 

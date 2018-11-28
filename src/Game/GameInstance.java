@@ -8,8 +8,10 @@ import Engine.SpecialText;
 import Game.AnimatedTiles.AnimatedTile;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
+import Game.Entities.LootPile;
 import Game.LevelScripts.LevelScript;
 import Game.Registries.EntityRegistry;
+import Game.Registries.TagRegistry;
 
 import java.io.File;
 import java.io.Serializable;
@@ -251,6 +253,32 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             er.printStackTrace();
         }
         return e;
+    }
+
+    /**
+     * Either adds an item to the LootPile found at the specified location, or creates a new one if it does not exist.
+     *
+     * @param toDrop The Item to drop onto the ground
+     * @param loc The location of where the Item should drop
+     * @return The LootPile where the Item was added to. Returns null if the Item cannot be dropped.
+     */
+    public LootPile dropItem(Item toDrop, Coordinate loc){
+        if (toDrop.hasTag(TagRegistry.IMPORTANT)) return null;
+        ArrayList<Entity> entities = getCurrentLevel().getEntitiesAt(loc);
+        for (Entity e : entities){ //Search for a loot pile that already exists
+            if (e instanceof LootPile) {
+                LootPile lootPile = (LootPile) e;
+                lootPile.addItem(toDrop);
+                return lootPile;
+            }
+        }
+        //Create a new loot pile, since one obviously doesn't exist
+        DebugWindow.reportf(DebugWindow.GAME, "SubInventory.dropItem","Creating new loot pile");
+        EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot", null);
+        LootPile pile = (LootPile)instantiateEntity(lootPileStruct, loc, getCurrentLevel());
+        pile.addItem(toDrop);
+        pile.onLevelEnter();
+        return pile;
     }
 
     public boolean isSpaceAvailable(Coordinate loc, int wallTag){

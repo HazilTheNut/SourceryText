@@ -5,10 +5,10 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Entities.Entity;
 
-public class ArrowProjectile extends Projectile {
+public class ArrowProjectile extends ItemProjectile {
 
-    public ArrowProjectile(Entity creator, Coordinate target, SpecialText icon, LayerManager lm) {
-        super(creator, target, icon);
+    public ArrowProjectile(Entity creator, Coordinate target, SpecialText icon, Item item) {
+        super(creator, target, icon, item);
     }
 
     @Override

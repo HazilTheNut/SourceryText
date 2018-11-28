@@ -336,9 +336,8 @@ public class CombatEntity extends Entity {
             }
         }
         if (arrowItem != null) {
-            ArrowProjectile arrow = new ArrowProjectile(this, targetPos, new SpecialText('+', new Color(255, 231, 217), new Color(191, 174, 163, 15)), gi.getLayerManager());
+            ArrowProjectile arrow = new ArrowProjectile(this, targetPos, new SpecialText('+', new Color(255, 231, 217), new Color(191, 174, 163, 15)), arrowItem);
             arrow.getTags().addAll(weapon.getTags());
-            arrow.getTags().addAll(arrowItem.getTags());
             DamageTag damageTag = (DamageTag)arrow.getTag(TagRegistry.DAMAGE_START);
             int dmgBonus = getStrength() / 4;
             DebugWindow.reportf(GAME, "CombatEntity.doBowAttack", "Strength: %1$d Damage Bonus: %2$d", getStrength(), dmgBonus);
@@ -367,7 +366,7 @@ public class CombatEntity extends Entity {
 
     private Projectile getThrowingWeaponProjectile(Coordinate target){
         if (getWeapon().hasTag(TagRegistry.THROW_KNIFE))
-            return new ArrowProjectile(this, target, new SpecialText('/', new Color(165, 165, 165), new Color(45, 45, 45, 45)), getGameInstance().getLayerManager());
+            return new ArrowProjectile(this, target, new SpecialText('/', new Color(165, 165, 165), new Color(45, 45, 45, 45)), getWeapon());
         SpecialText icon = new SpecialText('%');
         if (getWeapon().hasTag(TagRegistry.THROW_STONE))
             icon = new SpecialText('o', new Color(143, 148, 143), new Color(45, 45, 45, 45));
