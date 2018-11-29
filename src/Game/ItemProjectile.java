@@ -19,6 +19,18 @@ public class ItemProjectile extends Projectile {
     }
 
     @Override
+    public void addTag(Tag tag, TagHolder source) {
+        super.addTag(tag, source);
+        item.addTag(tag, source);
+    }
+
+    @Override
+    public void removeTag(int id) {
+        super.removeTag(id);
+        item.removeTag(id);
+    }
+
+    @Override
     protected void collideWithTerrain() {
         super.collideWithTerrain();
         if (!item.isStackable())

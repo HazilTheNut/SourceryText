@@ -347,32 +347,35 @@ public class GameInstance implements Serializable, FrameUpdateListener {
      */
     void doEnemyTurn(){
         //Thread enemyTurnThread = new Thread(() -> {
-            long[] runTimes = new long[6];
-            runTimes[0] = System.nanoTime();
-            currentLevel.onTurnStart();
-            runTimes[1] = System.nanoTime();
-            for (EntityOperation op : entityOperations) {
-                op.run();
-            }
-            entityOperations.clear();
-            runTimes[2] = System.nanoTime();
-            for (Entity e : currentLevel.getEntities()) {
-                e.onTurn();
-            }
-            runTimes[3] = System.nanoTime();
-            for (Tile tile : currentLevel.getAllTiles()){
-                tile.onTurn(GameInstance.this);
-            }
-            runTimes[4] = System.nanoTime();
-            currentLevel.onTurnEnd();
-            runTimes[5] = System.nanoTime();
-            reportUpdatePerformance(runTimes);
-            getPlayer().updateHUD();
-            turnCounter++;
-            DebugWindow.reportf(DebugWindow.STAGE, "GameInstace:turnCounter", "%1$d", turnCounter);
-            DebugWindow.reportf(DebugWindow.GAME,  "GameInstace", "TURN %1$d", turnCounter);
-            getPlayer().updateSynopsis();
-            isPlayerTurn = true;
+        long[] runTimes = new long[6];
+        runTimes[0] = System.nanoTime();
+        currentLevel.onTurnStart();
+        runTimes[1] = System.nanoTime();
+        for (EntityOperation op : entityOperations) {
+            op.run();
+        }
+        entityOperations.clear();
+        runTimes[2] = System.nanoTime();
+        ArrayList<Entity> entities = currentLevel.getEntities();
+        for (int i = 0; i < entities.size();) {
+            Entity e = entities.get(i);
+            e.onTurn();
+            i++;
+        }
+        runTimes[3] = System.nanoTime();
+        for (Tile tile : currentLevel.getAllTiles()){
+            tile.onTurn(GameInstance.this);
+        }
+        runTimes[4] = System.nanoTime();
+        currentLevel.onTurnEnd();
+        runTimes[5] = System.nanoTime();
+        reportUpdatePerformance(runTimes);
+        getPlayer().updateHUD();
+        turnCounter++;
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstace:turnCounter", "%1$d", turnCounter);
+        DebugWindow.reportf(DebugWindow.GAME,  "GameInstace", "TURN %1$d", turnCounter);
+        getPlayer().updateSynopsis();
+        isPlayerTurn = true;
         //});
         //enemyTurnThread.start();
     }
