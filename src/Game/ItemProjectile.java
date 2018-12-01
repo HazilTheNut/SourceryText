@@ -29,8 +29,12 @@ public class ItemProjectile extends Projectile {
     }
 
     @Override
-    protected void collideWithTerrain() {
-        super.collideWithTerrain();
+    protected void collide(TagHolder other) {
+        super.collide(other);
+        drop();
+    }
+
+    private void drop(){
         if (!item.hasTag(TagRegistry.FRAGILE)) { //Items that are 'fragile' are destroyed upon hitting something after being thrown.
             if (!item.isStackable())
                 gi.dropItem(item, getRoundedPos());

@@ -351,17 +351,17 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         runTimes[0] = System.nanoTime();
         currentLevel.onTurnStart();
         runTimes[1] = System.nanoTime();
-        for (EntityOperation op : entityOperations) {
-            op.run();
-        }
-        entityOperations.clear();
-        runTimes[2] = System.nanoTime();
         ArrayList<Entity> entities = currentLevel.getEntities();
         for (int i = 0; i < entities.size();) {
             Entity e = entities.get(i);
             e.onTurn();
             i++;
         }
+        runTimes[2] = System.nanoTime();
+        for (EntityOperation op : entityOperations) {
+            op.run();
+        }
+        entityOperations.clear();
         runTimes[3] = System.nanoTime();
         for (Tile tile : currentLevel.getAllTiles()){
             tile.onTurn(GameInstance.this);
@@ -391,15 +391,15 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private void reportUpdatePerformance(long[] times){
         if (times.length >= 4) {
             double lsstart    = (double)(times[1] - times[0]) / 1000000;
-            double entityop   = (double)(times[2] - times[1]) / 1000000;
-            double entityturn = (double)(times[3] - times[2]) / 1000000;
+            double entityturn = (double)(times[2] - times[1]) / 1000000;
+            double entityop   = (double)(times[3] - times[2]) / 1000000;
             double tileupdate = (double)(times[4] - times[3]) / 1000000;
             double lsend      = (double)(times[5] - times[4]) / 1000000;
             double total      = (double)(times[5] - times[0]) / 1000000;
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "GameInstance.reportUpdatePerformance","Results:");
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "ls_start","   %1$fms", lsstart);
-            DebugWindow.reportf(DebugWindow.PERFORMANCE, "enityop","    %1$fms", entityop);
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "enityturn","  %1$fms", entityturn);
+            DebugWindow.reportf(DebugWindow.PERFORMANCE, "enityop","    %1$fms", entityop);
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "tileupdate"," %1$fms", tileupdate);
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "ls_end","     %1$fms", lsend);
             DebugWindow.reportf(DebugWindow.PERFORMANCE, "TOTAL","      %1$fms", total);

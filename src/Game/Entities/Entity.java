@@ -91,6 +91,7 @@ public class Entity extends TagHolder implements Serializable {
     //Marking this is false will totally conceal the entity
     public boolean isVisible() { return true; }
 
+    //Being "alive" means that this Entity has not self-destructed yet, and therefore "in the game".
     public boolean isAlive() {
         return isAlive;
     }

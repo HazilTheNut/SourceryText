@@ -162,7 +162,7 @@ public class Projectile extends TagHolder {
 
     Coordinate getRoundedPos(){ return getRoundedPos(xpos, ypos); }
 
-    private void collide(TagHolder other){
+    protected void collide(TagHolder other){
         TagEvent dmgEvent = new TagEvent(0, true, this, other, gi, this);
         for (Tag tag : getTags()) tag.onDealDamage(dmgEvent);
         dmgEvent.doFutureActions();
