@@ -106,14 +106,16 @@ public class HUD implements MouseInputReceiver, Serializable {
         tempLayer.editLayer(pos, 0, new SpecialText(']', fontColor, bkg));
 
         pos+=2;
-        //Draw equipped weapon
-        if (player.getWeapon().getItemData().getItemId() > 0) {
-            for (int ii = 0; ii < player.getInv().ITEM_STRING_LENGTH + 2; ii++) {
-                tempLayer.editLayer(ii + pos, 0, new SpecialText(' ', Color.WHITE, new Color(33, 33, 33)));
-            }
-            tempLayer.inscribeString(player.getWeapon().getItemData().getName(), pos, 0, player.getWeapon().colorateWithTags(Color.WHITE));
-            if (!player.getWeapon().hasTag(TagRegistry.UNLIMITED_USAGE))
-                tempLayer.inscribeString(String.valueOf(player.getWeapon().getItemData().getQty()), pos + player.getInv().ITEM_STRING_LENGTH, 0, new Color(240, 255, 200));
+        //Draw equipped weapon / item ready to be thrown
+        Item equipped = (player.getItemToThrow() == null) ? player.getWeapon() : player.getItemToThrow();
+        if (equipped.getItemData().getItemId() > 0) { //Check to see if item is valid ("no_weapon" has id -1)
+            //Fill bkg
+            Color weaponBkg = (player.getItemToThrow() == null) ? new Color(33, 33, 33) : new Color(74, 58, 33);
+            tempLayer.fillLayer(new SpecialText(' ', Color.WHITE, weaponBkg), new Coordinate(pos, 0), new Coordinate(pos + player.getInv().ITEM_STRING_LENGTH + 1, 0));
+            //Draw text
+            tempLayer.inscribeString(equipped.getItemData().getName(), pos, 0, equipped.colorateWithTags(Color.WHITE));
+            if (!equipped.hasTag(TagRegistry.UNLIMITED_USAGE))
+                tempLayer.inscribeString(String.valueOf(equipped.getItemData().getQty()), pos + player.getInv().ITEM_STRING_LENGTH, 0, new Color(240, 255, 200));
             pos += player.getInv().ITEM_STRING_LENGTH + 2;
         }
 

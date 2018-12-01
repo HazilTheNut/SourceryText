@@ -1,12 +1,10 @@
 package Game;
 
 import Data.Coordinate;
-import Data.ItemStruct;
 import Engine.SpecialText;
 import Game.Entities.Entity;
+import Game.Registries.TagRegistry;
 import Game.Tags.Tag;
-
-import java.util.ArrayList;
 
 public class ItemProjectile extends Projectile {
 
@@ -33,13 +31,15 @@ public class ItemProjectile extends Projectile {
     @Override
     protected void collideWithTerrain() {
         super.collideWithTerrain();
-        if (!item.isStackable())
-            gi.dropItem(item, getRoundedPos());
-        else {
-            Item singleItem = new Item(item.getItemData().copy(), gi).setQty(1);
-            singleItem.getTags().clear();
-            singleItem.getTags().addAll(item.getTags());
-            gi.dropItem(singleItem, getRoundedPos());
+        if (!item.hasTag(TagRegistry.FRAGILE)) { //Items that are 'fragile' are destroyed upon hitting something after being thrown.
+            if (!item.isStackable())
+                gi.dropItem(item, getRoundedPos());
+            else {
+                Item singleItem = new Item(item.getItemData().copy(), gi).setQty(1);
+                singleItem.getTags().clear();
+                singleItem.getTags().addAll(item.getTags());
+                gi.dropItem(singleItem, getRoundedPos());
+            }
         }
     }
 }

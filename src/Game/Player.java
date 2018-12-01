@@ -51,6 +51,8 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     private double weightCapacity = 20;
     private PlayerWallet wallet;
 
+    private transient Item itemToThrow = null;
+
     private int noEnterWarpZoneTimer = 0;
 
     private final Coordinate NORTH    = new Coordinate(0, -1);
@@ -509,6 +511,10 @@ public class Player extends GameCharacter implements MouseInputReceiver{
             if (actions.contains(InputMap.PASS_TURN)){
                 movementKeyDown(PASS);
             }
+            if (actions.contains(InputMap.THROW_ITEM)){
+                if (getWeapon().getItemData().getItemId() > 0)
+                    enterThrowingMode(getWeapon());
+            }
             if (actions.contains(InputMap.MOVE_INTERACT)){
                 moveAndInteract(levelPos);
             }
@@ -548,6 +554,9 @@ public class Player extends GameCharacter implements MouseInputReceiver{
             }
             if (actions.contains(InputMap.CAST_SPELL)){
                 castSpell(levelPos);
+            }
+            if (actions.contains(InputMap.THROW_ITEM)){
+                exitThrowingMode();
             }
         }
         return true;
@@ -626,13 +635,32 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         if (isNotFrozen()) {
             Thread attackThread = new Thread(() -> {
                 freeze();
-                for (PlayerActionCollector actionCollector : playerActionCollectors)
-                    actionCollector.onPlayerAttack(levelPos, getWeapon());
-                doWeaponAttack(levelPos);
+                if (itemToThrow == null)
+                    doStandardAttack(levelPos);
+                else {
+                    throwItem(itemToThrow, levelPos);
+                    exitThrowingMode();
+                }
                 gi.doEnemyTurn();
             });
             attackThread.start();
         }
+    }
+
+    private void doStandardAttack(Coordinate levelPos){
+        for (PlayerActionCollector actionCollector : playerActionCollectors)
+            actionCollector.onPlayerAttack(levelPos, getWeapon());
+        doWeaponAttack(levelPos);
+    }
+
+    void enterThrowingMode(Item toThrow){
+        itemToThrow = toThrow;
+        updateHUD();
+    }
+
+    void exitThrowingMode(){
+        itemToThrow = null;
+        updateHUD();
     }
 
     private boolean isSpellReady(){
@@ -754,5 +782,9 @@ public class Player extends GameCharacter implements MouseInputReceiver{
                 droppedAnything = true;
         }
         return droppedAnything;
+    }
+
+    public Item getItemToThrow() {
+        return itemToThrow;
     }
 }

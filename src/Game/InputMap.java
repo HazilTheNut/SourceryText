@@ -17,22 +17,27 @@ public class InputMap implements Serializable {
       The Key-binding system would then match each of these actions with some form of input event, all MouseInputReceivers could check for these integers to detect if the correct key had been pressed.
      */
 
-    public static final int MOVE_NORTH     = 0; //The Keybinds menu assumes all the game actions are consecutively ordered.
+    //Movement
+    public static final int MOVE_NORTH     = 0;
     public static final int MOVE_SOUTH     = 1;
     public static final int MOVE_WEST      = 2;
     public static final int MOVE_EAST      = 3;
     public static final int MOVE_INTERACT  = 4;
-    public static final int ATTACK         = 5;
-    public static final int INVENTORY      = 6;
-    public static final int INSPECT        = 7;
-    public static final int CAST_SPELL     = 8;
-    public static final int CHANGE_SPELL   = 9;
-    public static final int INV_USE        = 10;
-    public static final int INV_DROP       = 11;
-    public static final int INV_MOVE_WHOLE = 12;
-    public static final int INV_MOVE_ONE   = 13;
+    //Combat
+    public static final int ATTACK         = 10;
+    public static final int CAST_SPELL     = 11;
+    public static final int CHANGE_SPELL   = 12;
+    public static final int THROW_ITEM     = 13;
     public static final int PASS_TURN      = 14;
-    public static final int OPEN_MENU      = 15;
+    //Inventory
+    public static final int INVENTORY      = 20;
+    public static final int INSPECT        = 21;
+    public static final int INV_USE        = 25;
+    public static final int INV_DROP       = 26;
+    public static final int INV_MOVE_WHOLE = 27;
+    public static final int INV_MOVE_ONE   = 28;
+    //Misc
+    public static final int OPEN_MENU      = 90;
 
     /*
     Each input is mapped to a list of actions. For example, the mouse left-click can both be mapped to using an item and attacking enemies.
@@ -80,7 +85,7 @@ public class InputMap implements Serializable {
 
     private void clearKeybind(HashMap<InputType, ArrayList<Integer>> inputMap, int actionID){
         for (InputType inputType : inputMap.keySet()){
-            inputMap.get(inputType).remove(new Integer(actionID));
+            inputMap.get(inputType).remove(Integer.valueOf(actionID));
             if (inputMap.get(inputType).size() == 0){ //If the list is empty
                 inputMap.remove(inputType); //Trim it off!
             }
@@ -135,6 +140,8 @@ public class InputMap implements Serializable {
                 return "Pass Turn";
             case OPEN_MENU:
                 return "Open Menu";
+            case THROW_ITEM:
+                return "Throw Item";
             default:
                 return "NO_ASSOCIATION";
         }

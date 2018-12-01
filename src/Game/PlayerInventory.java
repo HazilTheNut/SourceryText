@@ -271,6 +271,8 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
 
     @Override
     public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
+        if (actions.contains(InputMap.THROW_ITEM))
+            player.exitThrowingMode();
         return isInInvLayers(screenPos);
     }
 
@@ -571,6 +573,9 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                             itemUseThread.start();
                         } else if (actions.contains(InputMap.INV_DROP)){
                             dropItem(selected);
+                        } else if (actions.contains(InputMap.THROW_ITEM) && !selected.hasTag(TagRegistry.IMPORTANT)){
+                            player.enterThrowingMode(selected);
+                            close();
                         }
                     }
                     return true;

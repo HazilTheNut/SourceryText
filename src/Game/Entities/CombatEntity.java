@@ -375,6 +375,13 @@ public class CombatEntity extends Entity {
         return new Projectile(this, target, icon);
     }
 
+    protected void throwItem(Item item, Coordinate loc){
+        if (item.isStackable()) item.decrementQty();
+        else removeItem(item);
+        ItemProjectile itemProjectile = new ItemProjectile(this, loc, new SpecialText('%'), item);
+        itemProjectile.launchProjectile(10);
+    }
+
     /**
      * Does the yellow flash animation to signify readying a bow.
      */

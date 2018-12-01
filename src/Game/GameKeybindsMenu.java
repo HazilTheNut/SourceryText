@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
 
@@ -126,9 +127,10 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
     private void generateKeybindListing(InputMap inputMap){
         if (optionsFillThread != null && optionsFillThread.isAlive())
             optionsFillThread.interrupt();
-        optionsFillThread = new Thread(() -> { //In case things are going slowly, this operation is put onto a different thread.
+        optionsFillThread = new Thread(() -> { //In case things are going slowly, this operation is put onto a new thread.
             keybindListng.clear();
             if (inputMap != null){
+                //Compile all keybindings from input inputMap
                 for (InputType inputType : inputMap.getPrimaryInputMap().keySet()){
                     addToKeyListing(inputType, inputMap.getAction(inputType), true);
                 }
@@ -178,11 +180,7 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
     }
 
     private void sortKeybindListing(){
-        ArrayList<KeybindSet> newListing = new ArrayList<>(keybindListng);
-        for (KeybindSet keybindSet : keybindListng){
-            newListing.set(keybindSet.action, keybindSet);
-        }
-        keybindListng = newListing;
+        keybindListng.sort((o1, o2) -> (int)Math.signum((float)(o1.action - o2.action)));
     }
 
     private void applyChanges(){
