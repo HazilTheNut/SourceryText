@@ -562,6 +562,16 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         return true;
     }
 
+    @Override
+    public boolean onNumberKey(Coordinate levelPos, Coordinate screenPos, int number) {
+        DebugWindow.reportf(DebugWindow.STAGE, "Player.onNumberKey", "Last key #: %1$d", number);
+        int index = (number != 0) ? number - 1 : 9;
+        if (index < spells.size())
+            equippedSpell = spells.get(index);
+        updateHUD();
+        return false;
+    }
+
     private void inspect(Coordinate levelPos){
         ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(levelPos);
         if (entities.size() == 1) inv.openOtherInventory(entities.get(0));

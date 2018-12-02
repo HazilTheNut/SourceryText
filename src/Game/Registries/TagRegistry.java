@@ -234,6 +234,7 @@ public class TagRegistry {
         registerTag(BLEEDING, "Bleeding", BleedTag.class);
         registerTag(UNSTABLE, "Unstable", UnstableTag.class);
 
+        //Test stuff
         registerTag(MAGIC_CYCLER, "Mind Recycler", MagicStatCyclerTag.class);
 
         //Registering stuff ends here

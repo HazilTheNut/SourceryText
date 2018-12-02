@@ -37,6 +37,10 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
     private boolean cursorOnCloseButton   = false;
     private boolean cursorOnApplyButton   = false;
     private boolean cursorOnDefaultButton = false;
+    private boolean cursorOnNumbersOnBtn  = false;
+    private boolean cursorOnNumbersOffBtn = false;
+
+    private boolean useNumberKeys = true;
 
     private KeybindSet selectedKeybindSet;
     private boolean settingPrimary = true;
@@ -107,8 +111,10 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
         updateBanner();
     }
 
+    private String nuumberKeyMessage = "Number Keys Select Spells:    /";
+
     /**
-     * Updates just the banner at the top
+     * Updates just the banners at the top and bottom
      */
     private void updateBanner(){
         menuLayer.fillLayer(new SpecialText(' ', Color.WHITE, bannerBkg), new Coordinate(0, 0), new Coordinate(menuLayer.getCols(), 0));
@@ -119,6 +125,12 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
         menuLayer.inscribeString("Default", lm.getWindow().RESOLUTION_WIDTH - 26, 0, defaultColor);
         Color closeBkg = (cursorOnCloseButton) ? Color.WHITE : exitFg;
         menuLayer.inscribeString("Close", lm.getWindow().RESOLUTION_WIDTH - 6, 0, closeBkg);
+        menuLayer.fillLayer(new SpecialText(' ', Color.WHITE, bannerBkg), new Coordinate(0, menuLayer.getRows()-1), new Coordinate(menuLayer.getCols(), menuLayer.getRows()-1));
+        menuLayer.inscribeString(nuumberKeyMessage, 1, menuLayer.getRows()-1, titleGray);
+        Color numbersOnColor = (useNumberKeys) ? Color.WHITE : titleGray.darker();
+        menuLayer.inscribeString("ON", 1 + nuumberKeyMessage.length() - 4, menuLayer.getRows() - 1, numbersOnColor);
+        Color numbersOffColor = (!useNumberKeys) ? Color.WHITE : titleGray.darker();
+        menuLayer.inscribeString("OFF", 1 + nuumberKeyMessage.length() + 1, menuLayer.getRows() - 1, numbersOffColor);
     }
 
     /**
@@ -142,6 +154,7 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
             updateDisplay();
         });
         optionsFillThread.start();
+        useNumberKeys = inputMap.isNumberKeysSelectSpells();
     }
 
     private InputMap getSavedInputMap(){
@@ -188,6 +201,7 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
         for (KeybindSet keybindSet : keybindListng){
             inputMap.bindKeyPrimary(keybindSet.primaryInput, keybindSet.action);
             inputMap.bindKeySecondary(keybindSet.secondaryInput, keybindSet.action);
+            inputMap.setNumberKeysSelectSpells(useNumberKeys);
         }
         mi.setInputMap(inputMap);
         FileIO io = new FileIO();
@@ -202,6 +216,8 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
         cursorOnCloseButton   = screenPos.getX() >= lm.getWindow().RESOLUTION_WIDTH - 6 && screenPos.getX() <= lm.getWindow().RESOLUTION_WIDTH - 1 && screenPos.getY() == 0;
         cursorOnApplyButton   = screenPos.getX() >= lm.getWindow().RESOLUTION_WIDTH - 15 && screenPos.getX() <= lm.getWindow().RESOLUTION_WIDTH - 10 && screenPos.getY() == 0;
         cursorOnDefaultButton = screenPos.getX() >= lm.getWindow().RESOLUTION_WIDTH - 26 && screenPos.getX() <= lm.getWindow().RESOLUTION_WIDTH - 21 && screenPos.getY() == 0;
+        cursorOnNumbersOnBtn  = screenPos.getX() >= 1 + nuumberKeyMessage.length() - 4 && screenPos.getX() <= 1 + nuumberKeyMessage.length() - 3 && screenPos.getY() == menuLayer.getRows()-1;
+        cursorOnNumbersOffBtn = screenPos.getX() >= 1 + nuumberKeyMessage.length() + 1 && screenPos.getX() <= 1 + nuumberKeyMessage.length() + 3 && screenPos.getY() == menuLayer.getRows()-1;
         updateBanner();
 
         if (selectedKeybindSet == null) {
@@ -236,11 +252,19 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
                 updateBanner();
             } else if (cursorOnCloseButton) {
                 close();
+            } else if (cursorOnNumbersOnBtn){
+                useNumberKeys = true;
+                changesDetected = true;
+                updateBanner();
+            } else if (cursorOnNumbersOffBtn){
+                useNumberKeys = false;
+                changesDetected = true;
+                updateBanner();
             } else if (selectorLayer.getVisible()) {
                 selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, selectorEditing));
                 selectedKeybindSet = keybindListng.get(selectorLayer.getY() - 1 + scrollPos);
                 settingPrimary = selectorLayer.getX() == primaryAnchor;
-                menuLayer.inscribeString("BACKSPACE to clear", 1, menuLayer.getRows() - 1);
+                menuLayer.inscribeString("BACKSPACE to clear", 1, menuLayer.getRows() - 2);
             }
         } else { //In "set button" mode
             if (settingPrimary)
@@ -271,6 +295,11 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
     @Override
     public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return true;
+    }
+
+    @Override
+    public boolean onNumberKey(Coordinate levelPos, Coordinate screenPos, int number) {
+        return false;
     }
 
     @Override

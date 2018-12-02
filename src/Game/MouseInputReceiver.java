@@ -23,4 +23,7 @@ public interface MouseInputReceiver {
 
     //Ran when a button is released. Return true to prevent mouse input reaching elements below current one.
     boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions);
+
+    //Ran when one of the number keys are pressed
+    boolean onNumberKey(Coordinate levelPos, Coordinate screenPos, int number);
 }

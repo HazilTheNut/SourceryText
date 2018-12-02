@@ -310,4 +310,9 @@ public class HUD implements MouseInputReceiver, Serializable {
     public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return (mousePos != null && mousePos.getY() == 0) || spellMenu.isShowing();
     }
+
+    @Override
+    public boolean onNumberKey(Coordinate levelPos, Coordinate screenPos, int number) {
+        return (mousePos != null && mousePos.getY() == 0) || spellMenu.isShowing();
+    }
 }

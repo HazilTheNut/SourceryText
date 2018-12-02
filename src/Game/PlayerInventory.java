@@ -276,6 +276,11 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         return isInInvLayers(screenPos);
     }
 
+    @Override
+    public boolean onNumberKey(Coordinate levelPos, Coordinate screenPos, int number) {
+        return isInInvLayers(screenPos);
+    }
+
     private boolean isInInvLayers(Coordinate mousePos){
         return (otherInv.invLayer.getVisible() && !otherInv.invLayer.isLayerLocInvalid(mousePos)) || (playerInv.invLayer.getVisible() && !playerInv.invLayer.isLayerLocInvalid(mousePos));
     }

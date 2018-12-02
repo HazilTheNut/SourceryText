@@ -69,7 +69,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         return inputTypes;
     }
 
-    private Coordinate getTiledMousePos(Coordinate mousePos){
+    private Coordinate getLevelPos(Coordinate mousePos){
         Coordinate tiledPos = getScreenPos(mousePos);
         return tiledPos.add(lm.getCameraPos());
     }
@@ -149,6 +149,17 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
             defMap.bindKeySecondary(new InputType(KeyEvent.VK_DOWN,  InputType.TYPE_KEY), InputMap.MOVE_SOUTH);
             defMap.bindKeySecondary(new InputType(KeyEvent.VK_LEFT,  InputType.TYPE_KEY), InputMap.MOVE_WEST);
             defMap.bindKeySecondary(new InputType(KeyEvent.VK_RIGHT, InputType.TYPE_KEY), InputMap.MOVE_EAST);
+            /* //Spell selection; replaced with "Use Number Keys to Select Spells" option
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_1, InputType.TYPE_KEY), InputMap.SELECT_SPELL_1);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_2, InputType.TYPE_KEY), InputMap.SELECT_SPELL_2);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_3, InputType.TYPE_KEY), InputMap.SELECT_SPELL_3);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_4, InputType.TYPE_KEY), InputMap.SELECT_SPELL_4);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_5, InputType.TYPE_KEY), InputMap.SELECT_SPELL_5);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_6, InputType.TYPE_KEY), InputMap.SELECT_SPELL_6);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_7, InputType.TYPE_KEY), InputMap.SELECT_SPELL_7);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_8, InputType.TYPE_KEY), InputMap.SELECT_SPELL_8);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_9, InputType.TYPE_KEY), InputMap.SELECT_SPELL_9);
+            */
             io.serializeInputMap(defMap, defaultInputMapFile.getPath());
         }
     }
@@ -171,16 +182,16 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
                     for (int action : actions) actionList.append(InputMap.describeAction(action)).append(" | ");
                     DebugWindow.reportf(DebugWindow.STAGE, "GameMouseInput.mousePressed", "input down: %s", actionList);
                 }
-                return receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE)));
+                return receiver.onInputDown(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE)));
             });
-        performInputEvent(receiver -> receiver.onMouseClick(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), e.getButton()));
+        performInputEvent(receiver -> receiver.onMouseClick(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), e.getButton()));
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         mouseRawPos = new Coordinate(e.getX(), e.getY());
         if (inputMap != null)
-            performInputEvent(receiver -> receiver.onInputUp(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE))));
+            performInputEvent(receiver -> receiver.onInputUp(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE))));
     }
 
     @Override
@@ -204,7 +215,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         mouseScreenPos = getScreenPos(mouseRawPos);
         if (mousePrevPos == null || !mousePrevPos.equals(mouseScreenPos)) {
             mouseHighlight.setPos(window.getSnappedMouseX(e.getX()), window.getSnappedMouseY(e.getY()));
-            performInputEvent(receiver -> receiver.onMouseMove(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos)));
+            performInputEvent(receiver -> receiver.onMouseMove(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos)));
             mousePrevPos = mouseScreenPos.copy();
         }
     }
@@ -213,7 +224,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         mouseRawPos = new Coordinate(e.getX(), e.getY());
-        performInputEvent(receiver -> receiver.onMouseWheel(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), e.getPreciseWheelRotation()));
+        performInputEvent(receiver -> receiver.onMouseWheel(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), e.getPreciseWheelRotation()));
     }
 
     @Override
@@ -224,10 +235,17 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     @Override
     public void keyPressed(KeyEvent e) {
         InputType input = new InputType(e.getKeyCode(), InputType.TYPE_KEY);
+        if (inputMap.isNumberKeysSelectSpells() && getKeyNumber(e.getKeyCode()) != -1)
+            doNumberedKeypress(getKeyNumber(e.getKeyCode()));
+        else
+            doNormalKeypress(input);
+    }
+
+    private void doNormalKeypress(InputType input){
         if (inputMap != null && !getDownInputs().contains(input)) { //keyPressed() gets ran a bunch of times in a row if the button is held down long enough, which is not desired.
             performInputEvent(receiver -> {
                 ArrayList<Integer> actions = inputMap.getAction(input);
-                boolean inputCaught = receiver.onInputDown(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), actions);
+                boolean inputCaught = receiver.onInputDown(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), actions);
                 if (inputCaught) {
                     downInputs.add(new DownInput(input, receiver));
                     reportDownInputs();
@@ -237,6 +255,10 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         }
     }
 
+    private void doNumberedKeypress(int keyNumber){
+        performInputEvent(receiver -> receiver.onNumberKey(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), keyNumber));
+    }
+
     @Override
     public void keyReleased(KeyEvent e) {
         if (inputMap != null) {
@@ -244,7 +266,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
             if (downInput != null) {
                 downInputs.remove(downInput);
                 reportDownInputs();
-                downInput.receiver.onInputUp(getTiledMousePos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getKeyCode(), InputType.TYPE_KEY)));
+                downInput.receiver.onInputUp(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getKeyCode(), InputType.TYPE_KEY)));
             }
         }
     }
@@ -269,6 +291,42 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         private DownInput(InputType inputType, MouseInputReceiver mouseInputReceiver){
             type = inputType;
             receiver = mouseInputReceiver;
+        }
+    }
+
+    private int getKeyNumber(int keyCode){
+        switch (keyCode){
+            case KeyEvent.VK_0:
+            case KeyEvent.VK_NUMPAD0:
+                return 0;
+            case KeyEvent.VK_1:
+            case KeyEvent.VK_NUMPAD1:
+                return 1;
+            case KeyEvent.VK_2:
+            case KeyEvent.VK_NUMPAD2:
+                return 2;
+            case KeyEvent.VK_3:
+            case KeyEvent.VK_NUMPAD3:
+                return 3;
+            case KeyEvent.VK_4:
+            case KeyEvent.VK_NUMPAD4:
+                return 4;
+            case KeyEvent.VK_5:
+            case KeyEvent.VK_NUMPAD5:
+                return 5;
+            case KeyEvent.VK_6:
+            case KeyEvent.VK_NUMPAD6:
+                return 6;
+            case KeyEvent.VK_7:
+            case KeyEvent.VK_NUMPAD7:
+                return 7;
+            case KeyEvent.VK_8:
+            case KeyEvent.VK_NUMPAD8:
+                return 8;
+            case KeyEvent.VK_9:
+            case KeyEvent.VK_NUMPAD9:
+                return 9;
+            default: return -1;
         }
     }
 }

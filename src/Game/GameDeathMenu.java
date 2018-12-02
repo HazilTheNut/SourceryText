@@ -132,4 +132,9 @@ public class GameDeathMenu implements MouseInputReceiver{
     public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         return isShowing;
     }
+
+    @Override
+    public boolean onNumberKey(Coordinate levelPos, Coordinate screenPos, int number) {
+        return isShowing;
+    }
 }

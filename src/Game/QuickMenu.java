@@ -189,6 +189,11 @@ public class QuickMenu implements MouseInputReceiver {
         return menuLayer.getVisible();
     }
 
+    @Override
+    public boolean onNumberKey(Coordinate levelPos, Coordinate screenPos, int number) {
+        return menuLayer.getVisible();
+    }
+
     public interface MenuAction {
         void doAction();
     }

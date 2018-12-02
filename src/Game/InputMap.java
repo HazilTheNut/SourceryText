@@ -38,12 +38,23 @@ public class InputMap implements Serializable {
     public static final int INV_MOVE_ONE   = 28;
     //Misc
     public static final int OPEN_MENU      = 90;
+    //Spell selection
+    public static final int SELECT_SPELL_1 = 101;
+    public static final int SELECT_SPELL_2 = 102;
+    public static final int SELECT_SPELL_3 = 103;
+    public static final int SELECT_SPELL_4 = 104;
+    public static final int SELECT_SPELL_5 = 105;
+    public static final int SELECT_SPELL_6 = 106;
+    public static final int SELECT_SPELL_7 = 107;
+    public static final int SELECT_SPELL_8 = 108;
+    public static final int SELECT_SPELL_9 = 109;
 
     /*
     Each input is mapped to a list of actions. For example, the mouse left-click can both be mapped to using an item and attacking enemies.
      */
     private HashMap<InputType, ArrayList<Integer>> primaryInputMap;
     private HashMap<InputType, ArrayList<Integer>> secondaryInputMap;
+    private boolean numberKeysSelectSpells;
 
     public InputMap(){
         primaryInputMap = new HashMap<>();
@@ -142,8 +153,34 @@ public class InputMap implements Serializable {
                 return "Open Menu";
             case THROW_ITEM:
                 return "Throw Item";
+            case SELECT_SPELL_1:
+                return "Select Spell 1";
+            case SELECT_SPELL_2:
+                return "Select Spell 2";
+            case SELECT_SPELL_3:
+                return "Select Spell 3";
+            case SELECT_SPELL_4:
+                return "Select Spell 4";
+            case SELECT_SPELL_5:
+                return "Select Spell 5";
+            case SELECT_SPELL_6:
+                return "Select Spell 6";
+            case SELECT_SPELL_7:
+                return "Select Spell 7";
+            case SELECT_SPELL_8:
+                return "Select Spell 8";
+            case SELECT_SPELL_9:
+                return "Select Spell 9";
             default:
                 return "NO_ASSOCIATION";
         }
+    }
+
+    public boolean isNumberKeysSelectSpells() {
+        return numberKeysSelectSpells;
+    }
+
+    public void setNumberKeysSelectSpells(boolean numberKeysSelectSpells) {
+        this.numberKeysSelectSpells = numberKeysSelectSpells;
     }
 }

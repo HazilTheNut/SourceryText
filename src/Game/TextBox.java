@@ -286,6 +286,11 @@ public class TextBox implements MouseInputReceiver{
         return textBoxLayer.getVisible();
     }
 
+    @Override
+    public boolean onNumberKey(Coordinate levelPos, Coordinate screenPos, int number) {
+        return textBoxLayer.getVisible();
+    }
+
     public interface PostMessageAction{
         void uponFinish();
     }
