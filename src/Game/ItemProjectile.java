@@ -9,11 +9,13 @@ import Game.Tags.Tag;
 public class ItemProjectile extends Projectile {
 
     private Item item;
+    int baseDamage;
 
-    public ItemProjectile(Entity creator, Coordinate target, SpecialText icon, Item item) {
+    public ItemProjectile(Entity creator, Coordinate target, SpecialText icon, Item item, int baseDamage) {
         super(creator, target, icon);
         this.item = item;
         getTags().addAll(item.getTags());
+        this.baseDamage = baseDamage;
     }
 
     @Override
@@ -30,15 +32,16 @@ public class ItemProjectile extends Projectile {
 
     @Override
     protected void collide(TagHolder other) {
-        super.collide(other);
+        super.collide(other, baseDamage);
         drop();
     }
 
     private void drop(){
         if (!item.hasTag(TagRegistry.FRAGILE)) { //Items that are 'fragile' are destroyed upon hitting something after being thrown.
-            if (!item.isStackable())
+            if (!item.isStackable()) {
+                item.receiveDamage(5); //Subtract durability
                 gi.dropItem(item, getRoundedPos());
-            else {
+            } else {
                 Item singleItem = new Item(item.getItemData().copy(), gi).setQty(1);
                 singleItem.getTags().clear();
                 singleItem.getTags().addAll(item.getTags());

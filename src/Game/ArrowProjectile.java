@@ -8,7 +8,7 @@ import Game.Entities.Entity;
 public class ArrowProjectile extends ItemProjectile {
 
     public ArrowProjectile(Entity creator, Coordinate target, SpecialText icon, Item item) {
-        super(creator, target, icon, item);
+        super(creator, target, icon, item, 0);
     }
 
     @Override

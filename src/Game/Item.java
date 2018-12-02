@@ -102,12 +102,12 @@ public class Item extends TagHolder implements Serializable {
 
     @Override
     public void heal(int amount) {
-        itemData.setQty(itemData.getQty()+amount);
+        if (stackability != NO_QUANTITY) itemData.setQty(itemData.getQty()+amount);
     }
 
     @Override
     public void receiveDamage(int amount) {
-        itemData.setQty(itemData.getQty()-amount); //"Damage" in this case just decrements the quantity.
+        if (stackability != NO_QUANTITY) itemData.setQty(itemData.getQty()-amount); //"Damage" in this case just decrements the quantity.
     }
 
     @Override
