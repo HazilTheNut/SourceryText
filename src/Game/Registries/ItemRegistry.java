@@ -35,6 +35,9 @@ public class ItemRegistry {
     static {
         //Registering stuff starts here
 
+        //Test Materials
+        registerItem(0, "Taboo Device", 0, TagRegistry.MAGIC_CYCLER, TagRegistry.UNLIMITED_USAGE);
+
         //Generic Weapons
         //Tier 1
         registerItem(108, "Wooden Club",     2.5, TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAMMABLE);

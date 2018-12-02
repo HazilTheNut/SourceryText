@@ -61,6 +61,10 @@ public class Spell implements Serializable {
         return result;
     }
 
+    int calculatePower(int baseAmount, int magicPower, double scalar){
+        return baseAmount + (int)Math.round((double)magicPower * scalar);
+    }
+
     public Spell copy(){ return new Spell(); }
 
 }

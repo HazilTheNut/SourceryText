@@ -32,7 +32,7 @@ public class IceBoltSpell extends Spell {
     @Override
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         Projectile fireBolt = new Projectile(spellCaster, targetLoc, icon);
-        fireBolt.addTag(TagRegistry.DAMAGE_START + calculateDamage(10, magicPower), spellCaster);
+        fireBolt.addTag(TagRegistry.DAMAGE_START + calculatePower(15, magicPower, 0.4375), spellCaster);
         fireBolt.addTag(TagRegistry.FROST_ENCHANT,    spellCaster);
         fireBolt.launchProjectile(14);
         return calculateCooldown(25, magicPower);

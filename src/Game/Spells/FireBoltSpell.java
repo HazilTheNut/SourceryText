@@ -32,7 +32,7 @@ public class FireBoltSpell extends Spell {
     @Override
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         Projectile fireBolt = new Projectile(spellCaster, targetLoc, icon);
-        fireBolt.addTag(TagRegistry.DAMAGE_START + calculateDamage(6, magicPower), spellCaster);
+        fireBolt.addTag(TagRegistry.DAMAGE_START + calculatePower(5, magicPower, 0.25), spellCaster);
         fireBolt.addTag(TagRegistry.FLAMMABLE,        spellCaster);
         fireBolt.addTag(TagRegistry.ON_FIRE,          spellCaster);
         fireBolt.launchProjectile(12);

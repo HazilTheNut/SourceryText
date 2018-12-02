@@ -60,7 +60,7 @@ public class SandWallSpell extends Spell {
         double angle = (180 / Math.PI) * Math.atan2(dy, dx);
         if (angle < 0) angle += 180;
         //Use angle to pick direction
-        int range = 4 + (magicPower / 16);
+        int range = calculatePower(3, magicPower, 0.075);
         if (angle <= 22.5){ //E & W
             doSpread(spreadOrigin, gi, new Coordinate(1, 0), new Coordinate(-1, 0), range, spreadAction, beSlow);
         } else if (angle <= 67.5){ //NE & SW

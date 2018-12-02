@@ -135,6 +135,8 @@ public class TagRegistry {
     public final static int RANGE_START   = 3000;
     public final static int REPAIR_START  = 4000;
 
+    public final static int MAGIC_CYCLER = 99999;
+
     static {
         //Registering stuff starts here
 
@@ -231,6 +233,8 @@ public class TagRegistry {
         registerTag(SCARED, "Scared", ScaredTag.class);
         registerTag(BLEEDING, "Bleeding", BleedTag.class);
         registerTag(UNSTABLE, "Unstable", UnstableTag.class);
+
+        registerTag(MAGIC_CYCLER, "Mind Recycler", MagicStatCyclerTag.class);
 
         //Registering stuff ends here
     }

@@ -32,7 +32,7 @@ public class ThunderBoltSpell extends Spell {
     @Override
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         Projectile thunderBolt = new Projectile(spellCaster, targetLoc, icon);
-        thunderBolt.addTag(TagRegistry.DAMAGE_START + calculateDamage(15, magicPower), spellCaster);
+        thunderBolt.addTag(TagRegistry.DAMAGE_START + calculatePower(15, magicPower, 0.5625), spellCaster);
         thunderBolt.addTag(TagRegistry.ELECTRIC_ENCHANT, spellCaster);
         thunderBolt.launchProjectile(20);
         return calculateCooldown(32, magicPower);
