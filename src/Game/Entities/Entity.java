@@ -226,21 +226,22 @@ public class Entity extends TagHolder implements Serializable {
      * @param item The item to add
      */
     public void addItem(Item item) {
+        int remainingAmount = item.getItemData().getQty();
         if (item.isStackable()) //TODO: Fix stacking bug when going over 100 qty
             for (Item i : items){
                 if (i.getItemData().getItemId() == item.getItemData().getItemId() && item.getItemData().getQty() < 99){
-                    int total = i.getItemData().getQty() + item.getItemData().getQty();
+                    int total = i.getItemData().getQty() + remainingAmount;
                     if (total < 100){
                         i.setQty(total);
                         return;
                     } else {
                         i.setQty(99);
-                        items.add(0, item.setQty(total - 99));
-                        return;
+                        remainingAmount = total - 99;
                     }
                 }
+                if (remainingAmount <= 0) break;
             }
-        items.add(0, item);
+        items.add(0, item.setQty(remainingAmount));
     }
 
     public void removeItem(Item item) { items.remove(item); }

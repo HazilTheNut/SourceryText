@@ -27,6 +27,10 @@ public class InputType implements Serializable {
         inputType = type;
     }
 
+    public int getInputType() {
+        return inputType;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof InputType) {

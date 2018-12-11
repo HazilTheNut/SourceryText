@@ -209,7 +209,7 @@ public class TagRegistry {
         registerTag(LEARN_SHADOW, "Teaches Shadowmancy", LearnShadowmancyTag.class);
         registerTag(LEARN_MAGICBOMB, "Teaches Magic Bomb", LearnMagicBombTag.class);
         registerTag(LEARN_SANDWALL, "Teaches Petramancy", LearnSandWallTag.class);
-        registerTag(LEARN_MAGIC, "Teaches Magic Bolt", LearnMagicBoltTag.class);
+        registerTag(LEARN_MAGIC, "Teaches Magic Arrow", LearnMagicBoltTag.class);
         registerTag(LEARN_AQUAMANCY, "Teaches Aquamancy", LearnAquamancyTag.class);
 
         //Tile related

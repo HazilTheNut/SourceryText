@@ -741,7 +741,20 @@ public class Player extends GameCharacter implements MouseInputReceiver{
 
     @Override
     public void onInteract(Player player) {
-        //Player should do nothing when trying to interact with itself.
+        //Player passes turn if it interacts with itself. This allows game play using just the mouse.
+        freeze();
+        gi.doEnemyTurn();
+        //Mouse-only game play assumes that the mouse being used has the forward and backward mouse buttons (called "mouse4" and "mouse 5")
+        /*
+        Possible Controls:
+            Movement & Interaction : Right-Click
+            Attack :                 Left-Click
+            Cast Spell :             Middle-Click
+            Change Spell :           (Click on Spell on HUD for drop-down menu)
+            Pass Turn :              (Interact with self)
+            Throw Item :             Mouse Button 4
+            Inventory :              Mouse Button 5
+         */
     }
 
     public void doEnemyTurn(){

@@ -60,6 +60,9 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
     private final Color selectorStandby = new Color(200, 200, 215, 75);
     private final Color selectorEditing = new Color(255, 255, 150, 100);
 
+    private final Color keybindMouse    = new Color(235, 235, 255);
+    private final Color keybindKeyboard = new Color(235, 255, 235);
+
     public GameKeybindsMenu(LayerManager lm, GameMouseInput mi){
         this.lm = lm;
         this.mi = mi;
@@ -106,7 +109,14 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
             menuLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg), new Coordinate(0, i+1), new Coordinate(lm.getWindow().RESOLUTION_WIDTH, i+1));
             String primary   = (keybindSet.primaryInput   != null) ? keybindSet.primaryInput.toString() : "";
             String secondary = (keybindSet.secondaryInput != null) ? keybindSet.secondaryInput.toString() : "";
-            menuLayer.inscribeString(String.format("%1$-20s | %2$-15s | %3$-15s", InputMap.describeAction(keybindSet.action), primary, secondary), 1, i+1);
+            menuLayer.inscribeString(String.format("%1$-20s | %2$-15s | %3$-15s", InputMap.describeAction(keybindSet.action), "", ""), 1, i+1);
+            //Draw the text
+            /**/
+            if (keybindSet.primaryInput != null)
+                menuLayer.inscribeString(primary, 24, i+1, (keybindSet.primaryInput.getInputType() == InputType.TYPE_KEY) ? keybindKeyboard : keybindMouse);
+            if (keybindSet.secondaryInput != null)
+                menuLayer.inscribeString(secondary, 42, i+1, (keybindSet.secondaryInput.getInputType() == InputType.TYPE_KEY) ? keybindKeyboard : keybindMouse);
+            /**/
         }
         updateBanner();
     }
@@ -117,6 +127,7 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
      * Updates just the banners at the top and bottom
      */
     private void updateBanner(){
+        //Top Banner
         menuLayer.fillLayer(new SpecialText(' ', Color.WHITE, bannerBkg), new Coordinate(0, 0), new Coordinate(menuLayer.getCols(), 0));
         menuLayer.inscribeString("Controls", 1, 0, titleGreen);
         Color applyColor = (changesDetected) ? (cursorOnApplyButton) ? Color.WHITE : titleTeal.brighter() : titleGray;
@@ -125,6 +136,7 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
         menuLayer.inscribeString("Default", lm.getWindow().RESOLUTION_WIDTH - 26, 0, defaultColor);
         Color closeBkg = (cursorOnCloseButton) ? Color.WHITE : exitFg;
         menuLayer.inscribeString("Close", lm.getWindow().RESOLUTION_WIDTH - 6, 0, closeBkg);
+        //Bottom Banner
         menuLayer.fillLayer(new SpecialText(' ', Color.WHITE, bannerBkg), new Coordinate(0, menuLayer.getRows()-1), new Coordinate(menuLayer.getCols(), menuLayer.getRows()-1));
         menuLayer.inscribeString(nuumberKeyMessage, 1, menuLayer.getRows()-1, titleGray);
         Color numbersOnColor = (useNumberKeys) ? Color.WHITE : titleGray.darker();

@@ -3,6 +3,7 @@ package Game.Spells;
 import Data.Coordinate;
 import Data.SerializationVersion;
 import Engine.SpecialText;
+import Game.ArrowProjectile;
 import Game.Entities.Entity;
 import Game.GameInstance;
 import Game.Item;
@@ -33,10 +34,10 @@ public class MagicArrowSpell extends Spell {
 
     @Override
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
-        Projectile magicArrow = new Projectile(spellCaster, targetLoc, icon);
-        magicArrow.addTag(TagRegistry.DAMAGE_START + calculatePower(3, magicPower, 0.525), spellCaster);
         Item arrowItem = ItemRegistry.generateItem(ItemRegistry.ID_ARROW, gi);
-        magicArrow.getTags().addAll(arrowItem.getTags());
+        ArrowProjectile magicArrow = new ArrowProjectile(spellCaster, targetLoc, icon, arrowItem);
+        magicArrow.addTag(TagRegistry.DAMAGE_START + calculatePower(3, magicPower, 0.525), spellCaster);
+        magicArrow.addTag(TagRegistry.FRAGILE, spellCaster);
         magicArrow.launchProjectile(calculatePower(15, magicPower, 0.5));
         return calculateCooldown(15, magicPower);
     }
