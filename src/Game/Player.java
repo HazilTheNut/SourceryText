@@ -143,11 +143,13 @@ public class Player extends GameCharacter implements MouseInputReceiver{
 
     /**
      * Checks for whether the player is standing in a warp zone (and hadn't just warped there) and moves to a new level if so.
+     *
+     * @return Returns if the player is moving onto a warp zone and the player transitioned to a new level.
      */
-    private void checkForWarpZones(){
+    boolean checkForWarpZones(Coordinate nextPos){
         ArrayList<WarpZone> warpZones = gi.getCurrentLevel().getWarpZones();
         for (WarpZone wz : warpZones){
-            if (wz.isInsideZone(getLocation())){
+            if (wz.isInsideZone(nextPos)){
                 if (noEnterWarpZoneTimer == 0) {
                     noEnterWarpZoneTimer = 2;
                     terminatePathing = true;
@@ -155,10 +157,12 @@ public class Player extends GameCharacter implements MouseInputReceiver{
                     String path = io.getRootFilePath() + wz.getRoomFilePath();
                     Coordinate wzNewPos = new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY());
                     DebugWindow.reportf(DebugWindow.GAME, "Player.checkForWarpZones","Attempting level file path: %1$s \n* wz pos: %2$s\n", path, wzNewPos);
-                    gi.enterLevel(path, wzNewPos.add(getLocation()).subtract(new Coordinate(wz.getXpos(), wz.getYpos())));
+                    gi.enterLevel(path, wzNewPos.add(nextPos).subtract(new Coordinate(wz.getXpos(), wz.getYpos())));
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     @Override
@@ -179,7 +183,10 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     @Override
     protected void move(int relativeX, int relativeY) {
         while (gi.getLayerManager().isDrawingFrame())
-            turnSleep(2);
+            turnSleep(2); //Moving causes the camera to move, which can cause screen tearing and other "jumpiness" that is undesirable
+        Coordinate nextPos = getLocation().copy().add(new Coordinate(relativeX, relativeY));
+        if (checkForWarpZones(nextPos))
+            return;
         if (doRaftStuff(relativeX, relativeY))
             super.move(relativeX, relativeY);
         for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerMove(getLocation());
@@ -196,7 +203,6 @@ public class Player extends GameCharacter implements MouseInputReceiver{
      * Performs checks after any kind of movement, aside from setPos()
      */
     private void postMovementCheck(){
-        checkForWarpZones();
         if (inv.getOtherInv().getMode() == PlayerInventory.CONFIG_OTHER_EXCHANGE && inv.getOtherInv().isShowing()){
             inv.closeOtherInventory();
             inv.getPlayerInv().close();

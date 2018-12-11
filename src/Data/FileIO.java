@@ -27,8 +27,7 @@ public class FileIO {
     /**
      * Gets the 'root file path' that points to the file folder where the SourceryText and LevelEditor .jar's are located.
      *
-     * Useful for trying to reference files nearby the executable, like idk, a .lda or two....
-     * Maybe a couple others too....
+     * Useful for trying to reference files nearby the executable.
      *
      * Getting the root file path is handy because that means SourceryText requires no Installation Wizards to correctly configure.
      * This is also why you can't just run SourceryText out of the IDE, because the root path would be in src instead of CompiledGame

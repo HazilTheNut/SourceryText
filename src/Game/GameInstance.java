@@ -441,7 +441,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
 
     @Override
     public void onFrameDrawStart() {
-        if (player != null){
+        if (player != null && currentLevel.getBackdrop() != null){
             player.updateCameraPos();
         }
         if (currentLevel != null) {

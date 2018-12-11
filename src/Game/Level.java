@@ -261,7 +261,8 @@ public class Level implements Serializable {
     }
 
     void onAnimatedTileUpdate(){
-        for (LevelScript ls : levelScripts) ls.onAnimatedTileUpdate();
+        if (levelScripts != null)
+            for (LevelScript ls : levelScripts) ls.onAnimatedTileUpdate();
     }
 
     public LevelScript getLevelScript(int scriptId){

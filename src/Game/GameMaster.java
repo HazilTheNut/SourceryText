@@ -8,10 +8,7 @@ import Game.Debug.DebugWindow;
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 public class GameMaster {
 
@@ -59,6 +56,7 @@ public class GameMaster {
         currentGameInstance.establishMouseInput();
         FileIO io = new FileIO();
         currentGameInstance.enterLevel(io.getRootFilePath() + "LevelData/gameStart.lda", new Coordinate(0, 0));
+        currentGameInstance.getPlayer().checkForWarpZones(new Coordinate(0, 0));
         gameRunning = true;
         layerManager.addLayer(mouseInput.getMouseHighlight());
     }

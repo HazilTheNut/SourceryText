@@ -68,7 +68,7 @@ public class BasicEnemy extends CombatEntity {
 
     @Override
     public void onTurn() {
-        if (isAutonomous)
+        if (isAutonomous && isAlive)
             doAutonomousAI();
         super.onTurn();
     }
