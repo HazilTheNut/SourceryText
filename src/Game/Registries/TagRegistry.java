@@ -73,7 +73,8 @@ public class TagRegistry {
     public final static int IMPORTANT       = 214;
     public final static int FRAGILE         = 215;
 
-    public final static int WEAPON_THROW        = 220;
+    @Deprecated
+    public final static int WEAPON_THROW        = 220; //All items can now be thrown
     public final static int THROW_KNIFE         = 221;
     public final static int THROW_STONE         = 222;
     public final static int THROW_WATERBALLOON  = 223;

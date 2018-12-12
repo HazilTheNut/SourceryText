@@ -83,14 +83,16 @@ public class BasicEnemy extends CombatEntity {
         if (target == null){
             doIdleBehavior();
             CombatEntity nearest = getNearestEnemy();
-            if (nearest != null) { //Target player if nearby and not already targeting something
-                setTarget(nearest);
-                alertNearbyAllies(); //Let everyone know
+            if (nearest != null) {
+                if (raycastToPosition(nearest.getLocation()) != RAYCAST_WALL) { //Target player if nearby and not already targeting something, and the player can be seen
+                    setTarget(nearest);
+                    alertNearbyAllies(); //Let everyone know
+                }
             }
         }
         if (target != null) {
             if (hasTag(TagRegistry.SCARED)) {
-                pathToPosition(target.getLocation());
+                pathToPosition(target.getLocation()); //While scared, it moves backwards
             } else {
                 if (isRanged())
                     doRangedBehavior();
@@ -316,18 +318,22 @@ public class BasicEnemy extends CombatEntity {
 
     private int raycastToTarget(){
         if (target == null) return -1;
-        Coordinate diff = target.getLocation().subtract(getLocation());
+        return raycastToPosition(target.getLocation());
+    }
+
+    private int raycastToPosition(Coordinate pos){
+        Coordinate diff = pos.subtract(getLocation());
         double angle = Math.atan2(diff.getY(), diff.getX());
         double dx = Math.cos(angle);
         double dy = Math.sin(angle);
-        double dist = (target.getLocation().hypDistance(getLocation()));
+        double dist = (pos.hypDistance(getLocation()));
         boolean friendExists = false;
         for (int i = 1; i <= dist; i++){
-            Coordinate pos = getLocation().add(new Coordinate((int)Math.round(i*dx), (int)Math.round(i*dy)));
-            gi.getPathTestLayer().editLayer(pos, new SpecialText(' ', Color.WHITE, new Color(255, 30, 30, 150)));
-            if (gi.getCurrentLevel().getTileAt(pos).hasTag(TagRegistry.TILE_WALL)){
+            Coordinate rcPos = getLocation().add(new Coordinate((int)Math.round(i*dx), (int)Math.round(i*dy)));
+            gi.getPathTestLayer().editLayer(rcPos, new SpecialText(' ', Color.WHITE, new Color(255, 30, 30, 150)));
+            if (gi.getCurrentLevel().getTileAt(rcPos).hasTag(TagRegistry.TILE_WALL)){
                 return RAYCAST_WALL;
-            } else if (isAlly(gi.getCurrentLevel().getSolidEntityAt(pos))){
+            } else if (isAlly(gi.getCurrentLevel().getSolidEntityAt(rcPos))){
                 friendExists = true;
             }
         }
