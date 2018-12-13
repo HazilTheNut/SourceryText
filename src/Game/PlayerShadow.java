@@ -35,6 +35,7 @@ public class PlayerShadow extends CombatEntity implements PlayerActionCollector 
         setMaxHealth(1);
         getSprite().editLayer(0, 0, new SpecialText('@', new Color(65, 75, 65), new Color(0, 0, 0, 25)));
         player = gameInstance.getPlayer();
+        setStrength(player.getStrength());
         player.addPlayerActionCollector(this);
         offset = getLocation().subtract(player.getLocation());
     }
@@ -100,6 +101,14 @@ public class PlayerShadow extends CombatEntity implements PlayerActionCollector 
         setWeapon(copy);
         if (copy.hasTag(TagRegistry.WEAPON_BOW)) addItem(ItemRegistry.generateItem(ItemRegistry.ID_ARROW, gi));
         doWeaponAttack(loc.add(offset));
+    }
+
+    @Override
+    public void onPlayerThrowItem(Coordinate target, Item item) {
+        Item copy = ItemRegistry.generateItem(item.getItemData(), gi);
+        copy.addTag(TagRegistry.FRAGILE, this);
+        addItem(copy);
+        throwItem(copy, target.add(offset));
     }
 
     @Override

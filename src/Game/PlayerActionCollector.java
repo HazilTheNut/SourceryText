@@ -13,6 +13,14 @@ public interface PlayerActionCollector {
     void onPlayerAttack(Coordinate loc, Item weapon);
 
     /**
+     * Runs when the player throws an item.
+     *
+     * @param target The position aimed at
+     * @param item The Item being thrown
+     */
+    void onPlayerThrowItem(Coordinate target, Item item);
+
+    /**
      * Runs when the player moves
      * @param loc The new position of the player
      */

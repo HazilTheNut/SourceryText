@@ -540,6 +540,8 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         return true;
     }
 
+    private boolean midThrowingAnimation = false; //If the player releases the throw item button while the player's shadow is throwing an item, the item being thrown suddenly becomes null.
+
     @Override
     public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
         if (actions != null) {
@@ -575,7 +577,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         if (index < spells.size())
             equippedSpell = spells.get(index);
         updateHUD();
-        return false;
+        return true;
     }
 
     private void inspect(Coordinate levelPos){
@@ -654,7 +656,11 @@ public class Player extends GameCharacter implements MouseInputReceiver{
                 if (itemToThrow == null)
                     doStandardAttack(levelPos);
                 else {
+                    midThrowingAnimation = true;
+                    for (PlayerActionCollector actionCollector : playerActionCollectors)
+                        actionCollector.onPlayerThrowItem(levelPos, itemToThrow);
                     throwItem(itemToThrow, levelPos);
+                    midThrowingAnimation = false;
                     exitThrowingMode();
                 }
                 gi.doEnemyTurn();
@@ -675,8 +681,10 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     }
 
     void exitThrowingMode(){
-        itemToThrow = null;
-        updateHUD();
+        if (!midThrowingAnimation) {
+            itemToThrow = null;
+            updateHUD();
+        }
     }
 
     private boolean isSpellReady(){

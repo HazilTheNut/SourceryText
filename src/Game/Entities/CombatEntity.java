@@ -111,7 +111,7 @@ public class CombatEntity extends Entity {
 
     @Override
     public void receiveDamage(int amount) {
-        if (health > 0) isAlive = true;
+        //if (health > 0) isAlive = true;
         if (amount > 0 && isAlive) {
             health -= amount;
             double percentage = Math.sqrt(Math.max(Math.min((double) amount / maxHealth, 1), 0.1));

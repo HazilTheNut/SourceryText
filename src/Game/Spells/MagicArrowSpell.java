@@ -29,7 +29,7 @@ public class MagicArrowSpell extends Spell {
 
     @Override
     public Color getColor() {
-        return new Color(115, 220, 255);
+        return new Color(130, 255, 221);
     }
 
     @Override

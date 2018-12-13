@@ -33,7 +33,7 @@ public class GameStart {
         ImageIcon icon = new ImageIcon(io.getRootFilePath() + "gameicon.png");
         gameFrame.setIconImage(icon.getImage());
 
-        gameFrame.setSize(500, 500);
+        gameFrame.setSize(700, 650);
         gameFrame.setResizable(true);
         gameFrame.setVisible(true);
         gameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

@@ -50,8 +50,8 @@ public class AquamancySpell extends Spell {
         lm.addLayer(animLayer);
         while (lm.isDrawingFrame())
             sleep(20);
-        char[] animSst = {'.','o','O'};
-        for (char c : animSst) {
+        char[] animSet = {'.','o','O'};
+        for (char c : animSet) {
             animLayer.editLayer(0, 0, new SpecialText(c, fgColor, bgColor));
             sleep(75);
         }

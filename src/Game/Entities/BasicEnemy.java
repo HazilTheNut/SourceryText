@@ -328,6 +328,7 @@ public class BasicEnemy extends CombatEntity {
         double dy = Math.sin(angle);
         double dist = (pos.hypDistance(getLocation()));
         boolean friendExists = false;
+        gi.getPathTestLayer().clearLayer();
         for (int i = 1; i <= dist; i++){
             Coordinate rcPos = getLocation().add(new Coordinate((int)Math.round(i*dx), (int)Math.round(i*dy)));
             gi.getPathTestLayer().editLayer(rcPos, new SpecialText(' ', Color.WHITE, new Color(255, 30, 30, 150)));

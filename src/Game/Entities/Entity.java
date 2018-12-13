@@ -227,7 +227,7 @@ public class Entity extends TagHolder implements Serializable {
      */
     public void addItem(Item item) {
         int remainingAmount = item.getItemData().getQty();
-        if (item.isStackable()) //TODO: Fix stacking bug when going over 100 qty
+        if (item.isStackable())
             for (Item i : items){
                 if (i.getItemData().getItemId() == item.getItemData().getItemId() && item.getItemData().getQty() < 99){
                     int total = i.getItemData().getQty() + remainingAmount;
