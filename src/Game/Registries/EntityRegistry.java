@@ -54,7 +54,7 @@ public class EntityRegistry {
         registerEntity(MAGIC_BOMB, "MagicBomb", new SpecialText('b'),                                                    MagicBomb.class, TagRegistry.LIVING, TagRegistry.NO_PATHING);
         registerEntity(RAFT, "Raft",       new SpecialText('=', new Color(142, 94, 60),   new Color(71, 47, 30, 240)),   Marker.class);
         registerEntity(19, "Store Item",   new SpecialText('$', new Color(171, 201, 75),  new Color(145, 165, 60, 15)),  StoreItem.class);
-        registerEntity(PLAYER_SHADOW, "Player Shadow", new SpecialText('@', new Color(65, 75, 65), new Color(0, 0, 0, 25)), PlayerShadow.class);
+        registerEntity(PLAYER_SHADOW, "Player Shadow", new SpecialText('@', new Color(65, 75, 65), new Color(0, 0, 0, 25)), PlayerShadow.class, TagRegistry.ETHEREAL);
 
         registerEntity(21, "Patrolling Character", new SpecialText('G', new Color(130, 255, 225), new Color(180, 255, 225, 15)), PatrollingCharacter.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING, TagRegistry.NO_PATHING);
 

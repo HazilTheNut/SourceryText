@@ -11,6 +11,7 @@ import Game.Entities.Entity;
 import Game.Registries.ItemRegistry;
 import Game.Registries.TagRegistry;
 import Game.Spells.Spell;
+import Game.Tags.EtherealTag;
 import Game.Tags.RangeTag;
 import Game.Tags.Tag;
 
@@ -96,6 +97,7 @@ public class PlayerShadow extends CombatEntity implements PlayerActionCollector 
     @Override
     public void onPlayerAttack(Coordinate loc, Item weapon) {
         Item copy = weapon.copy(gi);
+        copy.addTag(TagRegistry.ETHEREAL, this);
         setWeapon(copy);
         if (copy.hasTag(TagRegistry.WEAPON_BOW)) addItem(ItemRegistry.generateItem(ItemRegistry.ID_ARROW, gi));
         doWeaponAttack(loc.add(offset));
