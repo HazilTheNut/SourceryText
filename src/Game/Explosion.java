@@ -78,8 +78,10 @@ public class Explosion extends TagHolder{
                     DebugWindow.reportf(DebugWindow.STAGE, "Explosion.applyDamage:damage", "time: %1$.03fms", (System.nanoTime() - startTime) / 1000000f);
                     //Copy tags
                     for (Entity e : entities) {
-                        e.onReceiveDamage(amount, this, gi);
-                        transmitTags(e);
+                        if (shouldContact(this, e)) {
+                            e.onReceiveDamage(amount, this, gi);
+                            transmitTags(e);
+                        }
                     }
                     DebugWindow.reportf(DebugWindow.STAGE, "Explosion.applyDamage:copy", "time: %1$.03fms", (System.nanoTime() - startTime) / 1000000f);
                     //Contact tiles below

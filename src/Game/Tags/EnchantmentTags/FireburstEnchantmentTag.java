@@ -15,16 +15,17 @@ public class FireburstEnchantmentTag extends EnchantmentTag {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
-    public void onDealDamage(TagEvent e) {
+    public void onContact(TagEvent e) {
         if (e.getTarget().hasTag(TagRegistry.ON_FIRE)){
-            e.addFutureAction(event -> {
+            e.addCancelableAction(event -> {
                 e.getTarget().removeTag(TagRegistry.ON_FIRE);
-                e.setAmount((int)(e.getAmount() * 1.5) + 5);
+                int dmg = 5 + (int)(e.getTarget().getCurrentHealth() * 0.15);
+                e.getTarget().onReceiveDamage(dmg, e.getSource(), e.getGameInstance());
+                if (e.getTarget() instanceof Entity) {
+                    Entity entity = (Entity) e.getTarget();
+                    playAnimation(entity);
+                }
             });
-            if (e.getTarget() instanceof Entity) {
-                Entity entity = (Entity) e.getTarget();
-                playAnimation(entity);
-            }
         }
     }
 

@@ -102,7 +102,7 @@ public class Projectile extends TagHolder {
         Coordinate currentPos = getRoundedPos(xpos, ypos);
         Entity entity = gi.getCurrentLevel().getSolidEntityAt(currentPos);
         if (!currentPos.equals(startPos)) { //Should be a nice catch-all to prevent projectiles from not firing correctly (by hitting the creator of the projectile)
-            if (entity != null) { //Is the projectile now on top of an entity?
+            if (entity != null && shouldContact(this, entity)) { //Is the projectile now on top of an entity?
                 collide(entity);
                 destroy();
                 return true;

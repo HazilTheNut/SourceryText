@@ -161,7 +161,7 @@ public class CombatEntity extends Entity {
      * @param ce CombatEntity to performAttack
      */
     protected void doAttackEvent(CombatEntity ce){
-        if (getWeapon() != null && doSwingEvent()) {
+        if (getWeapon() != null && doSwingEvent(ce)) {
             TagEvent event = new TagEvent(strength, true, this, ce, getGameInstance(), getWeapon());
             for (Tag tag : getWeapon().getTags())
                 tag.onDealDamage(event);
@@ -181,7 +181,8 @@ public class CombatEntity extends Entity {
         }
     }
 
-    private boolean doSwingEvent(){
+    private boolean doSwingEvent(CombatEntity target){
+        if (!shouldContact(getWeapon(), target)) return false;
         TagEvent swingEvent = new TagEvent(100, true, this, getWeapon(), getGameInstance(), this);
         for (Tag tag : getTags())
             tag.onWeaponSwing(swingEvent);

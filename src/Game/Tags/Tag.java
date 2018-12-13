@@ -119,10 +119,10 @@ public class Tag implements Serializable {
     //Target: this
     public void onAddThis(TagEvent e){}
 
-    //Ran when this tag is removed. Cannot be canceled
+    //Ran when this tag is removed. Tag removal cannot be canceled
     public void onRemove(TagHolder owner){}
 
-    //Ran when the owner of this is destroyed. Cannot be canceled
+    //Ran when the owner of this is destroyed. Entity destruction cannot be canceled
     public void onEntityDestruct(Entity owner){}
 
     //Ran to figure if the owning Tile can be cleaned up by the level.

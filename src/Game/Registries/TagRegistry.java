@@ -55,6 +55,7 @@ public class TagRegistry {
     public final static int BURN_SPREAD   = 14;
     public final static int WETTING       = 15;
     public final static int BURN_NOSPREAD = 16;
+    public final static int ETHEREAL      = 17;
 
     public final static int POISON        = 20;
     public final static int VENOM_ENCHANT = 21;
@@ -154,6 +155,7 @@ public class TagRegistry {
         registerTag(ELECTRIC_ENCHANT, "Electric Ench.", ElectricEnchantmentTag.class);
         registerTag(POISON, "Poison", PoisonTag.class);
         registerTag(VENOM_ENCHANT, "Venom Enchantment", VenomEnchantmentTag.class);
+        registerTag(ETHEREAL, "Ethereal", EtherealTag.class);
 
         registerTag(FROZEN, "Frozen", FrozenTag.class);
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);

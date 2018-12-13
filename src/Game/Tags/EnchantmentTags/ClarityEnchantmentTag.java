@@ -12,10 +12,12 @@ public class ClarityEnchantmentTag extends EnchantmentTag {
 
     @Override
     public void onDealDamage(TagEvent e) {
-        if (e.getSource() instanceof Player) {
-            Player source = (Player) e.getSource();
-            source.decrementCooldowns();
-        }
+        e.addCancelableAction(event -> {
+            if (e.getSource() instanceof Player) {
+                Player source = (Player) e.getSource();
+                source.decrementCooldowns();
+            }
+        });
     }
 
     @Override

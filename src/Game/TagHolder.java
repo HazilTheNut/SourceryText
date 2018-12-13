@@ -114,6 +114,7 @@ public class TagHolder implements Serializable {
     public void heal(int amount){}
 
     public void onReceiveDamage(int amount, TagHolder source, GameInstance gi){
+        if (!shouldContact(source, this)) return;
         TagEvent dmgEvent = new TagEvent(amount, true, source, this, gi, this);
         for (Tag tag : tags){
             tag.onReceiveDamage(dmgEvent);
@@ -125,6 +126,10 @@ public class TagHolder implements Serializable {
         }
     }
 
+    public boolean shouldContact(TagHolder source, TagHolder target){
+        return source.hasTag(TagRegistry.ETHEREAL) || !target.hasTag(TagRegistry.ETHEREAL);
+    }
+
     protected void receiveDamage(int amount){
         //Override this
     }
@@ -134,7 +139,7 @@ public class TagHolder implements Serializable {
     }
 
     public void onContact(TagHolder other, GameInstance gi){
-        if (other == null)
+        if (other == null || !shouldContact(this, other))
             return;
         contactEvent(this, other, gi);
         contactEvent(other, this, gi);

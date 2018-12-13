@@ -4,6 +4,7 @@ import Data.ItemStruct;
 import Data.SerializationVersion;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
+import Game.Registries.ItemRegistry;
 import Game.Tags.Tag;
 
 import java.io.Serializable;
@@ -135,5 +136,11 @@ public class Item extends TagHolder implements Serializable {
 
     public void setFlavorText(String flavorText) {
         this.flavorText = flavorText;
+    }
+
+    public Item copy(GameInstance gi){
+        Item copy = new Item(itemData.copy(), gi);
+        for (Tag tag : getTags()) copy.addTag(tag.copy(), copy);
+        return copy;
     }
 }
