@@ -59,6 +59,7 @@ public class Level implements Serializable {
     private ArrayList<WarpZone> warpZones;
 
     private ArrayList<Entity> entities;
+    private ArrayList<ProjectileListener> projectileListeners;
 
     private Layer animatedTileLayer;
     private ArrayList<AnimatedTile> animatedTiles;
@@ -75,6 +76,7 @@ public class Level implements Serializable {
         animatedTiles = new ArrayList<>();
         entities = new ArrayList<>();
         warpZones = new ArrayList<>();
+        projectileListeners = new ArrayList<>();
     }
 
     void initialize(LevelData ldata){
@@ -164,6 +166,7 @@ public class Level implements Serializable {
 
     public void addEntity(Entity e){
         entities.add(e);
+        e.onLevelEnter();
         e.onContact(getTileAt(e.getLocation()), e.getGameInstance());
         for (LevelScript levelScript : levelScripts) levelScript.onAddEntity(e);
     }
@@ -462,5 +465,17 @@ public class Level implements Serializable {
 
     public Layer getTileTagLayer() {
         return tileTagLayer;
+    }
+
+    public ArrayList<ProjectileListener> getProjectileListeners() {
+        return projectileListeners;
+    }
+    
+    public void addProjectileListener(ProjectileListener projectileListener){
+        projectileListeners.add(projectileListener);
+    }
+
+    public void removeProjectileListener(ProjectileListener projectileListener){
+        projectileListeners.remove(projectileListener);
     }
 }

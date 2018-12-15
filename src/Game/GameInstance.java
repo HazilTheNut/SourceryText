@@ -277,7 +277,6 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot", null);
         LootPile pile = (LootPile)instantiateEntity(lootPileStruct, loc, getCurrentLevel());
         pile.addItem(toDrop);
-        pile.onLevelEnter();
         return pile;
     }
 
@@ -322,10 +321,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     }
 
     public void addEntity(EntityStruct entityStruct, Coordinate loc){
-        entityOperations.add(() -> {
-            Entity e = instantiateEntity(entityStruct, loc, currentLevel);
-            e.onLevelEnter();
-        });
+        entityOperations.add(() -> instantiateEntity(entityStruct, loc, currentLevel));
     }
 
     public void establishMouseInput(){
@@ -483,7 +479,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     }
 
     void onProjectileFly(Projectile projectile){
-        for (Entity e : currentLevel.getEntities())
-            e.onProjectileFly(projectile);
+        for (ProjectileListener pl : currentLevel.getProjectileListeners())
+            pl.onProjectileFly(projectile);
     }
 }

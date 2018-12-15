@@ -9,6 +9,7 @@ import Engine.SpecialText;
 import Game.Entities.PuzzleElements.Powerable;
 import Game.GameInstance;
 import Game.Projectile;
+import Game.ProjectileListener;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.Tags.Tag;
@@ -16,7 +17,7 @@ import Game.Tags.Tag;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Magnet extends Entity implements Powerable {
+public class Magnet extends Entity implements Powerable, ProjectileListener {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
@@ -31,6 +32,7 @@ public class Magnet extends Entity implements Powerable {
         addTag(magneticTag, null);
         isAttractive = readBoolArg(searchForArg(entityStruct.getArgs(), "isAttractive"), true);
         updateIcon();
+        gi.getCurrentLevel().addProjectileListener(this); //Current is set to the new one before entities are initialized.
     }
 
     @Override
@@ -43,7 +45,7 @@ public class Magnet extends Entity implements Powerable {
     @Override
     public void onProjectileFly(Projectile projectile) {
         if (projectile.hasTag(TagRegistry.METALLIC)) {
-            double magneticFactor = (isAttractive) ? 1 : -1; //Adjustment number for strength of pull
+            double magneticFactor = (isAttractive) ? 1 : -1; //Adjustment number for strength of pull. By pure luck it happens to be 1
             double dx = projectile.getXpos() - getLocation().getX();
             double dy = projectile.getYpos() - getLocation().getY();
             double distanceFactor = (Math.pow(dx, 2) + Math.pow(dy, 2)); //Pretend as if it were square-rooted. It's just that it's going to be squared immediately afterward.

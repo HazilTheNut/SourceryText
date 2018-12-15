@@ -230,8 +230,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         } else if (gi.isSpaceAvailable(nextPos, TagRegistry.TILE_WALL)){
             //Check for getting off of a raft
             if (!nextTile.hasTag(TagRegistry.DEEP_WATER)){
-                Entity raft = gi.instantiateEntity(EntityRegistry.getEntityStruct(EntityRegistry.RAFT), getLocation().copy(), gi.getCurrentLevel());
-                raft.onLevelEnter();
+                gi.instantiateEntity(EntityRegistry.getEntityStruct(EntityRegistry.RAFT), getLocation().copy(), gi.getCurrentLevel());
                 onRaft = false;
                 updateSprite();
             } else {

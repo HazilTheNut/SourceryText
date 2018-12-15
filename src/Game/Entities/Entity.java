@@ -399,9 +399,6 @@ public class Entity extends TagHolder implements Serializable {
     //Override this with stuff to do with interacted with the player
     public void onInteract(Player player){}
 
-    //Override this with stuff to do while projectiles fly.
-    public void onProjectileFly(Projectile projectile){}
-
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Entity) {

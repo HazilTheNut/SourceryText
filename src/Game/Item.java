@@ -69,6 +69,18 @@ public class Item extends TagHolder implements Serializable {
             return 1;
     }
 
+    /**
+     * The opposite of getLiteralQty.
+     *
+     * @return The smallest divisible amount of this item. If it is stackable or of no quantity, the quantity is 1, and its durability if it is non-stacking.
+     */
+    public int getIndivisibleQty(){
+        if (stackability == NON_STACKABLE)
+            return itemData.getQty();
+        else
+            return 1;
+    }
+
     public double calculateWeight(){
         return itemData.getRawWeight() * getLiteralQty();
     }

@@ -379,9 +379,11 @@ public class CombatEntity extends Entity {
     protected void throwItem(Item item, Coordinate loc){
         if (item.isStackable()) item.decrementQty();
         else removeItem(item);
-        int bonusDamage = (int)Math.ceil(getStrength() * (1 + (item.getItemData().getRawWeight() / 10)));
+        Item copy = item.copy(gi);
+        copy.setQty(copy.getIndivisibleQty()); //Only a singular amount of the item is desirable.
+        int bonusDamage = (int)Math.ceil(getStrength() * (1 + (copy.getItemData().getRawWeight() / 10)));
         if (item.hasTag(TagRegistry.SHARP)) bonusDamage *= 1.25;
-        ItemProjectile itemProjectile = new ItemProjectile(this, loc, new SpecialText('%'), item, bonusDamage);
+        ItemProjectile itemProjectile = new ItemProjectile(this, loc, new SpecialText('%'), copy, bonusDamage);
         itemProjectile.launchProjectile(10);
     }
 
