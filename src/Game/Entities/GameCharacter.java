@@ -153,7 +153,7 @@ public class GameCharacter extends BasicEnemy {
     }
 
     @Override
-    protected void updateSprite() {
+    public void updateSprite() {
         if (gi.getFactionManager().getOpinion(this, gi.getPlayer()) < 0 || (target != null && target.equals(gi.getPlayer())))
             redifyIcon();
         else

@@ -113,7 +113,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     }
 
     @Override
-    protected void updateSprite() {
+    public void updateSprite() {
         SpecialText icon = (onRaft) ? raftSprite : playerSprite;
         getSprite().editLayer(0,0, new SpecialText(icon.getCharacter(), colorateWithTags(icon.getFgColor()), icon.getBkgColor()));
         DebugWindow.reportf(DebugWindow.MISC, "Player.updateSprite","Original sprite %1$s ; Calculated: %2$s", getSprite().getSpecialText(0,0), playerSprite);

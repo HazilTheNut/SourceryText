@@ -59,6 +59,8 @@ public class Tag implements Serializable {
 
     // E V E N T S
 
+    //For reference, "this" means the owner of this tag. All TagEvents have a tagOwner field that should be used for lack of ambiguity.
+
     //Ran when the player enters a level. Cancellation does nothing. GameInstance is null for Tiles.
     //Source: this
     //Target: this

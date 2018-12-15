@@ -56,6 +56,7 @@ public class TagRegistry {
     public final static int WETTING       = 15;
     public final static int BURN_NOSPREAD = 16;
     public final static int ETHEREAL      = 17;
+    public final static int MAGNETIC      = 18;
 
     public final static int POISON        = 20;
     public final static int VENOM_ENCHANT = 21;
@@ -122,7 +123,6 @@ public class TagRegistry {
     public final static int SNOW          = 409;
 
     public final static int LIVING        = 600;
-    public final static int MAGNETIC      = 601;
     public final static int TOGGLING      = 602;
     public final static int BRIGHT        = 603;
     public final static int SLOTH         = 604;
@@ -156,6 +156,7 @@ public class TagRegistry {
         registerTag(POISON, "Poison", PoisonTag.class);
         registerTag(VENOM_ENCHANT, "Venom Enchantment", VenomEnchantmentTag.class);
         registerTag(ETHEREAL, "Ethereal", EtherealTag.class);
+        registerTag(MAGNETIC, "Magnetic", MagneticTag.class);
 
         registerTag(FROZEN, "Frozen", FrozenTag.class);
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);
