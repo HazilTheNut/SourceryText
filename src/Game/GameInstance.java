@@ -194,7 +194,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private void startLevel(Level level, Coordinate loc){
         getPlayer().setPos(loc);
         level.addEntity(getPlayer());
-        level.onEnter(lm);
+        level.onEnter(lm, this);
         getPlayer().updateCameraPos();
         getPlayer().unfreeze();
         Layer pathTestTranspose = new Layer(level.getWidth(), level.getHeight(), "", 0, 0, 0);
@@ -458,16 +458,6 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         }
         if (currentLevel != null) {
             currentLevel.onAnimatedTileUpdate();
-            ArrayList<AnimatedTile> animatedTiles = currentLevel.getAnimatedTiles();
-            for (int i = 0; i < animatedTiles.size(); i++){
-                AnimatedTile animatedTile = animatedTiles.get(i);
-                SpecialText text = animatedTile.onDisplayUpdate();
-                currentLevel.getAnimatedTileLayer().editLayer(animatedTile.getLocation().getX(), animatedTile.getLocation().getY(), text);
-                if (text == null) {
-                    currentLevel.removeAnimatedTile(animatedTile.getLocation());
-                    i--;
-                }
-            }
         }
     }
 

@@ -299,6 +299,9 @@ public class Player extends GameCharacter implements MouseInputReceiver{
         if (noEnterWarpZoneTimer > 0) noEnterWarpZoneTimer--;
     }
 
+    @Override
+    public void setTarget(CombatEntity target) { } //Should do nothing for the player
+
     public void decrementCooldowns(){
         for (int i = 0; i < cooldowns.size(); i++) {
             int cd = cooldowns.get(i)-1; //The new cooldown amount to assign

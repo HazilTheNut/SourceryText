@@ -47,7 +47,7 @@ public class FireAnimation extends AnimatedTile implements Serializable {
     @Override
     public SpecialText onDisplayUpdate() {
         float framesPerSecond = 7;
-        currentFrame += framesPerSecond / 20;
+        currentFrame += framesPerSecond / 20; //The game's display runs at 20fps
         int frame = (int)currentFrame;
         int hash = ((frame * 17) % 43) % frames.length; //Makes the fire feel random without resorting to generating a lot of random numbers.
         return frames[hash];

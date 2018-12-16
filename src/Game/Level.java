@@ -60,6 +60,7 @@ public class Level implements Serializable {
 
     private ArrayList<Entity> entities;
     private ArrayList<ProjectileListener> projectileListeners;
+    private ArrayList<FrameDrawListener> frameDrawListeners;
 
     private Layer animatedTileLayer;
     private ArrayList<AnimatedTile> animatedTiles;
@@ -77,6 +78,7 @@ public class Level implements Serializable {
         entities = new ArrayList<>();
         warpZones = new ArrayList<>();
         projectileListeners = new ArrayList<>();
+        frameDrawListeners = new ArrayList<>();
     }
 
     void initialize(LevelData ldata){
@@ -223,13 +225,13 @@ public class Level implements Serializable {
         return filePath;
     }
 
-    void onEnter(LayerManager lm){
+    void onEnter(LayerManager lm, GameInstance gi){
         if (animatedTiles == null) {
             animatedTiles = new ArrayList<>();
             animatedTileLayer.clearLayer();
         }
         for (Entity e : entities) e.onLevelEnter();
-        for (Tile t : getAllTiles()) t.onLevelEnter(null);
+        for (Tile t : getAllTiles()) t.onLevelEnter(gi);
         if (highContrastFilter == null)
             generateHighContrastFilter();
         lm.addLayer(backdrop);
@@ -266,6 +268,17 @@ public class Level implements Serializable {
     void onAnimatedTileUpdate(){
         if (levelScripts != null)
             for (LevelScript ls : levelScripts) ls.onAnimatedTileUpdate();
+        if (frameDrawListeners != null)
+            for (FrameDrawListener drawListener : frameDrawListeners) drawListener.onFrameDraw();
+        for (int i = 0; i < animatedTiles.size(); i++){
+            AnimatedTile animatedTile = animatedTiles.get(i);
+            SpecialText text = animatedTile.onDisplayUpdate();
+            getAnimatedTileLayer().editLayer(animatedTile.getLocation().getX(), animatedTile.getLocation().getY(), text);
+            if (text == null) {
+                removeAnimatedTile(animatedTile.getLocation());
+                i--;
+            }
+        }
     }
 
     public LevelScript getLevelScript(int scriptId){
@@ -477,5 +490,17 @@ public class Level implements Serializable {
 
     public void removeProjectileListener(ProjectileListener projectileListener){
         projectileListeners.remove(projectileListener);
+    }
+
+    public ArrayList<FrameDrawListener> getFrameDrawListeners() {
+        return frameDrawListeners;
+    }
+
+    public void addFrameDrawListener(FrameDrawListener frameDrawListener){
+        frameDrawListeners.add(frameDrawListener);
+    }
+
+    public void removeFrameDrawListener(FrameDrawListener frameDrawListener){
+        frameDrawListeners.remove(frameDrawListener);
     }
 }
