@@ -64,7 +64,7 @@ public class LocumancySpell extends Spell {
             if (gi.isSpaceAvailable(loc, TagRegistry.NO_PATHING))
                 previewLayer.editLayer(layerLoc, new SpecialText(' ', Color.WHITE, new Color(157, 0, 255, 100)));
             else
-                previewLayer.editLayer(layerLoc, new SpecialText(' ', Color.WHITE, new Color(187, 0, 155, 50)));
+                previewLayer.editLayer(layerLoc, new SpecialText(' ', Color.WHITE, new Color(187, 0, 57, 25)));
         }
     }
 

@@ -31,6 +31,7 @@ public class LayerImportances {
     public static final int MENU_CURSOR       = 55;
     public static final int QUICKMENU         = 57;
     public static final int QUICKMENU_CURSOR  = 58;
+    public static final int LOADING_SCREEN    = 59;
     public static final int HUD               = 60;
     public static final int HUD_SPELL_MENU    = 65;
     public static final int HUD_SPELL_CURSOR  = 67;

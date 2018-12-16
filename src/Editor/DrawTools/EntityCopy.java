@@ -52,7 +52,8 @@ public class EntityCopy extends DrawTool {
 
     @Override
     public void onDrawEnd(Layer layer, Layer highlight, int col, int row, SpecialText text) {
-        ldata.setEntityData(col, row, toCopy.copy()); //It...copies an entity? Huh. And I thought this tool was supposed to generate bars of digital ivory soap.
+        if (toCopy != null)
+            ldata.setEntityData(col, row, toCopy.copy()); //It...copies an entity? Interesting.
         highlight.clearLayer();
     }
 

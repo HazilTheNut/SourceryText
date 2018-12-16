@@ -13,6 +13,7 @@ import Game.LevelScripts.LevelScript;
 import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
 
+import java.awt.*;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -57,6 +58,8 @@ public class GameInstance implements Serializable, FrameUpdateListener {
 
     private ArrayList<String> gameEvents;
 
+    private Layer loadingScreenLayer;
+
     public GameInstance(){
         levels = new ArrayList<>();
         entityOperations = new ArrayList<>();
@@ -77,7 +80,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     }
 
     /**
-     * Sets up the GameInstance
+     * Sets up the GameInstance upon startup of the game (whether by "New Game" or by loading a save)
      */
     void initialize(){
         entityOperations = new ArrayList<>();
@@ -102,6 +105,17 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         pathTestLayer = new Layer(0, 0, "pathtest", 0, 0, LayerImportances.VFX);
         pathTestLayer.setVisible(false);
         lm.addLayer(pathTestLayer);
+
+        loadingScreenLayer = new Layer(lm.getWindow().RESOLUTION_WIDTH, lm.getWindow().RESOLUTION_HEIGHT, "loading_screen", 0, 0, LayerImportances.LOADING_SCREEN);
+        loadingScreenLayer.fixedScreenPos = true;
+        drawLoadingScreen();
+        lm.addLayer(loadingScreenLayer);
+    }
+
+    private void drawLoadingScreen(){
+        loadingScreenLayer.fillLayer(new SpecialText(' ', Color.BLACK, Color.BLACK));
+        String phrase = "Loading...";
+        loadingScreenLayer.inscribeString(phrase, (loadingScreenLayer.getCols() - phrase.length()) / 2, loadingScreenLayer.getRows() / 2);
     }
 
     void stopAnimations(){
@@ -144,6 +158,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         if (currentLevel != null) {
             currentLevel.onExit(lm);
             currentLevel.removeEntity(getPlayer());
+            loadingScreenLayer.setVisible(true);
         }
         String zoneName = getFilePathParentFolder(levelFilePath);
         if (currentZoneName == null || !currentZoneName.equals(zoneName)){ //If moved to a new zone
@@ -184,6 +199,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         getPlayer().unfreeze();
         Layer pathTestTranspose = new Layer(level.getWidth(), level.getHeight(), "", 0, 0, 0);
         pathTestLayer.transpose(pathTestTranspose);
+        loadingScreenLayer.setVisible(false);
     }
 
     /**
