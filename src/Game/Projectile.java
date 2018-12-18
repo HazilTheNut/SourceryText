@@ -177,7 +177,7 @@ public class Projectile extends TagHolder {
 
     protected void collideWithTerrain(){
         Tile landingTile = gi.getTileAt(getRoundedPos(xpos, ypos));
-        if (landingTile != null) {
+        if (landingTile != null && !landingTile.hasTag(TagRegistry.BOTTOMLESS)) {
             collide(landingTile);
         }
         destroy();

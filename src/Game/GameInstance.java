@@ -279,7 +279,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
      * @return The LootPile where the Item was added to. Returns null if the Item cannot be dropped.
      */
     public LootPile dropItem(Item toDrop, Coordinate loc){
-        if (toDrop.hasTag(TagRegistry.IMPORTANT)) return null;
+        if (toDrop.hasTag(TagRegistry.IMPORTANT) || currentLevel.getTileAt(loc).hasTag(TagRegistry.BOTTOMLESS)) return null;
         ArrayList<Entity> entities = getCurrentLevel().getEntitiesAt(loc);
         for (Entity e : entities){ //Search for a loot pile that already exists
             if (e instanceof LootPile) {
