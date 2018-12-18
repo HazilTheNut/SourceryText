@@ -57,6 +57,7 @@ public class EntityRegistry {
         registerEntity(PLAYER_SHADOW, "Player Shadow", new SpecialText('@', new Color(65, 75, 65), new Color(0, 0, 0, 25)), PlayerShadow.class, TagRegistry.ETHEREAL);
 
         registerEntity(21, "Patrolling Character", new SpecialText('G', new Color(130, 255, 225), new Color(180, 255, 225, 15)), PatrollingCharacter.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING, TagRegistry.NO_PATHING);
+        registerEntity(22, "Fan",          new SpecialText('/', new Color(150, 150, 200), new Color(100, 100, 125, 50)), Fan.class, TagRegistry.NO_PATHING, TagRegistry.METALLIC, TagRegistry.IMMOVABLE);
 
         //Registering stuff ends here
     }

@@ -476,6 +476,17 @@ public class CombatEntity extends Entity {
     }
 
     protected int pathToPosition(Coordinate loc, int maxDistance) {
+        ArrayList<Coordinate> movementOptions = getNextPathingPosition(loc, maxDistance);
+        if (gi.getPathTestLayer().getVisible()) turnSleep(350);
+        if (movementOptions.size() == 1) teleport(movementOptions.get(0));
+        if (movementOptions.size() > 1) {
+            Random random = new Random();
+            teleport(movementOptions.get(random.nextInt(movementOptions.size())));
+        }
+        return movementOptions.size();
+    }
+
+    public ArrayList<Coordinate> getNextPathingPosition(Coordinate loc, int maxDistance){
         defineTestColors();
         boolean movementFound = false;
         long startTime = System.nanoTime();
@@ -514,14 +525,8 @@ public class CombatEntity extends Entity {
                 if (gi.getPathTestLayer().getVisible()) turnSleep(150);
             }
         }
-        if (gi.getPathTestLayer().getVisible()) turnSleep(350);
-        if (movementOptions.size() == 1) teleport(movementOptions.get(0));
-        if (movementOptions.size() > 1) {
-            Random random = new Random();
-            teleport(movementOptions.get(random.nextInt(movementOptions.size())));
-        }
-        DebugWindow.reportf(DebugWindow.STAGE, "pathToPlayer", "Time to solve: %1$fms", (System.nanoTime() - startTime) / 1000000f);
-        return movementOptions.size();
+        DebugWindow.reportf(DebugWindow.STAGE, "getNextPathingPosition", "Time to solve: %1$fms", (System.nanoTime() - startTime) / 1000000f);
+        return movementOptions;
     }
 
     private void updateOpenPoints(){
