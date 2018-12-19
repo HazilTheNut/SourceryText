@@ -15,6 +15,7 @@ import Game.ProjectileListener;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Fan extends Entity implements Powerable, FrameDrawListener, ProjectileListener {
 
@@ -42,6 +43,7 @@ public class Fan extends Entity implements Powerable, FrameDrawListener, Project
             case "EAST":
             default: direction = EAST; break;
         }
+        windParticles = new ArrayList<>();
         generateIcon();
         generateWindLayer();
         gi.getCurrentLevel().addFrameDrawListener(this);
@@ -66,7 +68,6 @@ public class Fan extends Entity implements Powerable, FrameDrawListener, Project
         Coordinate offset = direction.ceil(new Coordinate(0, 0)).multiply(range).add(direction); //Relative location of layer. Effect is more pronounced for negative values.
         //Build layer
         windDisplayLayer = new Layer(dim.getX(), dim.getY(), "fan_wind:" + getUniqueID(), getLocation().add(offset).getX(), getLocation().add(offset).getY(), LayerImportances.ANIMATION + 1);
-        windDisplayLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(225, 225, 225, 125)));
         windDisplayLayer.setVisible(defaultActiveState);
         gi.getLayerManager().addLayer(windDisplayLayer);
     }
@@ -80,12 +81,20 @@ public class Fan extends Entity implements Powerable, FrameDrawListener, Project
     @Override
     public void onPowerOff() {
         active = defaultActiveState;
-        windDisplayLayer.setVisible(active);
+        onPowerUpdate();
     }
 
     @Override
     public void onPowerOn() {
         active = !defaultActiveState;
+        onPowerUpdate();
+    }
+
+    private void onPowerUpdate(){
+        if (!active)
+            windParticles.clear();
+        else
+            runWindParticleSimulation();
         windDisplayLayer.setVisible(active);
     }
 
@@ -105,6 +114,7 @@ public class Fan extends Entity implements Powerable, FrameDrawListener, Project
         if (subFrame >= 5 - fanStrength) {
             animationFrame++;
             generateIcon();
+            runWindParticleSimulation();
             subFrame = 0;
         }
     }
@@ -124,5 +134,36 @@ public class Fan extends Entity implements Powerable, FrameDrawListener, Project
             double windRotationScalar = fanStrength * 0.02f;
             projectile.adjust(direction.getX() * windTranslationScalar, direction.getY() * windTranslationScalar, direction.getX() * windRotationScalar, direction.getY() * windRotationScalar);
         }
+    }
+
+    private ArrayList<Coordinate> windParticles;
+    private int timeSinceLastParticle = 0;
+
+    private void runWindParticleSimulation(){
+        Random random = new Random();
+        windDisplayLayer.clearLayer();
+        timeSinceLastParticle += 2;
+        if (random.nextInt(10) < timeSinceLastParticle) {
+            windParticles.add(getLocation().copy());
+            timeSinceLastParticle = -2;
+        }
+        for (int i = 0; i < windParticles.size();) {
+            windParticles.get(i).movePos(direction.getX(), direction.getY());
+            Coordinate layerPos = windParticles.get(i).subtract(windDisplayLayer.getPos());
+            if (windDisplayLayer.isLayerLocInvalid(layerPos))
+                windParticles.remove(i);
+            else {
+                windDisplayLayer.editLayer(layerPos, new SpecialText(getWindDisplayChar()));
+                i++;
+            }
+        }
+    }
+
+    private char getWindDisplayChar(){
+        if (direction.equals(NORTH) || direction.equals(SOUTH))
+            return '|';
+        else if (direction.equals(EAST) || direction.equals(WEST))
+            return '-';
+        return '*';
     }
 }
