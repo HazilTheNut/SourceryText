@@ -75,6 +75,14 @@ public class Coordinate implements Serializable {
     public Coordinate multiply(double amount) { return new Coordinate((int)Math.round(x * amount), (int)Math.round(y * amount)); }
 
     /**
+     * Returns a new Coordinate whose values are the x and y values of this and other Coordinate multiplied respectively, similar to a vector dot product.
+     * NOTE: This method does not alter the values of either Coordinate!
+     * @param other The Other Coordinate to multiply with this one
+     * @return A new Coordinate
+     */
+    public Coordinate dotMultiply(Coordinate other) { return new Coordinate(x * other.getX(), y * other.getY()); }
+
+    /**
      * Returns a new Coordinate whose values are scaled from this Coordinate's x and y values. The non-integer results are truncated.
      * NOTE: This method does not alter the values of either Coordinate!
      * @param amount The factor by which the values are multiplied. Results are rounded back into integers before returning

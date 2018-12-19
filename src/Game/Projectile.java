@@ -144,6 +144,7 @@ public class Projectile extends TagHolder {
         velocityMagnitude = Math.sqrt(Math.pow(internalVelocityX, 2) + Math.pow(internalVelocityY, 2));
         normalizedVelocityX = internalVelocityX * (UNITS_PER_CYCLE / velocityMagnitude);
         normalizedVelocityY = internalVelocityY * (UNITS_PER_CYCLE / velocityMagnitude);
+        DebugWindow.reportf(DebugWindow.STAGE, "Projectile.normalize", "normalized speed: %1$.3f", Math.sqrt(Math.pow(normalizedVelocityX, 2) + Math.pow(normalizedVelocityY, 2)));
     }
 
     public double getXpos() {
@@ -168,7 +169,7 @@ public class Projectile extends TagHolder {
         return new Coordinate((int)Math.round(xpos), (int)Math.round(ypos));
     }
 
-    Coordinate getRoundedPos(){ return getRoundedPos(xpos, ypos); }
+    public Coordinate getRoundedPos(){ return getRoundedPos(xpos, ypos); }
 
     protected void collide(TagHolder other){ collide(other, 0); }
 

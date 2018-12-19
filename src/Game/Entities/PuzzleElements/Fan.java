@@ -3,6 +3,8 @@ package Game.Entities.PuzzleElements;
 import Data.Coordinate;
 import Data.EntityArg;
 import Data.EntityStruct;
+import Data.LayerImportances;
+import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Entities.Entity;
@@ -11,20 +13,37 @@ import Game.GameInstance;
 import Game.Projectile;
 import Game.ProjectileListener;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Fan extends Entity implements Powerable, FrameDrawListener, ProjectileListener {
 
     private int fanStrength = 0;
     private boolean active = false;
+    private boolean defaultActiveState = false;
+    private Layer windDisplayLayer;
+
+    private final Coordinate NORTH    = new Coordinate(0, -1);
+    private final Coordinate EAST     = new Coordinate(1, 0);
+    private final Coordinate SOUTH    = new Coordinate(0, 1);
+    private final Coordinate WEST     = new Coordinate(-1, 0);
+    private Coordinate direction;
 
     @Override
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
         fanStrength = readIntArg(searchForArg(entityStruct.getArgs(), "Strength"), 1);
         animationFrame = (byte)readIntArg(searchForArg(entityStruct.getArgs(), "startFrame"), 0);
-        active = readBoolArg(searchForArg(entityStruct.getArgs(), "defaultOn"), false);
+        defaultActiveState = readBoolArg(searchForArg(entityStruct.getArgs(), "defaultOn"), false);
+        switch (readStrArg(searchForArg(entityStruct.getArgs(), "direction"), "SOUTH")){
+            case "NORTH": direction = NORTH; break;
+            case "SOUTH": direction = SOUTH; break;
+            case "WEST": direction = WEST; break;
+            case "EAST":
+            default: direction = EAST; break;
+        }
         generateIcon();
+        generateWindLayer();
         gi.getCurrentLevel().addFrameDrawListener(this);
         gi.getCurrentLevel().addProjectileListener(this);
     }
@@ -39,14 +58,35 @@ public class Fan extends Entity implements Powerable, FrameDrawListener, Project
         return args;
     }
 
+    private void generateWindLayer(){
+        int range = (fanStrength * 2) + 2;
+        //Coordinate vector math ahead
+        Coordinate absDir = new Coordinate(Math.abs(direction.getX()), Math.abs(direction.getY())); //Doing vector math with Coordinates betrays its own name, but changing the name would be problematic
+        Coordinate dim = absDir.multiply(range).add(absDir).floor(new Coordinate(1, 1)); //The dimensions of the layer. Layer must be as long as (range + 1) in any of the four directions, and not be zero width.
+        Coordinate offset = direction.ceil(new Coordinate(0, 0)).multiply(range).add(direction); //Relative location of layer. Effect is more pronounced for negative values.
+        //Build layer
+        windDisplayLayer = new Layer(dim.getX(), dim.getY(), "fan_wind:" + getUniqueID(), getLocation().add(offset).getX(), getLocation().add(offset).getY(), LayerImportances.ANIMATION + 1);
+        windDisplayLayer.fillLayer(new SpecialText(' ', Color.WHITE, new Color(225, 225, 225, 125)));
+        windDisplayLayer.setVisible(defaultActiveState);
+        gi.getLayerManager().addLayer(windDisplayLayer);
+    }
+
+    @Override
+    public void selfDestruct() {
+        super.selfDestruct();
+        gi.getLayerManager().removeLayer(windDisplayLayer);
+    }
+
     @Override
     public void onPowerOff() {
-        active = !active;
+        active = defaultActiveState;
+        windDisplayLayer.setVisible(active);
     }
 
     @Override
     public void onPowerOn() {
-        active = !active;
+        active = !defaultActiveState;
+        windDisplayLayer.setVisible(active);
     }
 
     private int getFanStrength(){
@@ -78,6 +118,11 @@ public class Fan extends Entity implements Powerable, FrameDrawListener, Project
 
     @Override
     public void onProjectileFly(Projectile projectile) {
-
+        if (windDisplayLayer.getVisible() && !windDisplayLayer.isLayerLocInvalid(projectile.getRoundedPos().subtract(windDisplayLayer.getPos()))){
+            double dotProduct = (direction.getX() * projectile.getNormalizedVelocityX()) + (direction.getY() * projectile.getNormalizedVelocityY());
+            double windTranslationScalar = fanStrength * (1 - Math.abs(dotProduct)) * 0.25f; //Projectiles should not ever move two spaces in one direction in a single movement cycle
+            double windRotationScalar = fanStrength * 0.02f;
+            projectile.adjust(direction.getX() * windTranslationScalar, direction.getY() * windTranslationScalar, direction.getX() * windRotationScalar, direction.getY() * windRotationScalar);
+        }
     }
 }
