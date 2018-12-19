@@ -22,9 +22,14 @@ public class Projectile extends TagHolder {
      */
 
     protected double xpos;
-    protected double xvelocity;
     protected double ypos;
-    protected double yvelocity;
+    
+    private double internalVelocityX; //The idea behind "internal" and "normalized" velocity stems from wind
+    private double internalVelocityY; //That being, an arrow that flies against some wind should experience drag and land sooner than expected.
+    
+    protected double normalizedVelocityX; //However, all projectile trajectory adjustments are based on vector addition, which results in vectors whose magnitude is not UNITS_PER_CYCLE
+    protected double normalizedVelocityY; //Therefore, there are two velocities. "Internal" for calculating travel distance and "normalized" for the projectile's actual motion.
+    private double velocityMagnitude;
 
     private Layer iconLayer;
     private LayerManager lm;
@@ -58,8 +63,11 @@ public class Projectile extends TagHolder {
         if (!startPos.equals(targetPos)){
             double angle = Math.atan2(targetPos.getY() - Math.round(ypos), targetPos.getX() - Math.round(xpos));
             DebugWindow.reportf(DebugWindow.GAME, "Projectile.playerInit","Start pos: %1$s; Angle: %2$f", startPos, angle * (180 / Math.PI));
-            xvelocity = UNITS_PER_CYCLE * Math.cos(angle);
-            yvelocity = UNITS_PER_CYCLE * Math.sin(angle);
+            internalVelocityX = UNITS_PER_CYCLE * Math.cos(angle);
+            internalVelocityY = UNITS_PER_CYCLE * Math.sin(angle);
+            normalizedVelocityX = internalVelocityX;
+            normalizedVelocityY = internalVelocityY;
+            velocityMagnitude = 1;
             iconLayer = new Layer(1, 1, String.format("Projectile: %1$d", gi.issueUID()), (int)xpos, (int)ypos, LayerImportances.ANIMATION);
             iconLayer.editLayer(0, 0, getIcon(icon));
             iconLayer.setVisible(false);
@@ -77,14 +85,14 @@ public class Projectile extends TagHolder {
             lm.addLayer(iconLayer);
             double distance = 0;
             iconLayer.setVisible(true);
-            DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", xvelocity, yvelocity);
-            while (distance < range) {
-                if (xvelocity != 0 && checkCollision(xpos + xvelocity, ypos))
+            DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", normalizedVelocityX, normalizedVelocityY);
+            while (distance < (range * velocityMagnitude)) {
+                if (normalizedVelocityX != 0 && checkCollision(xpos + normalizedVelocityX, ypos))
                     return;
-                if (yvelocity != 0 && checkCollision(xpos, ypos + yvelocity))
+                if (normalizedVelocityY != 0 && checkCollision(xpos, ypos + normalizedVelocityY))
                     return;
-                xpos += xvelocity;
-                ypos += yvelocity;
+                xpos += normalizedVelocityX;
+                ypos += normalizedVelocityY;
                 Coordinate newPos = getRoundedPos(xpos, ypos);
                 iconLayer.setPos(newPos);
                 iconLayer.editLayer(0, 0, getIcon(iconLayer.getSpecialText(0, 0)));
@@ -128,14 +136,14 @@ public class Projectile extends TagHolder {
     public void adjust(double dx, double dy, double dvx, double dvy){
         xpos += dx;
         ypos += dy;
-        xvelocity += dvx;
-        yvelocity += dvy;
+        internalVelocityX += dvx;
+        internalVelocityY += dvy;
     }
 
     private void normalizeVelocity(){
-        double speed = Math.sqrt(Math.pow(xvelocity, 2) + Math.pow(yvelocity, 2));
-        xvelocity *= (UNITS_PER_CYCLE / speed);
-        yvelocity *= (UNITS_PER_CYCLE / speed);
+        velocityMagnitude = Math.sqrt(Math.pow(internalVelocityX, 2) + Math.pow(internalVelocityY, 2));
+        normalizedVelocityX = internalVelocityX * (UNITS_PER_CYCLE / velocityMagnitude);
+        normalizedVelocityY = internalVelocityY * (UNITS_PER_CYCLE / velocityMagnitude);
     }
 
     public double getXpos() {
@@ -146,12 +154,12 @@ public class Projectile extends TagHolder {
         return ypos;
     }
 
-    public double getXvelocity() {
-        return xvelocity;
+    public double getNormalizedVelocityX() {
+        return normalizedVelocityX;
     }
 
-    public double getYvelocity() {
-        return yvelocity;
+    public double getNormalizedVelocityY() {
+        return normalizedVelocityY;
     }
 
     //I had an issue earlier where the position rounding was done differently in different places in the code. That's no good!

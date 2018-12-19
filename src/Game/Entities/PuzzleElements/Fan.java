@@ -8,10 +8,12 @@ import Engine.SpecialText;
 import Game.Entities.Entity;
 import Game.FrameDrawListener;
 import Game.GameInstance;
+import Game.Projectile;
+import Game.ProjectileListener;
 
 import java.util.ArrayList;
 
-public class Fan extends Entity implements Powerable, FrameDrawListener {
+public class Fan extends Entity implements Powerable, FrameDrawListener, ProjectileListener {
 
     private int fanStrength = 0;
     private boolean active = false;
@@ -21,8 +23,10 @@ public class Fan extends Entity implements Powerable, FrameDrawListener {
         super.initialize(pos, lm, entityStruct, gameInstance);
         fanStrength = readIntArg(searchForArg(entityStruct.getArgs(), "Strength"), 1);
         animationFrame = (byte)readIntArg(searchForArg(entityStruct.getArgs(), "startFrame"), 0);
+        active = readBoolArg(searchForArg(entityStruct.getArgs(), "defaultOn"), false);
         generateIcon();
         gi.getCurrentLevel().addFrameDrawListener(this);
+        gi.getCurrentLevel().addProjectileListener(this);
     }
 
     @Override
@@ -30,17 +34,19 @@ public class Fan extends Entity implements Powerable, FrameDrawListener {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("Strength", "1"));
         args.add(new EntityArg("startFrame", "0"));
+        args.add(new EntityArg("defaultOn", "false"));
+        args.add(new EntityArg("direction", "NORTH, SOUTH, EAST, WEST"));
         return args;
     }
 
     @Override
     public void onPowerOff() {
-        active = false;
+        active = !active;
     }
 
     @Override
     public void onPowerOn() {
-        active = true;
+        active = !active;
     }
 
     private int getFanStrength(){
@@ -68,5 +74,10 @@ public class Fan extends Entity implements Powerable, FrameDrawListener {
         SpecialText icon = getSprite().getSpecialText(0, 0);
         setIcon(new SpecialText(animation[animationFrame], icon.getFgColor(), icon.getBkgColor()));
         updateSprite();
+    }
+
+    @Override
+    public void onProjectileFly(Projectile projectile) {
+
     }
 }

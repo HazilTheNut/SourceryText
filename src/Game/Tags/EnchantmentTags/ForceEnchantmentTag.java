@@ -25,7 +25,7 @@ public class ForceEnchantmentTag extends EnchantmentTag {
                     launchEntity(target, diff.getX(), diff.getY(), e.getGameInstance());
                 } else if (e.getSource() instanceof Projectile) {
                     Projectile source = (Projectile) e.getSource();
-                    launchEntity(target, source.getXvelocity(), source.getYvelocity(), e.getGameInstance());
+                    launchEntity(target, source.getNormalizedVelocityX(), source.getNormalizedVelocityY(), e.getGameInstance());
                 }
             }
         });

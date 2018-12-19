@@ -26,7 +26,7 @@ public class BeamEnchantmentTag extends EnchantmentTag {
                     fireBeam(target.getLocation(), diff.getX(), diff.getY(), e.getGameInstance()); //Beam starts at the target so that it flies through it to potential enemies behind it.
                 } else if (e.getSource() instanceof Projectile) {
                     Projectile source = (Projectile) e.getSource();
-                    fireBeam(target.getLocation(), source.getXvelocity(), source.getYvelocity(), e.getGameInstance());
+                    fireBeam(target.getLocation(), source.getNormalizedVelocityX(), source.getNormalizedVelocityY(), e.getGameInstance());
                 }
             }
         });

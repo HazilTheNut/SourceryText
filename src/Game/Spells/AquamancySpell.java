@@ -49,7 +49,7 @@ public class AquamancySpell extends Spell {
         //Draw accessible areas
         for (int col = 0; col < previewLayer.getCols(); col++) {
             for (int row = 0; row < previewLayer.getRows(); row++) {
-                if (canTeleportTo(new Coordinate(col, row), gi)) previewLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 136))); //Draws outline
+                if (canTeleportTo(new Coordinate(col, row), gi)) previewLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 86))); //Draws outline
             }
         }
         //previewLayer.setVisible(!allowedSpaces[targetLoc.getX()][targetLoc.getY()]);

@@ -1,7 +1,6 @@
 package Game;
 
 import Data.Coordinate;
-import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Entities.Entity;
 
@@ -13,7 +12,7 @@ public class ArrowProjectile extends ItemProjectile {
 
     @Override
     protected SpecialText getIcon(SpecialText baseIcon) {
-        double angle = 180 * Math.atan2(yvelocity, xvelocity) / Math.PI;
+        double angle = 180 * Math.atan2(normalizedVelocityY, normalizedVelocityX) / Math.PI;
         if (angle < 0) angle += 360;
         if (Math.abs(angle) <= 22.5 || Math.abs(angle - 360) <= 22.5 || Math.abs(angle - 180) <= 22.5){
             return makeIcon('-', baseIcon);
