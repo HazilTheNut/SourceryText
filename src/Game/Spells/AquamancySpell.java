@@ -72,7 +72,7 @@ public class AquamancySpell extends Spell {
 
     private void attemptPoint(Coordinate loc, GameInstance gi, ArrayList<Coordinate> nextPoints){
         boolean spaceOpen = gi.isSpaceAvailable(loc, TagRegistry.TILE_WALL);
-        if (!allowedSpaces[loc.getX()][loc.getY()] && spaceOpen){
+        if (spaceOpen && !allowedSpaces[loc.getX()][loc.getY()]){
             allowedSpaces[loc.getX()][loc.getY()] = true;
             nextPoints.add(loc);
         }
