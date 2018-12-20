@@ -6,12 +6,9 @@ import Data.EntityStruct;
 import Data.SerializationVersion;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.*;
 import Game.Entities.Entity;
-import Game.GameInstance;
-import Game.Player;
 import Game.Registries.TagRegistry;
-import Game.TagEvent;
-import Game.TagHolder;
 import Game.Tags.Tag;
 
 import java.awt.*;
@@ -36,8 +33,6 @@ public class ToggleSwitch extends Entity {
         TogglingTag togglingTag = new TogglingTag();
         togglingTag.setId(TagRegistry.TOGGLING);
         addTag(togglingTag, this);
-
-        isOn = !isOn;
     }
 
     @Override
@@ -87,7 +82,8 @@ public class ToggleSwitch extends Entity {
 
         @Override
         public void onContact(TagEvent e) {
-            toggle();
+            if (!(e.getTarget() instanceof Tile))
+                toggle();
             e.addFutureAction(event -> updateBrightTag(e.getSource()));
         }
 

@@ -40,6 +40,8 @@ public class TagHolder implements Serializable {
     }
 
     public void addTag(Tag tag, TagHolder source) {
+        if (tag == null)
+            return;
         if (!hasTag(tag.getId())) {
             tags.add(tag);
             TagEvent e = new TagEvent(0, true, source, this, null, this);

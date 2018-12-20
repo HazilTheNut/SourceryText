@@ -290,9 +290,10 @@ public class Level implements Serializable {
     public Tile getTileAt(Coordinate loc){
         if (loc != null && isLocationValid(loc)) {
             Tile overlay = getOverlayTileAt(loc);
-            if (overlay == null)
-                return getBaseTileAt(loc);
-            else
+            if (overlay == null) {
+                Tile tile = getBaseTileAt(loc);
+                return tile;
+            } else
                 return overlay;
         } else
             return null;
@@ -330,9 +331,10 @@ public class Level implements Serializable {
      * @return The newly generated base tile
      */
     private Tile generateBaseTile(Coordinate loc){
-        TileStruct tileStruct = TileRegistry.getTileStruct(tileIdMatrix[loc.getX()][loc.getY()]);
-        Tile baseTile = new Tile(loc, tileStruct.getTileName(), this);
-        baseTiles[loc.getX()][loc.getY()] = baseTile;
+        Coordinate tilePos = loc.copy(); //Input sanitation. Not kidding, this used to be the source of a rather awful bug (now fortunately fixed)
+        TileStruct tileStruct = TileRegistry.getTileStruct(tileIdMatrix[tilePos.getX()][tilePos.getY()]);
+        Tile baseTile = new Tile(tilePos, tileStruct.getTileName(), this);
+        baseTiles[tilePos.getX()][tilePos.getY()] = baseTile;
         //Add all tags from tileGenerationTags that match id's to the TileStruct
         for (int id : tileStruct.getTagIDs()){
             for (Tag tag : tileGenerationTags){
@@ -364,8 +366,10 @@ public class Level implements Serializable {
     private boolean isBaseTileCleanable(Tile baseTile){
         ArrayList<Tag> tileTags = baseTile.getTags();
         //Check to see if any tags do not want the tile to be removed.
-        for (Tag tag : tileTags){
+        for (int i = 0; i < tileTags.size();) {
+            Tag tag = tileTags.get(i);
             if (!tag.isTileRemovable(baseTile)) return false;
+            i++;
         }
         //Create list of template tag ids
         TileStruct template = TileRegistry.getTileStruct(tileIdMatrix[baseTile.getLocation().getX()][baseTile.getLocation().getY()]);

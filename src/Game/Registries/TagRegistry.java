@@ -241,7 +241,7 @@ public class TagRegistry {
         registerTag(UNSTABLE, "Unstable", UnstableTag.class);
 
         //Test stuff
-        registerTag(MAGIC_CYCLER, "Mind Recycler", MagicStatCyclerTag.class);
+        registerTag(MAGIC_CYCLER, "MAG Cycler", MagicStatCyclerTag.class);
 
         //Registering stuff ends here
     }
