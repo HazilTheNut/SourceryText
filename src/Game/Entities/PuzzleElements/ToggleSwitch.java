@@ -14,7 +14,7 @@ import Game.Tags.Tag;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class ToggleSwitch extends Entity {
+public class ToggleSwitch extends GenericPowerSource {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
@@ -22,13 +22,10 @@ public class ToggleSwitch extends Entity {
     private SpecialText iconOff = new SpecialText('*', new Color(44,  44,  89),  new Color(10, 10, 26, 100));
     private boolean isOn = false;
 
-    private ArrayList<Coordinate> powerToLocs;
-
     @Override
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
         isOn = readBoolArg(searchForArg(entityStruct.getArgs(), "isOn"), false);
-        powerToLocs = readCoordListArg(searchForArg(entityStruct.getArgs(), "powerTo"));
 
         TogglingTag togglingTag = new TogglingTag();
         togglingTag.setId(TagRegistry.TOGGLING);
@@ -39,26 +36,17 @@ public class ToggleSwitch extends Entity {
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("isOn","false"));
-        args.add(new EntityArg("powerTo","[0,0],[0,0],..."));
         return args;
     }
 
     private void toggle(){
         isOn = !isOn;
-        for (Coordinate pos : powerToLocs) {
-            for (Entity e : gi.getCurrentLevel().getEntitiesAt(pos)){
-                if (e instanceof Powerable) {
-                    if (isOn)
-                        ((Powerable) e).onPowerOn();
-                    else
-                        ((Powerable) e).onPowerOff();
-                }
-            }
-        }
         if (isOn){
+            powerOn();
             setIcon(iconOn);
             updateSprite();
         } else {
+            powerOff();
             setIcon(iconOff);
             updateSprite();
         }
