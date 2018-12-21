@@ -39,6 +39,10 @@ public class WetTag extends Tag {
 
     @Override
     public void onAddThis(TagEvent e) {
+        if (e.getTagOwner().hasTag(TagRegistry.BOTTOMLESS)){
+            e.cancel();
+            return;
+        }
         if (e.getTarget() instanceof Entity || e.getTarget() instanceof Item){
             drying = true;
             startLifetime();
