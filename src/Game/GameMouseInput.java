@@ -174,24 +174,22 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     @Override
     public void mousePressed(MouseEvent e) {
         mouseRawPos = new Coordinate(e.getX(), e.getY());
-        if (inputMap != null)
-            performInputEvent(receiver -> {
-                ArrayList<Integer> actions = inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE));
-                if (actions != null) {
-                    StringBuilder actionList = new StringBuilder();
-                    for (int action : actions) actionList.append(InputMap.describeAction(action)).append(" | ");
-                    DebugWindow.reportf(DebugWindow.STAGE, "GameMouseInput.mousePressed", "input down: %s", actionList);
-                }
-                return receiver.onInputDown(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE)));
-            });
+        InputType input = new InputType(e.getButton(), InputType.TYPE_MOUSE);
+        doDownInputWithOwnership(input);
         performInputEvent(receiver -> receiver.onMouseClick(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), e.getButton()));
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
         mouseRawPos = new Coordinate(e.getX(), e.getY());
-        if (inputMap != null)
-            performInputEvent(receiver -> receiver.onInputUp(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getButton(), InputType.TYPE_MOUSE))));
+        if (inputMap != null) {
+            DownInput downInput = getDownInput(new InputType(e.getButton(), InputType.TYPE_MOUSE));
+            if (downInput != null) {
+                downInputs.remove(downInput);
+                reportDownInputs();
+                downInput.receiver.onInputUp(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(downInput.type));
+            }
+        }
     }
 
     @Override
@@ -206,7 +204,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        mouseMoved(e);
     }
 
     @Override
@@ -238,10 +236,10 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         if (inputMap.isNumberKeysSelectSpells() && getKeyNumber(e.getKeyCode()) != -1)
             doNumberedKeypress(getKeyNumber(e.getKeyCode()));
         else
-            doNormalKeypress(input);
+            doDownInputWithOwnership(input);
     }
 
-    private void doNormalKeypress(InputType input){
+    private void doDownInputWithOwnership(InputType input){
         if (inputMap != null && !getDownInputs().contains(input)) { //keyPressed() gets ran a bunch of times in a row if the button is held down long enough, which is not desired.
             performInputEvent(receiver -> {
                 ArrayList<Integer> actions = inputMap.getAction(input);
@@ -266,7 +264,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
             if (downInput != null) {
                 downInputs.remove(downInput);
                 reportDownInputs();
-                downInput.receiver.onInputUp(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(new InputType(e.getKeyCode(), InputType.TYPE_KEY)));
+                downInput.receiver.onInputUp(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), inputMap.getAction(downInput.type));
             }
         }
     }
