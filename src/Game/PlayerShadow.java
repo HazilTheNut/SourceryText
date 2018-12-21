@@ -135,8 +135,10 @@ public class PlayerShadow extends CombatEntity implements PlayerActionCollector 
 
     @Override
     public void onPlayerInteract(Coordinate loc) {
+        /*
         ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(loc.add(offset));
         for( Entity e : entities)
             e.onInteract(player);
+        /**/
     }
 }
