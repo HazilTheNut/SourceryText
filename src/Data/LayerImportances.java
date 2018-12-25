@@ -40,4 +40,12 @@ public class LayerImportances {
     public static final int MAIN_MENU_CURSOR  = 85;
     public static final int MENU_SUPER        = 90;
     public static final int MENU_SUPER_CURSOR = 95;
+
+    //For use in Editor
+
+    public static final int EDITOR_ART        = 0;
+    public static final int EDITOR_TILE       = 2;
+    public static final int EDITOR_ENTITY     = 4;
+    public static final int EDITOR_WARPZONE   = 6;
+    public static final int EDITOR_SCRIPTMASK = 8;
 }

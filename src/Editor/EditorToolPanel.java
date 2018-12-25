@@ -1,9 +1,6 @@
 package Editor;
 
-import Data.EntityStruct;
-import Data.FileIO;
-import Data.LevelData;
-import Data.TileStruct;
+import Data.*;
 import Editor.DialgoueCreator.DialogueCreatorFrame;
 import Editor.DrawTools.*;
 import Engine.Layer;
@@ -19,6 +16,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Keybinds:
@@ -88,19 +86,19 @@ public class EditorToolPanel extends JPanel {
 
     private TileStruct selectedTileStruct;
 
-    private JFrame editorFrame;
+    private EditorFrame editorFrame;
 
     private CameraManager cm;
 
     private final int PANEL_WIDTH = 105;
 
-    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher, UndoManager undoManager, JRootPane rootPane, JFrame jFrame){
+    public EditorToolPanel(EditorMouseInput mi, LayerManager manager, LevelData ldata, WindowWatcher watcher, UndoManager undoManager, JRootPane rootPane, EditorFrame jFrame){
 
         this.mi = mi;
         lm = manager;
         this.undoManager = undoManager;
-        cm = new CameraManager(mi);
         editorFrame = jFrame;
+        cm = new CameraManager(mi, editorFrame);
 
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(120, 400));
@@ -115,7 +113,7 @@ public class EditorToolPanel extends JPanel {
         createCameraPanel(ldata);
 
         toolsPanel.add(Box.createRigidArea(new Dimension(1, 2)));
-        JButton expandButton = createDrawToolButton("Expand Room", new ExpandRoom(ldata, lm), KeyEvent.VK_X);
+        JButton expandButton = createDrawToolButton("Expand Room", new ExpandRoom(ldata, lm, editorFrame), KeyEvent.VK_X);
         expandButton.setMaximumSize(new Dimension(90, 20));
         expandButton.setAlignmentX(CENTER_ALIGNMENT);
         toolsPanel.add(expandButton);
@@ -522,8 +520,14 @@ public class EditorToolPanel extends JPanel {
         toolsPanel.add(levelScriptPanel);
     }
 
+    private ArrayList<LayerToggler> layerTogglers = new ArrayList<>();
+
     void assignLevelScriptPanel(LevelScript levelScript, LevelData ldata){
         levelScriptPanel.removeAll();
+        for (LayerToggler lt : layerTogglers) {
+            lt.getLayer().setVisible(false);
+        }
+        layerTogglers.clear();
 
         String btnName = (levelScript != null) ? levelScript.getClass().getSimpleName() : "Select...";
         JButton selectLevelScriptButton = new JButton(btnName);
@@ -535,7 +539,14 @@ public class EditorToolPanel extends JPanel {
             if (masks.length > 0) {
                 levelScriptPanel.add(new JLabel("Masks:"));
                 for (String s : masks) {
-                    levelScriptPanel.add(createDrawToolButton(s,  new LevelScriptMaskEdit(ldata.getLevelScriptMask(levelScript.getId(), s), ldata), -1));
+                    String layerName = String.format("%1$s:%2$s", levelScript.getClass().getSimpleName(), s);
+                    Layer maskLayer = new Layer(ldata.getBackdrop().getCols(), ldata.getBackdrop().getRows(), layerName, 0, 0, LayerImportances.EDITOR_SCRIPTMASK);
+                    maskLayer.setVisible(false);
+                    LevelScriptMaskEdit maskEdit = new LevelScriptMaskEdit(ldata.getLevelScriptMask(levelScript.getId(), s), ldata, maskLayer);
+                    maskEdit.drawLayer();
+                    levelScriptPanel.add(createDrawToolButton(s,  maskEdit, -1));
+                    lm.addLayer(maskLayer);
+                    editorFrame.addLayerToggler(new LayerToggler(maskLayer, layerName));
                 }
             }
             selectedScriptId = levelScript.getId();

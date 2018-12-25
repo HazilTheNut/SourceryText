@@ -33,10 +33,12 @@ public class CameraManager implements ActionListener {
     private EditorMouseInput mi; //Jokes on you! Zooming is actually handled by the EditorMouseInput object.
 
     private JButton prevViewModeBtn;
+    private EditorFrame ownerFrame;
 
-    CameraManager(EditorMouseInput editorMouseInput){
+    CameraManager(EditorMouseInput editorMouseInput, EditorFrame frame){
         mi = editorMouseInput;
         mi.cm = this;
+        ownerFrame = frame;
     }
 
     void updateLabel() { zoomAmountLabel.setText(mi.zoomAmount + "%"); }
@@ -67,11 +69,14 @@ public class CameraManager implements ActionListener {
     }
 
     private void updateButtons(JButton newBtn){
+        /*
         if (prevViewModeBtn != null) {
             prevViewModeBtn.setEnabled(true);
         }
         newBtn.setEnabled(false);
         prevViewModeBtn = newBtn;
+        */
+        ownerFrame.updateLayerControllers();
     }
 
     //Sets the view to the 'Art' view

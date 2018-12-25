@@ -216,8 +216,6 @@ public class Layer implements Serializable{
         }
     }
 
-
-
     public void resizeLayer(int width, int height, int startX, int startY){
         SpecialText[][] newMatrix = new SpecialText[width][height];
         for (int col = 0; col < textMatrix.length; col++){
@@ -331,4 +329,13 @@ public class Layer implements Serializable{
     }
 
     public String getName() { return name; }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Layer) {
+            Layer layer = (Layer) obj;
+            return layer.getName().equals(name);
+        }
+        return false;
+    }
 }

@@ -13,23 +13,40 @@ public class LevelScriptMaskEdit extends DrawTool {
     private boolean isErasing = false;
     private LevelScriptMask mask;
     private LevelData ldata;
+    private Layer maskLayer;
 
-    public LevelScriptMaskEdit(LevelScriptMask mask, LevelData ldata){
+    private Color fillColorOne;
+    private Color fillColorTwo;
+
+    public LevelScriptMaskEdit(LevelScriptMask mask, LevelData ldata, Layer layer){
         this.mask = mask;
         this.ldata = ldata;
+        maskLayer = layer;
+        generateFillColors(layer.getName());
+    }
+
+    private void generateFillColors(String seed){
+        int hash = seed.hashCode() >> 5;
+        float hue = Math.abs(hash % 25) / 25f;
+        float sat = Math.abs(hash % 3) * 0.3f + 0.2f;
+        System.out.printf("Seed: \"%1$s\" result: %2$d hue: %3$.3f sat: %4$.3f\n", seed, hash, hue, sat);
+        fillColorOne = Color.getHSBColor(hue, sat, 0.9f);
+        fillColorOne = new Color(fillColorOne.getRed(), fillColorOne.getGreen(), fillColorOne.getBlue(), 125);
+        fillColorTwo = Color.getHSBColor(hue, sat, 0.65f);
+        fillColorTwo = new Color(fillColorTwo.getRed(), fillColorTwo.getGreen(), fillColorTwo.getBlue(), 125);
     }
 
     @Override
     public void onActivate(JPanel panel) {
         retrieveMask();
         drawLayer();
-        ldata.getLevelScriptLayer().setVisible(true);
+        maskLayer.setVisible(true);
         ldata.setMaskEditTool(this);
     }
 
     @Override
     public void onDeactivate(JPanel panel) {
-        ldata.getLevelScriptLayer().setVisible(false);
+        //maskLayer.setVisible(false);
     }
 
     @Override
@@ -52,15 +69,15 @@ public class LevelScriptMaskEdit extends DrawTool {
     private void updateGraphics(int col, int row){
         if (mask.getMask()[col][row]) {
             if ((col + row) % 2 == 0)
-                ldata.getLevelScriptLayer().editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(150, 150, 150, 150)));
+                maskLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, fillColorOne));
             else
-                ldata.getLevelScriptLayer().editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(120, 120, 120, 150)));
+                maskLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, fillColorTwo));
         } else
-            ldata.getLevelScriptLayer().editLayer(col, row, null);
+            maskLayer.editLayer(col, row, null);
     }
 
     public void drawLayer(){
-        Layer scriptLayer = ldata.getLevelScriptLayer();
+        Layer scriptLayer = maskLayer;
         for (int col = 0; col < scriptLayer.getCols(); col++) {
             for (int row = 0; row < scriptLayer.getRows(); row++){
                 updateGraphics(col, row);

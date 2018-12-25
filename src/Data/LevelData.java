@@ -1,6 +1,8 @@
 package Data;
 
 import Editor.DrawTools.LevelScriptMaskEdit;
+import Editor.EditorFrame;
+import Editor.LayerToggler;
 import Engine.Layer;
 import Engine.SpecialText;
 import Game.Registries.EntityRegistry;
@@ -73,9 +75,9 @@ public class LevelData implements Serializable {
      * Those layers are thus dubbed "auxiliary" because they are not essential to the function of the LevelData.
      */
     public void resetAuxiliaryLayers(){
-        tileDataLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "tiledata", 0, 0);
-        entityLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "entitydata", 0, 0);
-        warpZoneLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "warpzonedata", 0, 0);
+        tileDataLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "tiledata", 0, 0, LayerImportances.EDITOR_TILE);
+        entityLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "entitydata", 0, 0, LayerImportances.EDITOR_ENTITY);
+        warpZoneLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "warpzonedata", 0, 0, LayerImportances.EDITOR_WARPZONE);
         levelScriptLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "levelscript", 0, 0);
     }
 
@@ -193,39 +195,37 @@ public class LevelData implements Serializable {
      * @param col The x location to adjust to
      * @param row The y location to adjust to
      */
-    public void resize(int col, int row){
+    public void resize(int col, int row, EditorFrame editorFrame){
         System.out.println("Data dim: " + tileData.length + "x"  + tileData[0].length);
         if (col < 0 || row < 0) {
             int c = Math.min(0, col);
             int r = Math.min(0, row);
-            System.out.printf("c = %1$d, r = %2$d", c, r);
-            backdrop.resizeLayer(backdrop.getCols()           - c, backdrop.getRows() - r,      -1 * c, -1 * r);
-            tileDataLayer.resizeLayer(tileDataLayer.getCols() - c, tileDataLayer.getRows() - r, -1 * c, -1 * r);
-            entityLayer.resizeLayer(entityLayer.getCols()     - c, entityLayer.getRows() - r,   -1 * c, -1 * r);
-            warpZoneLayer.resizeLayer(warpZoneLayer.getCols() - c, warpZoneLayer.getRows() - r, -1 * c, -1 * r);
-            tileData = resizeTileData(tileData.length         - c, tileData[0].length - r,      -1 * c, -1 * r);
-            entityData = resizeEntityData(entityData.length   - c, entityData[0].length - r,    -1 * c, -1 * r);
+            System.out.printf("c = %1$d, r = %2$d\n", c, r);
+            int newWidth = tileData.length - c;
+            int newHeight = tileData[0].length - r;
+            tileData = resizeTileData(newWidth, newHeight, -1 * c, -1 * r);
+            entityData = resizeEntityData(newWidth, newHeight, -1 * c, -1 * r);
             for (LevelScriptMask mask : levelScriptMasks)
-                resizeLevelScriptMask(mask.getMask().length   - c, mask.getMask()[0].length - r,-1 * c, -1 * r, mask);
-            levelScriptLayer.resizeLayer(levelScriptLayer.getCols() - c, levelScriptLayer.getRows() - r, -1 * c, -1 * r);
+                resizeLevelScriptMask(newWidth - c, newWidth - r, -1 * c, -1 * r, mask);
+            for (LayerToggler toggler : editorFrame.getLayerTogglers())
+                toggler.getLayer().resizeLayer(toggler.getLayer().getCols() - c, toggler.getLayer().getRows() - r, -1 * c, -1 * r);
+            levelScriptLayer.resizeLayer(newWidth, newHeight, -1 * c, -1 * r);
             translateWarpZones(-1 * c, -1 * r);
             refreshTileDataLayer();
         }
         if (col >= tileData.length || row >= tileData[0].length){
             int w = Math.max(col+1, tileData.length);
             int h = Math.max(row+1, tileData[0].length);
-            backdrop.resizeLayer(w, h, 0, 0);
-            tileDataLayer.resizeLayer(w, h, 0, 0);
-            entityLayer.resizeLayer(w, h, 0, 0);
-            warpZoneLayer.resizeLayer(w, h, 0, 0);
-            levelScriptLayer.resizeLayer(w, h, 0, 0);
             tileData = resizeTileData(w, h, 0, 0);
             entityData = resizeEntityData(w, h, 0, 0);
             for (LevelScriptMask mask : levelScriptMasks)
                 resizeLevelScriptMask(w, h, 0, 0, mask);
+            for (LayerToggler toggler : editorFrame.getLayerTogglers())
+                toggler.getLayer().resizeLayer(w, h, 0, 0);
             refreshTileDataLayer();
         }
         updateMaskEditTool();
+        System.out.println("New Data dim: " + tileData.length + "x"  + tileData[0].length);
     }
 
     //Carries out the resizing of the Tile Data in resize()

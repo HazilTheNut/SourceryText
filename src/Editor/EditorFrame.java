@@ -30,6 +30,8 @@ public class EditorFrame extends JFrame {
     private EditorToolPanel toolPanel;
     private EditorTextPanel textPanel;
 
+    private JPanel windowLayersPanel;
+
     public EditorFrame(LevelData ldata, WindowWatcher watcher){
 
         Container c = getContentPane();
@@ -59,12 +61,23 @@ public class EditorFrame extends JFrame {
         manager.addLayer(ldata.getWarpZoneLayer());
         manager.addLayer(ldata.getLevelScriptLayer());
         manager.addLayer(mouseHighlight);
-        //Just to make sure....
-        manager.printLayerStack();
 
         window.addSpecialGraphics(new EditorLevelBoundGraphics(window, manager, ldata));
 
-        c.add(window, BorderLayout.CENTER);
+        //View Window panel
+        JPanel windowPanel = new JPanel(new BorderLayout());
+        windowLayersPanel = new JPanel();
+        windowLayersPanel.setBorder(BorderFactory.createEtchedBorder());
+        windowLayersPanel.setLayout(new WrapLayout(FlowLayout.LEFT, 2, 0));
+        windowLayersPanel.add(new LayerToggler(ldata.getBackdrop(), " Art "));
+        windowLayersPanel.add(new LayerToggler(ldata.getTileDataLayer(), " Tile "));
+        windowLayersPanel.add(new LayerToggler(ldata.getEntityLayer(), " Entity "));
+        windowLayersPanel.add(new LayerToggler(ldata.getWarpZoneLayer(), " Warp Zones "));
+
+        windowPanel.add(windowLayersPanel, BorderLayout.PAGE_START);
+        windowPanel.add(window, BorderLayout.CENTER);
+
+        c.add(windowPanel, BorderLayout.CENTER);
         //Create Text Panel
         textPanel = new EditorTextPanel();
         c.add(textPanel, BorderLayout.LINE_START);
@@ -152,5 +165,33 @@ public class EditorFrame extends JFrame {
 
     void setTextPanelContents(ArrayList<JButton> btns){
         textPanel.setButtonPanelContents(btns);
+    }
+
+    void updateLayerControllers(){
+        for (Component c : windowLayersPanel.getComponents())
+            if (c instanceof LayerToggler) {
+                LayerToggler layerToggler = (LayerToggler) c;
+                layerToggler.update();
+            }
+    }
+
+    void removeLayerController(LayerToggler toggler){
+        windowLayersPanel.remove(toggler);
+    }
+
+    void addLayerToggler(LayerToggler toggler){
+        for (Component c : windowLayersPanel.getComponents())
+            if (toggler.equals(c)) return;
+        windowLayersPanel.add(toggler);
+        windowLayersPanel.validate();
+    }
+
+    public ArrayList<LayerToggler> getLayerTogglers(){
+        ArrayList<LayerToggler> togglers = new ArrayList<>();
+        for (Component c : windowLayersPanel.getComponents())
+            if (c instanceof LayerToggler) {
+                togglers.add((LayerToggler)c);
+            }
+        return togglers;
     }
 }

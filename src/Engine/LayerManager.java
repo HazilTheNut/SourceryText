@@ -394,7 +394,9 @@ public class LayerManager {
         return layer.getSpecialText(screenX - layer.getX() + camX, screenY - layer.getY() + camY);
     }
 
-    private boolean isSpecialTextOpaque(SpecialText text) {return text != null && !(text.getCharacter() == ' ' && text.getBkgColor().getAlpha() != 255); }
+    private boolean isSpecialTextOpaque(SpecialText text) {
+        return text != null && !(text.getCharacter() == ' ' && (text.getBkgColor() == null || text.getBkgColor().getAlpha() != 255));
+    }
 
     public void printLayerStack(){
         System.out.println("LAYERS: \n");
