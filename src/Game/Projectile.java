@@ -88,9 +88,9 @@ public class Projectile extends TagHolder {
             DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", normalizedVelocityX, normalizedVelocityY);
             while (distance < (range * velocityMagnitude)) {
                 if (normalizedVelocityX != 0 && checkCollision(xpos + normalizedVelocityX, ypos))
-                    return;
+                    break;
                 if (normalizedVelocityY != 0 && checkCollision(xpos, ypos + normalizedVelocityY))
-                    return;
+                    break;
                 xpos += normalizedVelocityX;
                 ypos += normalizedVelocityY;
                 Coordinate newPos = getRoundedPos(xpos, ypos);
@@ -102,24 +102,24 @@ public class Projectile extends TagHolder {
                 normalizeVelocity();
                 distance += UNITS_PER_CYCLE;
             }
-            collideWithTerrain();
+            collideWithTerrain(getRoundedPos());
         }
     }
 
     private boolean checkCollision(double xpos, double ypos){
-        Coordinate currentPos = getRoundedPos(xpos, ypos);
-        Entity entity = gi.getCurrentLevel().getSolidEntityAt(currentPos);
-        if (!currentPos.equals(startPos)) { //Should be a nice catch-all to prevent projectiles from not firing correctly (by hitting the creator of the projectile)
+        Coordinate checkPos = getRoundedPos(xpos, ypos);
+        Entity entity = gi.getCurrentLevel().getSolidEntityAt(checkPos);
+        if (!checkPos.equals(startPos)) { //Should be a nice catch-all to prevent projectiles from not firing correctly (by hitting the creator of the projectile)
             if (entity != null && shouldContact(this, entity)) { //Is the projectile now on top of an entity?
                 collide(entity);
                 destroy();
                 return true;
             }
-            if (!gi.isSpaceAvailable(currentPos, TagRegistry.TILE_WALL) || currentPos.equals(targetPos)) { //"No Pathing" Tag is also applicable to Deep Water tiles, which should be something projectiles can go over.
-                collideWithTerrain();
+            if (!gi.isSpaceAvailable(checkPos, TagRegistry.TILE_WALL) || checkPos.equals(targetPos)) { //"No Pathing" Tag is also applicable to Deep Water tiles, which should be something projectiles can go over.
+                collideWithTerrain(checkPos);
                 return true;
             } else {
-                applyFlyover(currentPos);
+                applyFlyover(checkPos);
             }
         }
         return false;
@@ -184,8 +184,8 @@ public class Projectile extends TagHolder {
         }
     }
 
-    protected void collideWithTerrain(){
-        Tile landingTile = gi.getTileAt(getRoundedPos(xpos, ypos));
+    protected void collideWithTerrain(Coordinate pos){
+        Tile landingTile = gi.getTileAt(pos);
         if (landingTile != null && !landingTile.hasTag(TagRegistry.BOTTOMLESS)) {
             collide(landingTile);
         }
