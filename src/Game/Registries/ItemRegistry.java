@@ -44,7 +44,7 @@ public class ItemRegistry {
         registerItem(108, "Wooden Club",     2.5, TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAMMABLE);
         registerItem(101, "Wooden Sword",    2,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_SWEEP,   TagRegistry.FLAMMABLE);
         registerItem(100, "Wooden Pole",     1,   TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_THRUST,  TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
-        registerItem(109, "Rotted Bow",      2,   TagRegistry.DAMAGE_START + 3, TagRegistry.RANGE_START + 15, TagRegistry.WEAPON_BOW,     TagRegistry.FLAMMABLE);
+        registerItem(109, "Rotted Bow",      2,   TagRegistry.DAMAGE_START + 3, TagRegistry.RANGE_START + 15, TagRegistry.WEAPON_BOW, TagRegistry.FLAMMABLE);
         //Tier 2
         registerItem(105, "Iron Axe",        6,   TagRegistry.DAMAGE_START + 6, TagRegistry.WEAPON_STRIKE, TagRegistry.METALLIC);
         registerItem(106, "Iron Sword",      4,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_SWEEP, TagRegistry.METALLIC, TagRegistry.SHARP);

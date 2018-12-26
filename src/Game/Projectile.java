@@ -88,9 +88,9 @@ public class Projectile extends TagHolder {
             DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", normalizedVelocityX, normalizedVelocityY);
             while (distance < (range * velocityMagnitude)) {
                 if (normalizedVelocityX != 0 && checkCollision(xpos + normalizedVelocityX, ypos))
-                    break;
+                    return;
                 if (normalizedVelocityY != 0 && checkCollision(xpos, ypos + normalizedVelocityY))
-                    break;
+                    return;
                 xpos += normalizedVelocityX;
                 ypos += normalizedVelocityY;
                 Coordinate newPos = getRoundedPos(xpos, ypos);
