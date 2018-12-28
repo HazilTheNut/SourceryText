@@ -93,10 +93,11 @@ public class TagRegistry {
     public final static int SPOOKY_ENCHANT    = 238;
     public final static int CLARITY_ENCHANT   = 239;
     public final static int BLEED_ENCHANT     = 240;
-    public final static int THORN_ENCHANT     = 241;
+    public final static int POWER_ENCHANT     = 241;
     public final static int FORCE_ENCHANT     = 242;
     public final static int UNSTABLE_ENCHANT  = 243;
     public final static int DIZZY_ENCHANT     = 244;
+    public final static int CHAOS_ENCHANT     = 245;
 
     public final static int MONEY           = 260;
 
@@ -201,8 +202,9 @@ public class TagRegistry {
         registerTag(SPOOKY_ENCHANT, "Spooky Enchantment", SpookyEnchantmentTag.class);
         registerTag(CLARITY_ENCHANT, "Clarity Enchantment", ClarityEnchantmentTag.class);
         registerTag(BLEED_ENCHANT, "Bleed Enchantment", BleedEnchantmentTag.class);
-        registerTag(THORN_ENCHANT, "Thorn Enchantment", PowerEnchantment.class);
+        registerTag(POWER_ENCHANT, "Power Enchantment", PowerEnchantment.class);
         registerTag(FORCE_ENCHANT, "Force Enchantment", ForceEnchantmentTag.class);
+        registerTag(CHAOS_ENCHANT, "Chaos Enchantment", ChaosEnchantmentTag.class);
         registerTag(UNSTABLE_ENCHANT, "Unstable Ench.", UnstableEnchantmentTag.class);
 
         registerTag(MONEY, "Money", MoneyTag.class);

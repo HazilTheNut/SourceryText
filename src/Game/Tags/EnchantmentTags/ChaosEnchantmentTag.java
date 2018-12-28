@@ -21,13 +21,19 @@ public class ChaosEnchantmentTag extends EnchantmentTag {
         e.addCancelableAction(event -> {
             if (e.getTarget() instanceof  Entity){
                 Entity target = (Entity)e.getTarget();
-                Random random = new Random();
-                Coordinate relativePos = new Coordinate(random.nextInt(9) - 4, random.nextInt(9) - 4);
-                LocumancySpell locumancySpell = new LocumancySpell();
-                if (e.getGameInstance().isSpaceAvailable(target.getLocation().add(relativePos), TagRegistry.NO_PATHING))
-                    locumancySpell.teleportEntity(target, target.getLocation().add(relativePos));
+                teleportEntity(target);
             }
         });
+    }
+
+    private void teleportEntity(Entity e){
+        Random random = new Random();
+        Coordinate relativePos = new Coordinate(random.nextInt(9) - 4, random.nextInt(9) - 4);
+        LocumancySpell locumancySpell = new LocumancySpell();
+        if (e.getGameInstance().isSpaceAvailable(e.getLocation().add(relativePos), TagRegistry.NO_PATHING))
+            locumancySpell.teleportEntity(e, e.getLocation().add(relativePos));
+        else
+            teleportEntity(e);
     }
 
     @Override

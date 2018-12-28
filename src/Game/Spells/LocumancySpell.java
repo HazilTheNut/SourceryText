@@ -73,18 +73,19 @@ public class LocumancySpell extends Spell {
         gi.getLayerManager().removeLayer(previewLayer);
         if (toTransport.size() < 1 || !validLocations.contains(targetLoc) || !gi.isSpaceAvailable(targetLoc, TagRegistry.NO_PATHING))
             return 0;
+        playTeleportAnimation(toTransport.get(0).getLocation(), targetLoc, gi);
         for (Entity e : toTransport) {
-            teleportEntity(e, targetLoc);
+            e.teleport(targetLoc);
         }
         return calculateCooldown(26, magicPower);
     }
 
-    public void teleportEntity(Entity e, Coordinate loc){
-        playTeleportAnimation(loc, e.getGameInstance());
-        e.teleport(loc);
+    public void teleportEntity(Entity e, Coordinate pos){
+        playTeleportAnimation(e.getLocation().copy(), pos, e.getGameInstance());
+        e.teleport(pos);
     }
 
-    private void playTeleportAnimation(Coordinate targetLoc, GameInstance gi){
+    private void playTeleportAnimation(Coordinate fromLoc, Coordinate targetLoc, GameInstance gi){
         Color[] colors = {
             new Color(157, 0, 255),
             new Color(172, 128, 255),
@@ -94,8 +95,8 @@ public class LocumancySpell extends Spell {
             new Color(145, 81, 241)
         };
         char[] chars = {'#', '@', '%', ' ', '^', '$', 'H', 'i', ' ', 't', 'h', 'e', 'r', 'E', '!'};
-        Layer fromLayer = new Layer(1, 1, "Lcoumancy_from", toTransport.get(0).getLocation().getX(),toTransport.get(0).getLocation().getY(), LayerImportances.ANIMATION);
-        Layer toLayer =   new Layer(1, 1, "Lcoumancy_to", targetLoc.getX(),targetLoc.getY(), LayerImportances.ANIMATION);
+        Layer fromLayer = new Layer(1, 1, "Lcoumancy_from", fromLoc.getX(), fromLoc.getY(), LayerImportances.ANIMATION);
+        Layer toLayer =   new Layer(1, 1, "Lcoumancy_to", targetLoc.getX(), targetLoc.getY(), LayerImportances.ANIMATION);
         gi.getLayerManager().addLayer(fromLayer);
         gi.getLayerManager().addLayer(toLayer);
         Random random = new Random();
