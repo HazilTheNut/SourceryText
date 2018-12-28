@@ -3,6 +3,8 @@ package Game.LevelScripts;
 import Data.Coordinate;
 import Data.SerializationVersion;
 import Game.OverlayTileGenerator;
+import Game.Registries.TagRegistry;
+import Game.Tile;
 
 public class GenerateOverlayTiles extends LevelScript {
 
@@ -10,7 +12,7 @@ public class GenerateOverlayTiles extends LevelScript {
 
     @Override
     public String[] getMaskNames() {
-        return new String[]{"snow", "ice", "bridge"};
+        return new String[]{"snow", "ice", "bridge", "ash", "fire"};
     }
 
     @Override
@@ -25,6 +27,15 @@ public class GenerateOverlayTiles extends LevelScript {
                     otg.createIceTile(loc, level);
                 else if (getMaskDataAt("bridge", loc))
                     otg.createBridgeTile(loc, level);
+                else if (getMaskDataAt("ash", loc))
+                    otg.createAshTile(loc, level);
+                else if (getMaskDataAt("fire", loc)){
+                    Tile tile = otg.createAshTile(loc, level);
+                    tile.addTag(TagRegistry.FLAMMABLE, tile);
+                    tile.addTag(TagRegistry.BURN_FOREVER, tile);
+                    tile.addTag(TagRegistry.ON_FIRE, tile);
+                    tile.removeTag(TagRegistry.FLAMMABLE);
+                }
             }
         }
     }
