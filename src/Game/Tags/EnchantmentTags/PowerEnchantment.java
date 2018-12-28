@@ -11,7 +11,7 @@ public class PowerEnchantment extends EnchantmentTag {
 
     @Override
     public void onDealDamage(TagEvent e) {
-        e.addCancelableAction(event -> e.getTagOwner().onReceiveDamage(1, e.getSource(), e.getGameInstance()));
+        e.addCancelableAction(event -> e.getTagOwner().onReceiveDamage(1, e.getSource(), e.getGameInstance())); //Damaging the tag owner causes weapon durability to deplete (on top of the normal effect)
         e.addFutureAction(event -> e.setAmount((int) (e.getAmount() * 1.5)));
     }
 

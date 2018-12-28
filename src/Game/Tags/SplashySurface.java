@@ -37,11 +37,6 @@ public class SplashySurface extends Tag {
                     splashLocs.remove(source.getLocation());
                 }
             }
-            /*
-            else if (e.getGameInstance().getCurrentLevel().getSolidEntityAt(source.getLocation()) != null){ //Entities have not been here, there is one now. Better record that to track when they move
-                splashLocs.add(source.getLocation());
-            }
-            */
         }
     }
 

@@ -60,6 +60,7 @@ public class TagRegistry {
 
     public final static int POISON        = 20;
     public final static int VENOM_ENCHANT = 21;
+    public final static int PRICKLY       = 22;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -158,6 +159,7 @@ public class TagRegistry {
         registerTag(VENOM_ENCHANT, "Venom Enchantment", VenomEnchantmentTag.class);
         registerTag(ETHEREAL, "Ethereal", EtherealTag.class);
         registerTag(MAGNETIC, "Magnetic", MagneticTag.class);
+        registerTag(PRICKLY, "Prickly", PricklyTag.class);
 
         registerTag(FROZEN, "Frozen", FrozenTag.class);
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);
