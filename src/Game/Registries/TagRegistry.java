@@ -199,7 +199,7 @@ public class TagRegistry {
         registerTag(SPOOKY_ENCHANT, "Spooky Enchantment", SpookyEnchantmentTag.class);
         registerTag(CLARITY_ENCHANT, "Clarity Enchantment", ClarityEnchantmentTag.class);
         registerTag(BLEED_ENCHANT, "Bleed Enchantment", BleedEnchantmentTag.class);
-        registerTag(THORN_ENCHANT, "Thorn Enchantment", ThornEnchantmentTag.class);
+        registerTag(THORN_ENCHANT, "Thorn Enchantment", PowerEnchantment.class);
         registerTag(FORCE_ENCHANT, "Force Enchantment", ForceEnchantmentTag.class);
         registerTag(UNSTABLE_ENCHANT, "Unstable Ench.", UnstableEnchantmentTag.class);
 

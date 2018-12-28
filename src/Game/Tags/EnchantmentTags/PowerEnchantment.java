@@ -5,18 +5,18 @@ import Game.TagEvent;
 
 import java.awt.*;
 
-public class ThornEnchantmentTag extends EnchantmentTag {
+public class PowerEnchantment extends EnchantmentTag {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
     public void onDealDamage(TagEvent e) {
-        e.addCancelableAction(event -> e.getSource().onReceiveDamage(3, e.getSource(), e.getGameInstance()));
-        e.setAmount(e.getAmount() + 5);
+        e.addCancelableAction(event -> e.getTagOwner().onReceiveDamage(1, e.getSource(), e.getGameInstance()));
+        e.addFutureAction(event -> e.setAmount((int) (e.getAmount() * 1.5)));
     }
 
     @Override
     public Color getTagColor() {
-        return EnchantmentColors.THORN;
+        return EnchantmentColors.POWER;
     }
 }
