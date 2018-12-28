@@ -25,6 +25,6 @@ public class FlameEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(255, 131, 59);
+        return EnchantmentColors.FLAME;
     }
 }

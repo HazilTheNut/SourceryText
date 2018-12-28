@@ -23,6 +23,6 @@ public class SlothEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(67, 72, 230);
+        return EnchantmentColors.SLOTH;
     }
 }

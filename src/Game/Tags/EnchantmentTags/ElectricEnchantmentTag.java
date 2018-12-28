@@ -79,6 +79,6 @@ public class ElectricEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(255, 255, 50);
+        return EnchantmentColors.ELECTRIC;
     }
 }

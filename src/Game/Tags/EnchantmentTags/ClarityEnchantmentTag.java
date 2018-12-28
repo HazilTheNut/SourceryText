@@ -22,6 +22,6 @@ public class ClarityEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(56, 255, 202);
+        return EnchantmentColors.CLARITY;
     }
 }

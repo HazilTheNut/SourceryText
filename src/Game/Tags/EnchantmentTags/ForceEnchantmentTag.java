@@ -52,6 +52,6 @@ public class ForceEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(248, 255, 115);
+        return EnchantmentColors.FORCE;
     }
 }

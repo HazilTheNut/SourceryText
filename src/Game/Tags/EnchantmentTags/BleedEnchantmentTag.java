@@ -23,6 +23,6 @@ public class BleedEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(191, 0, 13);
+        return EnchantmentColors.BLEED;
     }
 }

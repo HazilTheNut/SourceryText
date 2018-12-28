@@ -1,6 +1,7 @@
 package Game.Tags.TempTags;
 
 import Data.SerializationVersion;
+import Game.Tags.EnchantmentTags.EnchantmentColors;
 
 import java.awt.*;
 
@@ -13,6 +14,6 @@ public class ScaredTag extends TempTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(111, 67, 179);
+        return EnchantmentColors.SPOOKY;
     }
 }

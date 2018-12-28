@@ -27,6 +27,6 @@ public class RegenEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(68, 255, 127);
+        return EnchantmentColors.REGEN;
     }
 }

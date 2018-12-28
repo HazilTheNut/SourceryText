@@ -16,6 +16,6 @@ public class VampireEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(255, 36, 21);
+        return EnchantmentColors.VAMPIRE;
     }
 }

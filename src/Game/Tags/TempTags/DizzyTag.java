@@ -2,6 +2,7 @@ package Game.Tags.TempTags;
 
 import Data.SerializationVersion;
 import Game.TagEvent;
+import Game.Tags.EnchantmentTags.EnchantmentColors;
 
 import java.awt.*;
 
@@ -19,6 +20,6 @@ public class DizzyTag extends TempTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(148, 37, 255);
+        return EnchantmentColors.DIZZY;
     }
 }

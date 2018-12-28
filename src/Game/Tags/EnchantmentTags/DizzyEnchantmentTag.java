@@ -23,6 +23,6 @@ public class DizzyEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(148, 37, 255);
+        return EnchantmentColors.DIZZY;
     }
 }

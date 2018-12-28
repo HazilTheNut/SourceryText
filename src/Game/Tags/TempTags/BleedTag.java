@@ -2,6 +2,7 @@ package Game.Tags.TempTags;
 
 import Data.SerializationVersion;
 import Game.TagEvent;
+import Game.Tags.EnchantmentTags.EnchantmentColors;
 
 import java.awt.*;
 
@@ -30,6 +31,6 @@ public class BleedTag extends TempTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(191, 0, 13);
+        return EnchantmentColors.BLEED;
     }
 }

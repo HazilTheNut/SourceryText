@@ -26,6 +26,6 @@ public class BerserkEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(255, 65, 51);
+        return EnchantmentColors.BERSERK;
     }
 }

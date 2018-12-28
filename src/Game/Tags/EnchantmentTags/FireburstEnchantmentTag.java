@@ -43,6 +43,6 @@ public class FireburstEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(255, 133, 104);
+        return EnchantmentColors.FIREBURST;
     }
 }

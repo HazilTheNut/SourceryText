@@ -1,6 +1,7 @@
 package Game.Tags.TempTags;
 
 import Data.SerializationVersion;
+import Game.Tags.EnchantmentTags.EnchantmentColors;
 
 import java.awt.*;
 
@@ -13,6 +14,6 @@ public class BerserkTag extends TempTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(255, 65, 51);
+        return EnchantmentColors.BERSERK;
     }
 }

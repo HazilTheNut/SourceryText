@@ -23,6 +23,6 @@ public class SpookyEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(111, 67, 179);
+        return EnchantmentColors.SPOOKY;
     }
 }

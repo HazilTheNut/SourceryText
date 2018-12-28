@@ -29,6 +29,6 @@ public class VenomEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(121, 226, 0);
+        return EnchantmentColors.VENOM;
     }
 }

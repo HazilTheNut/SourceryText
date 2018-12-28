@@ -74,10 +74,14 @@ public class LocumancySpell extends Spell {
         if (toTransport.size() < 1 || !validLocations.contains(targetLoc) || !gi.isSpaceAvailable(targetLoc, TagRegistry.NO_PATHING))
             return 0;
         for (Entity e : toTransport) {
-            playTeleportAnimation(targetLoc, gi);
-            e.teleport(targetLoc);
+            teleportEntity(e, targetLoc);
         }
         return calculateCooldown(26, magicPower);
+    }
+
+    public void teleportEntity(Entity e, Coordinate loc){
+        playTeleportAnimation(loc, e.getGameInstance());
+        e.teleport(loc);
     }
 
     private void playTeleportAnimation(Coordinate targetLoc, GameInstance gi){

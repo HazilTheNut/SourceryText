@@ -36,13 +36,18 @@ public class BeamEnchantmentTag extends EnchantmentTag {
         //Calculate end position
         Coordinate endPos = startPos.add(new Coordinate((int)(dx * 5), (int)(dy * 5)));
         //Prepare and launch beam projectile
-        Projectile beamProj = new Projectile(startPos, endPos, new SpecialText('+', getTagColor(), getTagColor()), gi);
+        Projectile beamProj = new Projectile(startPos, endPos, new SpecialText('+', getTagColor(), getBkg()), gi);
         beamProj.addTag(TagRegistry.DAMAGE_START + 5, beamProj);
         beamProj.launchProjectile(5);
     }
 
+    private Color getBkg(){
+        Color col = EnchantmentColors.BEAM;
+        return new Color(col.getRed(), col.getGreen(), col.getBlue(), 50);
+    }
+
     @Override
     public Color getTagColor() {
-        return new Color(123, 66, 255, 50);
+        return EnchantmentColors.BEAM;
     }
 }

@@ -3,6 +3,7 @@ package Game.Tags.TempTags;
 import Data.SerializationVersion;
 import Game.Entities.Entity;
 import Game.Explosion;
+import Game.Tags.EnchantmentTags.EnchantmentColors;
 
 import java.awt.*;
 
@@ -22,6 +23,6 @@ public class UnstableTag extends TempTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(255, 0, 68, 200);
+        return new Color(EnchantmentColors.UNSTABLE.getRed(), EnchantmentColors.UNSTABLE.getGreen(), EnchantmentColors.UNSTABLE.getBlue(), 200);
     }
 }

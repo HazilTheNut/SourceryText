@@ -29,6 +29,6 @@ public class FrostEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(102, 201, 255);
+        return EnchantmentColors.FROST;
     }
 }

@@ -20,6 +20,6 @@ public class UnstableEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(255, 0, 68);
+        return EnchantmentColors.UNSTABLE;
     }
 }

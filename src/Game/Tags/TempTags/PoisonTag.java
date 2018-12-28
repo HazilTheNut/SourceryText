@@ -6,6 +6,7 @@ import Game.Item;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
+import Game.Tags.EnchantmentTags.EnchantmentColors;
 import Game.Tags.Tag;
 
 import java.awt.*;
@@ -95,6 +96,6 @@ public class PoisonTag extends Tag {
 
     @Override
     public Color getTagColor() {
-        return new Color(179, 219, 87);
+        return EnchantmentColors.VENOM;
     }
 }

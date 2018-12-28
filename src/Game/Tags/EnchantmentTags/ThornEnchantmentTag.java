@@ -17,6 +17,6 @@ public class ThornEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(87, 189, 74);
+        return EnchantmentColors.THORN;
     }
 }

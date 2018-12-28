@@ -2,6 +2,7 @@ package Game.Tags.TempTags;
 
 import Data.SerializationVersion;
 import Game.TagEvent;
+import Game.Tags.EnchantmentTags.EnchantmentColors;
 import Game.Tags.Tag;
 
 import java.awt.*;
@@ -39,6 +40,6 @@ public class SlothTag extends Tag {
 
     @Override
     public Color getTagColor() {
-        return new Color(67, 72, 230);
+        return EnchantmentColors.SLOTH;
     }
 }

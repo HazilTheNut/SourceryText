@@ -27,6 +27,6 @@ public class WarpEnchantmentTag extends EnchantmentTag {
 
     @Override
     public Color getTagColor() {
-        return new Color(151, 37, 255);
+        return EnchantmentColors.WARP;
     }
 }
