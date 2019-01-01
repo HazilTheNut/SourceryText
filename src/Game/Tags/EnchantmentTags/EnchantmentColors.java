@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class EnchantmentColors {
 
-    //Total number of enchantments: 20
+    //Total number of enchantments: 21
 
     public static Color BEAM     = new Color(159, 107, 255);
     public static Color BERSERK  = new Color(255, 33, 23);

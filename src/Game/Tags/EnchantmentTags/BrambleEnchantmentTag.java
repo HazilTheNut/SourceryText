@@ -105,11 +105,7 @@ public class BrambleEnchantmentTag extends Tag {
         if (cooldown <= 0)
             return super.getName();
         else {
-            StringBuilder builder = new StringBuilder("Recharging [");
-            for (int i = 1; i < COOLDOWN_START - 1; i++)
-                if (i < COOLDOWN_START - cooldown) builder.append('=');
-                else builder.append(' ');
-            return builder.append(']').toString();
+            return "Recharging [" + cooldown + ']';
         }
     }
 }

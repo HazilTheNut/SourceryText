@@ -23,7 +23,7 @@ public class BleedTag extends TempTag {
     @Override
     public void onTurn(TagEvent e) {
         if (didMove)
-            e.getSource().onReceiveDamage(3, e.getSource(), e.getGameInstance());
+            e.getSource().onReceiveDamage(2 + e.getSource().getCurrentHealth() / 15, e.getSource(), e.getGameInstance());
         else
             e.getSource().onReceiveDamage(1, e.getSource(), e.getGameInstance());
         didMove = false;

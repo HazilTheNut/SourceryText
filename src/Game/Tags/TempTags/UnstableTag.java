@@ -18,7 +18,7 @@ public class UnstableTag extends TempTag {
     @Override
     public void onEntityDestruct(Entity owner) {
         Explosion explosion = new Explosion();
-        explosion.explode(7, owner.getLocation(), owner.getGameInstance(), getTagColor());
+        explosion.explode(5 + owner.getCurrentHealth() / 4, owner.getLocation(), owner.getGameInstance(), getTagColor());
     }
 
     @Override
