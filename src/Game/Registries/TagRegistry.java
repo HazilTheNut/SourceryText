@@ -98,6 +98,7 @@ public class TagRegistry {
     public final static int UNSTABLE_ENCHANT  = 243;
     public final static int DIZZY_ENCHANT     = 244;
     public final static int CHAOS_ENCHANT     = 245;
+    public final static int BRAMBLE_ENCHANT   = 246;
 
     public final static int MONEY           = 260;
 
@@ -206,6 +207,7 @@ public class TagRegistry {
         registerTag(FORCE_ENCHANT, "Force Enchantment", ForceEnchantmentTag.class);
         registerTag(CHAOS_ENCHANT, "Chaos Enchantment", ChaosEnchantmentTag.class);
         registerTag(UNSTABLE_ENCHANT, "Unstable Ench.", UnstableEnchantmentTag.class);
+        registerTag(BRAMBLE_ENCHANT, "Bramble Enchantment", BrambleEnchantmentTag.class);
 
         registerTag(MONEY, "Money", MoneyTag.class);
 

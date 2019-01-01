@@ -318,6 +318,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     protected void fireArrowProjectile(Projectile arrow) {
         doYellowFlash();
         doEnemyTurn();
+        freeze(); //Because GameInstance automatically unfreezes the player after processing a turn, but firing the arrow has yet to happen
         turnSleep(100);
         if (shouldDoAction()) {
             RangeTag rangeTag = (RangeTag) getWeapon().getTag(TagRegistry.RANGE_START);

@@ -1,18 +1,15 @@
 package Game.Tags.EnchantmentTags;
 
-import Data.SerializationVersion;
-
 import java.awt.*;
 
 public class EnchantmentColors {
-
-    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     //Total number of enchantments: 20
 
     public static Color BEAM     = new Color(159, 107, 255);
     public static Color BERSERK  = new Color(255, 33, 23);
     public static Color BLEED    = new Color(191, 0, 13);
+    public static Color BRAMBLE  = new Color(78, 214, 63);
     public static Color CHAOS    = new Color(201, 31, 160);
     public static Color CLARITY  = new Color(56, 255, 202);
     public static Color DIZZY    = new Color(139, 47, 255);
