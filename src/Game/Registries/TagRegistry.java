@@ -167,7 +167,7 @@ public class TagRegistry {
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);
         registerTag(WET, "Wet", WetTag.class);
         registerTag(NO_REFREEZE, "Cannot Refreeze", NoRefreezeTag.class);
-        registerTag(BURN_SPREAD, "Fast Fire-Spreading", BurnSpreadingTag.class);
+        registerTag(BURN_SPREAD, "Burns Instantly", BurnSpreadingTag.class);
         registerTag(WETTING, "Wetting", WettingTag.class);
         registerTag(BURN_NOSPREAD, "No Fire-Spreading", BurnNonSpreadingTag.class);
 

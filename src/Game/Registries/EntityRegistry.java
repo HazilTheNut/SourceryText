@@ -60,7 +60,7 @@ public class EntityRegistry {
         registerEntity(21, "Patrolling Character", new SpecialText('G', new Color(130, 255, 225), new Color(180, 255, 225, 15)), PatrollingCharacter.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING, TagRegistry.NO_PATHING);
         registerEntity(22, "Fan",          new SpecialText('/', new Color(150, 150, 200), new Color(100, 100, 125, 50)), Fan.class, TagRegistry.NO_PATHING, TagRegistry.METALLIC, TagRegistry.IMMOVABLE);
         registerEntity(23, "Photogate",    new SpecialText('!', new Color(42,  42,  86),  new Color(20, 20, 51, 100)),   Photogate.class, TagRegistry.IMMOVABLE);
-        registerEntity(BRAMBLE, "Bramble", new SpecialText('#', new Color(126, 255, 109), new Color(82, 230, 91, 75)),   Bramble.class, TagRegistry.FLAMMABLE, TagRegistry.PRICKLY, TagRegistry.NO_PATHING);
+        registerEntity(BRAMBLE, "Bramble", new SpecialText('#', new Color(126, 255, 109), new Color(82, 230, 91, 75)),   Bramble.class, TagRegistry.FLAMMABLE, TagRegistry.PRICKLY, TagRegistry.NO_PATHING, TagRegistry.BURN_SPREAD);
 
         //Registering stuff ends here
     }

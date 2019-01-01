@@ -6,6 +6,9 @@ import Data.SerializationVersion;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.GameInstance;
+import Game.Registries.TagRegistry;
+import Game.TagHolder;
+import Game.Tags.Tag;
 
 import java.awt.*;
 
@@ -37,6 +40,13 @@ public class Bramble extends CombatEntity {
         }
         if (lifetime == 0) selfDestruct();
         super.onTurn();
+    }
+
+    @Override
+    public void addTag(Tag tag, TagHolder source) {
+        super.addTag(tag, source);
+        if (tag.getId() == TagRegistry.ON_FIRE)
+            lifetime = 2;
     }
 
     private void generateIcon(){
