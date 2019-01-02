@@ -40,7 +40,8 @@ public class LevelData implements Serializable {
     private transient Layer warpZoneLayer;
     private transient Layer entityLayer;
     private transient Layer levelScriptLayer;
-    private transient LevelScriptMaskEdit maskEditTool;
+
+    private transient ArrayList<LevelScriptMaskEdit> maskEditArrayList;
 
     private int[][] tileData;
     private EntityStruct[][] entityData;
@@ -79,6 +80,7 @@ public class LevelData implements Serializable {
         entityLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "entitydata", 0, 0, LayerImportances.EDITOR_ENTITY);
         warpZoneLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "warpzonedata", 0, 0, LayerImportances.EDITOR_WARPZONE);
         levelScriptLayer = new Layer(new SpecialText[tileData.length][tileData[0].length], "levelscript", 0, 0);
+        maskEditArrayList = new ArrayList<>();
     }
 
     /**
@@ -86,7 +88,6 @@ public class LevelData implements Serializable {
      */
     public void setAllData(LevelData other){
         this.backdrop.transpose(other.getBackdrop());
-        syncDisplayWithData();
         this.tileData = new int[other.getTileData().length][other.getTileData()[0].length];
         for (int col = 0; col < other.getTileData().length; col++){
             System.arraycopy(other.getTileData()[col], 0, this.tileData[col], 0, other.getTileData()[0].length);
@@ -103,7 +104,8 @@ public class LevelData implements Serializable {
         for (LevelScriptMask mask : other.getLevelScriptMasks()){
             getLevelScriptMask(mask.getScriptId(), mask.getName()).setMask(mask.copyMask());
         }
-        updateMaskEditTool();
+        maskEditArrayList = other.getMaskEditArrayList();
+        syncDisplayWithData();
     }
 
     /**
@@ -342,10 +344,15 @@ public class LevelData implements Serializable {
     }
 
     private void updateMaskEditTool(){
-        if (maskEditTool != null) {
-            maskEditTool.retrieveMask();
-            maskEditTool.drawLayer();
-        }
+        for (LevelScriptMaskEdit maskEdit : maskEditArrayList) maskEdit.redraw();
+    }
+
+    public void addLevelScriptMaskEditor(LevelScriptMaskEdit maskEdit){
+        maskEditArrayList.add(maskEdit);
+    }
+
+    public ArrayList<LevelScriptMaskEdit> getMaskEditArrayList() {
+        return maskEditArrayList;
     }
 
     public void addLevelScript(int scriptId){
@@ -366,9 +373,5 @@ public class LevelData implements Serializable {
 
     public Layer getLevelScriptLayer() {
         return levelScriptLayer;
-    }
-
-    public void setMaskEditTool(LevelScriptMaskEdit maskEditTool) {
-        this.maskEditTool = maskEditTool;
     }
 }

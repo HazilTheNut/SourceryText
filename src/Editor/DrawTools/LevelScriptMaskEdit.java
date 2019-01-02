@@ -36,12 +36,16 @@ public class LevelScriptMaskEdit extends DrawTool {
         fillColorTwo = new Color(fillColorTwo.getRed(), fillColorTwo.getGreen(), fillColorTwo.getBlue(), 125);
     }
 
-    @Override
-    public void onActivate(JPanel panel) {
+    public void redraw(){
         retrieveMask();
         drawLayer();
+    }
+
+    @Override
+    public void onActivate(JPanel panel) {
+        redraw();
         maskLayer.setVisible(true);
-        ldata.setMaskEditTool(this);
+        ldata.addLevelScriptMaskEditor(this);
     }
 
     @Override
