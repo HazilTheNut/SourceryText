@@ -80,7 +80,8 @@ public class GameCharacter extends BasicEnemy {
         for (Entity e : entities){
             int dist = e.getLocation().stepDistance(getLocation());
             byte opinion = getOpinion(e);
-            if (isWithinDetectRange(e.getLocation(), detectRange) && e instanceof GameCharacter && opinion <= maxHate && dist > 0 && (dist <= minDistance || opinion < maxHate)) {
+            //GameCharacters always prioritize the most hated enemies, secondly ranked by distance
+            if (dist > 0 && e instanceof GameCharacter && isEntityVisible(e) && opinion <= maxHate && (dist <= minDistance || opinion < maxHate)) {
                 GameCharacter gc = (GameCharacter) e;
                 minDistance = dist;
                 maxHate = opinion;

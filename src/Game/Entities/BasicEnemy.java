@@ -80,17 +80,15 @@ public class BasicEnemy extends CombatEntity {
             if (hp <= 0)
                 target = null;
         }
-        if (target == null){
+        if (target == null){ //if not being aggressive
             doIdleBehavior();
             CombatEntity nearest = getNearestEnemy();
             if (nearest != null) {
-                if (raycastToPosition(nearest.getLocation()) != RAYCAST_WALL) { //Target player if nearby and not already targeting something, and the player can be seen
-                    setTarget(nearest);
-                    alertNearbyAllies(); //Let everyone know
-                }
+                setTarget(nearest);
+                alertNearbyAllies(); //Let everyone know
             }
         }
-        if (target != null) {
+        if (target != null) { //If being aggressive
             if (hasTag(TagRegistry.SCARED)) {
                 pathToPosition(target.getLocation()); //While scared, it moves backwards
             } else {
@@ -152,9 +150,13 @@ public class BasicEnemy extends CombatEntity {
         if (hasTag(TagRegistry.BERSERK))
             return getNearestBasicEnemy();
         Player player = gi.getPlayer();
-        if (isWithinDetectRange(player.getLocation(), detectRange))
+        if (isEntityVisible(player))
             return player;
         return null;
+    }
+
+    protected boolean isEntityVisible(Entity entity){
+        return isWithinDetectRange(entity.getLocation(), detectRange) && raycastToPosition(entity.getLocation()) != RAYCAST_WALL;
     }
 
     private BasicEnemy getNearestBasicEnemy(){
