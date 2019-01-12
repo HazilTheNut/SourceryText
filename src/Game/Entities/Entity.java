@@ -150,9 +150,14 @@ public class Entity extends TagHolder implements Serializable {
         if (moveEvent.eventPassed() && shouldDoAction() && getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)), TagRegistry.NO_PATHING)) {
             location.movePos(relativeX, relativeY);
             sprite.movePos(relativeX, relativeY);
-            onContact(gi.getTileAt(location), gi);
+            contactAt(location);
             checkForSlidingSurface(relativeX, relativeY);
         }
+    }
+
+    private void contactAt(Coordinate loc){
+        onContact(gi.getTileAt(loc), gi);
+        for (Entity e : gi.getCurrentLevel().getEntitiesAt(loc)) if (!equals(e)) onContact(e, gi);
     }
 
     protected void checkForSlidingSurface(int relativeX, int relativeY){
@@ -187,7 +192,7 @@ public class Entity extends TagHolder implements Serializable {
     public void setPos(Coordinate pos){
         location.setPos(pos.getX(), pos.getY());
         sprite.setPos(pos.getX(), pos.getY());
-        onContact(gi.getTileAt(location), gi);
+        contactAt(location);
     }
 
     public void selfDestruct(){

@@ -26,6 +26,8 @@ public class TagHolder implements Serializable {
 
     private ArrayList<Tag> tags = new ArrayList<>();
 
+    public boolean tagsVisible() { return true; }
+
     public ArrayList<Tag> getTags() { return tags; }
 
     public void setTags(ArrayList<Tag> tags) {

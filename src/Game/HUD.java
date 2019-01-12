@@ -205,7 +205,7 @@ public class HUD implements MouseInputReceiver, Serializable {
                 }
             }
             for (Tag tag : e.getTags())
-                if (isTagImportant(tag)) {
+                if (isTagImportant(tag) && e.tagsVisible()) {
                     boxHeight++;
                     boxLength = Math.max(boxLength, tag.getName().length() + 2);
                 }
@@ -234,12 +234,14 @@ public class HUD implements MouseInputReceiver, Serializable {
         boxLength = Math.max(boxLength, e.getName().length() + 2);
         synopsisLayer.inscribeString(e.getName(), 1, startRow, txt_entity);
         //Draw Important Tags
-        for (Tag tag : e.getTags())
-            if (isTagImportant(tag)){
-                startRow++;
-                synopsisLayer.inscribeString(tag.getName(), 2, startRow, tag.getTagColor());
-                synopsisLayer.inscribeString("*", 1, startRow, Color.GRAY);
-            }
+        if (e.tagsVisible())
+            for (Tag tag : e.getTags())
+                if (isTagImportant(tag)){
+                    startRow++;
+                    synopsisLayer.inscribeString(tag.getName(), 2, startRow, tag.getTagColor());
+                    synopsisLayer.inscribeString("*", 1, startRow, Color.GRAY);
+                }
+        //Draw stuff relevant to combat Entities.
         if (e instanceof CombatEntity){
             startRow++;
             CombatEntity ce = (CombatEntity)e;

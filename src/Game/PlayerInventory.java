@@ -141,9 +141,10 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             else
                 descLayer.inscribeString(String.format("Weight: %1$.2f", item.calculateWeight()), 2, 1, Color.GRAY);
             //Draw each Tag in Item.
-            for (int ii = 0; ii < item.getTags().size(); ii++) {
-                drawItemTag(descLayer, item, invOwner, ii);
-            }
+            if (item.tagsVisible())
+                for (int ii = 0; ii < item.getTags().size(); ii++) {
+                    drawItemTag(descLayer, item, invOwner, ii);
+                }
             //Draw item flavor text
             descLayer.insert(drawItemFlavorText(item), new Coordinate(0, item.getTags().size() + 2));
             descriptionLayer.setVisible(true);
@@ -380,7 +381,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
         }
 
         private int getTagListHeight() {
-            int height = e.getTags().size() + 1;
+            int height = (e.tagsVisible()) ? e.getTags().size() + 1 : 0;
             if (getOwner() instanceof CombatEntity) {
                 height++;
             }

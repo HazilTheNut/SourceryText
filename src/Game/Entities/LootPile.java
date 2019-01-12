@@ -8,6 +8,8 @@ import Engine.LayerManager;
 import Game.GameInstance;
 import Game.Item;
 import Game.Player;
+import Game.TagHolder;
+import Game.Tags.Tag;
 
 import java.util.ArrayList;
 
@@ -58,7 +60,21 @@ public class LootPile extends Chest {
             super.onInteract(player);
     }
 
-    void doAutoPickup(Player player){
+    @Override
+    public ArrayList<Tag> getTags() {
+        ArrayList<Tag> tags = new ArrayList<>(super.getTags());
+        for (Item item : getItems())
+            for (Tag itemTag : item.getTags())
+                if (!tags.contains(itemTag)) tags.add(itemTag);
+        return tags;
+    }
+
+    @Override
+    public boolean tagsVisible() {
+        return false; //Tag list looks super messy, so let's just hide it.
+    }
+
+    private void doAutoPickup(Player player){
         double totalWeight = player.getInv().calculateTotalWeight();
         for (Item item : getItems())
             totalWeight += item.calculateWeight();
@@ -66,6 +82,7 @@ public class LootPile extends Chest {
             gi.getTextBox().showMessage(String.format("You don't have the weight capacity (<cy>CAP<cw>) required to carry this.<nl><cs>%1$.2f / %2$.2f", totalWeight, player.getWeightCapacity()));
             return;
         }
+        //Build pickup message
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < getItems().size(); i++) {
             builder.append(String.format("<cy>%1$s x%2$d<cw>", getItems().get(i).getItemData().getName(), getItems().get(i).getItemData().getQty()));
@@ -75,5 +92,19 @@ public class LootPile extends Chest {
         }
         gi.getTextBox().showMessage("Found " + builder.toString());
         selfDestruct();
+    }
+
+    @Override
+    public void addTag(Tag tag, TagHolder source) {
+        super.addTag(tag, source);
+        for (Item item : getItems())
+            item.addTag(tag, source);
+    }
+
+    @Override
+    public void removeTag(int id) {
+        super.removeTag(id);
+        for (Item item : getItems())
+            item.removeTag(id);
     }
 }

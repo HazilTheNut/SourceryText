@@ -10,6 +10,8 @@ import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.Tags.Tag;
 
+import java.util.ArrayList;
+
 /**
  * Created by Jared on 4/18/2018.
  */
@@ -186,6 +188,9 @@ public class Projectile extends TagHolder {
 
     protected void collideWithTerrain(Coordinate pos){
         Tile landingTile = gi.getTileAt(pos);
+        ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(pos);
+        for (Entity entity : entities)
+            collide(entity);
         if (landingTile != null && !landingTile.hasTag(TagRegistry.BOTTOMLESS)) {
             collide(landingTile);
         }
