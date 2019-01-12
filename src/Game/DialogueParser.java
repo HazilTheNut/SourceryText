@@ -18,6 +18,8 @@ public class DialogueParser implements Serializable {
     private int parserPos; //Where the parser is currently reading at
     private int moduleStartPos; //Where the parser should go if it reaches the end of the string
 
+    private String tempSpeakerName; //Temporary new speaker name
+
     private GameInstance gi;
 
     private HashMap<Integer, Integer> gotoMapping; //Maps an integer (marker #) to string position of marker.
@@ -84,6 +86,10 @@ public class DialogueParser implements Serializable {
                 String containedText = getContainedString('>', true);
                 processGoto(containedText);
                 System.out.printf("[DialogueParser] GOTO:        \"%1$s\"\n", containedText);
+            } else if (charAt == '!'){
+                String containedText = getContainedString('!', true);
+                processSpecialAction(containedText);
+                System.out.printf("[DialogueParser] GOTO:        \"%1$s\"\n", containedText);
             }
             parserPos++;
         }
@@ -115,7 +121,8 @@ public class DialogueParser implements Serializable {
     }
 
     private void processText(String text, GameCharacter speaker){
-        gi.getTextBox().showMessage(text, speaker.getName(), () -> startParser(speaker)); //parserPos already moves to the next index, so nothing needs to be done (see startParser while loop for details)
+        String speakerName = (tempSpeakerName != null) ? tempSpeakerName : speaker.getName();
+        gi.getTextBox().showMessage(text, speakerName, () -> startParser(speaker)); //parserPos already moves to the next index, so nothing needs to be done (see startParser while loop for details)
     }
 
     private int getIntFromStr(String str){
@@ -338,5 +345,22 @@ public class DialogueParser implements Serializable {
         }
         gi.getDialogueOptions().showMenu("Respond:", false);
         waitForPlayerInput(keepWaiting);
+    }
+
+    private void processSpecialAction(String text){
+        ArrayList<String> strings = divideStringList(text, '|');
+        switch (strings.get(0).toLowerCase()){
+            case "end":
+                parserPos = dialogueText.length();
+                break;
+            case "trigger":
+                if (strings.get(1) != null)
+                    gi.levelScriptTrigger(strings.get(1));
+                break;
+            case "speakername":
+                if (strings.get(1) != null)
+                    tempSpeakerName = strings.get(1);
+                break;
+        }
     }
 }

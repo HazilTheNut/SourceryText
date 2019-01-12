@@ -39,7 +39,7 @@ public class ItemRegistry {
         //Test Materials
         registerItem(0, "Taboo Device", 0, TagRegistry.MAGIC_CYCLER, TagRegistry.UNLIMITED_USAGE);
         registerItem(1, "Ethereal Weapon", 0, TagRegistry.WEAPON_STRIKE, TagRegistry.DAMAGE_START + 3, TagRegistry.ETHEREAL, TagRegistry.FLAME_ENCHANT);
-        registerItem(2, "Enchanted Weapon", 1, TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_STRIKE, TagRegistry.BRAMBLE_ENCHANT);
+        registerItem(2, "Enchanted Weapon", 1, TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_STRIKE, TagRegistry.BLEED_ENCHANT);
         registerItem(3, "Enchanted Bow", 1, TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_BOW, TagRegistry.BRAMBLE_ENCHANT);
 
         //Generic Weapons

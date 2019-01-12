@@ -173,7 +173,10 @@ public class Level implements Serializable {
         for (LevelScript levelScript : levelScripts) levelScript.onAddEntity(e);
     }
 
-    public void removeEntity(Entity e){ entities.remove(e); }
+    public void removeEntity(Entity e){
+        entities.remove(e);
+        for (LevelScript levelScript : levelScripts) levelScript.onRemoveEntity(e);
+    }
 
     public ArrayList<Entity> getEntities() {
         return entities;

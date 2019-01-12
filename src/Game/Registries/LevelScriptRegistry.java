@@ -29,6 +29,7 @@ public class LevelScriptRegistry {
         scriptMap.put(1001, CinemaDennisHouse.class);
         scriptMap.put(1002, CinemaLibraryStorage.class);
         scriptMap.put(1003, CinemaUndergroundTunnel.class);
+        scriptMap.put(1004, CinemaRockyHighlands.class);
 
         scriptMap.put(2000, VillageDetectFires.class);
 

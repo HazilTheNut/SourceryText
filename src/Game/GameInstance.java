@@ -451,6 +451,11 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             gameEvents.add(event);
     }
 
+    public void levelScriptTrigger(String phrase){
+        for (LevelScript script : currentLevel.getLevelScripts())
+            script.onTrigger(phrase);
+    }
+
     @Override
     public void onFrameDrawStart() {
         if (player != null && currentLevel.getBackdrop() != null){

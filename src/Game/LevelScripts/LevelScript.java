@@ -105,6 +105,16 @@ public class LevelScript implements Serializable {
         //Override this
     }
 
+    //Ran when an entity is removed from the level
+    public void onRemoveEntity(Entity e){
+        //Override this
+    }
+
+    //Ran when the GameInstance encounters a trigger, usually caused by dialogue
+    public void onTrigger(String phrase){
+        //Override this
+    }
+
     public String[] getMaskNames(){
         return new String[0];
     }
