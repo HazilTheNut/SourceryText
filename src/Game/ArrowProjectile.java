@@ -2,12 +2,13 @@ package Game;
 
 import Data.Coordinate;
 import Engine.SpecialText;
+import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 
 public class ArrowProjectile extends ItemProjectile {
 
-    public ArrowProjectile(Entity creator, Coordinate target, SpecialText icon, Item item) {
-        super(creator, target, icon, item, 0);
+    public ArrowProjectile(Entity creator, Coordinate target, SpecialText icon, Item item, int damage) {
+        super(creator, target, icon, item, damage);
     }
 
     @Override

@@ -227,9 +227,6 @@ public class CombatEntity extends Entity {
         for (int i = 0; i < getWeapon().getTags().size(); i++) {
             Tag tag = getWeapon().getTags().get(i);
             switch (tag.getId()) {
-                case TagRegistry.WEAPON_STRIKE:
-                    doStrikeWeaponAttack(calculateMeleeDirection(loc));
-                    break;
                 case TagRegistry.WEAPON_THRUST:
                     doThrustWeaponAttack(calculateMeleeDirection(loc));
                     break;
@@ -239,8 +236,9 @@ public class CombatEntity extends Entity {
                 case TagRegistry.WEAPON_BOW:
                     doBowAttack(loc);
                     break;
-                case TagRegistry.WEAPON_THROW:
-                    doThrowingWeaponAttack(loc);
+                case TagRegistry.WEAPON_STRIKE:
+                case TagRegistry.WEAPON_KNIFE:
+                    doStrikeWeaponAttack(calculateMeleeDirection(loc));
                     break;
             }
         }
@@ -337,17 +335,11 @@ public class CombatEntity extends Entity {
             }
         }
         if (arrowItem != null) {
-            ArrowProjectile arrow = new ArrowProjectile(this, targetPos, new SpecialText('+', new Color(255, 231, 217), new Color(191, 174, 163, 15)), arrowItem);
-            arrow.getTags().addAll(weapon.getTags());
-            DamageTag damageTag = (DamageTag)arrow.getTag(TagRegistry.DAMAGE_START);
+            DamageTag damageTag = (DamageTag)weapon.getTag(TagRegistry.DAMAGE_START);
+            int baseDamage = (damageTag != null) ? damageTag.getDamageAmount() : 0;
             int dmgBonus = getStrength() / 4;
+            ArrowProjectile arrow = new ArrowProjectile(this, targetPos, new SpecialText('+', new Color(255, 231, 217), new Color(191, 174, 163, 15)), arrowItem, baseDamage + dmgBonus);
             DebugWindow.reportf(GAME, "CombatEntity.doBowAttack", "Strength: %1$d Damage Bonus: %2$d", getStrength(), dmgBonus);
-            if (damageTag != null) {
-                arrow.removeTag(TagRegistry.DAMAGE_START);
-                DamageTag totalDamageTag = new DamageTag(damageTag.getDamageAmount() + dmgBonus);
-                totalDamageTag.setId(TagRegistry.DAMAGE_START);
-                arrow.addTag(totalDamageTag, getWeapon());
-            }
             fireArrowProjectile(arrow);
             arrowItem.decrementQty();
             scanInventory();
@@ -356,24 +348,6 @@ public class CombatEntity extends Entity {
 
     protected void fireArrowProjectile(Projectile arrow){
         //Override by Player, BasicEnemy, etc.
-    }
-
-    private void doThrowingWeaponAttack(Coordinate loc){
-        getWeapon().decrementQty();
-        Projectile projectile = getThrowingWeaponProjectile(loc);
-        projectile.getTags().addAll(getWeapon().getTags());
-        projectile.launchProjectile(7 + getStrength() / 4);
-    }
-
-    private Projectile getThrowingWeaponProjectile(Coordinate target){
-        if (getWeapon().hasTag(TagRegistry.THROW_KNIFE))
-            return new ArrowProjectile(this, target, new SpecialText('/', new Color(165, 165, 165), new Color(45, 45, 45, 45)), getWeapon());
-        SpecialText icon = new SpecialText('%');
-        if (getWeapon().hasTag(TagRegistry.THROW_STONE))
-            icon = new SpecialText('o', new Color(143, 148, 143), new Color(45, 45, 45, 45));
-        if (getWeapon().hasTag(TagRegistry.THROW_WATERBALLOON))
-            icon = new SpecialText('o', new Color(70, 70, 153), new Color(66, 66, 140, 45));
-        return new Projectile(this, target, icon);
     }
 
     protected void throwItem(Item item, Coordinate loc){

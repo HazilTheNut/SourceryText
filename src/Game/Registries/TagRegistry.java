@@ -68,6 +68,7 @@ public class TagRegistry {
     public final static int WEAPON_SWEEP  = 203;
     public final static int WEAPON_BOW    = 204;
     public final static int ARROW         = 205;
+    public final static int WEAPON_KNIFE  = 206;
 
     public final static int KEY             = 210;
     public final static int UNLIMITED_USAGE = 211;
@@ -76,10 +77,6 @@ public class TagRegistry {
     public final static int IMPORTANT       = 214;
     public final static int FRAGILE         = 215;
 
-    @Deprecated
-    public final static int WEAPON_THROW        = 220; //All items can now be thrown
-    public final static int THROW_KNIFE         = 221;
-    public final static int THROW_STONE         = 222;
     public final static int THROW_WATERBALLOON  = 223;
 
     public final static int FIREBURST_ENCHANT = 230;
@@ -176,18 +173,16 @@ public class TagRegistry {
         registerTag(WEAPON_STRIKE, "Striking Weapon",  StrikeWeaponTypeTag.class);
         registerTag(WEAPON_THRUST, "Thrusting Weapon", ThrustWeaponTypeTag.class);
         registerTag(WEAPON_SWEEP,  "Sweeping Weapon",  SweepWeaponTypeTag.class);
-        registerTag(WEAPON_BOW, "Bow",                 BowWeaponTag.class);
+        registerTag(WEAPON_BOW, "Bow (Weapon)",        BowWeaponTag.class);
+        registerTag(WEAPON_KNIFE, "Knife (Weapon)",    KnifeWeaponTag.class);
         registerTag(ARROW, "Arrow",                    ArrowTag.class);
-        registerTag(WEAPON_THROW, "Throwing Weapon",   ThrowingWeaponTypeTag.class);
         registerTag(KEY, "Key", KeyTag.class);
         registerTag(UNLIMITED_USAGE, "Unlimited Usage", UnlimitedUsageTag.class);
         registerTag(DIGGING, "Can Dig", DiggingTag.class);
         registerTag(ENCHANT_WEAPON, "Enchants Weapon", WeaponEnchantTag.class);
         registerTag(IMPORTANT, "Important", ImportantTag.class);
         registerTag(FRAGILE, "Fragile", FragileTag.class);
-        
-        registerTag(THROW_STONE, "Stone", ThrowStoneTag.class);
-        registerTag(THROW_KNIFE, "Knife", ThrowKnifeTag.class);
+
         registerTag(THROW_WATERBALLOON, "Water Balloon", ThrowWaterBalloonTag.class);
 
         //Enchantments

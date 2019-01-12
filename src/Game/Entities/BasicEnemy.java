@@ -203,7 +203,7 @@ public class BasicEnemy extends CombatEntity {
     }
 
     private boolean isRanged(){
-        return getWeapon().hasTag(TagRegistry.WEAPON_BOW) || getWeapon().hasTag(TagRegistry.WEAPON_THROW);
+        return getWeapon().hasTag(TagRegistry.WEAPON_BOW);
     }
 
     private void doMeleeBehavior(){
@@ -275,7 +275,7 @@ public class BasicEnemy extends CombatEntity {
             if (item.hasTag(TagRegistry.ON_FIRE))       value *= MULT_FIRE;
             if (item.hasTag(TagRegistry.FLAME_ENCHANT)) value *= MULT_FIRE;
             if (item.hasTag(TagRegistry.FROST_ENCHANT)) value *= MULT_ICE;
-            if (item.hasTag(TagRegistry.WEAPON_BOW) || item.hasTag(TagRegistry.WEAPON_THROW)) value *= MULT_RANGED;
+            if (item.hasTag(TagRegistry.WEAPON_BOW))    value *= MULT_RANGED;
             if (value > topScore){
                 topScore = value;
                 bestItem = item;
@@ -306,8 +306,6 @@ public class BasicEnemy extends CombatEntity {
             } else {
                 return target.getLocation().hypDistance(getLocation()) <= RangeTag.RANGE_DEFAULT;
             }
-        } else if (weapon.hasTag(TagRegistry.WEAPON_THROW)){
-            return target.getLocation().hypDistance(getLocation()) <= 7 + (getStrength() / 4);
         }
         return false;
     }

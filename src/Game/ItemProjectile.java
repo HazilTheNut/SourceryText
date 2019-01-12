@@ -2,6 +2,7 @@ package Game;
 
 import Data.Coordinate;
 import Engine.SpecialText;
+import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.Tags.Tag;
@@ -9,7 +10,7 @@ import Game.Tags.Tag;
 public class ItemProjectile extends Projectile {
 
     private Item item;
-    int baseDamage;
+    private int baseDamage;
 
     public ItemProjectile(Entity creator, Coordinate target, SpecialText icon, Item item, int baseDamage) {
         super(creator, target, icon);
@@ -33,7 +34,8 @@ public class ItemProjectile extends Projectile {
     @Override
     protected void collide(TagHolder other) {
         super.collide(other, baseDamage);
-        drop();
+        boolean shouldNotDrop = other instanceof CombatEntity && item.hasTag(TagRegistry.SHARP) && item.isStackable();
+        if (!shouldNotDrop) drop(); //If the TagHolder being collided with is a combat entity, sharp thrown items should "stick". However, it would be very disappointing to have weapons disintegrate
     }
 
     private void drop(){

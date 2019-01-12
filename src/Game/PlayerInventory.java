@@ -196,7 +196,6 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
             CombatEntity ce = (CombatEntity) owner;
             if (tag.getId() == TagRegistry.DAMAGE_START){
                 int strengthBonus = ce.getStrength();
-                if (item.hasTag(TagRegistry.WEAPON_THROW)) strengthBonus = 0;
                 if (item.hasTag(TagRegistry.WEAPON_BOW)) strengthBonus = ce.getStrength() / 4;
                 if (strengthBonus > 0)
                     descLayer.inscribeString(String.format(" (+%1$d)", strengthBonus), tag.getName().length() + 2, index + 2, strengthBonusFg);
