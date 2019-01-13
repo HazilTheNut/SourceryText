@@ -125,6 +125,12 @@ public class DialogueParser implements Serializable {
         gi.getTextBox().showMessage(text, speakerName, () -> startParser(speaker)); //parserPos already moves to the next index, so nothing needs to be done (see startParser while loop for details)
     }
 
+    /*
+    AtomicBoolean keepWaiting = new AtomicBoolean(true);
+        gi.getTextBox().showMessage(text, speakerName, () -> keepWaiting.set(false)); //parserPos already moves to the next index, so nothing needs to be done (see startParser while loop for details)
+        waitForPlayerInput(keepWaiting);
+     */
+
     private int getIntFromStr(String str){
         try {
             return Integer.valueOf(str);
@@ -181,6 +187,8 @@ public class DialogueParser implements Serializable {
                 return opinion >= minOpinion;
             case "ifevent":
                 return gi.eventHappened(arguments);
+            case "ifitem":
+                return !itemsAbsent(gi.getPlayer(), getItemsFromStringList(divideStringList(arguments, ',')));
             default:
                 return true;
         }
@@ -361,6 +369,9 @@ public class DialogueParser implements Serializable {
                 if (strings.get(1) != null)
                     tempSpeakerName = strings.get(1);
                 break;
+            case "record":
+                if (strings.get(1) != null)
+                    gi.recordEvent(strings.get(1));
         }
     }
 }

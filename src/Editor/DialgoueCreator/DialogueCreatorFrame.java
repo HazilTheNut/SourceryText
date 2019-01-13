@@ -124,6 +124,7 @@ public class DialogueCreatorFrame extends JFrame {
         tabbedPane.addTab("Options", new DialogueOptionsCreator());
         tabbedPane.addTab("Trades", new DialogueTradeCreator());
         tabbedPane.addTab("Special Actions", new DialogueSpecialActionCreator());
+        tabbedPane.addTab("Factions", new DialogueFactionsReference());
 
         tabbedPane.addChangeListener(e -> tabbedPane.setPreferredSize(tabbedPane.getSelectedComponent().getPreferredSize()));
         tabbedPane.setPreferredSize(tabbedPane.getComponentAt(0).getPreferredSize());

@@ -105,7 +105,7 @@ public class TextBox implements MouseInputReceiver{
         isSkimming = false;
         int SCROLL_SPEED_NORMAL = 28;
         int SCROLL_SPEED_FAST = 8;
-        int SCROLL_SPEED_SLOW = 250;
+        int SCROLL_SPEED_SLOW = 52;
         int SCROLL_SPEED_SKIM = 3;
         //Begin writing
         int scrollSpeed = SCROLL_SPEED_NORMAL;

@@ -16,6 +16,7 @@ public class DialogueConditionalCreator extends JPanel {
         selectionBox.addItem(new Conditional("ifm", "If member of my faction", false));
         selectionBox.addItem(new Conditional("ifop","If my opinion is at least", true));
         selectionBox.addItem(new Conditional("ifevent","If event happened", true));
+        selectionBox.addItem(new Conditional("ifitem","If player has items", true));
 
         JTextField argumentField = new JTextField(15);
         argumentField.setFont(font);

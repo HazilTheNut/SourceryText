@@ -15,12 +15,12 @@ public class FactionManager implements Serializable {
 
     private ArrayList<Faction> factions;
 
-    void initialize(){
+    public void initialize(){
         factions = new ArrayList<>();
 
         createFaction("player");
         createFaction("monster", new FactionOpinion("ALL", -10));
-        createFaction("bandit", new FactionOpinion("villager", -3));
+        createFaction("bandit", new FactionOpinion("villager", -3), new FactionOpinion("player", -3));
         createFaction("villager", new FactionOpinion("bandit", -3));
         createFaction("wizard"); //Should go hostile to bandits when launching flare
         createFaction("termite", new FactionOpinion("spider", -3));
@@ -52,6 +52,10 @@ public class FactionManager implements Serializable {
                 return faction;
         }
         return null;
+    }
+
+    public ArrayList<Faction> getFactions() {
+        return factions;
     }
 
     public byte getOpinion(GameCharacter source, GameCharacter target){
@@ -123,6 +127,10 @@ public class FactionManager implements Serializable {
                 }
             }
             relations.add(new FactionOpinion(name, opinion));
+        }
+
+        public String getName() {
+            return name;
         }
     }
 

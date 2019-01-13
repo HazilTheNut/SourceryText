@@ -445,7 +445,7 @@ public class CombatEntity extends Entity {
 
     //Path-finding stuff below
 
-    protected int pathToPosition(Coordinate loc){
+    public int pathToPosition(Coordinate loc){
         return pathToPosition(loc, Integer.MAX_VALUE);
     }
 

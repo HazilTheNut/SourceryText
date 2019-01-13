@@ -16,6 +16,7 @@ public class DialogueSpecialActionCreator extends JPanel {
         selectionBox.addItem(new ActionType("end", "End parser", false));
         selectionBox.addItem(new ActionType("trigger","LevelScript trigger", true));
         selectionBox.addItem(new ActionType("speakername","Change speaker name", true));
+        selectionBox.addItem(new ActionType("record","Record game event", true));
 
         JTextField argumentField = new JTextField(15);
         argumentField.setFont(font);
