@@ -10,6 +10,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -41,6 +42,9 @@ public class FileIO {
         //System.out.println("[FileIO.getRootFilePath] base path: " + path);
         String reducedPath = path.substring(0, path.lastIndexOf('/'));
         reducedPath += "/";
+        if (!System.getProperty("os.name").startsWith("Windows")) {
+            reducedPath = "/" + reducedPath;  // Linux Hack
+        }
         //System.out.println("[FileIO.getRootFilePath] root path: " + reducedPath);
         return reducedPath;
     }
@@ -74,15 +78,10 @@ public class FileIO {
      */
     public String decodeFilePath(String rawPath){
         String path;
-        try {
-            path = URLDecoder.decode(rawPath, "UTF-8");
-            String output = path.replace('\\','/');
-            if (output.startsWith("/")) output = output.substring(1);
-            return output;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            return rawPath;
-        }
+        path = URLDecoder.decode(rawPath, StandardCharsets.UTF_8);
+        String output = path.replace('\\','/');
+        if (output.startsWith("/")) output = output.substring(1);
+        return output;
     }
 
     /**
