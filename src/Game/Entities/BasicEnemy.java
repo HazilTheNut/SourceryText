@@ -163,7 +163,7 @@ public class BasicEnemy extends CombatEntity {
         double lowestDistance = Double.MAX_VALUE;
         BasicEnemy target = null;
         for (Entity e : gi.getCurrentLevel().getEntities()){
-            if (e instanceof BasicEnemy) {
+            if (e instanceof BasicEnemy && !e.equals(gi.getPlayer())) {
                 BasicEnemy basicEnemy = (BasicEnemy) e;
                 double dist = basicEnemy.getLocation().stepDistance(getLocation());
                 if (dist < lowestDistance && dist > 0){
@@ -172,6 +172,8 @@ public class BasicEnemy extends CombatEntity {
                 }
             }
         }
+        if (target == null)
+            return gi.getPlayer();
         return target;
     }
 

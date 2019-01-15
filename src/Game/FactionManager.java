@@ -19,7 +19,7 @@ public class FactionManager implements Serializable {
         factions = new ArrayList<>();
 
         createFaction("player");
-        createFaction("monster", new FactionOpinion("ALL", -10));
+        createFaction("monster", new FactionOpinion("ALL", -6));
         createFaction("bandit", new FactionOpinion("villager", -3), new FactionOpinion("player", -3));
         createFaction("villager", new FactionOpinion("bandit", -3));
         createFaction("wizard"); //Should go hostile to bandits when launching flare

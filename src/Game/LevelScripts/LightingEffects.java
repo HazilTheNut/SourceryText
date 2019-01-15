@@ -142,16 +142,18 @@ public class LightingEffects extends LevelScript {
      * Draws the vfx Layer for light and shadows.
      */
     private void drawShadingLayer(){
+        int MAX_OPACITY_COLD = 225;
+        int MAX_OPACITY_WARM = 50;
         Layer tempLayer = new Layer(shadingLayer.getCols(), shadingLayer.getRows(), "shandingtemp", 0, 0, 0);
         for (int col = 0; col < level.getBackdrop().getCols(); col++) { //Iterate over every part of the level.
             for (int row = 0; row < level.getBackdrop().getRows(); row++) {
                 double lightness = masterLightMap[col][row];
                 double warmLightingCutoff = 3.75;
                 if (lightness < 1){ //Draw the cold colors if it is dim.
-                    int opacity = (int)(255 - (225 * lightness));
+                    int opacity = (int)(MAX_OPACITY_COLD * (1 - lightness));
                     tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(lightingCold.getRed(), lightingCold.getGreen(), lightingCold.getBlue(), opacity)));
                 } else if (lightness > warmLightingCutoff){ //Draw the warm colors if it is bright.
-                    int opacity = Math.min((int)(12 * (lightness - warmLightingCutoff)), 50);
+                    int opacity = Math.min((int)(12 * (lightness - warmLightingCutoff)), MAX_OPACITY_WARM);
                     tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(lightingWarm.getRed(), lightingWarm.getGreen(), lightingWarm.getBlue(), opacity)));
                 }
             }
