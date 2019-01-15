@@ -111,7 +111,9 @@ public class ItemRegistry {
         registerItem(ID_WATERBALLOON, "Water Balloon",  0.10, TagRegistry.THROW_WATERBALLOON, TagRegistry.FRAGILE);
 
         registerItem(1200, "Carrot",    0.05, TagRegistry.HEALTH_START + 4);
-        itemFlavorTextMap.put(1200, "A popular veggie\n");
+        itemFlavorTextMap.put(1200, "A popular veggie");
+        registerItem(1201, "Cured Meat", 0.08, TagRegistry.HEALTH_START + 8);
+        itemFlavorTextMap.put(1201, "A little salty, but\n it fortunately adds\n a lot to the shelf life.");
 
         registerItem(ID_ARROW, "Arrow",           0.03, TagRegistry.ARROW, TagRegistry.FLAMMABLE, TagRegistry.METALLIC, TagRegistry.SHARP);
 
@@ -142,6 +144,7 @@ public class ItemRegistry {
 
         //Important items
         registerItem(2500, "Shovel",       1, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_STRIKE, TagRegistry.UNLIMITED_USAGE, TagRegistry.DIGGING);
+        registerItem(2501, "Polar Bear Crown", 0.5, TagRegistry.METALLIC);
 
         registerItem(3000, "Coins",        0, TagRegistry.MONEY);
         registerItem(3001, "Fondant Bits", 0, TagRegistry.MONEY);

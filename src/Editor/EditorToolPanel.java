@@ -263,7 +263,7 @@ public class EditorToolPanel extends JPanel {
         Layer simulationLayer;
         LayerToggler toggler = editorFrame.getLayerToggler("simulation");
         if (toggler == null)
-            simulationLayer = new Layer(ldata.getBackdrop().getCols(), ldata.getBackdrop().getRows(), "simulation", 0, 0, LayerImportances.EDITOR_SCRIPTMASK + 1);
+            simulationLayer = new Layer(ldata.getBackdrop().getCols(), ldata.getBackdrop().getRows(), "simulation", 0, 0, LayerImportances.EDITOR_TILE + 1);
         else
             simulationLayer = toggler.getLayer();
         simulationLayer.clearLayer();
