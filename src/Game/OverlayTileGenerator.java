@@ -17,7 +17,7 @@ public class OverlayTileGenerator {
      */
 
     public final SpecialText TILE_BRIDGE = new SpecialText('=', new Color(115, 76, 49),   new Color(77, 50, 33, 240));
-    public final SpecialText TILE_SNOW   = new SpecialText(' ', Color.WHITE, new Color(149, 149, 161));
+    public final SpecialText TILE_SNOW   = new SpecialText(' ', Color.WHITE, new Color(149, 155, 161));
 
     public Tile createAshTile(Coordinate pos, Level level){
         return genericCreateTile(level, pos, "Ash", getAshTileSpecTxt(), TagRegistry.ASH, TagRegistry.FOOTPRINTS);

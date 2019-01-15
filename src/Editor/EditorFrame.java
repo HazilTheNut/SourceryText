@@ -201,4 +201,12 @@ public class EditorFrame extends JFrame {
             }
         return togglers;
     }
+
+    public LayerToggler getLayerToggler(String name){
+        for (LayerToggler toggler : getLayerTogglers()){
+            if (toggler.getLayer().getName().equals(name))
+                return toggler;
+        }
+        return null;
+    }
 }

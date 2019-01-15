@@ -260,7 +260,13 @@ public class EditorToolPanel extends JPanel {
 
     private void buildOverlayTileSimulation(LevelData ldata){
         //Initialize stuff
-        Layer simulationLayer = new Layer(ldata.getBackdrop().getCols(), ldata.getBackdrop().getRows(), "simulation", 0, 0, LayerImportances.EDITOR_SCRIPTMASK + 1);
+        Layer simulationLayer;
+        LayerToggler toggler = editorFrame.getLayerToggler("simulation");
+        if (toggler == null)
+            simulationLayer = new Layer(ldata.getBackdrop().getCols(), ldata.getBackdrop().getRows(), "simulation", 0, 0, LayerImportances.EDITOR_SCRIPTMASK + 1);
+        else
+            simulationLayer = toggler.getLayer();
+        simulationLayer.clearLayer();
         LevelScriptMask snowMask    = ldata.getLevelScriptMask(LevelScriptRegistry.SCRIPT_OVERLAYTILES, "snow");
         LevelScriptMask iceMask     = ldata.getLevelScriptMask(LevelScriptRegistry.SCRIPT_OVERLAYTILES, "ice");
         LevelScriptMask bridgeMask  = ldata.getLevelScriptMask(LevelScriptRegistry.SCRIPT_OVERLAYTILES, "bridge");
