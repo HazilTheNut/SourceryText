@@ -179,11 +179,18 @@ public class EditorFrame extends JFrame {
         windowLayersPanel.remove(toggler);
     }
 
-    void addLayerToggler(LayerToggler toggler){
+    /**
+     * Adds a LayerToggler to the list at the top of the screen. Returns whether or not a new layer toggler was added.
+     *
+     * @param toggler The LayerToggler you want to add
+     * @return Returns true if the LayerToggler had not already existed in the list, and false if it had.
+     */
+    boolean addLayerToggler(LayerToggler toggler){
         for (Component c : windowLayersPanel.getComponents())
-            if (toggler.equals(c)) return;
+            if (toggler.equals(c)) return false;
         windowLayersPanel.add(toggler);
         windowLayersPanel.validate();
+        return true;
     }
 
     public ArrayList<LayerToggler> getLayerTogglers(){

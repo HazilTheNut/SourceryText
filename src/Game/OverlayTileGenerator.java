@@ -16,19 +16,30 @@ public class OverlayTileGenerator {
      * A Utility class that generates overlay tiles for quick and easy use.
      */
 
+    public final SpecialText TILE_BRIDGE = new SpecialText('=', new Color(115, 76, 49),   new Color(77, 50, 33, 240));
+    public final SpecialText TILE_SNOW   = new SpecialText(' ', Color.WHITE, new Color(149, 149, 161));
+
     public Tile createAshTile(Coordinate pos, Level level){
+        return genericCreateTile(level, pos, "Ash", getAshTileSpecTxt(), TagRegistry.ASH, TagRegistry.FOOTPRINTS);
+    }
+
+    public SpecialText getAshTileSpecTxt(){
         Random random = new Random();
         if (random.nextDouble() < 0.25)
-            return genericCreateTile(level, pos, "Ash", new SpecialText('.', new Color(81, 77, 77), new Color(60, 58, 55)), TagRegistry.ASH, TagRegistry.FOOTPRINTS);
+            return new SpecialText('.', new Color(81, 77, 77), new Color(60, 58, 55));
         else
-            return genericCreateTile(level, pos, "Ash", new SpecialText(' ', Color.WHITE,           new Color(60, 58, 55)), TagRegistry.ASH, TagRegistry.FOOTPRINTS);
+            return new SpecialText(' ', Color.WHITE,           new Color(60, 58, 55));
     }
 
     public Tile createIceTile(Coordinate pos, Level level){
-        char c = ((23 * 113 * pos.getX() + pos.getY()) % 2 == 0) ? ' ' : '/';
-        Tile iceTile = genericCreateTile(level, pos, "Ice", new SpecialText(c, new Color(220, 220, 255), new Color(109, 133, 166)), TagRegistry.WET, TagRegistry.FROZEN, TagRegistry.FLAMMABLE, TagRegistry.SLIDING);
+        Tile iceTile = genericCreateTile(level, pos, "Ice", getIceTileSpecTxt(pos), TagRegistry.WET, TagRegistry.FROZEN, TagRegistry.FLAMMABLE, TagRegistry.SLIDING);
         iceTile.removeTag(TagRegistry.WET);
         return iceTile;
+    }
+
+    public SpecialText getIceTileSpecTxt(Coordinate pos){
+        char c = ((23 * 113 * pos.getX() + pos.getY()) % 2 == 0) ? ' ' : '/';
+        return new SpecialText(c, new Color(220, 220, 255), new Color(109, 133, 166));
     }
 
     public Tile createIceWallTile(Coordinate pos, Level level){
@@ -43,7 +54,7 @@ public class OverlayTileGenerator {
     }
 
     public Tile createSnowTile(Coordinate pos, Level level){
-        Tile snowTile = genericCreateTile(level, pos, "Snow", new SpecialText(' ', Color.WHITE, new Color(149, 149, 161)), TagRegistry.WET, TagRegistry.FROZEN, TagRegistry.FLAMMABLE, TagRegistry.SNOW, TagRegistry.FOOTPRINTS);
+        Tile snowTile = genericCreateTile(level, pos, "Snow", TILE_SNOW, TagRegistry.WET, TagRegistry.FROZEN, TagRegistry.FLAMMABLE, TagRegistry.SNOW, TagRegistry.FOOTPRINTS);
         snowTile.removeTag(TagRegistry.WET);
         return snowTile;
     }
@@ -61,7 +72,7 @@ public class OverlayTileGenerator {
     }
 
     public Tile createBridgeTile(Coordinate pos, Level level){
-        return genericCreateTile(level, pos, "Bridge", new SpecialText('=', new Color(115, 76, 49),   new Color(77, 50, 33, 240)), TagRegistry.FLAMMABLE);
+        return genericCreateTile(level, pos, "Bridge", TILE_BRIDGE, TagRegistry.FLAMMABLE);
     }
 
     private Tile genericCreateTile(Level level, Coordinate pos, String name, SpecialText icon, int... tags){

@@ -14,6 +14,7 @@ public class LevelScriptRegistry {
 
     public static final int SCRIPT_LIGHTING  = 2;
     public static final int SCRIPT_WATERFLOW = 6;
+    public static final int SCRIPT_OVERLAYTILES = 5;
 
     static{
         //Registering stuff starts here
@@ -21,7 +22,7 @@ public class LevelScriptRegistry {
         scriptMap.put(SCRIPT_LIGHTING, LightingEffects.class);
         scriptMap.put(3, ResetOnEnter.class);
         scriptMap.put(4, SpaceBackground.class);
-        scriptMap.put(5, GenerateOverlayTiles.class);
+        scriptMap.put(SCRIPT_OVERLAYTILES, GenerateOverlayTiles.class);
         scriptMap.put(SCRIPT_WATERFLOW, WaterFlow.class);
         scriptMap.put(7, CliffsFalling.class);
 
