@@ -13,7 +13,7 @@ import javax.swing.*;
  */
 public class GameStart {
 
-    public static void main(String[] args){
+    public void main(){
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

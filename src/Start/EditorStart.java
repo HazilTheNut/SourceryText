@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class EditorStart {
 
-    public static void main (String[] args){
+    public void main (){
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
