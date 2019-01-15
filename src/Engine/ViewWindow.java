@@ -1,11 +1,14 @@
 package Engine;
 
+import Data.FileIO;
 import Engine.SpecialGraphics.SpecialGraphics;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -65,7 +68,25 @@ public class ViewWindow extends JComponent implements ComponentListener, MouseIn
         VER_MARGIN = (getHeight() - displayHeight) / 2;
 
         int fontSizeAdjustment = 4;
-        calculatedFont = (new Font(Font.MONOSPACED, Font.PLAIN, CHAR_SIZE + fontSizeAdjustment));
+        Font newFont = generateFont(CHAR_SIZE + fontSizeAdjustment);
+        if (newFont != null)
+            calculatedFont = newFont;
+    }
+
+    private ArrayList<Font> generatedFonts = new ArrayList<>();
+
+    private Font generateFont(int size){
+        for (Font font : generatedFonts)
+            if (font.getSize() == size) return font;
+        FileIO io = new FileIO();
+        try {
+            Font newFont = Font.createFont(Font.TRUETYPE_FONT, new File(io.getRootFilePath() + "font.ttf")).deriveFont((float)size);
+            generatedFonts.add(newFont);
+            return newFont;
+        } catch (FontFormatException | IOException ignored) {}
+        Font newfont = new Font(Font.MONOSPACED, Font.PLAIN, size);
+        generatedFonts.add(newfont);
+        return newfont;
     }
 
     @Override
