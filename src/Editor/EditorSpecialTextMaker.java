@@ -35,7 +35,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
 
         setTitle("SpecialText Creator");
 
-        setMinimumSize(new Dimension(500, 350));
+        setMinimumSize(new Dimension(600, 500));
 
         //Buttons and text box on left
         charField = new JTextField(3);

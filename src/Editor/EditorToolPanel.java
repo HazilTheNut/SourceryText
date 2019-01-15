@@ -708,14 +708,14 @@ public class EditorToolPanel extends JPanel {
         } else {
             FileIO io = new FileIO();
             io.quickSerializeLevelData(ldata, previousFilePath);
-            removeFrameAsterisk();
+            generateWindowTitle(editorFrame, previousFilePath);
         }
     }
 
     private void saveLevelAs (LevelData ldata){
         FileIO io = new FileIO();
         previousFilePath = io.serializeLevelData(ldata);
-        removeFrameAsterisk();
+        generateWindowTitle(editorFrame, previousFilePath);
     }
 
     private void openLevel(WindowWatcher watcher){
@@ -728,9 +728,18 @@ public class EditorToolPanel extends JPanel {
         if (levelFile != null) {
             LevelData levelData = io.openLevel(levelFile);
             EditorFrame nf = new EditorFrame(levelData, watcher);
+            generateWindowTitle(nf, levelFile.getPath());
             nf.setToolPanelFilePath(levelFile.getPath());
             nf.setTextPanelContents(mi.getTextPanel().getButtonManifest());
         }
+    }
+
+    private void generateWindowTitle(JFrame frame, String path){
+        File file = new File(path);
+        if (file.exists())
+            frame.setTitle("Sourcery Text Level Editor (" + file.getName() + ")");
+        else
+            frame.setTitle("Sourcery Text Level Editor");
     }
 
     private void newLevel(WindowWatcher watcher) {

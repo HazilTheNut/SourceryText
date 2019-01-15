@@ -108,6 +108,8 @@ public class FileIO {
         String path = "";
         try {
             path = decodeFilePath(EditorToolPanel.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            path = path.substring(0, path.lastIndexOf('/'));
+            path += "/LevelData";
             return chooseFile(path, "lda", "Sourcery Text Level Data");
         } catch (URISyntaxException e) {
             e.printStackTrace();
