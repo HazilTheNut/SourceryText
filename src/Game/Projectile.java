@@ -89,6 +89,8 @@ public class Projectile extends TagHolder {
             iconLayer.setVisible(true);
             DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", normalizedVelocityX, normalizedVelocityY);
             while (distance < (range * velocityMagnitude)) {
+                if (checkCollision(xpos, ypos))
+                    return;
                 if (normalizedVelocityX != 0 && checkCollision(xpos + normalizedVelocityX, ypos))
                     return;
                 if (normalizedVelocityY != 0 && checkCollision(xpos, ypos + normalizedVelocityY))
