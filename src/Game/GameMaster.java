@@ -31,6 +31,7 @@ public class GameMaster {
         this.layerManager.getWindow().addMouseMotionListener(mouseInput);
         this.layerManager.getWindow().addMouseWheelListener(mouseInput);
         this.layerManager.getWindow().addKeyListener(mouseInput);
+        this.layerManager.getWindow().setFocusTraversalKeysEnabled(false);
         frame.addKeyListener(mouseInput);
         this.layerManager.getWindow().addKeyListener(new DebugWindowOpener());
         frame.addKeyListener(new DebugWindowOpener());

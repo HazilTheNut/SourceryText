@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by Jared on 3/28/2018.
  */
-public class GameMouseInput implements MouseInputListener, MouseWheelListener, KeyListener {
+public class GameMouseInput implements MouseInputListener, MouseWheelListener, KeyListener, KeyEventDispatcher {
 
     /**
      * GameMouseInput:
@@ -94,6 +94,12 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
 
     public Coordinate getMouseScreenPos() {
         return mouseScreenPos;
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent e) {
+        System.out.println(e.paramString());
+        return false;
     }
 
     public interface InputEventAction {

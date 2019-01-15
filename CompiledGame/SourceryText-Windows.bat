@@ -8,4 +8,4 @@
 ::  your downloads idk
 
 
-javaw -jar SourceryText.jar
+start javaw -jar SourceryText.jar
