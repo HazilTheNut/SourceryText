@@ -21,6 +21,9 @@ import java.awt.*;
 public class JarStart {
 
     public static void main (String[] args){
+        for (int ii = 0; ii < args.length; ii++){
+            System.out.printf("[JarStart.main] arg%1$d \'%2$s\'\n", ii, args[ii]);
+        }
         if (args.length != 0 && args[0].contains("editor")) {
             EditorStart editor = new EditorStart();
             editor.main();

@@ -7,4 +7,4 @@
 ::  installed version, for example it might be `C:\Program Files\Java\jdk-11\bin\javaw.exe` or it might be somewhere in
 ::  your downloads idk
 
-start javaw -jar SourceryText.jar editor
+javaw -jar SourceryText.jar editor
