@@ -113,7 +113,10 @@ public class DebugWindow{
                             LogEntry entry = entriesToAdd.get(i);
                             DebugLogPane logPane = getDebugLog(entry.paneID);
                             if (logPane != null) {
-                                logPane.addEntry(entry.caption, entry.message);
+                                if (entry.message == null)
+                                    logPane.removeEntry(entry.caption);
+                                else
+                                    logPane.addEntry(entry.caption, entry.message);
                             }
                         }
                     }
@@ -178,7 +181,17 @@ public class DebugWindow{
      * @param args The objects being substituting into the value, according to Java String formatting.
      */
     public static void reportf(int screen, String caption, String value, Object... args){
-        entriesToAdd.add(new LogEntry(screen, caption, String.format(value, args)));
+        addLine(screen, caption, String.format(value, args));
+    }
+
+    public static void removeLine(int screen, String caption){
+        DebugLogPane logPane = getDebugLog(screen);
+        if (logPane != null && logPane.isCaptionSensitive())
+            addLine(screen, caption, null);
+    }
+
+    private static void addLine(int screen, String caption, String message){
+        entriesToAdd.add(new LogEntry(screen, caption, message));
         DebugLogPane logPane = getDebugLog(screen);
         if (logPane != null)
             logPane.moveScrollBar();

@@ -181,6 +181,10 @@ public class QuickMenu implements MouseInputReceiver {
 
     @Override
     public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
+        if (actions.contains(InputMap.OPEN_MENU) && menuLayer.getVisible()){
+            closeMenu();
+            return true;
+        }
         return menuLayer.getVisible();
     }
 

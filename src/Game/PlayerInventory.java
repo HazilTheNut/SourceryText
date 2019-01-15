@@ -250,12 +250,7 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
 
     @Override
     public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
-        Item item = playerInv.getItemAtCursor(screenPos);
-        if (item != null)
-            return playerInv.onItemClick(item, actions);
-        item = otherInv.getItemAtCursor(screenPos);
-        if (item != null)
-            return otherInv.onItemClick(item, actions);
+        //Opening and closing inventory
         if (actions.contains(InputMap.INVENTORY)) {
             if (playerInv.isShowing()){
                 playerInv.close();
@@ -265,7 +260,20 @@ public class PlayerInventory implements MouseInputReceiver, Serializable {
                 playerInv.show();
                 updateItemDescription(null, null);
             }
+        } else if (actions.contains(InputMap.OPEN_MENU)){
+            if (playerInv.isShowing() || otherInv.isShowing()){
+                playerInv.close();
+                otherInv.close();
+                return true;
+            }
         }
+        //Do stuff with items
+        Item item = playerInv.getItemAtCursor(screenPos);
+        if (item != null)
+            return playerInv.onItemClick(item, actions);
+        item = otherInv.getItemAtCursor(screenPos);
+        if (item != null)
+            return otherInv.onItemClick(item, actions);
         return isInInvLayers(screenPos);
     }
 

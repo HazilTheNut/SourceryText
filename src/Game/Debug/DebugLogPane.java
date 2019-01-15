@@ -27,6 +27,10 @@ public class DebugLogPane extends JComponent {
         setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
     }
 
+    public boolean isCaptionSensitive() {
+        return captionSensitive;
+    }
+
     void addEntry(String caption, String text){
         if (captionSensitive) {
             for (int i = 0; i < debugEntries.size(); i++) {
@@ -37,6 +41,15 @@ public class DebugLogPane extends JComponent {
             }
         }
         debugEntries.add(new DebugEntry(caption, text));
+    }
+
+    void removeEntry(String caption){
+        for (int i = 0; i < debugEntries.size(); i++) {
+            if (debugEntries.get(i).caption.equals(caption)) {
+                debugEntries.remove(i);
+                return;
+            }
+        }
     }
 
     public void update(){

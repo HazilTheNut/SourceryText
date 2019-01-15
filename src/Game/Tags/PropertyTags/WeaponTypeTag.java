@@ -29,7 +29,11 @@ public class WeaponTypeTag extends Tag {
 
     private void assignWeapon(TagEvent e){
         if (e.getTarget() instanceof CombatEntity && e.getSource() instanceof Item){
-            ((CombatEntity)e.getTarget()).setWeapon((Item)e.getSource());
+            CombatEntity ce = (CombatEntity)e.getTarget();
+            if (ce.getWeapon().equals(e.getTagOwner()))
+                ce.setWeapon(null);
+            else
+                ce.setWeapon((Item)e.getTagOwner());
         }
     }
 

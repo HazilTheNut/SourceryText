@@ -366,7 +366,10 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         ArrayList<Entity> entities = currentLevel.getEntities();
         for (int i = 0; i < entities.size();) {
             Entity e = entities.get(i);
+            long startTime = System.nanoTime();
             e.onTurn();
+            float turntime = (System.nanoTime() - startTime) / 1000000f;
+            DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", e.getUniqueID()), "Name: \'%1$-20s\' Pos: %2$-9s Time: %3$.3fms", e.getName(), e.getLocation(), turntime);
             i++;
         }
         runTimes[2] = System.nanoTime();
