@@ -126,7 +126,7 @@ public class Entity extends TagHolder implements Serializable {
 
     public void onLevelExit(){
         if (isVisible()) gi.getLayerManager().removeLayer(sprite);
-        DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' - - -", getName());
+        DebugWindow.removeLine(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()));
     }
 
     private String createEntityLayerName(EntityStruct struct, Coordinate coordinate){
@@ -198,8 +198,7 @@ public class Entity extends TagHolder implements Serializable {
     public void selfDestruct(){
         isAlive = false;
         gi.removeEntity(this);
-        gi.getLayerManager().removeLayer(sprite);
-        DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' - - -", getName());
+        onLevelExit();
         for (Tag tag : getTags())
             tag.onEntityDestruct(this);
     }
@@ -363,7 +362,6 @@ public class Entity extends TagHolder implements Serializable {
             turnEvent.doCancelableActions();
         }
         updateInventory();
-        DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()), "Name: \'%1$-20s\' Pos: %2$s", getName(), location);
     }
 
     @Override

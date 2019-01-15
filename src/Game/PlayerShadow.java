@@ -89,12 +89,6 @@ public class PlayerShadow extends CombatEntity implements PlayerActionCollector 
     }
 
     @Override
-    public void onLevelExit() {
-        super.onLevelExit();
-        selfDestruct();
-    }
-
-    @Override
     public void onPlayerAttack(Coordinate loc, Item weapon) {
         Item copy = weapon.copy(gi);
         copy.addTag(TagRegistry.ETHEREAL, this);
