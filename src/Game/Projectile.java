@@ -31,7 +31,7 @@ public class Projectile extends TagHolder {
     
     protected double normalizedVelocityX; //However, all projectile trajectory adjustments are based on vector addition, which results in vectors whose magnitude is not UNITS_PER_CYCLE
     protected double normalizedVelocityY; //Therefore, there are two velocities. "Internal" for calculating travel distance and "normalized" for the projectile's actual motion.
-    private double velocityMagnitude;
+    private double internalVelMagnitude;
 
     private Layer iconLayer;
     private LayerManager lm;
@@ -65,11 +65,9 @@ public class Projectile extends TagHolder {
         this.gi = gi;
         double angle = Math.atan2(targetPos.getY() - Math.round(ypos), targetPos.getX() - Math.round(xpos));
         DebugWindow.reportf(DebugWindow.GAME, "Projectile.playerInit","Start pos: %1$s; Angle: %2$f", startPos, angle * (180 / Math.PI));
-        internalVelocityX = UNITS_PER_CYCLE * Math.cos(angle);
-        internalVelocityY = UNITS_PER_CYCLE * Math.sin(angle);
-        normalizedVelocityX = internalVelocityX;
-        normalizedVelocityY = internalVelocityY;
-        velocityMagnitude = UNITS_PER_CYCLE;
+        internalVelocityX = Math.cos(angle);
+        internalVelocityY = Math.sin(angle);
+        normalizeVelocity(UNITS_PER_CYCLE);
         goalDistance = startPos.hypDistance(targetPos);
         iconLayer = new Layer(1, 1, String.format("Projectile: %1$d", gi.issueUID()), (int)xpos, (int)ypos, LayerImportances.ANIMATION);
         iconLayer.editLayer(0, 0, getIcon(icon));
@@ -81,14 +79,41 @@ public class Projectile extends TagHolder {
         return baseIcon;
     }
 
+    /*
+    PROJECTILE MOTION:
+
+    Projectiles have five fundamental requirements:
+        1) In order for correct collision detection, projectiles must move at a fixed speed of UNITS_PER_CYCLE (= 0.9)
+        2) Projectile motion can be modified purely by vector addition.
+        3) The magnitude of the velocity vector affects how far the projectile will travel.
+        4) The "speed" of a projectile is reflected by how far it goes.
+        5) Players and enemies target specific locations with their projectiles, but their weapons can limit to a maximum distance.
+
+    Number 2 could be satisfied by the projectile just normalizing its velocity at the end of each movement cycle, but then Number 3 gets completely ignored.
+    It makes sense if shooting away from a repulsive magnet should accelerate the projectile (if metallic) and cause it to travel further.
+
+    To reconcile for all the conflicting requirements, Projectiles have two velocity vectors:
+        1: The "internal" velocity, which is used for vector addition math and speed calculations. Its magnitude is variable.
+        2: The "normalized" velocity, which is used for the flight animation and collision detection. Its magnitude is always UNITS_PER_CYCLE.
+
+    The "normalized" velocity is then calculated by normalizing the "internal" velocity to length UNITS_PER_CYCLE.
+    Every movement cycle, the projectile moves according to the "normalized" velocity vector, which is recalculated each cycle. At the end of the cycle, magnets, wind, etc. modify the "internal" velocity.
+
+    Projectiles are initialized with a target distance to travel. The number of movement cycles = (target distance / UNITS_PER_CYCLE)
+    However, if the projectile's internal velocity changes, the target distance is multiplied by the magnitude of the internal velocity.
+    So getting slowed down causes the projectile to fall short of the target.
+     */
+
     //Recommended to be ran within a thread separate from the main one.
     public void launchProjectile(int maxRange){
         lm.addLayer(iconLayer);
         double distance = 0;
-        double range = Math.min(goalDistance, maxRange);
+        double targetDistance = Math.min(goalDistance, maxRange);
         iconLayer.setVisible(true);
         DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", normalizedVelocityX, normalizedVelocityY);
-        while (distance < (range * velocityMagnitude / UNITS_PER_CYCLE)) {
+        while (distance < (targetDistance * internalVelMagnitude)) {
+            double distToTravel = Math.max(0.1, Math.min(UNITS_PER_CYCLE, targetDistance - distance)); //How far the projectile should travel this cycle.
+            normalizeVelocity(distToTravel); //When reaching the end of the projectile's travel, there may be "leftover" distance that is less tan UNITS_PER_CYCLE, so the remaining distance is accounted for.
             if (checkCollision(xpos + normalizedVelocityX, ypos + normalizedVelocityY))
                 return;
             if (normalizedVelocityX != 0 && checkCollision(xpos + normalizedVelocityX, ypos))
@@ -103,8 +128,7 @@ public class Projectile extends TagHolder {
             DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile:" + (int)distance, "pos: %1$s", newPos);
             sleep(50);
             gi.onProjectileFly(this);
-            normalizeVelocity();
-            distance += velocityMagnitude;
+            distance += distToTravel;
         }
         collideWithTerrain(getRoundedPos());
     }
@@ -143,11 +167,11 @@ public class Projectile extends TagHolder {
         internalVelocityY += dvy;
     }
 
-    private void normalizeVelocity(){
-        velocityMagnitude = Math.sqrt(Math.pow(internalVelocityX, 2) + Math.pow(internalVelocityY, 2));
-        normalizedVelocityX = internalVelocityX * (UNITS_PER_CYCLE / velocityMagnitude);
-        normalizedVelocityY = internalVelocityY * (UNITS_PER_CYCLE / velocityMagnitude);
-        DebugWindow.reportf(DebugWindow.STAGE, "Projectile.normalize", "normalized speed: %1$.3f internal speed %2$.3f", Math.sqrt(Math.pow(normalizedVelocityX, 2) + Math.pow(normalizedVelocityY, 2)), velocityMagnitude);
+    private void normalizeVelocity(double normalizedSpeed){
+        internalVelMagnitude = Math.sqrt(Math.pow(internalVelocityX, 2) + Math.pow(internalVelocityY, 2));
+        normalizedVelocityX = internalVelocityX * (normalizedSpeed / internalVelMagnitude);
+        normalizedVelocityY = internalVelocityY * (normalizedSpeed / internalVelMagnitude);
+        DebugWindow.reportf(DebugWindow.STAGE, "Projectile.normalize", "normalized speed: %1$.3f internal speed %2$.3f", Math.sqrt(Math.pow(normalizedVelocityX, 2) + Math.pow(normalizedVelocityY, 2)), internalVelMagnitude);
     }
 
     public double getXpos() {
