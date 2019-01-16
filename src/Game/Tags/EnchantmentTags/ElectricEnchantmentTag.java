@@ -56,7 +56,7 @@ public class ElectricEnchantmentTag extends EnchantmentTag {
             for (Entity e : target.getGameInstance().getCurrentLevel().getEntitiesAt(origin)) electricTag.addToBlacklist(e);
             zapProj.addTag(electricTag, null);
             //Launch the projectile
-            zapProj.launchProjectile(origin.hypDistance(target.getLocation()) + 5);
+            zapProj.launchProjectile((int)origin.hypDistance(target.getLocation()) + 5);
         }
     }
 

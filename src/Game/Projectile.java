@@ -41,6 +41,7 @@ public class Projectile extends TagHolder {
     private Coordinate startPos;
     protected GameInstance gi;
 
+    private double goalDistance;
     private final double UNITS_PER_CYCLE = 0.9;
 
     public Projectile(Entity creator, Coordinate target, SpecialText icon){
@@ -49,7 +50,7 @@ public class Projectile extends TagHolder {
         ypos = creator.getLocation().getY();
         targetPos = target;
         startPos = creator.getLocation();
-        init(icon, source.getGameInstance());
+        init(icon, source.getGameInstance(), creator.getLocation(),  target);
     }
 
     public Projectile(Coordinate startPos, Coordinate target, SpecialText icon, GameInstance gi){
@@ -57,24 +58,23 @@ public class Projectile extends TagHolder {
         ypos = startPos.getY();
         targetPos = target;
         this.startPos = startPos;
-        init(icon, gi);
+        init(icon, gi, startPos, target);
     }
 
-    private void init(SpecialText icon, GameInstance gi){
+    private void init(SpecialText icon, GameInstance gi, Coordinate startPos, Coordinate targetPos){
         this.gi = gi;
-        if (!startPos.equals(targetPos)){
-            double angle = Math.atan2(targetPos.getY() - Math.round(ypos), targetPos.getX() - Math.round(xpos));
-            DebugWindow.reportf(DebugWindow.GAME, "Projectile.playerInit","Start pos: %1$s; Angle: %2$f", startPos, angle * (180 / Math.PI));
-            internalVelocityX = UNITS_PER_CYCLE * Math.cos(angle);
-            internalVelocityY = UNITS_PER_CYCLE * Math.sin(angle);
-            normalizedVelocityX = internalVelocityX;
-            normalizedVelocityY = internalVelocityY;
-            velocityMagnitude = 1;
-            iconLayer = new Layer(1, 1, String.format("Projectile: %1$d", gi.issueUID()), (int)xpos, (int)ypos, LayerImportances.ANIMATION);
-            iconLayer.editLayer(0, 0, getIcon(icon));
-            iconLayer.setVisible(false);
-            lm = gi.getLayerManager();
-        }
+        double angle = Math.atan2(targetPos.getY() - Math.round(ypos), targetPos.getX() - Math.round(xpos));
+        DebugWindow.reportf(DebugWindow.GAME, "Projectile.playerInit","Start pos: %1$s; Angle: %2$f", startPos, angle * (180 / Math.PI));
+        internalVelocityX = UNITS_PER_CYCLE * Math.cos(angle);
+        internalVelocityY = UNITS_PER_CYCLE * Math.sin(angle);
+        normalizedVelocityX = internalVelocityX;
+        normalizedVelocityY = internalVelocityY;
+        velocityMagnitude = UNITS_PER_CYCLE;
+        goalDistance = startPos.hypDistance(targetPos);
+        iconLayer = new Layer(1, 1, String.format("Projectile: %1$d", gi.issueUID()), (int)xpos, (int)ypos, LayerImportances.ANIMATION);
+        iconLayer.editLayer(0, 0, getIcon(icon));
+        iconLayer.setVisible(false);
+        lm = gi.getLayerManager();
     }
 
     protected SpecialText getIcon(SpecialText baseIcon){
@@ -82,32 +82,31 @@ public class Projectile extends TagHolder {
     }
 
     //Recommended to be ran within a thread separate from the main one.
-    public void launchProjectile(int range){
-        if (!targetPos.equals(startPos)) {
-            lm.addLayer(iconLayer);
-            double distance = 0;
-            iconLayer.setVisible(true);
-            DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", normalizedVelocityX, normalizedVelocityY);
-            while (distance < (range * velocityMagnitude)) {
-                if (checkCollision(xpos, ypos))
-                    return;
-                if (normalizedVelocityX != 0 && checkCollision(xpos + normalizedVelocityX, ypos))
-                    return;
-                if (normalizedVelocityY != 0 && checkCollision(xpos, ypos + normalizedVelocityY))
-                    return;
-                xpos += normalizedVelocityX;
-                ypos += normalizedVelocityY;
-                Coordinate newPos = getRoundedPos(xpos, ypos);
-                iconLayer.setPos(newPos);
-                iconLayer.editLayer(0, 0, getIcon(iconLayer.getSpecialText(0, 0)));
-                DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile:" + (int)distance, "pos: %1$s", newPos);
-                sleep(50);
-                gi.onProjectileFly(this);
-                normalizeVelocity();
-                distance += UNITS_PER_CYCLE;
-            }
-            collideWithTerrain(getRoundedPos());
+    public void launchProjectile(int maxRange){
+        lm.addLayer(iconLayer);
+        double distance = 0;
+        double range = Math.min(goalDistance, maxRange);
+        iconLayer.setVisible(true);
+        DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", normalizedVelocityX, normalizedVelocityY);
+        while (distance < (range * velocityMagnitude / UNITS_PER_CYCLE)) {
+            if (checkCollision(xpos + normalizedVelocityX, ypos + normalizedVelocityY))
+                return;
+            if (normalizedVelocityX != 0 && checkCollision(xpos + normalizedVelocityX, ypos))
+                return;
+            if (normalizedVelocityY != 0 && checkCollision(xpos, ypos + normalizedVelocityY))
+                return;
+            xpos += normalizedVelocityX;
+            ypos += normalizedVelocityY;
+            Coordinate newPos = getRoundedPos(xpos, ypos);
+            iconLayer.setPos(newPos);
+            iconLayer.editLayer(0, 0, getIcon(iconLayer.getSpecialText(0, 0)));
+            DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile:" + (int)distance, "pos: %1$s", newPos);
+            sleep(50);
+            gi.onProjectileFly(this);
+            normalizeVelocity();
+            distance += velocityMagnitude;
         }
+        collideWithTerrain(getRoundedPos());
     }
 
     private boolean checkCollision(double xpos, double ypos){
@@ -119,7 +118,7 @@ public class Projectile extends TagHolder {
                 destroy();
                 return true;
             }
-            if (!gi.isSpaceAvailable(checkPos, TagRegistry.TILE_WALL) || checkPos.equals(targetPos)) { //"No Pathing" Tag is also applicable to Deep Water tiles, which should be something projectiles can go over.
+            if (!gi.isSpaceAvailable(checkPos, TagRegistry.TILE_WALL)) { //"No Pathing" Tag is also applicable to Deep Water tiles, which should be something projectiles can go over.
                 collideWithTerrain(checkPos);
                 return true;
             } else {
@@ -192,7 +191,7 @@ public class Projectile extends TagHolder {
         Tile landingTile = gi.getTileAt(pos);
         ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(pos);
         for (Entity entity : entities)
-            collide(entity);
+            if (!entity.isSolid()) collide(entity); //Entity treated as "Terrain" if it can be stepped over. If it were "solid" the projectile would hit it upon collision check.
         if (landingTile != null && !landingTile.hasTag(TagRegistry.BOTTOMLESS)) {
             collide(landingTile);
         }

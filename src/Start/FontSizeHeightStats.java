@@ -20,10 +20,17 @@ public class FontSizeHeightStats {
 
         System.out.println("FONT SIZE TEST: Font Size vs. Height");
 
-        for (int i = 0; i < 100; i++) {
+        float avgFontHeightPerSize = 0;
+        float numCycles = 100;
+
+        for (int i = 0; i < numCycles; i++) {
             Font font = new Font(Font.MONOSPACED, Font.PLAIN, i);
             FontMetrics metrics = dummy.getFontMetrics(font);
             System.out.printf("%1$d | %2$d\n", i, metrics.getHeight());
+            if (i > 0)
+                avgFontHeightPerSize += ((float)metrics.getHeight() / i) / (numCycles - 1);
         }
+
+        System.out.printf("\nAvg. Font height per size: %1$.3f\n", avgFontHeightPerSize);
     }
 }
