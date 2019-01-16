@@ -67,8 +67,9 @@ public class FileIO {
      * Cleans up file paths for easier interfacing with.
      *
      * 1) It parses the file path using URLDecoder
-     * 2) It replaces every '\' with a '/', which is less of a pain to work with.
-     * 3) It removes the '/' at the start of the file path.
+     * and on Windows:
+     *   2) It replaces every '\' with a '/', which is less of a pain to work with.
+     *   3) It removes the '/' at the start of the file path.
      *
      * @param rawPath The 'raw' file path that needs cleaning
      * @return A much cleaner file path

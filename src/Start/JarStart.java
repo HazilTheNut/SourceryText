@@ -1,12 +1,5 @@
 package Start;
 
-import Data.LevelData;
-import Editor.EditorFrame;
-import Editor.WindowWatcher;
-
-import javax.swing.*;
-import java.awt.*;
-
 /**
  * Main class of both the SourceryText game and level editor.
  *
