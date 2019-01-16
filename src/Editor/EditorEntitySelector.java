@@ -1,6 +1,7 @@
 package Editor;
 
 import Data.EntityStruct;
+import Data.FileIO;
 import Engine.SpecialText;
 import Game.Registries.EntityRegistry;
 
@@ -8,11 +9,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by Jared on 4/8/2018.
  */
-public class EditorEntitySelector extends JFrame {
+class EditorEntitySelector extends JFrame {
 
     /**
      * EditorEntitySelector:
@@ -81,7 +84,7 @@ public class EditorEntitySelector extends JFrame {
 
     class EntityListRenderer extends JLabel implements ListCellRenderer {
 
-        public EntityListRenderer(){
+        EntityListRenderer(){
             setOpaque(true);
             setHorizontalAlignment(LEFT);
             setVerticalAlignment(CENTER);
@@ -95,6 +98,17 @@ public class EditorEntitySelector extends JFrame {
                 Color newBkg = new Color((bkg.getRed() * bkg.getAlpha()) / 255, (bkg.getGreen() * bkg.getAlpha()) / 255, (bkg.getBlue() * bkg.getAlpha()) / 255);
                 SpecialText icon = new SpecialText(struct.getDisplayChar().getCharacter(), struct.getDisplayChar().getFgColor(), newBkg);
                 setIcon(new SingleTextRenderer(icon));
+                // The default font didn't work on linux; this stuff fixes that
+                FileIO io = new FileIO();
+                int height = -getBounds().y; // getHeight() returns 0 somehow, but this kinda works
+                float size = height/1.5f;
+                Font font = new Font(Font.MONOSPACED, Font.PLAIN, (int)size);
+                try {
+                    font = Font.createFont(Font.TRUETYPE_FONT, new File(io.getRootFilePath() + "font.ttf")).deriveFont(size);
+                } catch (FontFormatException | IOException e) {
+                    System.out.println("Packaged font not found; falling back to default");
+                }
+                setFont(font);
                 setText(struct.getEntityName());
             } else {
                 setIcon(new SingleTextRenderer(new SpecialText('/', Color.RED, Color.BLACK)));
