@@ -144,8 +144,8 @@ public class Coordinate implements Serializable {
      * @param other The other Coordinate to find the distance to
      * @return The sqrt(dx^2 + dy^2) distance we all know and love
      */
-    public int hypDistance(Coordinate other){
-        return (int)Math.sqrt(Math.pow(getX() - other.getX(), 2) + Math.pow(getY() - other.getY(), 2));
+    public double hypDistance(Coordinate other){
+        return Math.sqrt(Math.pow(getX() - other.getX(), 2) + Math.pow(getY() - other.getY(), 2));
     }
 
     @Override
