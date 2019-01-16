@@ -16,10 +16,10 @@ When the changes hit, you (the player) fell unconscious, waking up months after.
 SYSTEM REQUIREMENTS
 
 Computer must be more powerful than a potato. Toasters will probably work, so that's good. If you unfortunately have only a potato, we suggest putting the potato in the toaster to boost its power.
-Be sure to hook up the coffee machine to the toaster, to ensure compatibility with Java. 8 beans minimum capacity for the coffee machine, though.
+Be sure to hook up the coffee machine to the toaster, to ensure compatibility with Java. 11 beans minimum capacity for the coffee machine, though.
 
 
 FOR THOSE CONCERNED WITH EDITING THE SOURCE CODE (OF THE GAME, NOT IN THE GAME)
 
 Running GameStart out of the IDE will be meet with failure.
-The game is built to be exported as a .jar before being ran.
+The game is built to be exported as a .jar in the CompiledGame directory before being ran.
