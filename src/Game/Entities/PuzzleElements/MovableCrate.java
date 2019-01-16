@@ -39,7 +39,7 @@ public class MovableCrate extends CombatEntity {
         super.onTurn();
         if (hasTag(TagRegistry.ON_FIRE)){
             fireTimer--;
-            setHealth(getMaxHealth() / 5);
+            setHealth(getMaxHealth() / 5 * fireTimer);
         }
         if (fireTimer == 0){
             selfDestruct();
