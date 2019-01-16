@@ -111,7 +111,7 @@ public class Projectile extends TagHolder {
         double targetDistance = Math.min(goalDistance, maxRange);
         iconLayer.setVisible(true);
         DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", normalizedVelocityX, normalizedVelocityY);
-        while (distance < (targetDistance * internalVelMagnitude)) {
+        while (distance < (targetDistance * internalVelMagnitude) || shouldntStop()) {
             double distToTravel = Math.max(0.1, Math.min(UNITS_PER_CYCLE, targetDistance - distance)); //How far the projectile should travel this cycle.
             normalizeVelocity(distToTravel); //When reaching the end of the projectile's travel, there may be "leftover" distance that is less tan UNITS_PER_CYCLE, so the remaining distance is accounted for.
             if (checkCollision(xpos + normalizedVelocityX, ypos + normalizedVelocityY))
@@ -131,6 +131,11 @@ public class Projectile extends TagHolder {
             distance += distToTravel;
         }
         collideWithTerrain(getRoundedPos());
+    }
+
+    private boolean shouldntStop() {
+        // Arrows shouldn't hit the ground in space
+        return gi.getCurrentLevel().getTileAt(getRoundedPos()).hasTag(TagRegistry.NO_GRAVITY) && this.hasTag(TagRegistry.ARROW);
     }
 
     private boolean checkCollision(double xpos, double ypos){

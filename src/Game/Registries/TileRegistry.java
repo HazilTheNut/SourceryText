@@ -29,7 +29,7 @@ public class TileRegistry {
         registerTile(9,  "Sand",          new SpecialText(' ', Color.WHITE,              new Color(189, 182, 153)), TagRegistry.SAND, TagRegistry.FOOTPRINTS);
         registerTile(10, "Wood Floor",    new SpecialText(' ', Color.WHITE,              new Color(61, 28, 0)),     TagRegistry.FLAMMABLE, TagRegistry.BURN_SLOW);
         registerTile(11, "Cactus",        new SpecialText('#', new Color(126, 210, 109), new Color(82, 198, 91)),   TagRegistry.TILE_WALL, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE, TagRegistry.PRICKLY);
-        registerTile(12, "Space",         new SpecialText('+', new Color(45, 45, 45),    new Color(10, 10, 10)),    TagRegistry.SLIDING);
+        registerTile(12, "Space",         new SpecialText('+', new Color(45, 45, 45),    new Color(10, 10, 10)),    TagRegistry.SLIDING, TagRegistry.NO_GRAVITY);
         registerTile(13, "Clay",          new SpecialText(' ', new Color(20, 20, 20),    new Color(110, 70, 20)),   TagRegistry.NO_PATHING, TagRegistry.TILE_WALL, TagRegistry.DIGGABLE, TagRegistry.SAND);
 
         //Registering stuff ends here

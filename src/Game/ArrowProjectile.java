@@ -4,11 +4,13 @@ import Data.Coordinate;
 import Engine.SpecialText;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.Registries.TagRegistry;
 
 public class ArrowProjectile extends ItemProjectile {
 
     public ArrowProjectile(Entity creator, Coordinate target, SpecialText icon, Item item, int damage) {
         super(creator, target, icon, item, damage);
+        this.addTag(TagRegistry.ARROW, this);
     }
 
     @Override

@@ -123,6 +123,7 @@ public class TagRegistry {
     public final static int FOOTPRINTS    = 408;
     public final static int SNOW          = 409;
     public final static int BOTTOMLESS    = 410;
+    public final static int NO_GRAVITY = 411;
 
     public final static int LIVING        = 600;
     public final static int TOGGLING      = 602;
@@ -232,6 +233,7 @@ public class TagRegistry {
         registerTag(FOOTPRINTS, "Soft Ground", FootprintsTag.class);
         registerTag(SNOW, "Snow", SnowTag.class);
         registerTag(BOTTOMLESS, "Bottomless", BottomlessTag.class);
+        registerTag(NO_GRAVITY, "No Gravity", NoGravityTag.class);
 
         //Entity related
         registerTag(LIVING, "Living", LivingTag.class);
