@@ -7,6 +7,7 @@ import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Entities.GameCharacter;
+import Game.LevelScripts.LevelScript;
 import Game.LevelScripts.WaterFlow;
 import Game.Registries.EntityRegistry;
 import Game.Registries.LevelScriptRegistry;
@@ -718,25 +719,8 @@ public class Player extends GameCharacter implements MouseInputReceiver{
                     long loopStartTime = System.nanoTime();
 
                     if (getLocation().stepDistance(levelPos) <= 1){
-                        ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(levelPos);
-                        if (entities.size() == 1) {
-                            entities.get(0).onInteract(this);
-                            for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerInteract(entities.get(0).getLocation());
-                            return; //Don't try to move into the thing you're trying to interact with.
-                        }
-                        else if (entities.size() > 1){
-                            QuickMenu quickMenu = gi.getQuickMenu(); //Create menu of options to interact with
-                            quickMenu.clearMenu();
-                            for (int i = 0; i < entities.size(); i++) {
-                                int finalI = i;
-                                quickMenu.addMenuItem(entities.get(i).getName(), () -> {
-                                    entities.get(finalI).onInteract(this);
-                                    for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerInteract(entities.get(finalI).getLocation());
-                                });
-                            }
-                            quickMenu.showMenu("Interact:", true);
+                        if (interactAt(levelPos))
                             return;
-                        }
                     }
 
                     pathToPosition(levelPos, 150); //Limit of 150 steps away to prevent the game hanging for too long.
@@ -754,6 +738,32 @@ public class Player extends GameCharacter implements MouseInputReceiver{
             });
             pathingThread.start();
         }
+    }
+
+    private boolean interactAt(Coordinate loc){
+        for (LevelScript ls : gi.getCurrentLevel().getLevelScripts()){
+            if (ls.onPlayerInteract(loc)) return true;
+        }
+        ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(loc);
+        if (entities.size() == 1) {
+            entities.get(0).onInteract(this);
+            for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerInteract(entities.get(0).getLocation());
+            return true; //Don't try to move into the thing you're trying to interact with.
+        }
+        else if (entities.size() > 1){
+            QuickMenu quickMenu = gi.getQuickMenu(); //Create menu of options to interact with
+            quickMenu.clearMenu();
+            for (int i = 0; i < entities.size(); i++) {
+                int finalI = i;
+                quickMenu.addMenuItem(entities.get(i).getName(), () -> {
+                    entities.get(finalI).onInteract(this);
+                    for (PlayerActionCollector actionCollector : playerActionCollectors) actionCollector.onPlayerInteract(entities.get(finalI).getLocation());
+                });
+            }
+            quickMenu.showMenu("Interact:", true);
+            return true;
+        }
+        return false;
     }
 
     @Override

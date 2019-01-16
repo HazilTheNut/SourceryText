@@ -411,12 +411,8 @@ public class CombatEntity extends Entity {
     @Override
     public void selfDestruct() {
         if (isAlive) {
-            if (getItems().size() > 0) {
-                EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot Pile", null);
-                for (Item item : getItems()) {
-                    lootPileStruct.addItem(item.getItemData());
-                }
-                gi.addEntity(lootPileStruct, getLocation());
+            for (Item item : getItems()) {
+                gi.dropItem(item, getLocation());
             }
         }
         super.selfDestruct();

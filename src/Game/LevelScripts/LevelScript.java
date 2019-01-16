@@ -115,6 +115,12 @@ public class LevelScript implements Serializable {
         //Override this
     }
 
+    //Ran when the player interacts with a space. Return true to tell the player something got interacted with.
+    public boolean onPlayerInteract(Coordinate interactLoc){
+        //Override this
+        return false;
+    }
+
     public String[] getMaskNames(){
         return new String[0];
     }
