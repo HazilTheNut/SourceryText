@@ -25,7 +25,10 @@ public class ToggleSwitch extends GenericPowerSource {
     @Override
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
-        isOn = readBoolArg(searchForArg(entityStruct.getArgs(), "isOn"), false);
+        if (readBoolArg(searchForArg(entityStruct.getArgs(), "isOn"), false))
+            setToOn();
+        else
+            setToOff();
 
         TogglingTag togglingTag = new TogglingTag();
         togglingTag.setId(TagRegistry.TOGGLING);
@@ -40,16 +43,30 @@ public class ToggleSwitch extends GenericPowerSource {
     }
 
     private void toggle(){
-        isOn = !isOn;
-        if (isOn){
-            powerOn();
-            setIcon(iconOn);
-            updateSprite();
-        } else {
-            powerOff();
-            setIcon(iconOff);
-            updateSprite();
-        }
+        if (isOn)
+            setToOff();
+        else
+            setToOn();
+    }
+
+    private void setToOn(){
+        isOn = true;
+        powerOn();
+        setIcon(iconOn);
+        updateSprite();
+        updateBrightTag(this);
+    }
+
+    public void setToOff(){
+        isOn = false;
+        powerOff();
+        setIcon(iconOff);
+        updateSprite();
+        updateBrightTag(this);
+    }
+
+    public boolean isOn() {
+        return isOn;
     }
 
     @Override

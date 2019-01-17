@@ -111,7 +111,7 @@ public class Tag implements Serializable {
     //Target: null
     public void onEntityAction(TagEvent e){}
 
-    //Ran when the tag holder containing this tag receives another tag. GameInstance is null
+    //Ran when the tag holder containing this tag receives another tag. GameInstance is null. When this event is ran, the newly added tag is already in the tag list of the tagOwner.
     //Source: source of tag addition
     //Target: this
     public void onAdd(TagEvent e){}

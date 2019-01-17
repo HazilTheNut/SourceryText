@@ -61,7 +61,7 @@ public class EntityRegistry {
         registerEntity(22, "Fan",          new SpecialText('/', new Color(150, 150, 200), new Color(100, 100, 125, 50)), Fan.class, TagRegistry.NO_PATHING, TagRegistry.METALLIC, TagRegistry.IMMOVABLE);
         registerEntity(23, "Photogate",    new SpecialText('!', new Color(42,  42,  86),  new Color(20, 20, 51, 100)),   Photogate.class, TagRegistry.IMMOVABLE);
         registerEntity(BRAMBLE, "Bramble", new SpecialText('#', new Color(126, 255, 109), new Color(82, 230, 91, 75)),   Bramble.class, TagRegistry.FLAMMABLE, TagRegistry.PRICKLY, TagRegistry.NO_PATHING, TagRegistry.BURN_SPREAD);
-        registerEntity(25, "Explosive Crate",    new SpecialText('X', new Color(220, 128, 61), new Color(134, 82, 11)),   Photogate.class, TagRegistry.IMMOVABLE, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE, TagRegistry.EXPLOSIVE);
+        registerEntity(25, "Explosive Crate",    new SpecialText('X', new Color(220, 128, 61), new Color(134, 82, 11)),  Photogate.class, TagRegistry.IMMOVABLE, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE, TagRegistry.EXPLOSIVE);
 
         //Registering stuff ends here
     }
