@@ -107,12 +107,12 @@ public class Projectile extends TagHolder {
     //Recommended to be ran within a thread separate from the main one.
     public void launchProjectile(int maxRange){
         lm.addLayer(iconLayer);
-        double distance = 0;
+        double totalDistanceTraveled = 0;
         double targetDistance = Math.min(goalDistance, maxRange);
         iconLayer.setVisible(true);
         DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", normalizedVelocityX, normalizedVelocityY);
-        while (distance < (targetDistance * internalVelMagnitude) || shouldntStop()) {
-            double distToTravel = Math.max(0.1, Math.min(UNITS_PER_CYCLE, (targetDistance * internalVelMagnitude) - distance)); //How far the projectile should travel this cycle.
+        while (totalDistanceTraveled < (targetDistance * internalVelMagnitude)) {
+            double distToTravel = Math.max(0.1, Math.min(UNITS_PER_CYCLE, (targetDistance * internalVelMagnitude) - totalDistanceTraveled)); //How far the projectile should travel this cycle.
             normalizeVelocity(distToTravel); //When reaching the end of the projectile's travel, there may be "leftover" distance that is less tan UNITS_PER_CYCLE, so the remaining distance is accounted for.
             if (checkCollision(xpos + normalizedVelocityX, ypos + normalizedVelocityY))
                 return;
@@ -125,17 +125,17 @@ public class Projectile extends TagHolder {
             Coordinate newPos = getRoundedPos(xpos, ypos);
             iconLayer.setPos(newPos);
             iconLayer.editLayer(0, 0, getIcon(iconLayer.getSpecialText(0, 0)));
-            DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile:" + (int)distance, "pos: %1$s", newPos);
+            DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile:" + (int)totalDistanceTraveled, "pos: %1$s", newPos);
             sleep(50);
             gi.onProjectileFly(this);
-            distance += distToTravel;
+            if (shouldFall()) totalDistanceTraveled += distToTravel;
         }
         collideWithTerrain(getRoundedPos());
     }
 
-    private boolean shouldntStop() {
+    private boolean shouldFall() {
         // Arrows shouldn't hit the ground in space
-        return gi.getCurrentLevel().getTileAt(getRoundedPos()).hasTag(TagRegistry.NO_GRAVITY) && this.hasTag(TagRegistry.ARROW);
+        return !gi.getCurrentLevel().getTileAt(getRoundedPos()).hasTag(TagRegistry.NO_GRAVITY) || !this.hasTag(TagRegistry.ARROW);
     }
 
     private boolean checkCollision(double xpos, double ypos){
