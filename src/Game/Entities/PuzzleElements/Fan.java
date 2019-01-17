@@ -160,11 +160,13 @@ public class Fan extends Entity implements Powerable, FrameDrawListener, Project
 
     @Override
     public void onProjectileFly(Projectile projectile) {
-        if (windDisplayLayer.getVisible() && isWithinWindDomain(projectile.getRoundedPos())){
-            double dotProduct = (direction.getX() * projectile.getNormalizedVelocityX()) + (direction.getY() * projectile.getNormalizedVelocityY());
-            double windTranslationScalar = fanStrength * (1 - Math.abs(dotProduct)) * 0.25f; //Projectiles should not ever move two spaces in one direction in a single movement cycle
-            double windRotationScalar = fanStrength * 0.02f;
-            projectile.adjust(direction.getX() * windTranslationScalar, direction.getY() * windTranslationScalar, direction.getX() * windRotationScalar, direction.getY() * windRotationScalar);
+        if (windDisplayLayer.getVisible()) {
+            if (isWithinWindDomain(projectile.getRoundedPos())) {
+                double dotProduct = Math.abs((direction.getX() * projectile.getNormalizedVelocityX()) + (direction.getY() * projectile.getNormalizedVelocityY())); //In this case the dot product is only used to determine how perpendicular the vectors are
+                double windTranslationScalar = fanStrength * (1 - dotProduct) * 0.25f; //Projectiles should not ever move two spaces in one direction in a single movement cycle
+                double windRotationScalar = fanStrength * 0.03f;
+                projectile.adjust(direction.getX() * windTranslationScalar, direction.getY() * windTranslationScalar, direction.getX() * windRotationScalar, direction.getY() * windRotationScalar);
+            }
         }
     }
 
