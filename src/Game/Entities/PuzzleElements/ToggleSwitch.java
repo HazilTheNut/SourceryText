@@ -72,7 +72,6 @@ public class ToggleSwitch extends GenericPowerSource {
     @Override
     public void onInteract(Player player) {
         toggle();
-        updateBrightTag(this);
     }
     
     private void updateBrightTag(TagHolder tagHolder){
@@ -87,9 +86,10 @@ public class ToggleSwitch extends GenericPowerSource {
 
         @Override
         public void onContact(TagEvent e) {
-            if (!(e.getTarget() instanceof Tile))
-                toggle();
-            e.addFutureAction(event -> updateBrightTag(e.getSource()));
+            e.addFutureAction(event -> {
+                if (!(e.getTarget() instanceof Tile))
+                    toggle();
+            });
         }
 
         @Override

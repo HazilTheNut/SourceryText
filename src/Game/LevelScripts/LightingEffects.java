@@ -142,7 +142,7 @@ public class LightingEffects extends LevelScript {
      * Draws the vfx Layer for light and shadows.
      */
     private void drawShadingLayer(){
-        int MAX_OPACITY_COLD = 225;
+        int MAX_OPACITY_COLD = 240;
         int MAX_OPACITY_WARM = 50;
         Layer tempLayer = new Layer(shadingLayer.getCols(), shadingLayer.getRows(), "shandingtemp", 0, 0, 0);
         for (int col = 0; col < level.getBackdrop().getCols(); col++) { //Iterate over every part of the level.
