@@ -71,11 +71,11 @@ public class OnFireTag extends Tag implements FrameDrawListener{
             lifetime = 3;
             spreadLikelihood = 0.65;
         } else if (owner.hasTag(TagRegistry.BURN_SLOW)){
-            lifetime = 12;
-            spreadLikelihood = 0.2;
+            lifetime = 15;
+            spreadLikelihood = 0.15;
         } else {
-            lifetime = 6;
-            spreadLikelihood = 0.4;
+            lifetime = 9;
+            spreadLikelihood = 0.35;
         }
         if (owner.hasTag(TagRegistry.BURN_SPREAD)){
             spreadLikelihood = 1;
@@ -117,7 +117,7 @@ public class OnFireTag extends Tag implements FrameDrawListener{
                             e.getSource().removeTag(TagRegistry.ON_FIRE);
                         } else {
                             float health = e.getSource().getCurrentHealth();
-                            e.getSource().onReceiveDamage((int)Math.ceil(health / 10), e.getSource(), e.getGameInstance()); //Deals 10% of current health, rounding up.
+                            e.getSource().onReceiveDamage((int)Math.ceil(health * 0.05), e.getSource(), e.getGameInstance()); //Deals 10% of current health, rounding up.
                         }
                     }
                 }
@@ -141,7 +141,7 @@ public class OnFireTag extends Tag implements FrameDrawListener{
     @Override
     public String getName() {
         if (burnForever)
-            return "On Fire";
+            return super.getName();
         return String.format("%1$s (%2$d)", super.getName(), lifetime);
     }
 
