@@ -1,7 +1,13 @@
 package Game.Tags;
 
+import Data.LayerImportances;
 import Data.SerializationVersion;
+import Engine.Layer;
+import Engine.SpecialText;
+import Game.Entities.Entity;
 import Game.TagEvent;
+
+import java.awt.*;
 
 /**
  * Created by Jared on 3/31/2018.
@@ -20,14 +26,21 @@ public class HealthTag extends Tag{
 
     public int healthAmount;
 
-    public HealthTag(int amount){
+    public HealthTag(int amount, int id){
         healthAmount = amount;
+        setId(id);
         setName(String.format("Health: %1$d", amount));
     }
 
     @Override
     public void onItemUse(TagEvent e) {
-        e.addCancelableAction(event -> e.getTarget().heal(healthAmount));
+        e.addCancelableAction(event -> {
+            if (e.getTarget() instanceof Entity) {
+                Entity entity = (Entity) e.getTarget();
+                playAnimation(entity);
+            }
+            e.getTarget().heal(healthAmount);
+        });
         e.setSuccess(true);
     }
 
@@ -37,6 +50,18 @@ public class HealthTag extends Tag{
 
     @Override
     public Tag copy() {
-        return new HealthTag(healthAmount);
+        return new HealthTag(healthAmount, getId());
+    }
+
+    private void playAnimation(Entity e){
+        Layer animLayer = new Layer(1, 1, "healing", e.getLocation().getX(), e.getLocation().getY(), LayerImportances.ANIMATION);
+        animLayer.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(78, 235, 78, 150)));
+        e.getGameInstance().getLayerManager().addLayer(animLayer);
+        try {
+            Thread.sleep(150);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
+        e.getGameInstance().getLayerManager().removeLayer(animLayer);
     }
 }
