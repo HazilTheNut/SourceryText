@@ -287,21 +287,13 @@ public class TagRegistry {
      */
     public static Tag getTag(int id) {
         if (id >= DAMAGE_START && id < HEALTH_START){
-            DamageTag tag = new DamageTag(id - DAMAGE_START);
-            tag.setId(DAMAGE_START);
-            return tag;
+            return new DamageTag(id - DAMAGE_START, DAMAGE_START);
         } else if (id >= HEALTH_START && id < HEALTH_START + 1000) {
-            HealthTag tag = new HealthTag(id - HEALTH_START);
-            tag.setId(HEALTH_START);
-            return tag;
+            return new HealthTag(id - HEALTH_START, HEALTH_START);
         } else if (id >= RANGE_START && id < RANGE_START + 1000) {
-            RangeTag tag = new RangeTag(id - RANGE_START);
-            tag.setId(RANGE_START);
-            return tag;
+            return new RangeTag(id - RANGE_START, RANGE_START);
         } else if (id >= REPAIR_START && id < REPAIR_START + 100) {
-            RepairTag tag = new RepairTag(id - REPAIR_START);
-            tag.setId(REPAIR_START);
-            return tag;
+            return new RepairTag(id - REPAIR_START, REPAIR_START);
         } else {
             return generateTag(id);
         }

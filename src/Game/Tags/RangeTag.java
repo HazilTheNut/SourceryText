@@ -17,8 +17,9 @@ public class RangeTag extends Tag{
 
     private int range;
 
-    public RangeTag(int range){
+    public RangeTag(int range, int id){
         this.range = range;
+        setId(id);
         setName(String.format("Range: %1$d", range));
     }
 
@@ -30,6 +31,6 @@ public class RangeTag extends Tag{
 
     @Override
     public Tag copy() {
-        return new RangeTag(range);
+        return new RangeTag(range, getId());
     }
 }

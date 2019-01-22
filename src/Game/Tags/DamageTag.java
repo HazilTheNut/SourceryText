@@ -18,8 +18,9 @@ public class DamageTag extends Tag{
 
     private int damageAmount;
 
-    public DamageTag(int dmg){
+    public DamageTag(int dmg, int id){
         damageAmount = dmg;
+        setId(id);
         setName(String.format("Damage: %d", dmg));
     }
 
@@ -38,6 +39,6 @@ public class DamageTag extends Tag{
 
     @Override
     public Tag copy() {
-        return new DamageTag(damageAmount);
+        return new DamageTag(damageAmount, getId());
     }
 }

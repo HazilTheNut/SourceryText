@@ -19,8 +19,9 @@ public class RepairTag extends Tag{
 
     private int repairAmount;
 
-    public RepairTag(int repairAmount){
+    public RepairTag(int repairAmount, int id){
         this.repairAmount = repairAmount;
+        setId(id);
         setName(String.format("Repairs Weapon x%1$-2d", repairAmount));
     }
 
@@ -38,5 +39,10 @@ public class RepairTag extends Tag{
                 e.setSuccess(true);
             }
         }
+    }
+
+    @Override
+    public Tag copy() {
+        return new RepairTag(repairAmount, getId());
     }
 }
