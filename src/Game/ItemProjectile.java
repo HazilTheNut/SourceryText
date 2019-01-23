@@ -7,6 +7,8 @@ import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 import Game.Tags.Tag;
 
+import java.util.ArrayList;
+
 public class ItemProjectile extends Projectile {
 
     private Item item;
@@ -15,20 +17,27 @@ public class ItemProjectile extends Projectile {
     public ItemProjectile(Entity creator, Coordinate target, SpecialText icon, Item item, int baseDamage) {
         super(creator, target, icon);
         this.item = item;
-        getTags().addAll(item.getTags());
         this.baseDamage = baseDamage;
     }
 
     @Override
+    public ArrayList<Tag> getTags() {
+        return item.getTags();
+    }
+
+    @Override
     public void addTag(Tag tag, TagHolder source) {
-        super.addTag(tag, source);
         item.addTag(tag, source);
     }
 
     @Override
     public void removeTag(int id) {
-        super.removeTag(id);
         item.removeTag(id);
+    }
+
+    @Override
+    public void onContact(TagHolder other, GameInstance gi) {
+        item.onContact(other, gi);
     }
 
     @Override

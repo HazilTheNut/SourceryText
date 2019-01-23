@@ -4,13 +4,38 @@ import Data.Coordinate;
 import Engine.SpecialText;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.Registries.ItemRegistry;
 import Game.Registries.TagRegistry;
+import Game.Tags.Tag;
 
-public class ArrowProjectile extends ItemProjectile {
+import java.util.ArrayList;
 
-    public ArrowProjectile(Entity creator, Coordinate target, SpecialText icon, Item item, int damage) {
-        super(creator, target, icon, item, damage);
-        this.addTag(TagRegistry.ARROW, this);
+public class ArrowProjectile extends Projectile {
+
+    private ArrayList<Tag> transmissionBlacklist;
+    private int bonusDamage;
+
+    public ArrowProjectile(Entity creator, Coordinate target, SpecialText icon, int damage, Item arrowItem, Item weapon) {
+        super(creator, target, icon);
+        getTags().addAll(arrowItem.getTags());
+        getTags().addAll(weapon.getTags());
+        transmissionBlacklist = new ArrayList<>();
+        transmissionBlacklist.addAll(arrowItem.getTags());
+        transmissionBlacklist.addAll(weapon.getTags());
+        bonusDamage = damage;
+    }
+
+    @Override
+    protected void collide(TagHolder other) {
+        super.collide(other, bonusDamage);
+        //Drop arrow item
+        if (!(other instanceof CombatEntity)) {
+            Item toDrop = ItemRegistry.generateItem(ItemRegistry.ID_ARROW, gi);
+            for (Tag tag : getTags()) {
+                if (!transmissionBlacklist.contains(tag)) toDrop.addTag(tag, this);
+            }
+            gi.dropItem(toDrop, getRoundedPos());
+        }
     }
 
     @Override

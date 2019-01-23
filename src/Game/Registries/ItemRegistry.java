@@ -95,18 +95,18 @@ public class ItemRegistry {
         registerItem(135, "Vine Spear",      3,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT, TagRegistry.VENOM_ENCHANT);
 
         //Healing items / potions with various effects
-        registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10);
+        registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10, TagRegistry.POTION, TagRegistry.FRAGILE);
         itemFlavorTextMap.put(1000, "It has a funny smell");
-        registerItem(1001, "Health Potion",   0.10, TagRegistry.HEALTH_START + 25);
-        registerItem(1002, "Health Flask",    0.25, TagRegistry.HEALTH_START + 40);
-        registerItem(1003, "Health Jar",      0.60, TagRegistry.HEALTH_START + 65);
+        registerItem(1001, "Health Potion",   0.10, TagRegistry.HEALTH_START + 25, TagRegistry.POTION, TagRegistry.FRAGILE);
+        registerItem(1002, "Health Flask",    0.25, TagRegistry.HEALTH_START + 40, TagRegistry.POTION, TagRegistry.FRAGILE);
+        registerItem(1003, "Health Jar",      0.60, TagRegistry.HEALTH_START + 65, TagRegistry.POTION, TagRegistry.FRAGILE);
 
         registerItem(1010, "Molding Clay",   0.5, TagRegistry.REPAIR_START + 3);
         registerItem(1011, "Duct Tape",      0.6, TagRegistry.REPAIR_START + 7);
 
         registerItem(1020, "Enchantment Orb", 1, TagRegistry.ENCHANT_WEAPON);
 
-        registerItem(1100, "Brick",          1.50, TagRegistry.DAMAGE_START + 9);
+        registerItem(1100, "Brick",          1.50, TagRegistry.DAMAGE_START + 7);
         registerItem(1102, "Magic Dagger",   0.33, TagRegistry.DAMAGE_START + 6,  TagRegistry.WEAPON_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT);
         registerItem(ID_WATERBALLOON, "Water Balloon",  0.10, TagRegistry.THROW_WATERBALLOON, TagRegistry.FRAGILE);
 

@@ -77,6 +77,7 @@ public class TagRegistry {
     public final static int ENCHANT_WEAPON  = 213;
     public final static int IMPORTANT       = 214;
     public final static int FRAGILE         = 215;
+    public final static int POTION          = 216;
 
     public final static int THROW_WATERBALLOON  = 223;
 
@@ -185,6 +186,7 @@ public class TagRegistry {
         registerTag(ENCHANT_WEAPON, "Enchants Weapon", WeaponEnchantTag.class);
         registerTag(IMPORTANT, "Important", ImportantTag.class);
         registerTag(FRAGILE, "Fragile", FragileTag.class);
+        registerTag(POTION, "Potion", PotionTag.class);
 
         registerTag(THROW_WATERBALLOON, "Water Balloon", ThrowWaterBalloonTag.class);
 

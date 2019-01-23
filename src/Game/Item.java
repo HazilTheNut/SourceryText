@@ -85,8 +85,9 @@ public class Item extends TagHolder implements Serializable {
         return itemData.getRawWeight() * getLiteralQty();
     }
 
-    TagEvent onItemUse(TagHolder target){
+    public TagEvent onItemUse(TagHolder target){
         DebugWindow.reportf(DebugWindow.GAME, "Item.onItemUse","\'%1$s\' Tags:\n", itemData.getName());
+        //Set up event
         TagEvent useEvent;
         if (target instanceof Entity) {
             Entity entity = (Entity) target;
@@ -94,9 +95,17 @@ public class Item extends TagHolder implements Serializable {
         } else {
             useEvent = new TagEvent(0, false, this, target, null, this);
         }
+        //Process event
         for (Tag tag : getTags()) {
             DebugWindow.reportf(DebugWindow.GAME, "Item","> %1$s\n", tag.getName());
             tag.onItemUse(useEvent);
+        }
+        //Post-event stuff
+        useEvent.doFutureActions();
+        if (!useEvent.isCanceled()){
+            useEvent.doCancelableActions();
+            if (useEvent.isSuccessful())
+                decrementQty();
         }
         return useEvent;
     }

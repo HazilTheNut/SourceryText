@@ -35,7 +35,7 @@ public class MagicArrowSpell extends Spell {
     @Override
     public int castSpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         Item arrowItem = ItemRegistry.generateItem(ItemRegistry.ID_ARROW, gi);
-        ArrowProjectile magicArrow = new ArrowProjectile(spellCaster, targetLoc, icon, arrowItem, 0);
+        ArrowProjectile magicArrow = new ArrowProjectile(spellCaster, targetLoc, icon, 0, arrowItem, arrowItem);
         magicArrow.addTag(TagRegistry.DAMAGE_START + calculatePower(3, magicPower, 0.525), spellCaster);
         magicArrow.addTag(TagRegistry.FRAGILE, spellCaster);
         magicArrow.launchProjectile(calculatePower(15, magicPower, 0.5));

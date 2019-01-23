@@ -336,9 +336,8 @@ public class CombatEntity extends Entity {
         }
         if (arrowItem != null) {
             DamageTag damageTag = (DamageTag)weapon.getTag(TagRegistry.DAMAGE_START);
-            int baseDamage = (damageTag != null) ? damageTag.getDamageAmount() : 0;
             int dmgBonus = getStrength() / 4;
-            ArrowProjectile arrow = new ArrowProjectile(this, targetPos, new SpecialText('+', new Color(255, 231, 217), new Color(191, 174, 163, 15)), arrowItem, baseDamage + dmgBonus);
+            ArrowProjectile arrow = new ArrowProjectile(this, targetPos, new SpecialText('+', new Color(255, 231, 217), new Color(191, 174, 163, 15)), dmgBonus, arrowItem, getWeapon());
             DebugWindow.reportf(GAME, "CombatEntity.doBowAttack", "Strength: %1$d Damage Bonus: %2$d", getStrength(), dmgBonus);
             fireArrowProjectile(arrow);
             arrowItem.decrementQty();
