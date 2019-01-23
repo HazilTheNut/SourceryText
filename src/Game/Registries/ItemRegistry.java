@@ -106,6 +106,8 @@ public class ItemRegistry {
 
         registerItem(1020, "Enchantment Orb", 1, TagRegistry.ENCHANT_WEAPON);
 
+        registerItem(1050, "Mending Potion", 0.25, TagRegistry.POTION_RECOVERING, TagRegistry.POTION, TagRegistry.FRAGILE);
+
         registerItem(1100, "Brick",          1.50, TagRegistry.DAMAGE_START + 7);
         registerItem(1102, "Magic Dagger",   0.33, TagRegistry.DAMAGE_START + 6,  TagRegistry.WEAPON_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT);
         registerItem(ID_WATERBALLOON, "Water Balloon",  0.10, TagRegistry.THROW_WATERBALLOON, TagRegistry.FRAGILE);

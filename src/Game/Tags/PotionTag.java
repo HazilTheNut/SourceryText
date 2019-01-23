@@ -3,6 +3,7 @@ package Game.Tags;
 import Data.SerializationVersion;
 import Game.Item;
 import Game.TagEvent;
+import Game.Tags.PotionEffectTags.PotionEffectTag;
 
 public class PotionTag extends Tag{
 
@@ -14,5 +15,17 @@ public class PotionTag extends Tag{
             Item tagOwner = (Item) e.getTagOwner();
             tagOwner.onItemUse(e.getTarget());
         }
+    }
+
+    @Override
+    public void onItemUse(TagEvent e) {
+        e.setSuccess(true);
+        e.addCancelableAction(event -> {
+            for (Tag tag : e.getTagOwner().getTags()){
+                if (tag instanceof PotionEffectTag) {
+                    e.getTarget().addTag(tag.copy(), e.getTagOwner());
+                }
+            }
+        });
     }
 }

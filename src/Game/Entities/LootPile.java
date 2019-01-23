@@ -71,7 +71,7 @@ public class LootPile extends Chest {
 
     @Override
     public boolean tagsVisible() {
-        return false; //Tag list looks super messy, so let's just hide it.
+        return true; //Tag list looks super messy, so let's just hide it.
     }
 
     private void doAutoPickup(Player player){
@@ -98,13 +98,23 @@ public class LootPile extends Chest {
     public void addTag(Tag tag, TagHolder source) {
         super.addTag(tag, source);
         for (Item item : getItems())
-            item.addTag(tag, source);
+            item.addTag(tag.copy(), source);
     }
 
-    @Override
-    public void removeTag(int id) {
-        super.removeTag(id);
-        for (Item item : getItems())
-            item.removeTag(id);
-    }
+    /*
+    *
+    * I encountered a bug where throwing a Mending Potion at a pile of loot would cause the potion to not impart its effects onto the pile of loot.
+    * As it turns out, because the recovery effect removes itself if healing its owner does nothing, healing the loot pile triggered the loot pile to remove the tags of every item it has.
+    * That of course neutralizes the effect.
+    *
+    * I can't think of any case in which removing a tag from a pile of loot would necessitate removing that tag from its constituents, but this bugfix may be cause for another down the line.
+    *
+    * */
+
+//    @Override
+//    public void removeTag(int id) {
+//        super.removeTag(id);
+//        for (Item item : getItems())
+//            item.removeTag(id);
+//    }
 }

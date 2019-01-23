@@ -125,6 +125,7 @@ public class Item extends TagHolder implements Serializable {
     @Override
     public void heal(int amount) {
         if (stackability != NO_QUANTITY) itemData.setQty(itemData.getQty()+amount);
+        itemData.setQty(Math.min(itemData.getQty(), 99));
     }
 
     @Override
