@@ -26,6 +26,11 @@ public class ItemProjectile extends Projectile {
     }
 
     @Override
+    public Tag getTag(int id) {
+        return item.getTag(id);
+    }
+
+    @Override
     public void addTag(Tag tag, TagHolder source) {
         item.addTag(tag, source);
     }

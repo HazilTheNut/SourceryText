@@ -22,7 +22,7 @@ public class PotionTag extends Tag{
         e.setSuccess(true);
         e.addCancelableAction(event -> {
             for (Tag tag : e.getTagOwner().getTags()){
-                if (tag instanceof PotionEffectTag) {
+                if (tag.getTagType() == Tag.TYPE_POTIONEFFECT) {
                     e.getTarget().addTag(tag.copy(), e.getTagOwner());
                 }
             }

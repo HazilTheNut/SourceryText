@@ -10,6 +10,11 @@ public class PotionEffectTag extends Tag {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
+    public int getTagType() {
+        return Tag.TYPE_POTIONEFFECT;
+    }
+
+    @Override
     public void onTurn(TagEvent e) {
         if (e.getTagOwner().hasTag(TagRegistry.POTION))
             e.cancel();

@@ -40,6 +40,14 @@ public class Tag implements Serializable {
     private String name;
     private int id;
 
+    public static final int TYPE_STANDARD = 0;
+    public static final int TYPE_ENCHANTMENT = 1;
+    public static final int TYPE_POTIONEFFECT = 2;
+
+    public int getTagType(){
+        return TYPE_STANDARD;
+    }
+
     public int getId() { return id; }
 
     public String getName() { return name; }

@@ -4,6 +4,7 @@ import Data.Coordinate;
 import Game.Debug.DebugWindow;
 import Game.Tags.*;
 import Game.Tags.EnchantmentTags.*;
+import Game.Tags.PotionEffectTags.MagneticTempTag;
 import Game.Tags.PotionEffectTags.RecoveringTag;
 import Game.Tags.PropertyTags.*;
 import Game.Tags.SpellLearningTags.*;
@@ -65,6 +66,7 @@ public class TagRegistry {
     public final static int EXPLOSIVE     = 23;
 
     public final static int POTION_RECOVERING = 150;
+    public final static int POTION_MAGNETIC   = 151;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -176,6 +178,7 @@ public class TagRegistry {
         registerTag(BURN_NOSPREAD, "No Fire-Spreading", BurnNonSpreadingTag.class);
 
         registerTag(POTION_RECOVERING, "Mending Effect", RecoveringTag.class);
+        registerTag(POTION_MAGNETIC, "Magnetic Effect", MagneticTempTag.class);
 
         //Item related
         registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);
