@@ -112,6 +112,7 @@ public class Projectile extends TagHolder {
         iconLayer.setVisible(true);
         DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", normalizedVelocityX, normalizedVelocityY);
         while (totalDistanceTraveled < (targetDistance * internalVelMagnitude)) {
+            calculateInternalMagnitude(); //Done first to ensure calculations are done correctly
             double distToTravel = Math.max(0.1, Math.min(UNITS_PER_CYCLE, (targetDistance * internalVelMagnitude) - totalDistanceTraveled)); //How far the projectile should travel this cycle.
             normalizeVelocity(distToTravel); //When reaching the end of the projectile's travel, there may be "leftover" distance that is less tan UNITS_PER_CYCLE, so the remaining distance is accounted for.
             if (checkCollision(xpos + normalizedVelocityX, ypos + normalizedVelocityY))
@@ -172,8 +173,12 @@ public class Projectile extends TagHolder {
         internalVelocityY += dvy;
     }
 
-    private void normalizeVelocity(double normalizedSpeed){
+    private void calculateInternalMagnitude(){
         internalVelMagnitude = Math.sqrt(Math.pow(internalVelocityX, 2) + Math.pow(internalVelocityY, 2));
+    }
+
+    private void normalizeVelocity(double normalizedSpeed){
+        calculateInternalMagnitude();
         normalizedVelocityX = internalVelocityX * (normalizedSpeed / internalVelMagnitude);
         normalizedVelocityY = internalVelocityY * (normalizedSpeed / internalVelMagnitude);
         DebugWindow.reportf(DebugWindow.STAGE, "Projectile.normalize", "normalized speed: %1$.3f internal speed %2$.3f", Math.sqrt(Math.pow(normalizedVelocityX, 2) + Math.pow(normalizedVelocityY, 2)), internalVelMagnitude);
