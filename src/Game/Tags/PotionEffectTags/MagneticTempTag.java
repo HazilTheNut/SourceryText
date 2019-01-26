@@ -12,7 +12,6 @@ public class MagneticTempTag extends MagneticTag {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private int lifetime;
-    private boolean active = true;
 
     @Override
     public int getTagType() {
@@ -33,12 +32,7 @@ public class MagneticTempTag extends MagneticTag {
     @Override
     public void onTurn(TagEvent e) {
         e.addFutureAction(event -> {
-            if (active) {
-                if (e.getTagOwner().hasTag(TagRegistry.POTION))
-                    active = false;
-                else
-                    lifetime--;
-            }
+            lifetime--;
             if (lifetime <= 0)
                 e.getTagOwner().removeTag(getId());
         });
@@ -46,15 +40,11 @@ public class MagneticTempTag extends MagneticTag {
 
     @Override
     public void onProjectileFly(Projectile projectile) {
-        if (active)
-            super.onProjectileFly(projectile);
+       super.onProjectileFly(projectile);
     }
 
     @Override
     public String getName() {
-        if (active)
-            return String.format("%1$s (%2$d)", super.getName(), lifetime);
-        else
-            return String.format("%1$s Effect", super.getName());
+        return String.format("%1$s (%2$d)", super.getName(), lifetime);
     }
 }

@@ -3,6 +3,7 @@ package Game.Tags;
 import Data.Coordinate;
 import Data.SerializationVersion;
 import Game.*;
+import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.Registries.TagRegistry;
 
@@ -54,6 +55,7 @@ public class MagneticTag extends Tag implements ProjectileListener {
             double dx = projectile.getXpos() - ownerLocation.getX();
             double dy = projectile.getYpos() - ownerLocation.getY();
             double distanceFactor = (Math.pow(dx, 2) + Math.pow(dy, 2)); //Pretend as if it were square-rooted. It's just that it's going to be squared immediately afterward.
+            distanceFactor = Math.max(1, distanceFactor); //Low distance factors cause wildly crazy results.
             double pullX = (magneticFactor * -dx) / (Math.pow(distanceFactor, 1.5)); //The math checks out
             double pullY = (magneticFactor * -dy) / (Math.pow(distanceFactor, 1.5));
             projectile.adjust(0, 0, pullX, pullY);
