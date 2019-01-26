@@ -48,7 +48,8 @@ public class LootPile extends Chest {
 
     @Override
     public void onTurn() {
-        super.onTurn();
+        //super.onTurn(); Runs onTurn() to all of the LootPile's tags and all items in its inventory. This results in the Item's tags getting updated twice in one turn.
+        updateInventory(); //This effectively does the turn update for the LootPile.
         if (getItems().size() == 0) selfDestruct();
     }
 
@@ -60,12 +61,19 @@ public class LootPile extends Chest {
             super.onInteract(player);
     }
 
+    /*
+    *
+    * A general principle is that upon contacting a LootPile, you are effectively contacting every Item it contains.
+    * Re-routing contact events is potentially very buggy, so a good shortcut is for the LootPile to have its list of tags assume the sum of all of the tags of its component Items.
+    *
+    * This composite tag list should not care about "duplicate" tags because each Item will have a different Tag object of the same ID.
+    * */
+
     @Override
     public ArrayList<Tag> getTags() {
         ArrayList<Tag> tags = new ArrayList<>(super.getTags());
         for (Item item : getItems())
-            for (Tag itemTag : item.getTags())
-                if (!tags.contains(itemTag)) tags.add(itemTag);
+            tags.addAll(item.getTags());
         return tags;
     }
 

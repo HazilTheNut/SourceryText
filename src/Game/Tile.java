@@ -2,8 +2,10 @@ package Game;
 
 import Data.Coordinate;
 import Data.SerializationVersion;
+import Engine.SpecialText;
 import Game.Tags.Tag;
 
+import java.awt.*;
 import java.io.Serializable;
 
 /**
@@ -82,5 +84,25 @@ public class Tile extends TagHolder implements Serializable {
 
     public int getAge() {
         return age;
+    }
+
+    public void updateTileTagColor(){
+        int numColors = 0; //The divisor which turns this addition operation into an averaging one.
+        int[] rgbsum = {0, 0, 0}; //Working sums of RGB channels
+        int alphasum = 0; //Exception made for the alpha channel; it is simply added together.
+        //Add up the colors
+        for (Tag tag : getTags()){
+            Color col = tag.getTagTileColor();
+            if (col != null) {
+                numColors++;
+                rgbsum[0] += col.getRed();
+                rgbsum[1] += col.getGreen();
+                rgbsum[2] += col.getBlue();
+                alphasum += col.getAlpha();
+            }
+        }
+        //Finalize and draw
+        Color finalCol = (numColors == 0) ? new Color(0,0,0,0) : new Color(rgbsum[0] / numColors, rgbsum[1] / numColors, rgbsum[2] / numColors, Math.min(alphasum, 255));
+        level.getTileTagLayer().editLayer(getLocation(), new SpecialText(' ', Color.WHITE, finalCol));
     }
 }

@@ -65,8 +65,8 @@ public class TagHolder implements Serializable {
     public void removeTag (int id) {
         for (Tag tag : tags){
             if (tag.getId() == id) {
-                tag.onRemove(this);
                 tags.remove(tag);
+                tag.onRemove(this);
                 return;
             }
         }

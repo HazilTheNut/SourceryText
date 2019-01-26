@@ -141,6 +141,9 @@ public class Tag implements Serializable {
     //Useful for coloring things that are frozen, on fire, etc.
     public Color getTagColor(){ return new Color(255, 255, 255, 0); }
 
+    //Special case for coloring tiles.
+    public Color getTagTileColor(){ return new Color(0, 0, 0, 0); }
+
     //This should be used when copying lists of strings
     public Tag copy(){
         return TagRegistry.getTag(getId());

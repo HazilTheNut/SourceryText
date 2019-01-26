@@ -2,12 +2,9 @@ package Game.Tags;
 
 import Data.Coordinate;
 import Data.SerializationVersion;
+import Game.*;
 import Game.Entities.Entity;
-import Game.Projectile;
-import Game.ProjectileListener;
 import Game.Registries.TagRegistry;
-import Game.TagEvent;
-import Game.Tile;
 
 import java.awt.*;
 
@@ -18,6 +15,7 @@ public class MagneticTag extends Tag implements ProjectileListener {
     private boolean isAttractive = true; //Insert joke about 'being attractive' having both the romantic and magnetic meaning.
     private Coordinate ownerLocation = null; //Not null only when added to an entity or tile
     private Entity entityOwner = null; //Null if this tag added to anything but an entity
+    private Tile tileOwner = null; //Null if this tag added to anything but a tile, obviously
 
     @Override
     public void onAddThis(TagEvent e) {
@@ -29,6 +27,23 @@ public class MagneticTag extends Tag implements ProjectileListener {
             Tile tagOwner = (Tile) e.getTagOwner();
             ownerLocation = tagOwner.getLocation();
             tagOwner.getLevel().addProjectileListener(this);
+            tileOwner = tagOwner;
+        }
+        updateTileColor(e.getTagOwner());
+    }
+
+    private void updateTileColor(TagHolder owner){
+        if (owner instanceof Tile)
+            ((Tile)owner).updateTileTagColor();
+    }
+
+    @Override
+    public void onRemove(TagHolder owner) {
+        updateTileColor(owner);
+        if (owner instanceof Entity)
+            ((Entity) owner).getGameInstance().getCurrentLevel().removeProjectileListener(this);
+        else if (owner instanceof Tile){
+            ((Tile) owner).getLevel().removeProjectileListener(this);
         }
     }
 
@@ -54,6 +69,7 @@ public class MagneticTag extends Tag implements ProjectileListener {
     public void toggle(){
         isAttractive = !isAttractive;
         if (entityOwner != null) entityOwner.updateSprite();
+        updateTileColor(tileOwner);
     }
 
     @Override
@@ -62,6 +78,12 @@ public class MagneticTag extends Tag implements ProjectileListener {
             return new Color(150, 150, 250);
         else
             return new Color(250, 150, 150);
+    }
+
+    @Override
+    public Color getTagTileColor() {
+        Color rawCol = getTagColor();
+        return new Color(rawCol.getRed(), rawCol.getGreen(), rawCol.getBlue(), 30);
     }
 
     public void setAttractive(boolean attractive) {

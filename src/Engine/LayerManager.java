@@ -44,11 +44,20 @@ public class LayerManager {
     private long previousCompileTime;
     private boolean isDrawingFrame;
 
-    int arbitraryNumber = 0;
+    private int arbitraryNumber = 0;
+
+    private long previousDrawTimestamp;
+
+    private static final int FRAMEUPDATE_INTERVAL = 50; //The period of time (in ms) expected to be in between each frame drawing.
+    private static final int FRAMEUPDATE_LISTENER_PERIOD = 5; //The "Grace Period" (in ms) to all FrameUpdateListeners to do their frame start operations.
 
     private class DrawUpdateTask extends TimerTask {
         @Override
         public void run() {
+            if (detectCatchUpFrame()) {
+                previousDrawTimestamp = System.nanoTime();
+                return;
+            }
             window.drawImage(compileLayers(new Dimension(window.RESOLUTION_WIDTH, window.RESOLUTION_HEIGHT)));
             arbitraryNumber++;
         }
@@ -58,7 +67,8 @@ public class LayerManager {
         window = viewWindow;
         window.manager = this;
         drawTimer = new Timer();
-        drawTimer.scheduleAtFixedRate(new DrawUpdateTask(), 10, 50);
+        drawTimer.scheduleAtFixedRate(new DrawUpdateTask(), 10, FRAMEUPDATE_INTERVAL);
+        previousDrawTimestamp = System.nanoTime();
     }
 
     public ViewWindow getWindow() {
@@ -233,7 +243,7 @@ public class LayerManager {
      * Updates all FrameUpdateListeners prior to drawing a frame.
      *
      * This process is handled on a separate thread to provide protection against possible interruptions in the drawing process.
-     * The full drawing process waits 5ms before drawing to allow for some, if not all, of the processes to finish.
+     * The full drawing process waits 5ms before drawing to allow for some, hopefully all, of the processes to finish.
      */
     private void frameStartUpdate(){
         Thread thread = new Thread(() -> {
@@ -286,6 +296,11 @@ public class LayerManager {
         }
     }
 
+    private boolean detectCatchUpFrame(){
+        double timeSinceDrawEnd = ((System.nanoTime() - previousDrawTimestamp) / 1000000f);
+        return (timeSinceDrawEnd < FRAMEUPDATE_LISTENER_PERIOD);
+    }
+
     /**
      * Takes all the Layers in the Layer stack and 'compresses' them into ont Layer, which represents a fully rendered screen.
      *
@@ -295,7 +310,7 @@ public class LayerManager {
     private Layer compileLayers(Dimension targetResolution){
         isDrawingFrame = true;
         frameStartUpdate();
-        sleep(5);
+        sleep(FRAMEUPDATE_LISTENER_PERIOD);
         long startTime = System.nanoTime();
         processLayerOperationBuffer();
         Layer finalResult = new Layer(new SpecialText[(int)targetResolution.getWidth()][(int)targetResolution.getHeight()], "final", 0, 0);
@@ -310,6 +325,7 @@ public class LayerManager {
         previousCompileTime = System.nanoTime() - startTime;
         isDrawingFrame = false;
         frameEndUpdate();
+        previousDrawTimestamp = System.nanoTime();
         return finalResult;
     }
 
