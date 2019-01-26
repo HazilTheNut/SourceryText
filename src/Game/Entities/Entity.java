@@ -148,6 +148,7 @@ public class Entity extends TagHolder implements Serializable {
         for (Tag tag : getTags()) tag.onMove(moveEvent);
         moveEvent.doFutureActions();
         if (moveEvent.eventPassed() && shouldDoAction() && getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)), TagRegistry.NO_PATHING)) {
+            moveEvent.doCancelableActions();
             location.movePos(relativeX, relativeY);
             sprite.movePos(relativeX, relativeY);
             contactAt(location);

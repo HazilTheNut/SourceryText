@@ -4,10 +4,7 @@ import Data.Coordinate;
 import Game.Debug.DebugWindow;
 import Game.Tags.*;
 import Game.Tags.EnchantmentTags.*;
-import Game.Tags.PotionEffectTags.MagneticPotionTag;
-import Game.Tags.PotionEffectTags.MagneticTempTag;
-import Game.Tags.PotionEffectTags.RecoveringPotionTag;
-import Game.Tags.PotionEffectTags.RecoveringTag;
+import Game.Tags.PotionEffectTags.*;
 import Game.Tags.PropertyTags.*;
 import Game.Tags.SpellLearningTags.*;
 import Game.Tags.TempTags.*;
@@ -69,9 +66,11 @@ public class TagRegistry {
 
     public final static int EFFECT_RECOVERING = 150;
     public final static int EFFECT_MAGNETIC   = 151;
+    public final static int EFFECT_STICKY     = 152;
 
     public final static int POTION_RECOVERING = 175;
     public final static int POTION_MAGNETIC   = 176;
+    public final static int POTION_STICKY     = 177;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -184,9 +183,11 @@ public class TagRegistry {
 
         registerTag(EFFECT_RECOVERING, "Mending", RecoveringTag.class);
         registerTag(EFFECT_MAGNETIC, "Magnetic Effect", MagneticTempTag.class);
+        registerTag(EFFECT_STICKY, "Sticky", StickyEffectTag.class);
 
         registerTag(POTION_RECOVERING, "Mending Effect", RecoveringPotionTag.class);
         registerTag(POTION_MAGNETIC, "Magnetic Effect", MagneticPotionTag.class);
+        registerTag(POTION_STICKY, "Sticky Effect", StickyPotionTag.class);
 
         //Item related
         registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);
