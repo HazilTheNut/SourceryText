@@ -12,7 +12,7 @@ public class DialogueCreatorFrame extends JFrame {
 
     public DialogueCreatorFrame(){
 
-        setTitle("DialogueGenerator");
+        setTitle("Dialogue Creator");
 
         Container c = getContentPane();
         c.setLayout(new BoxLayout(c, BoxLayout.PAGE_AXIS));

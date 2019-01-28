@@ -123,22 +123,30 @@ public class DialogueTradeCreator extends JPanel {
         StringBuilder builder = new StringBuilder();
         builder.append("$");
         //Player Items
+        int numItems = 0;
         for (int i = 0; i < ue.tableModel.getRowCount(); i++) {
             Object obj = ue.tableModel.getValueAt(i, 0);
             int qty = getFirstInt(ue.tableModel.getValueAt(i, 1).toString());
             if (obj instanceof ItemStruct && qty > 0) {
                 ItemStruct itemStruct = (ItemStruct) obj;
+                if (numItems > 0)
+                    builder.append(',');
                 builder.append(String.format("%1$dx%2$d", itemStruct.getItemId(), qty));
+                numItems++;
             }
         }
         builder.append("|");
         //NPC Items
+        numItems = 0;
         for (int i = 0; i < ue.tableModel.getRowCount(); i++) {
             Object obj = ue.tableModel.getValueAt(i, 2);
             int qty = getFirstInt(ue.tableModel.getValueAt(i, 3).toString());
             if (obj instanceof ItemStruct && qty > 0) {
                 ItemStruct itemStruct = (ItemStruct) obj;
+                if (numItems > 0)
+                    builder.append(',');
                 builder.append(String.format("%1$dx%2$d", itemStruct.getItemId(), qty));
+                numItems++;
             }
         }
         //All the spinners at the bottom
