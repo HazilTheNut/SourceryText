@@ -25,14 +25,15 @@ public class PlayerWallet extends Item {
         return 0;
     }
 
-    void addMoney(int amount, String name){
+    public void addMoney(int amount, String name){
         for (MoneyType moneyType : moneyList){
             if (moneyType.name.toLowerCase().equals(name.toLowerCase())) {
                 moneyType.qty += amount;
                 return;
             }
         }
-        moneyList.add(new MoneyType(amount, name));
+        if (amount > 0)
+            moneyList.add(new MoneyType(amount, name));
     }
 
     @Override

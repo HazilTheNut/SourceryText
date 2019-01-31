@@ -89,7 +89,7 @@ public class Entity extends TagHolder implements Serializable {
     public boolean isSolid() { return isAlive; }
 
     //Marking this is false will totally conceal the entity
-    public boolean isVisible() { return true; }
+    public boolean isVisible() { return getSprite().getVisible(); }
 
     //Being "alive" means that this Entity has not self-destructed yet, and therefore "in the game".
     public boolean isAlive() {
@@ -198,6 +198,7 @@ public class Entity extends TagHolder implements Serializable {
 
     public void selfDestruct(){
         isAlive = false;
+        getSprite().setVisible(false);
         gi.removeEntity(this);
         onLevelExit();
         for (Tag tag : getTags())
@@ -295,6 +296,8 @@ public class Entity extends TagHolder implements Serializable {
                     addItem(ItemRegistry.generateItem(item.getItemData().getItemId(), gi).setQty(remainingQty));
                     remainingQty = 0;
                 }
+            } else if (item instanceof PlayerWallet){
+                ((PlayerWallet)item).addMoney(toTake.getLiteralQty() * -1, toTake.getItemData().getName());
             }
             if (remainingQty <= 0) return; //remainingQty should never be negative, but it's checked for anyway in case an error occurred
             i++; //This gets IntelliJ to shut up about foreach loops, which are more error-prone with regards to co-modification

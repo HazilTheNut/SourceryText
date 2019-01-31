@@ -399,7 +399,7 @@ public class Level implements Serializable {
     public ArrayList<Entity> getEntitiesAt(Coordinate loc){
         ArrayList<Entity> list = new ArrayList<>();
         for (Entity e : entities) {
-            if (e.getLocation().equals(loc)) list.add(e);
+            if (e.getLocation().equals(loc) && e.isAlive()) list.add(e);
         }
         return list;
     }

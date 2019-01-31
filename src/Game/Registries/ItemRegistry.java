@@ -32,6 +32,7 @@ public class ItemRegistry {
      public static int ID_ARROW = 1500;
      public static int ID_FIRESCROLL = 1900;
      public static int ID_WATERBALLOON = 1103;
+     public static int ID_POLAR_BEAR_CROWN = 2501;
 
     static {
         //Registering stuff starts here
@@ -47,7 +48,7 @@ public class ItemRegistry {
         registerItem(108, "Wooden Club",     2.5, TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_STRIKE,  TagRegistry.FLAMMABLE);
         registerItem(101, "Wooden Sword",    2,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_SWEEP,   TagRegistry.FLAMMABLE);
         registerItem(100, "Wooden Pole",     1,   TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_THRUST,  TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
-        registerItem(109, "Rotted Bow",      2,   TagRegistry.DAMAGE_START + 3, TagRegistry.RANGE_START + 15, TagRegistry.WEAPON_BOW, TagRegistry.FLAMMABLE);
+        registerItem(109, "Driftwood Bow",   2,   TagRegistry.DAMAGE_START + 3, TagRegistry.RANGE_START + 15, TagRegistry.WEAPON_BOW, TagRegistry.FLAMMABLE);
         //Tier 2
         registerItem(105, "Iron Axe",        6,   TagRegistry.DAMAGE_START + 6, TagRegistry.WEAPON_STRIKE, TagRegistry.METALLIC);
         registerItem(106, "Iron Sword",      4,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_SWEEP, TagRegistry.METALLIC, TagRegistry.SHARP);
@@ -111,6 +112,7 @@ public class ItemRegistry {
         registerItem(1052, "Adhesive Potion", 0.35, TagRegistry.POTION_STICKY, TagRegistry.POTION, TagRegistry.FRAGILE);
 
         registerItem(1100, "Brick",          1.50, TagRegistry.DAMAGE_START + 7);
+        registerItem(1101, "Throwing Knife", 0.25, TagRegistry.DAMAGE_START + 4,  TagRegistry.WEAPON_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP);
         registerItem(1102, "Magic Dagger",   0.33, TagRegistry.DAMAGE_START + 6,  TagRegistry.WEAPON_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT);
         registerItem(ID_WATERBALLOON, "Water Balloon",  0.10, TagRegistry.THROW_WATERBALLOON, TagRegistry.FRAGILE);
 
@@ -148,7 +150,7 @@ public class ItemRegistry {
 
         //Important items
         registerItem(2500, "Shovel",       1, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_STRIKE, TagRegistry.UNLIMITED_USAGE, TagRegistry.DIGGING);
-        registerItem(2501, "Polar Bear Crown", 0.5, TagRegistry.METALLIC);
+        registerItem(ID_POLAR_BEAR_CROWN, "Polar Bear Crown", 0.5, TagRegistry.METALLIC);
 
         registerItem(3000, "Coins",        0, TagRegistry.MONEY);
         registerItem(3001, "Fondant Bits", 0, TagRegistry.MONEY);

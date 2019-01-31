@@ -5,20 +5,29 @@ import Game.InputMap;
 import Game.InputType;
 import Game.Item;
 import Game.Registries.ItemRegistry;
-import Game.Spells.Spell;
 
 public class CinemaUndergroundTunnel extends LevelScript {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     //Interact message
-    private boolean didMessage = false;
+    private boolean didInvThrowMessage = false;
+    private boolean didWeaponThrowMessage = false;
+
+    @Override
+    public String[] getMaskNames() {
+        return new String[]{"weaponthrow"};
+    }
 
     @Override
     public void onTurnEnd() {
-        if (playerHasWaterBalloon() && !didMessage){
-            gi.getTextBox().showMessage("You can throw items. Hold " + getInput(InputMap.THROW_ITEM) + " to get ready to throw the weapon you are currently holding, then press " + getInput(InputMap.ATTACK) + " to throw it.<np>You can also throw <cg>any item from your inventory<cw> by pressing " + getInput(InputMap.THROW_ITEM) + " while hovering over the desired item. (while your inventory is open)");
-            didMessage = true;
+        if (playerHasWaterBalloon() && !didInvThrowMessage){
+            gi.getTextBox().showMessage("You can also throw <cg>any item from your inventory<cw> by pressing " + getInput(InputMap.THROW_ITEM) + " while hovering over the desired item on your inventory screen.");
+            didInvThrowMessage = true;
+        }
+        if (getMaskDataAt("weaponthrow", gi.getPlayer().getLocation()) && !didWeaponThrowMessage){
+            gi.getTextBox().showMessage("You can throw your weapon. Hold " + getInput(InputMap.THROW_ITEM) + ", then press " + getInput(InputMap.ATTACK) + " to throw it.");
+            didWeaponThrowMessage = true;
         }
     }
 
