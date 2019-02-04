@@ -36,7 +36,7 @@ public class StickyEffectTag extends TempTag {
     }
 
     @Override
-    public void onMove(TagEvent e) {
+    public void onEntityMove(TagEvent e) {
         e.cancel();
     }
 

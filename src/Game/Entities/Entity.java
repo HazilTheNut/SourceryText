@@ -10,7 +10,6 @@ import Game.LevelScripts.LightingEffects;
 import Game.Registries.EntityRegistry;
 import Game.Registries.ItemRegistry;
 import Game.Registries.TagRegistry;
-import Game.Tags.PropertyTags.BrightTag;
 import Game.Tags.Tag;
 
 import java.io.Serializable;
@@ -145,7 +144,7 @@ public class Entity extends TagHolder implements Serializable {
 
     protected void move(int relativeX, int relativeY){
         TagEvent moveEvent = new TagEvent(0, true, this, gi.getTileAt(getLocation().add(new Coordinate(relativeX, relativeY))), gi, this);
-        for (Tag tag : getTags()) tag.onMove(moveEvent);
+        for (Tag tag : getTags()) tag.onEntityMove(moveEvent);
         moveEvent.doFutureActions();
         if (moveEvent.eventPassed() && shouldDoAction() && getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)), TagRegistry.NO_PATHING)) {
             moveEvent.doCancelableActions();

@@ -22,7 +22,7 @@ public class Photogate extends GenericPowerSource implements ProjectileListener 
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
         originalIcon = getSprite().getSpecialText(0, 0).copy();
-        gi.getCurrentLevel().addProjectileListener(this::onProjectileFly);
+        gi.getCurrentLevel().addProjectileListener(this);
     }
 
     @Override

@@ -23,8 +23,7 @@ public class FrostEnchantmentTag extends EnchantmentTag {
     }
 
     private void transmit(TagEvent e){
-        if (!e.getTarget().hasTag(TagRegistry.NO_REFREEZE))
-            e.getTarget().addTag(TagRegistry.FROZEN, e.getSource());
+        e.getTarget().addTag(TagRegistry.FROZEN, e.getSource());
     }
 
     @Override

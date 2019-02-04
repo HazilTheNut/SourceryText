@@ -136,7 +136,7 @@ public class GameMaster {
                 currentGameInstance.assignGameMaster(this);
                 currentGameInstance.initialize();
                 currentGameInstance.establishMouseInput();
-                currentGameInstance.enterLevel(currentGameInstance.getCurrentLevel().getFilePath(), currentGameInstance.getPlayer().getLocation());
+                currentGameInstance.resumeCurrentLevel();
                 gameRunning = true;
                 layerManager.addLayer(mouseInput.getMouseHighlight());
                 DebugWindow.reportf(DebugWindow.STAGE, "GameMaster.loadGame","Successful load of game!");

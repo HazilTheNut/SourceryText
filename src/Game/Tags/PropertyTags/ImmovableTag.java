@@ -8,7 +8,7 @@ public class ImmovableTag extends Tag {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
-    public void onMove(TagEvent e) {
+    public void onEntityMove(TagEvent e) {
         e.cancel();
     }
 }

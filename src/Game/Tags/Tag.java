@@ -2,6 +2,7 @@ package Game.Tags;
 
 import Data.SerializationVersion;
 import Game.Entities.Entity;
+import Game.Projectile;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
 import Game.TagHolder;
@@ -67,16 +68,14 @@ public class Tag implements Serializable {
 
     // E V E N T S
 
-    //For reference, "this" means the owner of this tag. All TagEvents have a tagOwner field that should be used for lack of ambiguity.
-
     //Ran when the player enters a level. Cancellation does nothing.
-    //Source: this
-    //Target: this
+    //Source: tag owner
+    //Target: tag owner
     public void onLevelEnter(TagEvent e){}
 
     //Upon when the TagHolder Item is 'used'
     //Source: the item being used
-    //Target: this
+    //Target: tag owner
     public void onItemUse(TagEvent e) {}
 
     //Upon dealing damage, useful for calculating the total damage of an attack
@@ -90,43 +89,43 @@ public class Tag implements Serializable {
     public void onReceiveDamage(TagEvent e){}
 
     //Upon an enemy swinging a weapon, useful for causing attacks to miss. Amount is % chance of success
-    //Source: this
+    //Source: tag owner
     //Target: held weapon
     public void onWeaponSwing(TagEvent e){}
 
     //Ran every turn
-    //Source: this
-    //Target: this. If this is a Tile, then it is instead the solid entity atop this Tile (can be null)
+    //Source: tag owner
+    //Target: tag owner. If this is a Tile, then it is instead the solid entity atop this Tile (can be null)
     public void onTurn(TagEvent e){}
 
     //Ran whenever two TagHolders come in physical contact with each other
-    //Source: this
+    //Source: tag owner
     //Target: other TagHolder being contacted
     public void onContact(TagEvent e){}
 
     //Ran on every iteration of projectile over tiles
-    //Source: this
+    //Source: tag owner
     //Target: other TagHolder 'below', almost always a Tile
     public void onFlyOver(TagEvent e){}
 
     //Ran on every movement of owner Entity
-    //Source: this
-    //Target: this
-    public void onMove(TagEvent e){}
+    //Source: tag owner
+    //Target: tag owner
+    public void onEntityMove(TagEvent e){}
 
     //Ran when en Entity tries do an action that 'takes up a turn'. Cancel to prevent the action from happening.
-    //Source: this
+    //Source: tag owner
     //Target: null
     public void onEntityAction(TagEvent e){}
 
     //Ran when the tag holder containing this tag receives another tag. GameInstance is null. When this event is ran, the newly added tag is already in the tag list of the tagOwner.
     //Source: source of tag addition
-    //Target: this
+    //Target: tag owner
     public void onAdd(TagEvent e){}
 
     //Ran when this tag is being added to a tag holder, happens after onAdd() and all future actions. GameInstance is null
     //Source: source of tag addition
-    //Target: this
+    //Target: tag owner
     public void onAddThis(TagEvent e){}
 
     //Ran when this tag is removed. Tag removal cannot be canceled
@@ -134,6 +133,9 @@ public class Tag implements Serializable {
 
     //Ran when the owner of this is destroyed. Entity destruction cannot be canceled
     public void onEntityDestruct(Entity owner){}
+
+    //Ran at the end of every movement cycle of the projectile owning this tag.
+    public void onProjectileMove(Projectile owner){}
 
     //Ran to figure if the owning Tile can be cleaned up by the level.
     public boolean isTileRemovable(Tile tile){ return true; }

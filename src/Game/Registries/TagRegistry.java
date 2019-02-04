@@ -52,7 +52,6 @@ public class TagRegistry {
     public final static int FROZEN        = 10;
     public final static int FROST_ENCHANT = 11;
     public final static int WET           = 12;
-    public final static int NO_REFREEZE   = 13;
     public final static int BURN_SPREAD   = 14;
     public final static int WETTING       = 15;
     public final static int BURN_NOSPREAD = 16;
@@ -176,7 +175,6 @@ public class TagRegistry {
         registerTag(FROZEN, "Frozen", FrozenTag.class);
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);
         registerTag(WET, "Wet", WetTag.class);
-        registerTag(NO_REFREEZE, "Cannot Refreeze", NoRefreezeTag.class);
         registerTag(BURN_SPREAD, "Burns Instantly", BurnSpreadingTag.class);
         registerTag(WETTING, "Wetting", WettingTag.class);
         registerTag(BURN_NOSPREAD, "No Fire-Spreading", BurnNonSpreadingTag.class);

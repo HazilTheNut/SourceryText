@@ -191,6 +191,10 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         return output;
     }
 
+    public void resumeCurrentLevel(){
+        startLevel(currentLevel, player.getLocation());
+    }
+
     private void startLevel(Level level, Coordinate loc){
         getPlayer().setPos(loc);
         level.addEntity(getPlayer());

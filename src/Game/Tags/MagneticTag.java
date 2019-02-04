@@ -51,15 +51,37 @@ public class MagneticTag extends Tag implements ProjectileListener {
     @Override
     public void onProjectileFly(Projectile projectile) {
         if (projectile.hasTag(TagRegistry.METALLIC) && ownerLocation != null) {
-            double magneticFactor = (isAttractive) ? 1 : -1; //Adjustment number for strength of pull. By pure luck it happens to be 1
-            double dx = projectile.getXpos() - ownerLocation.getX();
-            double dy = projectile.getYpos() - ownerLocation.getY();
-            double distanceFactor = (Math.pow(dx, 2) + Math.pow(dy, 2)); //Pretend as if it were square-rooted. It's just that it's going to be squared immediately afterward.
-            distanceFactor = Math.max(1, distanceFactor); //Low distance factors cause wildly crazy results.
-            double pullX = (magneticFactor * -dx) / (Math.pow(distanceFactor, 1.5)); //The math checks out
-            double pullY = (magneticFactor * -dy) / (Math.pow(distanceFactor, 1.5));
-            projectile.adjust(0, 0, pullX, pullY);
+            deflectProjectile(projectile, ownerLocation);
         }
+    }
+
+    @Override
+    public void onProjectileMove(Projectile owner) {
+        double MAG_CONST_PROJECTILE = 3;
+        for (Entity e : owner.getGameInstance().getCurrentLevel().getEntities())
+            if (e.hasTag(TagRegistry.MAGNETIC)){
+                double magneticFactor = (isAttractive ^ ((MagneticTag)e.getTag(TagRegistry.MAGNETIC)).isAttractive()) ? 1 : -1;
+                deflectProjectile(owner, e.getLocation(), MAG_CONST_PROJECTILE * magneticFactor);
+            }
+            else if (e.hasTag(TagRegistry.METALLIC)) {
+                double magneticFactor = (isAttractive) ? 1 : -1;
+                deflectProjectile(owner, e.getLocation(), MAG_CONST_PROJECTILE * magneticFactor);
+            }
+    }
+
+    public void deflectProjectile(Projectile projectile, Coordinate loc){
+        double magneticFactor = (isAttractive) ? 1 : -1; //Adjustment number for strength of pull. By pure luck it happens to be 1
+        deflectProjectile(projectile, loc, magneticFactor);
+    }
+
+    public void deflectProjectile(Projectile projectile, Coordinate loc, double magneticFactor){
+        double dx = projectile.getXpos() - loc.getX();
+        double dy = projectile.getYpos() - loc.getY();
+        double distanceFactor = (Math.pow(dx, 2) + Math.pow(dy, 2)); //Pretend as if it were square-rooted. It's just that it's going to be squared immediately afterward.
+        distanceFactor = Math.max(1, distanceFactor); //Low distance factors cause wildly crazy results.
+        double pullX = (magneticFactor * -dx) / (Math.pow(distanceFactor, 1.5)); //The math checks out
+        double pullY = (magneticFactor * -dy) / (Math.pow(distanceFactor, 1.5));
+        projectile.adjust(0, 0, pullX, pullY);
     }
 
     @Override
@@ -90,6 +112,10 @@ public class MagneticTag extends Tag implements ProjectileListener {
 
     public void setAttractive(boolean attractive) {
         isAttractive = attractive;
+    }
+
+    public boolean isAttractive() {
+        return isAttractive;
     }
 
     @Override

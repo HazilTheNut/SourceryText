@@ -87,7 +87,6 @@ public class FrozenTag extends Tag {
 
     private void meltOnto(TagHolder holder){
         holder.addTag(TagRegistry.WET, holder);
-        holder.addTag(TagRegistry.NO_REFREEZE, holder);
     }
 
     @Override

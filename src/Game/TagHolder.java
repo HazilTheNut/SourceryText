@@ -73,7 +73,7 @@ public class TagHolder implements Serializable {
     }
 
     public Tag getTag(int id){
-        for (Tag tag : tags){
+        for (Tag tag : getTags()){
             if (tag.getId() == id) return tag;
         }
         return null;

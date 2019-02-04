@@ -16,7 +16,7 @@ public class BleedTag extends TempTag {
     private boolean didMove = false;
 
     @Override
-    public void onMove(TagEvent e) {
+    public void onEntityMove(TagEvent e) {
         didMove = true;
     }
 

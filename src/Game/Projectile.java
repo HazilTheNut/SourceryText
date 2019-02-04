@@ -44,6 +44,8 @@ public class Projectile extends TagHolder {
     private double goalDistance;
     private final double UNITS_PER_CYCLE = 0.9;
 
+    private boolean[][] flyoverMatrix;
+
     public Projectile(Entity creator, Coordinate target, SpecialText icon){
         source = creator;
         xpos = creator.getLocation().getX();
@@ -73,6 +75,7 @@ public class Projectile extends TagHolder {
         iconLayer.editLayer(0, 0, getIcon(icon));
         iconLayer.setVisible(false);
         lm = gi.getLayerManager();
+        flyoverMatrix = new boolean[gi.getCurrentLevel().getWidth()][gi.getCurrentLevel().getHeight()];
     }
 
     protected SpecialText getIcon(SpecialText baseIcon){
@@ -112,15 +115,18 @@ public class Projectile extends TagHolder {
         iconLayer.setVisible(true);
         DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile", " xv: %1$f yv: %2$f", normalizedVelocityX, normalizedVelocityY);
         while (totalDistanceTraveled < (targetDistance * internalVelMagnitude)) {
-            calculateInternalMagnitude(); //Done first to ensure calculations are done correctly
+            //Pre-cycle calculations
+            calculateInternalMagnitude(); //The next line of code uses the internal velocity magnitude, which may change since it was previously calculated.
             double distToTravel = Math.max(0.1, Math.min(UNITS_PER_CYCLE, (targetDistance * internalVelMagnitude) - totalDistanceTraveled)); //How far the projectile should travel this cycle.
             normalizeVelocity(distToTravel); //When reaching the end of the projectile's travel, there may be "leftover" distance that is less tan UNITS_PER_CYCLE, so the remaining distance is accounted for.
+            //Collision detection
             if (checkCollision(xpos + normalizedVelocityX, ypos + normalizedVelocityY))
                 return;
             if (normalizedVelocityX != 0 && checkCollision(xpos + normalizedVelocityX, ypos))
                 return;
             if (normalizedVelocityY != 0 && checkCollision(xpos, ypos + normalizedVelocityY))
                 return;
+            //Move the projectile
             xpos += normalizedVelocityX;
             ypos += normalizedVelocityY;
             Coordinate newPos = getRoundedPos(xpos, ypos);
@@ -128,7 +134,10 @@ public class Projectile extends TagHolder {
             iconLayer.editLayer(0, 0, getIcon(iconLayer.getSpecialText(0, 0)));
             DebugWindow.reportf(DebugWindow.GAME, "Projectile.launchProjectile:" + (int)totalDistanceTraveled, "pos: %1$s", newPos);
             sleep(50);
+            //Post-cycle stuff
             gi.onProjectileFly(this);
+            for (Tag tag : getTags())
+                tag.onProjectileMove(this);
             if (shouldFall()) totalDistanceTraveled += distToTravel;
         }
         collideWithTerrain(getRoundedPos());
@@ -200,6 +209,8 @@ public class Projectile extends TagHolder {
         return normalizedVelocityY;
     }
 
+    public GameInstance getGameInstance() { return gi; }
+
     //I had an issue earlier where the position rounding was done differently in different places in the code. That's no good!
     //Therefore, all rounding calculations will be centralized at this method.
     private Coordinate getRoundedPos(double xpos, double ypos){
@@ -241,6 +252,8 @@ public class Projectile extends TagHolder {
     }
 
     private void doFlyoverEvent(Coordinate loc){
+        if (flyoverMatrix[loc.getX()][loc.getY()]) //It's kinda messy to have the same projectile do flyover events multiple times on the same tile.
+            return;
         Tile belowTile = gi.getTileAt(loc);
         if (belowTile != null) {
             TagEvent e = new TagEvent(0, true, this, belowTile, gi, this);
@@ -250,6 +263,7 @@ public class Projectile extends TagHolder {
             e.doFutureActions();
             if (e.eventPassed()) e.doCancelableActions();
         }
+        flyoverMatrix[loc.getX()][loc.getY()] = true;
     }
 
     private void destroy(){
