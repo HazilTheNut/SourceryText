@@ -8,6 +8,7 @@ import Engine.SpecialText;
 import Game.AnimatedTiles.AnimatedTile;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
+import Game.Entities.GameCharacter;
 import Game.Entities.LootPile;
 import Game.LevelScripts.LevelScript;
 import Game.Registries.EntityRegistry;
@@ -500,5 +501,13 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     void onProjectileFly(Projectile projectile){
         for (ProjectileListener pl : currentLevel.getProjectileListeners())
             pl.onProjectileFly(projectile);
+    }
+
+    public void updateGameCharacterIcons(){
+        for (Entity e : getCurrentLevel().getEntities())
+            if (e instanceof GameCharacter) {
+                GameCharacter gameCharacter = (GameCharacter) e;
+                gameCharacter.updateSprite();
+            }
     }
 }

@@ -148,7 +148,7 @@ public class GameCharacter extends BasicEnemy {
         for (String factionName : factionAlignments){
             FactionManager.Faction faction = gi.getFactionManager().getFaction(factionName);
             if (faction != null) {
-                faction.addOpinion("player", -2);
+                faction.addOpinion("player", -2, getGameInstance());
             }
         }
     }

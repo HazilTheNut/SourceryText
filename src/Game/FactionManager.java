@@ -2,6 +2,7 @@ package Game;
 
 import Data.SerializationVersion;
 import Game.Debug.DebugWindow;
+import Game.Entities.Entity;
 import Game.Entities.GameCharacter;
 import Game.Registries.TagRegistry;
 
@@ -84,6 +85,8 @@ public class FactionManager implements Serializable {
         DebugWindow.reportf(DebugWindow.MISC, "FactionManager.createFaction", faction.toString());
     }
 
+
+
     public class Faction implements Serializable{
 
         private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
@@ -119,7 +122,7 @@ public class FactionManager implements Serializable {
             return 0;
         }
 
-        public void addOpinion(String name, int opinion){
+        public void addOpinion(String name, int opinion, GameInstance gi){
             for (FactionOpinion relation : relations){
                 if (relation.name.equals(name)){
                     relation.opinion = (byte)Math.max(-10, Math.min(relation.opinion + opinion, 10));
@@ -127,6 +130,7 @@ public class FactionManager implements Serializable {
                 }
             }
             relations.add(new FactionOpinion(name, opinion));
+            gi.updateGameCharacterIcons();
         }
 
         public String getName() {

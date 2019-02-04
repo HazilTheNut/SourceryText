@@ -12,10 +12,16 @@ public class VillageDetectFires extends LevelScript {
         return new String[]{"Houses"};
     }
 
+    private boolean recordedEvent = false;
+
     @Override
     public void onAddOverlayTile(Tile tile) {
         if (tile.getName().equals("Ash") && getMaskDataAt("Houses", tile.getLocation())){
-            gi.getFactionManager().getFaction("villager").addOpinion("player", -4);
+            gi.getFactionManager().getFaction("villager").addOpinion("player", -4, gi);
+            if (!recordedEvent){
+                gi.recordEvent("PitheryBurned");
+                recordedEvent = true;
+            }
         }
     }
 }
