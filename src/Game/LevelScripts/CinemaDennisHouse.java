@@ -8,21 +8,28 @@ public class CinemaDennisHouse extends LevelScript {
 
     @Override
     public String[] getMaskNames() {
-        return new String[]{"Conversation"};
+        return new String[]{"Awaken","Warning"};
     }
 
-    private boolean conversationHappened = false;
+    private boolean awakenConvoHappened = false;
+    private boolean warningConvoHappened = false;
 
     @Override
     public void onTurnEnd() {
-        if (getMaskDataAt("Conversation", gi.getPlayer().getLocation()) && !conversationHappened){
-            conversationHappened = true;
-            gi.getTextBox().showMessage("Oh hey, yer awake.<p1> Long coma, huh?<p1><nl>That'll happen when the whole universe is turned on its head!<np>" +
-                    "Ya see, a few months ago, some idiot thought everything was too simple, and went down The Source to make some changes. They were so big, it knocked the lights out of nearly everyone, including you.<np>" +
-                    "I saw ya lying on the ground and put you in my basement. Kept ya safe from all the wolves and bandits out there, didn't it?<np>" +
-                    "Say, that means you owe me your life, don't it?<nl><p1>Hm, how about you return the favor and change things back; I hate all this complicated stuff!<np>" +
-                    "Even though The Source is just outside my house, I wouldn't suggest jumping down there right away. If you wanna survive, you'll have to get a magic rope strong enough to exit the universe.<np>" +
-                    "Not sure of where that might be, but you seem pretty capable.<nl>I bet you can figure something out.", "Dennis");
+        if (getMaskDataAt("Awaken", gi.getPlayer().getLocation()) && !awakenConvoHappened){
+            awakenConvoHappened = true;
+            gi.getTextBox().showMessage("Hunh?<p1> OH! You're awake!<np>" +
+                    "You must be pretty dazzled, yeah? All these colors?<p1><nl> If you ask me, it's disgusting.<np>" +
+                    "Someone went down The Source - that giant pit just outside my house - and got to change the universe's source code. Made everything all colorful and whatnot.<np>" +
+                    "As a side effect, it knocked the lights out of everybody! Must've hit you extra hard, 'cause it took you months to wake up.<np>" +
+                    "Well, at least you seem to have made it all in one piece. All those wolves and bandits out there would'a spelled your end!<np>" +
+                    "That means you owe me your life, don't it? How about you pay me back by changing things back to what they were before!<np>" +
+                    "You'll need to fetch two things: <cy>The Documentation<cw>, which lets you figure out how to rewrite the universe, and a <cc>magic rope<cw> which can withstand exiting the universe. Without it, you have no way of getting back out of The Source, which makes it suicide.", "Dennis");
+        }
+        if (getMaskDataAt("Warning", gi.getPlayer().getLocation()) && !warningConvoHappened){
+            warningConvoHappened = true;
+            gi.getTextBox().showMessage("Oh, forgot to mention you something:<nl>You ever heard of the <cc>Colorful Coalition<cw>?<np>" +
+                    "They might try to convince you to not revert the changes; just ignore them.", "Dennis");
         }
     }
 }

@@ -18,8 +18,10 @@ public class Explosion extends TagHolder{
 
     private Layer explosionLayer;
     private ArrayList<Integer> transmissionBlacklist = new ArrayList<>();
+    private boolean explosionBegan = false;
 
     public void explode(int explosionDamage, Coordinate center, GameInstance gi, Color baseColor){
+        explosionBegan = true;
         explosionLayer = new Layer(5, 5, "explosion:" + System.currentTimeMillis() % 30, center.getX() - 2, center.getY() - 2, LayerImportances.ANIMATION);
         explosionLayer.clearLayer();
         gi.getLayerManager().addLayer(explosionLayer);
@@ -86,6 +88,7 @@ public class Explosion extends TagHolder{
                     DebugWindow.reportf(DebugWindow.STAGE, "Explosion.applyDamage:copy", "time: %1$.03fms", (System.nanoTime() - startTime) / 1000000f);
                     //Contact tiles below
                     onContact(gi.getCurrentLevel().getTileAt(levelPos), gi);
+                    transmitTags(gi.getCurrentLevel().getTileAt(levelPos));
                     DebugWindow.reportf(DebugWindow.STAGE, "Explosion.applyDamage:contact", "time: %1$.03fms", (System.nanoTime() - startTime) / 1000000f);
                 }
             }
@@ -116,6 +119,7 @@ public class Explosion extends TagHolder{
                 //Cancelling the event will not remove the tag. Stuff like flammability shouldn't matter in this context.
             }
         }
+        if (explosionBegan) transmissionBlacklist.add(tag.getId());
     }
 
     private void turnSleep(long millis){

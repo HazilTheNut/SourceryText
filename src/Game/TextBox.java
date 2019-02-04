@@ -105,7 +105,7 @@ public class TextBox implements MouseInputReceiver{
         isSkimming = false;
         int SCROLL_SPEED_NORMAL = 28;
         int SCROLL_SPEED_FAST = 8;
-        int SCROLL_SPEED_SLOW = 52;
+        int SCROLL_SPEED_SLOW = 120;
         int SCROLL_SPEED_SKIM = 3;
         //Begin writing
         int scrollSpeed = SCROLL_SPEED_NORMAL;
@@ -115,13 +115,11 @@ public class TextBox implements MouseInputReceiver{
         while (index < message.length()){
             player.freeze();
             if (message.charAt(index) == ' ') { //End of a word
-                int nextIndex = getIndexOfNextSpace(message, index + 1);
-                DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","Next Word: \"%1$s\"", message.substring(index, nextIndex));
-                if (xpos + nextIndex - index > width - 1) { //If word needs to wrap
+                if (xpos + getLengthOfNextWord(message, index + 1) > width - 1) { //If word needs to wrap
                     shiftRow(speaker);
                 } else
                     xpos++;
-                sleep(13); //Somehow, this improves readability
+                sleep(20); //Somehow, this improves readability
             } else if (message.charAt(index) == '\n'){ //New line character
                 shiftRow(speaker);
             } else if (isFormattedElement(message, index, "<nl>")){ //New line flag
@@ -166,6 +164,10 @@ public class TextBox implements MouseInputReceiver{
             } else { //It's not a special or formatted character?
                 textBoxLayer.editLayer(xpos, row, new SpecialText(message.charAt(index), textColor, bkg));
                 xpos++;
+                if (message.charAt(index) == ',')
+                    sleep(40);
+                else if (message.charAt(index) == '.')
+                    sleep(65);
             }
             index++;
             if (isSkimming)
@@ -174,6 +176,8 @@ public class TextBox implements MouseInputReceiver{
                 sleep(scrollSpeed);
         }
         currentState = STATE_END;
+        arrowBrightness = 0;
+        drawNextPageArrow();
     }
 
     private void drawSpeakerBanner(String speakerName){
@@ -187,10 +191,26 @@ public class TextBox implements MouseInputReceiver{
         return index <= message.length() - element.length() && message.substring(index, index + element.length()).equals(element);
     }
 
+    private int getLengthOfNextWord(String message, int startIndex){
+        String word = message.substring(startIndex, getIndexOfNextSpace(message, startIndex));
+        String[] flags = {"<nl>","<np","<sf>","<sn>","<ss>","<cw>","<cr>","<cg>","<cb>","<cc>","<cp>","<cy>","<co>","<cs>","<p1>","<p3>"};
+        int length = word.length(); //Start by having the length equal the length of the word
+        for (int index = 0; index < word.length(); index++){ //Then begin subtracting out the lengths of any flags within the word
+            for (String flag : flags)
+                if (isFormattedElement(word, index, flag)) {
+                    index += flag.length() - 1; //index++ is ran at the end, bringing total increment of index to a proper amount.
+                    length -= flag.length();
+                }
+        }
+        //System.out.printf("[TextBox.getLengthOfNextWord] Word \'%1$s\' l=%2$d\n", word, length);
+        return length;
+    }
+
     private int getIndexOfNextSpace(String message, int index){
         int min = message.length() + 1;
         min = Math.min(getCleanedIndexOf(message, index, " "), min);
-        String[] flags = {"<nl>","<np","<sf>","<sn>","<ss>","<cw>","<cr>","<cg>","<cb>","<cc>","<cp>","<cy>","<co>","<cs>","<p1>","<p3>"};
+        //String[] flags = {"<nl>","<np","<sf>","<sn>","<ss>","<cw>","<cr>","<cg>","<cb>","<cc>","<cp>","<cy>","<co>","<cs>","<p1>","<p3>"};
+        String[] flags = {"<nl>","<np"}; //Newline and newpage flags need to treated as spaces
         for (String flag : flags) {
             min = Math.min(getCleanedIndexOf(message, index, flag), min);
         }
