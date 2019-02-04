@@ -70,6 +70,7 @@ public class TagRegistry {
     public final static int POTION_RECOVERING = 175;
     public final static int POTION_MAGNETIC   = 176;
     public final static int POTION_STICKY     = 177;
+    public final static int POTION_SICKNESS   = 178;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -186,6 +187,7 @@ public class TagRegistry {
         registerTag(POTION_RECOVERING, "Mending Effect", RecoveringPotionTag.class);
         registerTag(POTION_MAGNETIC, "Magnetic Effect", MagneticPotionTag.class);
         registerTag(POTION_STICKY, "Sticky Effect", StickyPotionTag.class);
+        registerTag(POTION_SICKNESS, "Sickness Effect", SicknessPotionTag.class);
 
         //Item related
         registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);
