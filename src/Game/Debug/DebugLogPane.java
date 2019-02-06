@@ -90,10 +90,12 @@ public class DebugLogPane extends JComponent {
     }
 
     void moveScrollBar(){
-        scrollPane.getViewport().revalidate();
-        revalidate();
-        scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
-        scrollPane.repaint();
+        if (!captionSensitive) {
+            scrollPane.getViewport().revalidate();
+            revalidate();
+            scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
+            scrollPane.repaint();
+       }
     }
 
     private class DebugEntry {

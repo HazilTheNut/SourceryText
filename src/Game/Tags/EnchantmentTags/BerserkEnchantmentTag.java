@@ -16,11 +16,6 @@ public class BerserkEnchantmentTag extends EnchantmentTag {
     public void onContact(TagEvent e) {
         if (e.getTarget() instanceof CombatEntity) {
             e.getTarget().addTag(TagRegistry.BERSERK, e.getSource());
-            if (e.getTarget() instanceof BasicEnemy) {
-                BasicEnemy target = (BasicEnemy) e.getTarget();
-                CombatEntity newTarget = target.getNearestEnemy();
-                target.setTarget(newTarget);
-            }
         }
     }
 

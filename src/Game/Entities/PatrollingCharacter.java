@@ -43,14 +43,20 @@ public class PatrollingCharacter extends GameCharacter {
 
     @Override
     protected void doIdleBehavior() {
+        super.doIdleBehavior();
         if (getLocation().equals(patrolPath.get(patrolPathPointer))){
             patrolPathPointer++;
             if (patrolPathPointer >= patrolPath.size()) patrolPathPointer = 0;
         } else {
-            if (shouldMove)
+            if (shouldMove) //Moves every other turn
                 pathToPosition(patrolPath.get(patrolPathPointer));
             shouldMove = !shouldMove;
         }
+    }
+
+    @Override
+    protected void wanderTo(Coordinate pos) {
+        if (mentalState == STATE_SEARCHING) super.wanderTo(pos);
     }
 
     @Override

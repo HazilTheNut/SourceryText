@@ -42,6 +42,7 @@ public class BasicEnemy extends CombatEntity {
         pickNewWeapon();
         detectRange = readIntArg(searchForArg(entityStruct.getArgs(), "detectRange"), detectRange);
         alertRadius = readIntArg(searchForArg(entityStruct.getArgs(), "alertRadius"), alertRadius);
+        originalLocation = getLocation().copy();
     }
 
     protected int detectRange = 15;
@@ -58,6 +59,17 @@ public class BasicEnemy extends CombatEntity {
     private static final int RAYCAST_WALL   = 2;
     private boolean clockwiseOrbit = false; //"Orbiting" occurs when a friendly CombatEntity is in between this and the target.
 
+    //States of "Mentality"
+    protected int mentalState = 0;
+    private static final int STATE_IDLE = 0;
+    private static final int STATE_HOSTILE = 1;
+    public static final int STATE_SEARCHING = 2;
+    public static final int STATE_BERSERK = 3;
+    public static final int STATE_SCARED = 4;
+
+    private Coordinate searchPos;
+    private Coordinate originalLocation;
+
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
@@ -73,35 +85,86 @@ public class BasicEnemy extends CombatEntity {
         super.onTurn();
     }
 
+    public void setMentalState(int mentalState) {
+        this.mentalState = mentalState;
+    }
+
     private void doAutonomousAI(){
         if (weapon == null && getItems().size() > 0) pickNewWeapon(); //No Weapon? Try picking new ones if there's something in the inventory
         if (target != null) {
             int hp = target.getHealth();
-            if (hp <= 0)
+            if (hp <= 0) {
                 target = null;
-        }
-        if (target == null){ //if not being aggressive
-            doIdleBehavior();
-            CombatEntity nearest = getNearestEnemy();
-            if (nearest != null) {
-                setTarget(nearest);
-                alertNearbyAllies(); //Let everyone know
+                mentalState = STATE_IDLE;
             }
         }
-        if (target != null) { //If being aggressive
-            if (hasTag(TagRegistry.SCARED)) {
-                pathToPosition(target.getLocation()); //While scared, it moves backwards
-            } else {
-                if (isRanged())
-                    doRangedBehavior();
-                else
-                    doMeleeBehavior();
-            }
+        displayMentalState();
+        switch (mentalState){
+            case STATE_IDLE:
+                doIdleBehavior();
+                break;
+            case STATE_HOSTILE:
+                doHostileBehavior();
+                break;
+            case STATE_SEARCHING:
+                doSearchingBehavior();
+                break;
+            case STATE_BERSERK:
+                doBerserkBehavior();
+                break;
+            case STATE_SCARED:
+                doScaredBehavior();
+                break;
         }
     }
 
     protected void doIdleBehavior(){
-        //Override this
+        CombatEntity nearest = getNearestEnemy();
+        if (nearest != null) {
+            setTarget(nearest);
+            alertNearbyAllies(); //Let everyone know
+        } else
+            wanderTo(originalLocation);
+    }
+
+    protected void wanderTo(Coordinate pos){
+        if (getLocation().stepDistance(pos) > 0){
+            pathToPosition(pos);
+        } else {
+            mentalState = STATE_IDLE;
+        }
+    }
+
+    protected void doHostileBehavior(){
+        if (isRanged())
+            doRangedBehavior();
+        else
+            doMeleeBehavior();
+        if (isEntityVisible(target)){
+            searchPos = target.getLocation().copy();
+        } else {
+            mentalState = STATE_SEARCHING;
+            target = null;
+        }
+    }
+
+    protected void doSearchingBehavior(){
+       wanderTo(searchPos);
+    }
+
+    protected void doBerserkBehavior(){
+        target = getNearestBasicEnemy();
+        if (isRanged())
+            doRangedBehavior();
+        else
+            doMeleeBehavior();
+    }
+
+    protected void doScaredBehavior(){
+        if (target == null)
+            target = getNearestBasicEnemy();
+        Coordinate movementVector = getLocation().subtract(target.getLocation()).normalize().multiply(-1);
+        pathToPosition(getLocation().add(movementVector));
     }
 
     protected boolean isEnemy(Entity e){
@@ -142,7 +205,7 @@ public class BasicEnemy extends CombatEntity {
             return range;
         double lightValue = Math.min(lightingEffects.getMasterLightMap()[loc.getX()][loc.getY()], 1); //Being in very bright areas caused guards to see you from a mile away, so multiplier is capped at 1.
         int reducedRange = (int) ((double)range * lightValue);
-        DebugWindow.reportf(DebugWindow.GAME, "PatrollingCharacter.isWithinDetectRange", "loc %1$s range %2$d id: %3$d", loc, reducedRange, getUniqueID());
+        DebugWindow.reportf(DebugWindow.GAME, "BasicEnemy.isWithinDetectRange", "loc %1$s range %2$d id: %3$d", loc, reducedRange, getUniqueID());
         return reducedRange;
     }
 
@@ -156,7 +219,7 @@ public class BasicEnemy extends CombatEntity {
     }
 
     protected boolean isEntityVisible(Entity entity){
-        return isWithinDetectRange(entity.getLocation(), detectRange) && raycastToPosition(entity.getLocation()) != RAYCAST_WALL;
+        return entity.isVisible() && isWithinDetectRange(entity.getLocation(), detectRange) && raycastToPosition(entity.getLocation()) != RAYCAST_WALL;
     }
 
     private BasicEnemy getNearestBasicEnemy(){
@@ -166,7 +229,7 @@ public class BasicEnemy extends CombatEntity {
             if (e instanceof BasicEnemy && !e.equals(gi.getPlayer())) {
                 BasicEnemy basicEnemy = (BasicEnemy) e;
                 double dist = basicEnemy.getLocation().stepDistance(getLocation());
-                if (dist < lowestDistance && dist > 0){
+                if (isEntityVisible(basicEnemy) && dist < lowestDistance && dist > 0){
                     target = basicEnemy;
                     lowestDistance = dist;
                 }
@@ -196,8 +259,12 @@ public class BasicEnemy extends CombatEntity {
     }
 
     private void setTarget(CombatEntity target, boolean urgent){
-        if (target != null && !target.equals(this) && (isEnemy(target) || urgent))
+        boolean targetValid = (isEnemy(target) || urgent);
+        boolean correctMentalState = mentalState == STATE_IDLE || mentalState == STATE_SEARCHING || urgent;
+        if (!target.equals(this) && targetValid && correctMentalState) {
             this.target = target;
+            mentalState = STATE_HOSTILE;
+        }
     }
 
     public void setTarget(CombatEntity target) {
@@ -366,4 +433,27 @@ public class BasicEnemy extends CombatEntity {
         this.lightingEffects = lightingEffects;
         return super.provideLightNodes(lightingEffects);
     }
+
+
+    private void displayMentalState(){
+        String toDisplay = "UNDEFINED";
+        switch (mentalState){
+            case STATE_IDLE:
+                toDisplay = "Idle";
+                break;
+            case STATE_HOSTILE:
+                toDisplay = "Hostile";
+                break;
+            case STATE_SEARCHING:
+                toDisplay = "Searching";
+                break;
+            case STATE_BERSERK:
+                toDisplay = "Berserk";
+                break;
+            case STATE_SCARED:
+                toDisplay = "Scared";
+        }
+        DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$d.displayMentalState", getUniqueID()), "State: %1$s", toDisplay);
+    }
+
 }
