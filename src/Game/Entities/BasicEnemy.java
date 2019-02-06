@@ -128,7 +128,7 @@ public class BasicEnemy extends CombatEntity {
     }
 
     protected void wanderTo(Coordinate pos){
-        if (getLocation().stepDistance(pos) > 0){
+        if (pos != null && getLocation().stepDistance(pos) > 0){
             pathToPosition(pos);
         } else {
             mentalState = STATE_IDLE;
@@ -264,6 +264,7 @@ public class BasicEnemy extends CombatEntity {
         if (!target.equals(this) && targetValid && correctMentalState) {
             this.target = target;
             mentalState = STATE_HOSTILE;
+            searchPos = target.getLocation().copy();
         }
     }
 
