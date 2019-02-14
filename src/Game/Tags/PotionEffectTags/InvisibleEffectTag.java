@@ -1,5 +1,6 @@
 package Game.Tags.PotionEffectTags;
 
+import Data.SerializationVersion;
 import Game.Entities.Entity;
 import Game.TagEvent;
 import Game.TagHolder;
@@ -7,6 +8,8 @@ import Game.Tags.Tag;
 import Game.Tags.TempTags.TempTag;
 
 public class InvisibleEffectTag extends TempTag {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     public InvisibleEffectTag(){
         LIFETIME_START = 25;

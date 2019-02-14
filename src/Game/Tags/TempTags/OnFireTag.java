@@ -148,6 +148,7 @@ public class OnFireTag extends Tag implements FrameDrawListener{
     @Override
     public void onAdd(TagEvent e) {
         if (e.getTarget().hasTag(TagRegistry.FROZEN) || e.getTarget().hasTag(TagRegistry.WET)) e.addFutureAction(event -> e.getTarget().removeTag(getId()));
+        defineFireBehavior(e.getTagOwner());
     }
 
     @Override

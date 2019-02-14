@@ -29,10 +29,10 @@ public class ItemRegistry {
 
      */
 
-     public static int ID_ARROW = 1500;
-     public static int ID_FIRESCROLL = 1900;
-     public static int ID_WATERBALLOON = 1103;
-     public static int ID_POLAR_BEAR_CROWN = 2501;
+     public static final int ID_ARROW = 1500;
+     public static final int ID_FIRESCROLL = 1900;
+     public static final int ID_WATERBALLOON = 1103;
+     public static final int ID_POLAR_BEAR_CROWN = 2501;
 
     static {
         //Registering stuff starts here
@@ -112,6 +112,7 @@ public class ItemRegistry {
         registerItem(1052, "Adhesive Potion", 0.35, TagRegistry.POTION_STICKY, TagRegistry.POTION, TagRegistry.FRAGILE);
         registerItem(1053, "Sickness Potion", 0.30, TagRegistry.POTION_SICKNESS, TagRegistry.POTION, TagRegistry.FRAGILE);
         registerItem(1054, "Cloaking Potion", 0.30, TagRegistry.POTION_INVISIBLE, TagRegistry.POTION, TagRegistry.FRAGILE);
+        registerItem(1055, "Armor Potion",   0.50, TagRegistry.POTION_ARMOR, TagRegistry.POTION, TagRegistry.FRAGILE);
 
         registerItem(1100, "Brick",          1.50, TagRegistry.DAMAGE_START + 7);
         registerItem(1101, "Throwing Knife", 0.25, TagRegistry.DAMAGE_START + 4,  TagRegistry.WEAPON_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP);
@@ -149,6 +150,7 @@ public class ItemRegistry {
         registerItem(2007, "Basement Key", 0, TagRegistry.KEY);
         registerItem(2008, "Secret Key",   0, TagRegistry.KEY);
         registerItem(2009, "Store Key",    0, TagRegistry.KEY);
+        registerItem(2010, "Backdoor Key", 0, TagRegistry.KEY);
 
         //Important items
         registerItem(2500, "Shovel",       1, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_STRIKE, TagRegistry.UNLIMITED_USAGE, TagRegistry.DIGGING);

@@ -119,16 +119,15 @@ public class BasicEnemy extends CombatEntity {
     }
 
     protected void doIdleBehavior(){
+        wanderTo(originalLocation);
+    }
+
+    protected void wanderTo(Coordinate pos){
         CombatEntity nearest = getNearestEnemy();
         if (nearest != null) {
             setTarget(nearest);
             alertNearbyAllies(); //Let everyone know
-        } else
-            wanderTo(originalLocation);
-    }
-
-    protected void wanderTo(Coordinate pos){
-        if (pos != null && getLocation().stepDistance(pos) > 0){
+        } else if (pos != null && getLocation().stepDistance(pos) > 0){
             pathToPosition(pos);
         } else {
             mentalState = STATE_IDLE;
@@ -140,7 +139,7 @@ public class BasicEnemy extends CombatEntity {
             doRangedBehavior();
         else
             doMeleeBehavior();
-        if (isEntityVisible(target)){
+        if (target != null && isEntityVisible(target)){
             searchPos = target.getLocation().copy();
         } else {
             mentalState = STATE_SEARCHING;
@@ -261,7 +260,7 @@ public class BasicEnemy extends CombatEntity {
     private void setTarget(CombatEntity target, boolean urgent){
         boolean targetValid = (isEnemy(target) || urgent);
         boolean correctMentalState = mentalState == STATE_IDLE || mentalState == STATE_SEARCHING || urgent;
-        if (!target.equals(this) && targetValid && correctMentalState) {
+        if (target != null && !target.equals(this) && targetValid && correctMentalState) {
             this.target = target;
             mentalState = STATE_HOSTILE;
             searchPos = target.getLocation().copy();

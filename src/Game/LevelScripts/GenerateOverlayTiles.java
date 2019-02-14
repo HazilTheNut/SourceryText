@@ -12,7 +12,7 @@ public class GenerateOverlayTiles extends LevelScript {
 
     @Override
     public String[] getMaskNames() {
-        return new String[]{"snow", "ice", "bridge", "ash", "fire"};
+        return new String[]{"snow", "ice", "bridge", "ash", "fire", "fireplace"};
     }
 
     @Override
@@ -30,13 +30,21 @@ public class GenerateOverlayTiles extends LevelScript {
                 else if (getMaskDataAt("ash", loc))
                     otg.createAshTile(loc, level);
                 else if (getMaskDataAt("fire", loc)){
-                    Tile tile = otg.createAshTile(loc, level);
-                    tile.addTag(TagRegistry.FLAMMABLE, tile);
-                    tile.addTag(TagRegistry.BURN_FOREVER, tile);
-                    tile.addTag(TagRegistry.ON_FIRE, tile);
-                    tile.removeTag(TagRegistry.FLAMMABLE);
+                    createFireTile(loc, otg);
+                } else if (getMaskDataAt("fireplace", loc)){
+                    Tile tile = createFireTile(loc, otg);
+                    tile.addTag(TagRegistry.BURN_NOSPREAD, tile);
                 }
             }
         }
+    }
+
+    private Tile createFireTile(Coordinate loc, OverlayTileGenerator otg){
+        Tile tile = otg.createAshTile(loc, level);
+        tile.addTag(TagRegistry.FLAMMABLE, tile);
+        tile.addTag(TagRegistry.BURN_FOREVER, tile);
+        tile.addTag(TagRegistry.ON_FIRE, tile);
+        tile.removeTag(TagRegistry.FLAMMABLE);
+        return tile;
     }
 }

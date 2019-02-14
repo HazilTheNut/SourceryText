@@ -67,12 +67,14 @@ public class TagRegistry {
     public final static int EFFECT_MAGNETIC   = 151;
     public final static int EFFECT_STICKY     = 152;
     public final static int EFFECT_INVISIBLE  = 153;
+    public final static int EFFECT_ARMOR      = 154;
 
     public final static int POTION_RECOVERING = 175;
     public final static int POTION_MAGNETIC   = 176;
     public final static int POTION_STICKY     = 177;
     public final static int POTION_SICKNESS   = 178;
     public final static int POTION_INVISIBLE  = 179;
+    public final static int POTION_ARMOR  = 180;
 
     public final static int WEAPON        = 200;
     public final static int WEAPON_STRIKE = 201;
@@ -186,12 +188,14 @@ public class TagRegistry {
         registerTag(EFFECT_MAGNETIC, "Magnetic Effect", MagneticTempTag.class);
         registerTag(EFFECT_STICKY, "Sticky", StickyEffectTag.class);
         registerTag(EFFECT_INVISIBLE, "Invisible", InvisibleEffectTag.class);
+        registerTag(EFFECT_ARMOR, "Armor", ArmorEffectTag.class);
 
         registerTag(POTION_RECOVERING, "Mending Effect", RecoveringPotionTag.class);
         registerTag(POTION_MAGNETIC, "Magnetic Effect", MagneticPotionTag.class);
         registerTag(POTION_STICKY, "Sticky Effect", StickyPotionTag.class);
         registerTag(POTION_SICKNESS, "Sickness Effect", SicknessPotionTag.class);
         registerTag(POTION_INVISIBLE, "Invisible Effect", InvisiblePotionTag.class);
+        registerTag(POTION_ARMOR, "Armor Effect", ArmorPotionTag.class);
 
         //Item related
         registerTag(WEAPON, "Undefined Weapon", WeaponTypeTag.class);

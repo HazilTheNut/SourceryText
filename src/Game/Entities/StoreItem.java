@@ -78,7 +78,7 @@ public class StoreItem extends LootPile {
             if (i < getItems().size() - 1)
                 builder.append(",<nl>");
         }
-        builder.append("<nl>Cost: <cg>$").append(cost).append(" <cs>").append(currencyType);
+        builder.append("<nl>Cost: <cg>$").append(cost).append(" <cs>").append(currencyType).append(" <cs>(In Wallet: $").append(gi.getPlayer().getMoney(currencyType)).append(')');
         return builder.toString();
     }
 
