@@ -20,9 +20,11 @@ public class ElectricEnchantmentTag extends EnchantmentTag {
     }
 
     private transient ArrayList<Entity> blacklist;
+    private boolean isOriginal = true;
 
     @Override
     public void onContact(TagEvent e) {
+        initBlacklist(e.getTagOwner());
         int dmg = 1;
         if (isTagHolderConductive(e.getTarget()))
             dmg = (e.getTarget().getCurrentHealth() / 10) + 5;
@@ -39,21 +41,29 @@ public class ElectricEnchantmentTag extends EnchantmentTag {
                 zapNearbyEntities(e.getGameInstance(), startLoc);
         }
     }
+    
+    public void initBlacklist(TagHolder owner){
+        if (isOriginal) {
+            blacklist = new ArrayList<>();
+            if (owner instanceof Entity)
+                blacklist.add((Entity)owner);
+        }
+    }
 
     private void zapNearbyEntities(GameInstance gi, Coordinate startLoc){
         ArrayList<Entity> entities = gi.getCurrentLevel().getEntities();
         for (Entity entity : entities) {
-            if (entity.getLocation().hypDistance(startLoc) <= 6) shootProjectileAt(startLoc, entity);
+            double hypDist = entity.getLocation().hypDistance(startLoc);
+            if (hypDist >= 0.5 && hypDist <= 6) shootProjectileAt(startLoc, entity);
         }
     }
 
     private void shootProjectileAt(Coordinate origin, Entity target){
-        if (blacklist == null)
-            blacklist = new ArrayList<>();
         if (target.isAlive() && !blacklist.contains(target)) {
             Projectile zapProj = new Projectile(origin, target.getLocation(), new SpecialText('+', new Color(255, 255, 50), new Color(255, 255, 50, 50)), target.getGameInstance());
             //Create ElectricEnchantmentTag and blacklist entities that cause the ElectricEnchantmentTag to spread backwards.
             ElectricEnchantmentTag electricTag = (ElectricEnchantmentTag) TagRegistry.getTag(TagRegistry.ELECTRIC_ENCHANT);
+            electricTag.setOriginal(false);
             for (Entity e : blacklist) electricTag.addToBlacklist(e);
             for (Entity e : target.getGameInstance().getCurrentLevel().getEntitiesAt(origin)) electricTag.addToBlacklist(e);
             zapProj.addTag(electricTag, null);
@@ -82,5 +92,9 @@ public class ElectricEnchantmentTag extends EnchantmentTag {
     @Override
     public Color getTagColor() {
         return EnchantmentColors.ELECTRIC;
+    }
+
+    public void setOriginal(boolean original) {
+        isOriginal = original;
     }
 }
