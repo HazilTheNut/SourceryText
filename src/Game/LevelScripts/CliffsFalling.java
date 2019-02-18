@@ -10,7 +10,7 @@ public class CliffsFalling extends LevelScript {
 
     @Override
     public String[] getMaskNames() {
-        return new String[]{"cliffs", "deathZone"};
+        return new String[]{"cliffs", "deathZone", "landing"};
     }
 
     @Override
@@ -23,7 +23,7 @@ public class CliffsFalling extends LevelScript {
     }
 
     private void doFallingAnim(Entity e){
-        while (e.getLocation().getY() < level.getHeight() - 1 && !getMaskDataAt("deathZone", e.getLocation())){
+        while (e.getLocation().getY() < level.getHeight() - 1 && !shouldStopAt(e.getLocation())){
             e.setPos(e.getLocation().add(new Coordinate(0, 1)));
             try {
                 Thread.sleep(100);
@@ -31,6 +31,10 @@ public class CliffsFalling extends LevelScript {
                 e1.printStackTrace();
             }
         }
-        e.selfDestruct();
+        if (getMaskDataAt("deathZone", e.getLocation())) e.selfDestruct();
+    }
+
+    private boolean shouldStopAt(Coordinate loc){
+        return getMaskDataAt("landing", loc) || getMaskDataAt("deathZone", loc);
     }
 }
