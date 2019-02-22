@@ -84,7 +84,11 @@ public class ElectricEnchantmentTag extends EnchantmentTag {
     }
 
     private boolean testConductivity(TagHolder holder){
-        return holder.hasTag(TagRegistry.METALLIC) || holder.hasTag(TagRegistry.WET);
+        byte conductivity = 0;
+        conductivity += (holder.hasTag(TagRegistry.METALLIC)) ? 1 : 0;
+        conductivity += (holder.hasTag(TagRegistry.WET)) ? 1 : 0;
+        conductivity += (holder.hasTag(TagRegistry.ELECTRIC_ENCHANT)) ? -1 : 0; //Having the electric enchantment gives you some protection against electricity
+        return conductivity > 0;
     }
 
     private void addToBlacklist(Entity e) { blacklist.add(e); }
