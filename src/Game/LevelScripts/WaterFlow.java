@@ -2,6 +2,7 @@ package Game.LevelScripts;
 
 import Data.Coordinate;
 import Data.LayerImportances;
+import Data.SerializationVersion;
 import Engine.Layer;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
@@ -12,6 +13,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class WaterFlow extends LevelScript {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private ArrayList<Coordinate> particles;
     private int particleSpawnCountdown;

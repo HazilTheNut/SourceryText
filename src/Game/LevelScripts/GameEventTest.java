@@ -1,6 +1,10 @@
 package Game.LevelScripts;
 
+import Data.SerializationVersion;
+
 public class GameEventTest extends LevelScript {
+
+    private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
     public String[] getMaskNames() {

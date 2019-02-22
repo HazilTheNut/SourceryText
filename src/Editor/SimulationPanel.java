@@ -1,9 +1,6 @@
 package Editor;
 
-import Data.Coordinate;
-import Data.LayerImportances;
-import Data.LevelData;
-import Data.LevelScriptMask;
+import Data.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
@@ -127,6 +124,8 @@ public class SimulationPanel extends JFrame {
 
     private class SimWaterFlow extends WaterFlow {
 
+        private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
+
         private LevelData ldata;
 
         public SimWaterFlow(){
@@ -135,7 +134,10 @@ public class SimulationPanel extends JFrame {
 
         @Override
         public boolean getMaskDataAt(String name, Coordinate loc) {
-            return ldata.getLevelScriptMask(LevelScriptRegistry.SCRIPT_WATERFLOW, name).getMask()[loc.getX()][loc.getY()];
+            LevelScriptMask mask = ldata.getLevelScriptMask(LevelScriptRegistry.SCRIPT_WATERFLOW, name);
+            if (loc.getX() < 0 || loc.getX() >= mask.getMask().length || loc.getY() < 0 || loc.getY() >= mask.getMask()[0].length)
+                return false;
+            return mask.getMask()[loc.getX()][loc.getY()];
         }
 
         @Override
