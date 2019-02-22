@@ -20,7 +20,7 @@ public class WaterFlow extends LevelScript {
     @Override
     public void onLevelLoad() {
         particles = new ArrayList<>();
-        particleLayer = new Layer(level.getWidth(), level.getHeight(), "WaterFlow particles: " + level.getName(), 0, 0, LayerImportances.TILE_ANIM + 1);
+        particleLayer = new Layer(getWidth(), getHeight(), "WaterFlow particles: " + level.getName(), 0, 0, LayerImportances.TILE_ANIM + 1);
         for (int i = 0; i < 100; i++) {
             updateParticles();
         }
@@ -28,7 +28,7 @@ public class WaterFlow extends LevelScript {
 
     @Override
     public void onLevelEnter() {
-        particleLayer = new Layer(level.getWidth(), level.getHeight(), "WaterFlow particles: " + level.getName(), 0, 0, LayerImportances.TILE_ANIM + 1);
+        particleLayer = new Layer(getWidth(), getHeight(), "WaterFlow particles: " + level.getName(), 0, 0, LayerImportances.TILE_ANIM + 1);
         gi.getLayerManager().addLayer(particleLayer);
     }
 
@@ -51,6 +51,14 @@ public class WaterFlow extends LevelScript {
     @Override
     public String[] getMaskNames() {
         return new String[]{"North", "South", "East", "West", "ParticleStart"};
+    }
+
+    public ArrayList<Coordinate> getParticles() {
+        return particles;
+    }
+
+    public void resetParticles(){
+        particles = new ArrayList<>();
     }
 
     public ArrayList<Coordinate> getBannedRaftDirections(Coordinate pos){
@@ -77,7 +85,7 @@ public class WaterFlow extends LevelScript {
         playerPrevPos = gi.getPlayer().getLocation().copy();
     }
 
-    private void updateParticles(){
+    public void updateParticles(){
         if (particleSpawnCountdown < 1)
             particleSpawnCountdown = 6;
         else
@@ -88,12 +96,20 @@ public class WaterFlow extends LevelScript {
     }
 
     private void spawnNewParticles(){
-        for (int col = 0; col < level.getWidth(); col++) {
-            for (int row = 0; row < level.getHeight(); row++) {
+        for (int col = 0; col < getWidth(); col++) {
+            for (int row = 0; row < getHeight(); row++) {
                 if (getMaskDataAt("ParticleStart", new Coordinate(col, row)) && hashLoc(col, row) == particleSpawnCountdown)
                     particles.add(new Coordinate(col, row));
             }
         }
+    }
+
+    public int getWidth(){
+        return level.getWidth();
+    }
+
+    public int getHeight(){
+        return level.getHeight();
     }
 
     private int hashLoc(int col, int row){
@@ -101,7 +117,8 @@ public class WaterFlow extends LevelScript {
     }
 
     private void translateParticles(){
-        particleLayer.clearLayer();
+        if (particleLayer != null) //The level editor can run a simulation of this level script and the layer does not exist in this case.
+            particleLayer.clearLayer();
         for (int i = 0; i < particles.size(); i++) {
             Coordinate particle = particles.get(i);
 
@@ -120,12 +137,12 @@ public class WaterFlow extends LevelScript {
         }
     }
 
-    private boolean isWaterAt(Coordinate loc){
+    public boolean isWaterAt(Coordinate loc){
         Tile tile = gi.getTileAt(loc);
         return tile.hasTag(TagRegistry.SHALLOW_WATER) || tile.hasTag(TagRegistry.DEEP_WATER);
     }
 
-    private void drawParticle(Coordinate particle, Coordinate vector){
+    public void drawParticle(Coordinate particle, Coordinate vector){
         char c = ' ';
         if (vector.equals(new Coordinate(1, 0)) || vector.equals(new Coordinate(-1, 0)))
             c = '-';

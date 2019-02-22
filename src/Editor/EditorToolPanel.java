@@ -228,8 +228,8 @@ public class EditorToolPanel extends JPanel {
         toggleAdvDisplayItem.setAccelerator(keyStroke);
         levelMenu.add(toggleAdvDisplayItem);
 
-        JMenuItem simulateItem = new JMenuItem("Simulate Overlay Tiles");
-        simulateItem.addActionListener(e -> buildOverlayTileSimulation(ldata));
+        JMenuItem simulateItem = new JMenuItem("Level Script Simulator...");
+        simulateItem.addActionListener(e -> new SimulationPanel(editorFrame, lm, ldata));
         levelMenu.add(simulateItem);
 
         levelMenu.addSeparator();
@@ -256,44 +256,6 @@ public class EditorToolPanel extends JPanel {
         menuPanel.setAlignmentX(CENTER_ALIGNMENT);
 
         add(menuPanel, BorderLayout.PAGE_START);
-    }
-
-    private void buildOverlayTileSimulation(LevelData ldata){
-        //Initialize stuff
-        Layer simulationLayer;
-        LayerToggler toggler = editorFrame.getLayerToggler("simulation");
-        if (toggler == null)
-            simulationLayer = new Layer(ldata.getBackdrop().getCols(), ldata.getBackdrop().getRows(), "simulation", 0, 0, LayerImportances.EDITOR_TILE + 1);
-        else
-            simulationLayer = toggler.getLayer();
-        simulationLayer.clearLayer();
-        LevelScriptMask snowMask    = ldata.getLevelScriptMask(LevelScriptRegistry.SCRIPT_OVERLAYTILES, "snow");
-        LevelScriptMask iceMask     = ldata.getLevelScriptMask(LevelScriptRegistry.SCRIPT_OVERLAYTILES, "ice");
-        LevelScriptMask bridgeMask  = ldata.getLevelScriptMask(LevelScriptRegistry.SCRIPT_OVERLAYTILES, "bridge");
-        LevelScriptMask ashMask     = ldata.getLevelScriptMask(LevelScriptRegistry.SCRIPT_OVERLAYTILES, "ash");
-        LevelScriptMask fireMask    = ldata.getLevelScriptMask(LevelScriptRegistry.SCRIPT_OVERLAYTILES, "fire");
-        OverlayTileGenerator otg = new OverlayTileGenerator();
-        //Begin drawing
-        for (int col = 0; col < ldata.getBackdrop().getCols(); col++) {
-            for (int row = 0; row < ldata.getBackdrop().getRows(); row++) {
-                if (snowMask.getMask()[col][row])
-                    simulationLayer.editLayer(col, row, otg.TILE_SNOW);
-                else if (iceMask.getMask()[col][row])
-                    simulationLayer.editLayer(col, row, otg.getIceTileSpecTxt(new Coordinate(col, row)));
-                else if (bridgeMask.getMask()[col][row])
-                    simulationLayer.editLayer(col, row, otg.TILE_BRIDGE);
-                else if (ashMask.getMask()[col][row])
-                    simulationLayer.editLayer(col, row, otg.getAshTileSpecTxt());
-                else if (fireMask.getMask()[col][row]){
-                    FireAnimation fireAnimation = new FireAnimation(new Coordinate(col, row));
-                    simulationLayer.editLayer(col, row, fireAnimation.onDisplayUpdate());
-                }
-            }
-        }
-        simulationLayer.setVisible(true);
-        //Send to display
-        if (editorFrame.addLayerToggler(new LayerToggler(simulationLayer, "Overlay Tiles Sim")))
-            lm.addLayer(simulationLayer);
     }
 
     //Creates the camera panel

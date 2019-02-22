@@ -44,7 +44,7 @@ public class LevelScript implements Serializable {
         return newMask;
     }
 
-    boolean getMaskDataAt(String name, Coordinate loc){
+    public boolean getMaskDataAt(String name, Coordinate loc){
         if (loc.getX() < 0 || loc.getX() >= getMask(name).getMask().length || loc.getY() < 0 || loc.getY() >= getMask(name).getMask()[0].length)
             return false;
         return getMask(name).getMask()[loc.getX()][loc.getY()];
