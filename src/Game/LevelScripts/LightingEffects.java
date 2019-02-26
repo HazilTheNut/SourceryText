@@ -11,7 +11,9 @@ import Game.Entities.Entity;
 import Game.Player;
 import Game.Registries.TagRegistry;
 import Game.TagHolder;
+import Game.Tags.LuminantTag;
 import Game.Tags.PropertyTags.BrightTag;
+import Game.Tags.Tag;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -128,15 +130,13 @@ public class LightingEffects extends LevelScript {
     }
 
     public double testForLightTag(TagHolder holder){
-        for (int id : lightTagIDs){
-            if (holder.hasTag(id)){
-                if (holder.hasTag(TagRegistry.BRIGHT) || holder.hasTag(TagRegistry.EFFECT_GLOWING))
-                    return BrightTag.BRIGHT;
-                else
-                    return BrightTag.DIM;
+        double sum = 0;
+        for (Tag tag : holder.getTags()){
+            if (tag instanceof LuminantTag) {
+                sum += ((LuminantTag)tag).getLuminance();
             }
         }
-        return 0;
+        return sum;
     }
 
     /**
@@ -154,7 +154,7 @@ public class LightingEffects extends LevelScript {
                     int opacity = (int)(MAX_OPACITY_COLD * (1 - lightness));
                     tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(lightingCold.getRed(), lightingCold.getGreen(), lightingCold.getBlue(), opacity)));
                 } else if (lightness > warmLightingCutoff){ //Draw the warm colors if it is bright.
-                    int opacity = Math.min((int)(12 * (lightness - warmLightingCutoff)), MAX_OPACITY_WARM);
+                    int opacity = Math.min((int)(6 * (lightness - warmLightingCutoff)), MAX_OPACITY_WARM);
                     tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(lightingWarm.getRed(), lightingWarm.getGreen(), lightingWarm.getBlue(), opacity)));
                 }
             }

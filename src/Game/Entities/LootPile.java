@@ -103,6 +103,12 @@ public class LootPile extends Chest {
     }
 
     @Override
+    public void addItem(Item item) {
+        super.addItem(item);
+        item.onContact(gi.getCurrentLevel().getTileAt(getLocation()), gi);
+    }
+
+    @Override
     public void addTag(Tag tag, TagHolder source) {
         super.addTag(tag, source);
         for (Item item : getItems())

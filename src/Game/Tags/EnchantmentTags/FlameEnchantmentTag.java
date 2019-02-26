@@ -3,13 +3,14 @@ package Game.Tags.EnchantmentTags;
 import Data.SerializationVersion;
 import Game.Registries.TagRegistry;
 import Game.TagEvent;
+import Game.Tags.LuminantTag;
 
 import java.awt.*;
 
 /**
  * Created by Jared on 4/15/2018.
  */
-public class FlameEnchantmentTag extends EnchantmentTag {
+public class FlameEnchantmentTag extends EnchantmentTag implements LuminantTag {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
@@ -26,5 +27,10 @@ public class FlameEnchantmentTag extends EnchantmentTag {
     @Override
     public Color getTagColor() {
         return EnchantmentColors.FLAME;
+    }
+
+    @Override
+    public double getLuminance() {
+        return 5;
     }
 }

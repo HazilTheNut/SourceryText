@@ -7,6 +7,7 @@ import Game.AnimatedTiles.FireAnimation;
 import Game.Entities.Entity;
 import Game.*;
 import Game.Registries.TagRegistry;
+import Game.Tags.LuminantTag;
 import Game.Tags.Tag;
 
 import java.awt.*;
@@ -16,7 +17,7 @@ import java.util.Random;
 /**
  * Created by Jared on 4/10/2018.
  */
-public class OnFireTag extends Tag implements FrameDrawListener{
+public class OnFireTag extends Tag implements FrameDrawListener, LuminantTag {
 
     /**
      * OnFireTag:
@@ -212,5 +213,10 @@ public class OnFireTag extends Tag implements FrameDrawListener{
             Color bkg = new Color(frame.getBkgColor().getRed(), frame.getBkgColor().getGreen(), frame.getBkgColor().getBlue(), alpha);
             owner.getSprite().editLayer(0, 0, new SpecialText(ownerSprite.getCharacter(), ownerSprite.getFgColor(), bkg));
         }
+    }
+
+    @Override
+    public double getLuminance() {
+        return 5;
     }
 }
