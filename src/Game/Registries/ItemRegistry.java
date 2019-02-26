@@ -113,6 +113,7 @@ public class ItemRegistry {
         registerItem(1053, "Sickness Potion", 0.30, TagRegistry.POTION_SICKNESS, TagRegistry.POTION, TagRegistry.FRAGILE);
         registerItem(1054, "Cloaking Potion", 0.30, TagRegistry.POTION_INVISIBLE, TagRegistry.POTION, TagRegistry.FRAGILE);
         registerItem(1055, "Armor Potion",   0.50, TagRegistry.POTION_ARMOR, TagRegistry.POTION, TagRegistry.FRAGILE);
+        registerItem(1056, "Glowing Potion",   0.50, TagRegistry.POTION_GLOWING, TagRegistry.POTION, TagRegistry.FRAGILE);
 
         registerItem(1100, "Brick",          1.50, TagRegistry.DAMAGE_START + 7);
         registerItem(1101, "Throwing Knife", 0.25, TagRegistry.DAMAGE_START + 4,  TagRegistry.WEAPON_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP);

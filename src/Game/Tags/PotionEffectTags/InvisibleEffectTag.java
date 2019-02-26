@@ -7,6 +7,8 @@ import Game.TagHolder;
 import Game.Tags.Tag;
 import Game.Tags.TempTags.TempTag;
 
+import java.awt.*;
+
 public class InvisibleEffectTag extends TempTag {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
@@ -30,5 +32,10 @@ public class InvisibleEffectTag extends TempTag {
             Entity entity = (Entity) owner;
             entity.getSprite().setVisible(true);
         }
+    }
+
+    @Override
+    public Color getTagColor() {
+        return new Color(118, 143, 143);
     }
 }

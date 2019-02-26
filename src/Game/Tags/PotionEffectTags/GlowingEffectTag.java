@@ -1,19 +1,17 @@
 package Game.Tags.PotionEffectTags;
 
 import Data.SerializationVersion;
-import Game.Entities.Entity;
 import Game.TagEvent;
-import Game.TagHolder;
 import Game.Tags.TempTags.TempTag;
 
 import java.awt.*;
 
-public class ArmorEffectTag extends TempTag {
+public class GlowingEffectTag extends TempTag {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
-    public ArmorEffectTag(){
-        LIFETIME_START = 25;
+    public GlowingEffectTag(){
+        LIFETIME_START = 75;
     }
 
     @Override
@@ -22,12 +20,7 @@ public class ArmorEffectTag extends TempTag {
     }
 
     @Override
-    public void onReceiveDamage(TagEvent e) {
-        e.addFutureAction(event -> e.setAmount(e.getAmount() / 2));
-    }
-
-    @Override
     public Color getTagColor() {
-        return new Color(62, 201, 172);
+        return new Color(255, 255, 220);
     }
 }

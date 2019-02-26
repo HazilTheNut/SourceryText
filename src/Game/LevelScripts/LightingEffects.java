@@ -27,7 +27,8 @@ public class LightingEffects extends LevelScript {
     private int[] lightTagIDs = {
             TagRegistry.ON_FIRE,
             TagRegistry.FLAME_ENCHANT,
-            TagRegistry.BRIGHT
+            TagRegistry.BRIGHT,
+            TagRegistry.EFFECT_GLOWING
     };
 
     private Color lightingCold = new Color(10, 10, 20);
@@ -129,7 +130,7 @@ public class LightingEffects extends LevelScript {
     public double testForLightTag(TagHolder holder){
         for (int id : lightTagIDs){
             if (holder.hasTag(id)){
-                if (holder.hasTag(TagRegistry.BRIGHT))
+                if (holder.hasTag(TagRegistry.BRIGHT) || holder.hasTag(TagRegistry.EFFECT_GLOWING))
                     return BrightTag.BRIGHT;
                 else
                     return BrightTag.DIM;
