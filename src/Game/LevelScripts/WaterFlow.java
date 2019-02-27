@@ -41,7 +41,7 @@ public class WaterFlow extends LevelScript {
     }
 
     protected void computeVectorField(){
-        movementVectorField = new Coordinate[getWidth()][getHeight()];
+        movementVectorField = new Coordinate[getWidth()+1][getHeight()+1];
         for (int col = 0; col < movementVectorField.length; col++) {
             for (int row = 0; row < movementVectorField[0].length; row++) {
                 movementVectorField[col][row] = computeFlowDirection(new Coordinate(col, row));
@@ -75,10 +75,12 @@ public class WaterFlow extends LevelScript {
 
     @Override
     public void onAnimatedTileUpdate() {
-        updateTimer--;
-        if (updateTimer < 1){
-            updateParticles();
-            updateTimer = 3;
+        if (particleLayer.getVisible()) {
+            updateTimer--;
+            if (updateTimer < 1) {
+                updateParticles();
+                updateTimer = 3;
+            }
         }
     }
 

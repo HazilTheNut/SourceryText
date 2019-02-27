@@ -290,10 +290,10 @@ public class Level implements Serializable {
         return null;
     }
 
-    public boolean checkTileTag(Coordinate loc, int tagID, boolean baseTileOnly){
+    public boolean checkTileTag(Coordinate loc, int tagID, boolean includeOverlayTiles){
         if (loc != null && isLocationValid(loc)) {
             Tile overlay = getOverlayTileAt(loc);
-            if (overlay != null && !baseTileOnly) {
+            if (overlay != null && includeOverlayTiles) {
                 return overlay.hasTag(tagID);
             } else if (baseTiles[loc.getX()][loc.getY()] != null) {
                 return baseTiles[loc.getX()][loc.getY()].hasTag(tagID);
