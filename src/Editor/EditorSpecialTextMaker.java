@@ -24,6 +24,8 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
     private JButton bgButton;
     private boolean settingForeground = true;
 
+    private SingleTextRenderer preview;
+
     private ColorPicker colorPicker;
     private float[] fgHSB;
     private float[] bgHSB;
@@ -36,6 +38,10 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         setTitle("SpecialText Creator");
 
         setMinimumSize(new Dimension(600, 500));
+
+        preview = new SingleTextRenderer(startingText);
+        JLabel previewLabel = new JLabel(preview);
+        previewLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         //Buttons and text box on left
         charField = new JTextField(3);
@@ -86,7 +92,9 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         selectorPanel.setPreferredSize(new Dimension(120, 200));
         selectorPanel.setLayout(new BoxLayout(selectorPanel, BoxLayout.PAGE_AXIS));
 
-        selectorPanel.add(Box.createRigidArea(new Dimension(1, 20)));
+        selectorPanel.add(Box.createRigidArea(new Dimension(1, 15)));
+        selectorPanel.add(previewLabel);
+        selectorPanel.add(Box.createRigidArea(new Dimension(1, 5)));
         selectorPanel.add(charField);
 
         selectorPanel.add(Box.createRigidArea(new Dimension(1, 20)));
@@ -175,6 +183,11 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
         return masterPanel;
     }
 
+    private void updatePreview(){
+        preview.specText = new SpecialText(charField.getText().charAt(0), charField.getForeground(), charField.getBackground());
+        repaint();
+    }
+
     private JButton createQuickColorButton(Color color){
         JButton btn = new JButton(new SingleTextRenderer(new SpecialText(' ', Color.WHITE, color)));
         btn.addActionListener(e -> {
@@ -209,6 +222,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             String endText = charText.substring(charText.length()-1, charText.length());
             charField.setText(endText);
             charField.setCaretPosition(1);
+            updatePreview();
         }
     }
 
@@ -334,6 +348,7 @@ public class EditorSpecialTextMaker extends JFrame implements ActionListener {
             } else {
                 charField.setBackground(col);
             }
+            updatePreview();
         }
 
         private void onMouseInput(MouseEvent e){
