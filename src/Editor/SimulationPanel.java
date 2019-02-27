@@ -109,8 +109,7 @@ public class SimulationPanel extends JFrame {
         else
             simulationLayer = toggler.getLayer();
         simulationLayer.clearLayer();
-        SimWaterFlow simWaterFlow = new SimWaterFlow();
-        simWaterFlow.ldata = ldata;
+        SimWaterFlow simWaterFlow = new SimWaterFlow(ldata);
         //Begin simulation
         for (int i = 0; i < numCycles; i++) {
             simWaterFlow.updateParticles();
@@ -128,7 +127,9 @@ public class SimulationPanel extends JFrame {
 
         private LevelData ldata;
 
-        public SimWaterFlow(){
+        public SimWaterFlow(LevelData ldata){
+            this.ldata = ldata;
+            computeVectorField();
             resetParticles();
         }
 
@@ -159,6 +160,11 @@ public class SimulationPanel extends JFrame {
 
         @Override
         public void drawParticle(Coordinate particle, Coordinate vector) { }
+
+        @Override
+        public Coordinate getFlowDirection(Coordinate pos) {
+            return super.getFlowDirection(pos);
+        }
     }
 
 }

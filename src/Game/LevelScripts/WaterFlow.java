@@ -7,7 +7,6 @@ import Engine.Layer;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.Registries.TagRegistry;
-import Game.Tile;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -20,10 +19,15 @@ public class WaterFlow extends LevelScript {
     private int particleSpawnCountdown;
     private Layer particleLayer;
 
+    //Optimization stuff
+    private Coordinate[][] movementVectorField;
+    private ArrayList<Integer> wateryTileIDs;
+
     @Override
     public void onLevelLoad() {
         particles = new ArrayList<>();
         particleLayer = new Layer(getWidth(), getHeight(), "WaterFlow particles: " + level.getName(), 0, 0, LayerImportances.TILE_ANIM + 1);
+        computeVectorField();
         for (int i = 0; i < 100; i++) {
             updateParticles();
         }
@@ -33,6 +37,38 @@ public class WaterFlow extends LevelScript {
     public void onLevelEnter() {
         particleLayer = new Layer(getWidth(), getHeight(), "WaterFlow particles: " + level.getName(), 0, 0, LayerImportances.TILE_ANIM + 1);
         gi.getLayerManager().addLayer(particleLayer);
+        computeVectorField();
+    }
+
+    protected void computeVectorField(){
+        movementVectorField = new Coordinate[getWidth()][getHeight()];
+        for (int col = 0; col < movementVectorField.length; col++) {
+            for (int row = 0; row < movementVectorField[0].length; row++) {
+                movementVectorField[col][row] = computeFlowDirection(new Coordinate(col, row));
+            }
+        }
+    }
+
+    @Override
+    public String[] getMaskNames() {
+        return new String[]{"North", "South", "East", "West", "ParticleStart"};
+    }
+
+    private Coordinate computeFlowDirection(Coordinate pos){
+        Coordinate vector = new Coordinate(0, 0);
+        if (getMaskDataAt("North", pos))
+            vector = vector.add(new Coordinate(0, -1));
+        if (getMaskDataAt("South", pos))
+            vector = vector.add(new Coordinate(0, 1));
+        if (getMaskDataAt("East", pos))
+            vector = vector.add(new Coordinate(1, 0));
+        if (getMaskDataAt("West", pos))
+            vector = vector.add(new Coordinate(-1, 0));
+        return vector;
+    }
+
+    public Coordinate getFlowDirection(Coordinate pos){
+        return movementVectorField[pos.getX()][pos.getY()];
     }
 
     private int updateTimer = 3;
@@ -51,11 +87,6 @@ public class WaterFlow extends LevelScript {
         gi.getLayerManager().removeLayer(particleLayer);
     }
 
-    @Override
-    public String[] getMaskNames() {
-        return new String[]{"North", "South", "East", "West", "ParticleStart"};
-    }
-
     public ArrayList<Coordinate> getParticles() {
         return particles;
     }
@@ -64,26 +95,12 @@ public class WaterFlow extends LevelScript {
         particles = new ArrayList<>();
     }
 
-    public ArrayList<Coordinate> getBannedRaftDirections(Coordinate pos){
-        ArrayList<Coordinate> bannedVectors = new ArrayList<>();
-        if (getMaskDataAt("North", pos))
-            bannedVectors.add(new Coordinate(0, 1));
-        if (getMaskDataAt("South", pos))
-            bannedVectors.add(new Coordinate(0, -1));
-        if (getMaskDataAt("East", pos))
-            bannedVectors.add(new Coordinate(-1, 0));
-        if (getMaskDataAt("West", pos))
-            bannedVectors.add(new Coordinate(1, 0));
-        return bannedVectors;
-    }
-
     private Coordinate playerPrevPos;
 
     @Override
     public void onTurnStart() {
         if (gi.getPlayer().getLocation().equals(playerPrevPos) && gi.getPlayer().isOnRaft()){
-            for (Coordinate vector : getBannedRaftDirections(gi.getPlayer().getLocation()))
-                gi.getPlayer().teleport(gi.getPlayer().getLocation().add(vector.multiply(-1)));
+            gi.getPlayer().teleport(gi.getPlayer().getLocation().add(getFlowDirection(gi.getPlayer().getLocation())));
         }
         playerPrevPos = gi.getPlayer().getLocation().copy();
     }
@@ -124,11 +141,7 @@ public class WaterFlow extends LevelScript {
             particleLayer.clearLayer();
         for (int i = 0; i < particles.size(); i++) {
             Coordinate particle = particles.get(i);
-
-            Coordinate totalVector = new Coordinate(0, 0);
-            for (Coordinate vector : getBannedRaftDirections(particle)) {
-                totalVector = totalVector.add(vector.multiply(-1));
-            }
+            Coordinate totalVector = getFlowDirection(particle);
             if (totalVector.equals(new Coordinate(0, 0))){
                 particles.remove(i);
                 i--; //To account for removing a particle
@@ -141,8 +154,7 @@ public class WaterFlow extends LevelScript {
     }
 
     public boolean isWaterAt(Coordinate loc){
-        Tile tile = gi.getTileAt(loc);
-        return tile.hasTag(TagRegistry.SHALLOW_WATER) || tile.hasTag(TagRegistry.DEEP_WATER);
+        return level.checkTileTag(loc, TagRegistry.DEEP_WATER, true) || level.checkTileTag(loc, TagRegistry.SHALLOW_WATER, true);
     }
 
     public void drawParticle(Coordinate particle, Coordinate vector){

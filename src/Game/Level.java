@@ -290,6 +290,27 @@ public class Level implements Serializable {
         return null;
     }
 
+    public boolean checkTileTag(Coordinate loc, int tagID, boolean baseTileOnly){
+        if (loc != null && isLocationValid(loc)) {
+            Tile overlay = getOverlayTileAt(loc);
+            if (overlay != null && !baseTileOnly) {
+                return overlay.hasTag(tagID);
+            } else if (baseTiles[loc.getX()][loc.getY()] != null) {
+                return baseTiles[loc.getX()][loc.getY()].hasTag(tagID);
+            } else {
+                return idArrayHasInt(TileRegistry.getTileStruct(tileIdMatrix[loc.getX()][loc.getY()]).getTagIDs(), tagID);
+            }
+        } else
+            return false;
+    }
+
+    private boolean idArrayHasInt(int[] array, int num){
+        for (int i : array) {
+            if (i == num) return true;
+        }
+        return false;
+    }
+
     public Tile getTileAt(Coordinate loc){
         if (loc != null && isLocationValid(loc)) {
             Tile overlay = getOverlayTileAt(loc);

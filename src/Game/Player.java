@@ -257,7 +257,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     private boolean waterFlowAllowsMovement(Coordinate loc, int relativeX, int relativeY){
         WaterFlow waterFlowScript = (WaterFlow)gi.getCurrentLevel().getLevelScript(LevelScriptRegistry.SCRIPT_WATERFLOW);
         if (waterFlowScript != null) {
-            return !waterFlowScript.getBannedRaftDirections(loc).contains(new Coordinate(relativeX, relativeY));
+            return waterFlowScript.getFlowDirection(loc).boxDistance(new Coordinate(relativeX, relativeY)) <= 1;
         }
         return true;
     }
