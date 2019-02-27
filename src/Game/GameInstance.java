@@ -291,6 +291,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             if (e instanceof LootPile) {
                 LootPile lootPile = (LootPile) e;
                 lootPile.addItem(toDrop);
+
                 return lootPile;
             }
         }

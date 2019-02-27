@@ -105,7 +105,7 @@ public class LootPile extends Chest {
     @Override
     public void addItem(Item item) {
         super.addItem(item);
-        item.onContact(gi.getCurrentLevel().getTileAt(getLocation()), gi);
+        item.onContact(gi.getCurrentLevel().getTileAt(getLocation()), gi, Tag.CONTACT_LIGHT);
     }
 
     @Override

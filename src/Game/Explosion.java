@@ -87,7 +87,7 @@ public class Explosion extends TagHolder{
                     }
                     DebugWindow.reportf(DebugWindow.STAGE, "Explosion.applyDamage:copy", "time: %1$.03fms", (System.nanoTime() - startTime) / 1000000f);
                     //Contact tiles below
-                    onContact(gi.getCurrentLevel().getTileAt(levelPos), gi);
+                    onContact(gi.getCurrentLevel().getTileAt(levelPos), gi, Tag.CONTACT_HEAVY);
                     transmitTags(gi.getCurrentLevel().getTileAt(levelPos));
                     DebugWindow.reportf(DebugWindow.STAGE, "Explosion.applyDamage:contact", "time: %1$.03fms", (System.nanoTime() - startTime) / 1000000f);
                 }

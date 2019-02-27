@@ -11,7 +11,7 @@ public class PotionTag extends Tag{
 
     @Override
     public void onContact(TagEvent e) {
-        if (e.getTagOwner() instanceof Item) {
+        if (e.getTagOwner() instanceof Item && e.getAmount() == Tag.CONTACT_HEAVY) {
             Item tagOwner = (Item) e.getTagOwner();
             tagOwner.onItemUse(e.getTarget());
         }

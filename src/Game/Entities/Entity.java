@@ -156,8 +156,8 @@ public class Entity extends TagHolder implements Serializable {
     }
 
     private void contactAt(Coordinate loc){
-        onContact(gi.getTileAt(loc), gi);
-        for (Entity e : gi.getCurrentLevel().getEntitiesAt(loc)) if (!equals(e)) onContact(e, gi);
+        onContact(gi.getTileAt(loc), gi, Tag.CONTACT_HEAVY);
+        for (Entity e : gi.getCurrentLevel().getEntitiesAt(loc)) if (!equals(e)) onContact(e, gi, Tag.CONTACT_HEAVY);
     }
 
     protected void checkForSlidingSurface(int relativeX, int relativeY){

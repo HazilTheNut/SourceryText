@@ -41,8 +41,8 @@ public class ItemProjectile extends Projectile {
     }
 
     @Override
-    public void onContact(TagHolder other, GameInstance gi) {
-        item.onContact(other, gi);
+    public void onContact(TagHolder other, GameInstance gi, int strength) {
+        item.onContact(other, gi, strength);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class ItemProjectile extends Projectile {
 
     private void drop(){
         if (!item.hasTag(TagRegistry.FRAGILE)) { //Items that are 'fragile' are destroyed upon hitting something after being thrown.
-            if (!item.isStackable()) {
+            if (item.getStackability() == Item.NON_STACKABLE) {
                 item.receiveDamage(5); //Subtract durability
                 gi.dropItem(item, getRoundedPos());
             } else {

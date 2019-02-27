@@ -142,7 +142,7 @@ public class TagHolder implements Serializable {
         return 0; //Override this
     }
 
-    public void onContact(TagHolder other, GameInstance gi){
+    public void onContact(TagHolder other, GameInstance gi, int contactStrength){
         if (other == null || !shouldContact(this, other))
             return;
         contactEvent(this, other, gi);

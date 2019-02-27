@@ -147,9 +147,9 @@ public class CombatEntity extends Entity {
                 toContact = entity;
             }
             if (getWeapon() != null)
-                getWeapon().onContact(toContact, getGameInstance());
+                getWeapon().onContact(toContact, getGameInstance(), Tag.CONTACT_HEAVY);
             else
-                onContact(toContact, getGameInstance());
+                onContact(toContact, getGameInstance(), Tag.CONTACT_HEAVY);
         }
     }
 
@@ -174,9 +174,9 @@ public class CombatEntity extends Entity {
                     setWeapon(null);
                 }
                 if (getWeapon() != null)
-                    getWeapon().onContact(ce, getGameInstance());
+                    getWeapon().onContact(ce, getGameInstance(), Tag.CONTACT_HEAVY);
                 else
-                    onContact(ce, getGameInstance());
+                    onContact(ce, getGameInstance(), Tag.CONTACT_HEAVY);
             }
         }
     }

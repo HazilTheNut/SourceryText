@@ -17,13 +17,17 @@ public class ThrowWaterBalloonTag extends Tag {
 
     @Override
     public void onContact(TagEvent e) {
-        if (e.getTarget() instanceof Tile) {
-            Tile target = (Tile) e.getTarget();
-            explodeAt(target.getLocation(), e.getGameInstance());
-        }
-        if (e.getTarget() instanceof Entity) {
-            Entity target = (Entity) e.getTarget();
-            explodeAt(target.getLocation(), e.getGameInstance());
+        if (e.getAmount() == Tag.CONTACT_HEAVY) {
+            e.addCancelableAction(event -> {
+                if (e.getTarget() instanceof Tile) {
+                    Tile target = (Tile) e.getTarget();
+                    explodeAt(target.getLocation(), e.getGameInstance());
+                }
+                if (e.getTarget() instanceof Entity) {
+                    Entity target = (Entity) e.getTarget();
+                    explodeAt(target.getLocation(), e.getGameInstance());
+                }
+            });
         }
     }
 

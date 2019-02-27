@@ -45,6 +45,9 @@ public class Tag implements Serializable {
     public static final int TYPE_ENCHANTMENT = 1;
     public static final int TYPE_POTIONEFFECT = 2;
 
+    public static final int CONTACT_LIGHT = 0;
+    public static final int CONTACT_HEAVY = 1;
+
     public int getTagType(){
         return TYPE_STANDARD;
     }
@@ -98,7 +101,7 @@ public class Tag implements Serializable {
     //Target: tag owner. If this is a Tile, then it is instead the solid entity atop this Tile (can be null)
     public void onTurn(TagEvent e){}
 
-    //Ran whenever two TagHolders come in physical contact with each other
+    //Ran whenever two TagHolders come in physical contact with each other. The amount of the event corresponds to the strength of contact, being either "light" or "heavy"
     //Source: tag owner
     //Target: other TagHolder being contacted
     public void onContact(TagEvent e){}
