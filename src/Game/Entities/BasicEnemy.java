@@ -85,6 +85,12 @@ public class BasicEnemy extends CombatEntity {
         super.onTurn();
     }
 
+    @Override
+    public void setPos(Coordinate pos) {
+        super.setPos(pos);
+        originalLocation = pos; //This may cause bugs later, but setPos() is meant to be very forceful about relocating an entity.
+    }
+
     public void setMentalState(int mentalState) {
         this.mentalState = mentalState;
     }

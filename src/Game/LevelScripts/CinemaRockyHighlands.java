@@ -81,6 +81,7 @@ public class CinemaRockyHighlands extends CinematicLevelScript {
         } else if (phrase.equals("joinbandits")){
             gi.getPlayer().getFactionAlignments().add("bandit");
             gi.updateGameCharacterIcons();
+            gi.recordEvent("BanditsJoined");
         }
     }
 }

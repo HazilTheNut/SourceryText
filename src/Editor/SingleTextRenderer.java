@@ -1,9 +1,12 @@
 package Editor;
 
+import Data.FileIO;
 import Engine.SpecialText;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by Jared on 2/25/2018.
@@ -17,9 +20,22 @@ class SingleTextRenderer implements Icon {
      */
 
     SpecialText specText;
+    private Font font;
 
     SingleTextRenderer(SpecialText text) {
         specText = text;
+        FileIO io = new FileIO();
+        File fontFile = new File(io.getRootFilePath() + "font.ttf");
+        if (fontFile.exists()) {
+            try {
+                font = Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(17f);
+            } catch (FontFormatException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (font == null) {
+            font = new Font(Font.MONOSPACED, Font.PLAIN, 17);
+        }
     }
 
     @Override
@@ -28,7 +44,7 @@ class SingleTextRenderer implements Icon {
             g.setColor(specText.getBkgColor());
             g.fillRect(x, y, getIconWidth(), getIconHeight());
             g.setColor(specText.getFgColor());
-            g.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 17));
+            g.setFont(font);
             g.drawString(specText.getStr(), x + (getIconWidth() / 2) - 5, y + (getIconHeight() - 4));
         } /*else {
             g.setColor(Color.WHITE);
