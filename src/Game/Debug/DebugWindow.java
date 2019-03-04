@@ -123,13 +123,15 @@ public class DebugWindow{
                 } catch (NullPointerException | ConcurrentModificationException e){
                     e.printStackTrace();
                 }
-                if (entriesToAdd.size() > 0) {
+                int entries = entriesToAdd.size();
+                if (entries > 0) {
                     //System.out.printf("[DebugWindow] Total # of entryActions: %1$d\n", entriesToAdd.size());
                     entriesToAdd.clear();
                     updateLogPanes();
                 }
                 double ms = (double)(System.nanoTime() - startTime) / 1000000;
                 if (ms > 50) System.out.printf("[DebugWindow] update time: %1$.2fms\n", ms);
+                reportf(PERFORMANCE, "DebugWindow.Timer", "Update time: %1$.3fms (%2$d new entries)", ms, entries);
             }
         }, 10, 100);
     }
@@ -143,7 +145,7 @@ public class DebugWindow{
                 logPane.update();
             }
             i++;
-        } while( logPane != null);
+        } while (logPane != null);
     }
 
     public static void open(){
