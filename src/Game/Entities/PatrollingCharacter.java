@@ -60,7 +60,7 @@ public class PatrollingCharacter extends GameCharacter {
     }
 
     @Override
-    protected void move(int relativeX, int relativeY) {
+    public void move(int relativeX, int relativeY) {
         super.move(relativeX, relativeY);
         //Obtain target direction to point the light
         Coordinate vector = new Coordinate(relativeX, relativeY);

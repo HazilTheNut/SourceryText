@@ -34,6 +34,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private boolean isPlayerTurn = true;
+    private boolean cameraLocked = true;
 
     private ArrayList<EntityOperation> entityOperations;
 
@@ -466,9 +467,13 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             script.onTrigger(phrase);
     }
 
+    public void setCameraLocked(boolean cameraLocked) {
+        this.cameraLocked = cameraLocked;
+    }
+
     @Override
     public void onFrameDrawStart() {
-        if (player != null && currentLevel.getBackdrop() != null){
+        if (cameraLocked && player != null && currentLevel.getBackdrop() != null){
             player.updateCameraPos();
         }
         if (currentLevel != null) {

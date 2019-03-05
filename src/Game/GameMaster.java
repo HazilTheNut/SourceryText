@@ -139,6 +139,7 @@ public class GameMaster {
                 currentGameInstance.resumeCurrentLevel();
                 gameRunning = true;
                 layerManager.addLayer(mouseInput.getMouseHighlight());
+                currentGameInstance.setCameraLocked(true);
                 DebugWindow.reportf(DebugWindow.STAGE, "GameMaster.loadGame","Successful load of game!");
             } else {
                 exitGameToMainMenu();

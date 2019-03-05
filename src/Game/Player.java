@@ -123,7 +123,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     /**
      * Moves the camera position so that it is centered on the player
      */
-    void updateCameraPos(){
+    public void updateCameraPos(){
         int cameraOffsetX = (gi.getLayerManager().getWindow().RESOLUTION_WIDTH / -2) - 1;
         int cameraOffsetY = (gi.getLayerManager().getWindow().RESOLUTION_HEIGHT / -2);
         int camNewX = getLocation().getX() + cameraOffsetX;
@@ -182,7 +182,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
     }
 
     @Override
-    protected void move(int relativeX, int relativeY) {
+    public void move(int relativeX, int relativeY) {
         while (gi.getLayerManager().isDrawingFrame())
             turnSleep(2); //Moving causes the camera to move, which can cause screen tearing and other "jumpiness" that is undesirable
         Coordinate nextPos = getLocation().copy().add(new Coordinate(relativeX, relativeY));

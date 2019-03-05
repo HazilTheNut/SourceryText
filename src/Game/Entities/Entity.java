@@ -136,13 +136,15 @@ public class Entity extends TagHolder implements Serializable {
 
     public Layer getSprite() { return sprite; }
 
-    protected void setSprite(Layer sprite) { this.sprite = sprite; }
+    public void setSprite(Layer sprite) { this.sprite = sprite; }
 
     public GameInstance getGameInstance() { return gi; }
 
+    public void setGameInstance(GameInstance gi) { this.gi = gi; } //Should be used in very rare cases.
+
     protected void setLocation(Coordinate pos) { location = pos; }
 
-    protected void move(int relativeX, int relativeY){
+    public void move(int relativeX, int relativeY){
         TagEvent moveEvent = new TagEvent(0, true, this, gi.getTileAt(getLocation().add(new Coordinate(relativeX, relativeY))), gi, this);
         for (Tag tag : getTags()) tag.onEntityMove(moveEvent);
         moveEvent.doFutureActions();
