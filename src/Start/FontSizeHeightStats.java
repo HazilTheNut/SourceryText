@@ -1,13 +1,7 @@
 package Start;
 
-import Engine.Layer;
-import Engine.LayerManager;
-import Engine.SpecialText;
-import Engine.ViewWindow;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
 
 /**
  * Created by Jared on 3/26/2018.

@@ -5,13 +5,11 @@ import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.AnimatedTiles.FireAnimation;
-import Game.Level;
 import Game.LevelScripts.WaterFlow;
 import Game.OverlayTileGenerator;
 import Game.Registries.LevelScriptRegistry;
 import Game.Registries.TagRegistry;
 import Game.Registries.TileRegistry;
-import Game.Tile;
 
 import javax.swing.*;
 import java.awt.*;

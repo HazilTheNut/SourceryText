@@ -5,6 +5,7 @@ import Data.FileIO;
 import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
+import Engine.Layers.NegatingLayer;
 import Engine.SpecialText;
 import Engine.ViewWindow;
 import Game.Debug.DebugWindow;

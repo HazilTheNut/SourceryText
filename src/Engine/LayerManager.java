@@ -316,9 +316,8 @@ public class LayerManager {
         Layer finalResult = new Layer(new SpecialText[(int)targetResolution.getWidth()][(int)targetResolution.getHeight()], "final", 0, 0);
         for (int col = 0; col < finalResult.getCols(); col++){
             for (int row = 0; row < finalResult.getRows(); row++){
-                SpecialText text = projectTextToScreen(col, row);
-                Color[] colors = projectColorsToScreen(col, row);
-                finalResult.editLayer(col, row, new SpecialText(text.getCharacter(), colors[1], colors[0]));
+                SpecialText text = projectSpecialTextToScreen(col, row, layerStack.size()-1);
+                finalResult.editLayer(col, row, text);
             }
         }
         finalResult.convertNullToOpaque();
@@ -330,61 +329,43 @@ public class LayerManager {
     }
 
     /**
-     * Iterates through the Layer stack and returns the appropriate SpecialText.
+     * Iterates through the Layer stack and returns a SpecialText for a specific screen coordinate.
      *
-     * @param screenX The x coordinate of the screen to project to
-     * @param screenY The y coordinate of the screen to project to
-     * @return The front-most SpecialText
-     */
-    private SpecialText projectTextToScreen(int screenX, int screenY){
-        for (int ii = layerStack.size()-1; ii >= 0; ii--){
-            Layer layer = layerStack.get(ii);
-            if (layer.visible) {
-                SpecialText get = getSpecialTextAtScreenCoord(screenX, screenY, layer);
-                if (isSpecialTextOpaque(get))
-                    return get;
-            }
-        }
-        return new SpecialText(' ');
-    }
-
-    /**
-     * Iterates through the Layer stack and returns a font and highlight color for a specific screen coordinate.
-     *
-     * The output is formatted as follows:
-     *
-     * colors[0] = Highlight color
-     * colors[1] = Font color
+     * Some notable features:
+     *   * (Foreground + Text) and Background run on separate channels within the same for loop
      *
      * @param screenX The x coordinate of the screen to project to
      * @param screenY The y coordinate of the screen to project to.
      * @return The array of colors.
      */
-    private Color[] projectColorsToScreen(int screenX, int screenY){
-        Color[] fgBkgColors = new Color[2];
-        double alphaSum = 0;
-        int redSum =   0;
-        int blueSum =  0;
-        int greenSum = 0;
+    public SpecialText projectSpecialTextToScreen(int screenX, int screenY, int startPos){
+        char text = ' ';
+        boolean textFound = false;
+        int[] fgColor = new int[3];
+        int[] bgColor = new int[3];
+        double alphaSum = 0; //Alpha sum is on a 0-1 scale for easier math, and therefore cannot be incorporated into the bgColor array
         double remainingAlpha = 1;
-        for (int ii = layerStack.size()-1; ii >= 0; ii--) {
+        for (int ii = startPos; ii >= 0; ii--) { //Iteration runs backwards because the topmost layers must get processed first
             Layer layer = layerStack.get(ii);
-            if (layer.getVisible()) {
-                SpecialText get = getSpecialTextAtScreenCoord(screenX, screenY, layer);
-                if (get != null) {
-                    if (get.getCharacter() != ' ' && fgBkgColors[1] == null) { //Finds non-empty text, and therefore what to return as foreground color
-                        int fgRed = Math.min(redSum + (int) (remainingAlpha * get.getFgColor().getRed()), 255);
-                        int fgGreen = Math.min(greenSum + (int) (remainingAlpha * get.getFgColor().getGreen()), 255);
-                        int fgBlue = Math.min(blueSum + (int) (remainingAlpha * get.getFgColor().getBlue()), 255);
-                        fgBkgColors[1] = new Color(fgRed, fgGreen, fgBlue);
+            if (layer.getVisible()) { //Invisible layers are just skipped
+                SpecialText specTxt = getSpecialTextAtScreenCoord(screenX, screenY, layer, ii);
+                if (specTxt != null) {
+                    if (isSpecialTextOpaque(specTxt) && !textFound) { //The text "channel" of the display
+                        //An opaque character also counts if the char is ' ' but the background is a = 255. The text channel will stop here but luckily that's the behavior we want anyways.
+                        if (specTxt.getCharacter() != ' ') { //Don't do unnecessary calculations. If we stop at a blank character, font color is totally meaningless.
+                            fgColor[0] = Math.min(bgColor[0] + (int) (remainingAlpha * specTxt.getFgColor().getRed()), 255); //The translucent stuff above text should influence font color
+                            fgColor[1] = Math.min(bgColor[1] + (int) (remainingAlpha * specTxt.getFgColor().getGreen()), 255);
+                            fgColor[2] = Math.min(bgColor[2] + (int) (remainingAlpha * specTxt.getFgColor().getBlue()), 255);
+                        }
+                        text = specTxt.getCharacter();
+                        textFound = true;
                     }
-                    /**/
-                    if (get.getBkgColor().getAlpha() > 0) {
-                        double percentAlpha = (double) get.getBkgColor().getAlpha() / 255; //Alpha being reduced from range 0-255 to 0-1
+                    if (specTxt.getBkgColor().getAlpha() > 0) { //The Background "channel"
+                        double percentAlpha = (double) specTxt.getBkgColor().getAlpha() / 255; //Alpha being reduced from range 0-255 to 0-1
                         alphaSum += percentAlpha * remainingAlpha;
-                        redSum += (double) get.getBkgColor().getRed() * percentAlpha * remainingAlpha;
-                        greenSum += (double) get.getBkgColor().getGreen() * percentAlpha * remainingAlpha;
-                        blueSum += (double) get.getBkgColor().getBlue() * percentAlpha * remainingAlpha;
+                        bgColor[0] += (double) specTxt.getBkgColor().getRed() * percentAlpha * remainingAlpha;
+                        bgColor[1] += (double) specTxt.getBkgColor().getGreen() * percentAlpha * remainingAlpha;
+                        bgColor[2] += (double) specTxt.getBkgColor().getBlue() * percentAlpha * remainingAlpha;
                         remainingAlpha *= (1 - percentAlpha);
                     }
                 }
@@ -392,8 +373,7 @@ public class LayerManager {
                     break;
             }
         }
-        fgBkgColors[0] = new Color(redSum, greenSum, blueSum);
-        return fgBkgColors;
+        return new SpecialText(text, new Color(fgColor[0], fgColor[1], fgColor[2]), new Color(bgColor[0], bgColor[1], bgColor[2]));
     }
 
     /**
@@ -404,10 +384,12 @@ public class LayerManager {
      * @param layer The layer to draw from
      * @return The SpecialText from the layer, accounting Layer location, camera location, and layer being fixed onto the screen.
      */
-    private SpecialText getSpecialTextAtScreenCoord(int screenX, int screenY, Layer layer){
-        if (layer.fixedScreenPos)
-            return layer.getSpecialText(screenX - layer.getX(), screenY - layer.getY());
-        return layer.getSpecialText(screenX - layer.getX() + camX, screenY - layer.getY() + camY);
+    private SpecialText getSpecialTextAtScreenCoord(int screenX, int screenY, Layer layer, int pos){
+        Coordinate layerPos = new Coordinate(screenX - layer.getX(), screenY - layer.getY());
+        if (!layer.fixedScreenPos) layerPos = layerPos.add(new Coordinate(camX, camY));
+        if (layer.isLayerLocInvalid(layerPos))
+            return null;
+        return layer.provideTextForDisplay(this, layerPos, new Coordinate(screenX, screenY), pos);
     }
 
     private boolean isSpecialTextOpaque(SpecialText text) {

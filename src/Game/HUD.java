@@ -4,7 +4,6 @@ import Data.Coordinate;
 import Data.LayerImportances;
 import Data.SerializationVersion;
 import Engine.Layer;
-import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;

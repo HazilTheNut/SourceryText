@@ -12,7 +12,6 @@ import Game.Player;
 import Game.Registries.TagRegistry;
 import Game.TagHolder;
 import Game.Tags.LuminantTag;
-import Game.Tags.PropertyTags.BrightTag;
 import Game.Tags.Tag;
 
 import java.awt.*;

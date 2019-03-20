@@ -237,6 +237,19 @@ public class Layer implements Serializable{
         return textMatrix[col][row];
     }
 
+    /**
+     * A very special version of getSpecialText() concerned only with rendering.
+     *
+     * @param lm The LayerManager drawing the frame
+     * @param layerPos The position relative to this layer
+     * @param screenPos The position relative to the screen being drawn to
+     * @param position The "vertical" position of this layer in the LayerManager's stack. + goes "up" and - goes "down"
+     * @return The SpecialText for the LayerManager to process.
+     */
+    public SpecialText provideTextForDisplay(LayerManager lm, Coordinate layerPos, Coordinate screenPos, int position){
+        return getSpecialText(layerPos);
+    }
+
     public SpecialText getSpecialText (Coordinate pos){
         return getSpecialText(pos.getX(), pos.getY());
     }

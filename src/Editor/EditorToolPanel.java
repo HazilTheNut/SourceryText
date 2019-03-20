@@ -6,10 +6,7 @@ import Editor.DrawTools.*;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
-import Game.AnimatedTiles.FireAnimation;
 import Game.LevelScripts.LevelScript;
-import Game.OverlayTileGenerator;
-import Game.Registries.LevelScriptRegistry;
 import Game.Registries.TileRegistry;
 
 import javax.swing.*;

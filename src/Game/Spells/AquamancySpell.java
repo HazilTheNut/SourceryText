@@ -6,7 +6,6 @@ import Data.SerializationVersion;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
-import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.GameInstance;
 import Game.Registries.TagRegistry;

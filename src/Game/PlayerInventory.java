@@ -8,7 +8,6 @@ import Game.Debug.DebugWindow;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.Entities.LootPile;
-import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
 import Game.Tags.Tag;
 

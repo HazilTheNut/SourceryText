@@ -6,7 +6,6 @@ import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.*;
 import Game.Debug.DebugWindow;
-import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
 import Game.Tags.DamageTag;
 import Game.Tags.Tag;
