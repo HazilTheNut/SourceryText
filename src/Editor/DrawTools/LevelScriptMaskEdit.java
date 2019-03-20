@@ -31,9 +31,9 @@ public class LevelScriptMaskEdit extends DrawTool {
         float sat = Math.abs(hash % 3) * 0.3f + 0.2f;
         System.out.printf("Seed: \"%1$s\" result: %2$d hue: %3$.3f sat: %4$.3f\n", seed, hash, hue, sat);
         fillColorOne = Color.getHSBColor(hue, sat, 0.9f);
-        fillColorOne = new Color(fillColorOne.getRed(), fillColorOne.getGreen(), fillColorOne.getBlue(), 125);
-        fillColorTwo = Color.getHSBColor(hue, sat, 0.65f);
-        fillColorTwo = new Color(fillColorTwo.getRed(), fillColorTwo.getGreen(), fillColorTwo.getBlue(), 125);
+        fillColorOne = new Color(fillColorOne.getRed(), fillColorOne.getGreen(), fillColorOne.getBlue(), 100);
+        fillColorTwo = Color.getHSBColor(hue, sat, 0.825f);
+        fillColorTwo = new Color(fillColorTwo.getRed(), fillColorTwo.getGreen(), fillColorTwo.getBlue(), 100);
     }
 
     public void redraw(){

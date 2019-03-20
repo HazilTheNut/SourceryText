@@ -38,7 +38,7 @@ public class CinemaBanditFortress extends CinematicLevelScript {
 
     @Override
     public String[] getMaskNames() {
-        return new String[]{"KingGreeting"};
+        return new String[]{"KingGreeting","WarRoomTalk"};
     }
 
     @Override
@@ -68,13 +68,39 @@ public class CinemaBanditFortress extends CinematicLevelScript {
     }
 
     private boolean greetingHappened = false;
+    private boolean warRoomTalkHappened = false;
 
     @Override
     public void onTurnEnd() {
-        if (!greetingHappened && getMaskDataAt("KingGreeting", gi.getPlayer().getLocation())){
-            DialogueParser parser = new DialogueParser(gi, "#0#\"Ay, you that new kid my grunts keep talkin' about? You don't look tough, what gives?\"{I'll let the results speak for themselves.=1|I'm a wizard. I don't need muscles to get the job done.=2}#1#\"We Bandits got a brand to uphold, and your looks ain't helpin'. That bein' said, you could be exactly what we need.<np>We'll talk further in the War Room.\"<9>#2#\"A wizard? You gotta be joking. They're all stuck up in the Magic Academy casting curses everywhere, what business do they have sendin' you over?\"{The only person sending me here is myself.=4|I assure you, the past is behind me.=5}#4#\"Let me make this clear to you: if you're a Bandit, it's just us now. You can't be leaking our hidden treasure to any outsiders.<np>Meet me in the War Room. I've got a job for you.\"<9>#9#!trigger|moveToWarRoom!;");
-            parser.startParser(getBanditKing());
-            greetingHappened = true;
+        if (getFactionPlayerOpinion("bandit") > -3) {
+            if (!greetingHappened && getMaskDataAt("KingGreeting", gi.getPlayer().getLocation())) {
+                DialogueParser parser = new DialogueParser(gi, "#0#\"Ay, you that new kid my grunts were talkin' about? You don't look tough, what gives?\"{I'll let the results speak for themselves.=1|I'm a wizard. I don't need muscles to get the job done.=2}#1#\"We Bandits got a brand to uphold, and your looks ain't helpin'. That bein' said, you could be exactly what we need.<np>We'll talk further in the War Room.\"<9>#2#\"A wizard? You gotta be joking. They're all stuck up in the Magic Academy casting curses everywhere, what business do they have sendin' you over?\"{The only person sending me here is myself.=4|I assure you, the past is behind me.=5}#4#\"Let me make this clear to you: if you're a Bandit, it's just us now. You can't be leaking our hidden treasure to any outsiders.<np>Meet me in the War Room. I've got a job for you.\"<9>#9#!trigger|moveToWarRoom!;");
+                parser.startParser(getBanditKing());
+                greetingHappened = true;
+            } else if (!warRoomTalkHappened && getMaskDataAt("WarRoomTalk", gi.getPlayer().getLocation())) {
+                DialogueParser parser = new DialogueParser(gi, "#0#\"You see kid, we all look like...dangerous. Except you and your lack of muscle, full set of teeth, and that fancy robe.<np>" +
+                        "Long story short, we need a spy.<p1> No, an assassin. We've been trying to hit this town in the Forest of Fondant for weeks, but a certain Lord Dentist stops us from invading.<np>" +
+                        "I don't get it. The guy hates fondant, but the whole village is built on it. You'd think he'd just vaporize it as quickly as he does to us.<np>" +
+                        "Can't talk to him either, 'cause he starts shootin' the moment he sees us. That's why we need you. Gotta kill The Lord Dentist before he knows you're a threat.<np>" +
+                        "There's a raft ready to the eastern end of the fort. Take it down the river and that'll put you right in the Forest of Fondant. From there, head to his castle and kill him.<np>" +
+                        "Not that I want to make it sound easy though. The Lord Dentist is not to be messed around with. If you're gonna kill him, you better make it quick.<np>" +
+                        "You'll need everything you can take to head off against The Lord Dentist. Feel free to take what you want here and then head down the river.<np>" +
+                        "Good luck, recruit. You're gonna need it.\"");
+                parser.startParser(getBanditKing());
+                warRoomTalkHappened = true;
+            }
+        }
+    }
+
+    @Override
+    public void onTrigger(String phrase) {
+        switch (phrase){
+            case "moveToWarRoom":
+                gi.getPlayer().freeze();
+                pathfindCombatEntities(getEntitiesOfName(getBanditKingName()), new Coordinate(225, 15), 25, 120);
+                getFirstEntityofName(getBanditKingName()).setPos(getFirstEntityofName(getBanditKingName()).getLocation()); //This anchors the bandit king in place
+                gi.getPlayer().unfreeze();
+                break;
         }
     }
 

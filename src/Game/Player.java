@@ -790,7 +790,7 @@ public class Player extends GameCharacter implements MouseInputReceiver{
 
     public void freeze() {gi.setPlayerTurn(false);}
 
-    void unfreeze() {
+    public void unfreeze() {
         if (gi != null) {
             gi.setPlayerTurn(true);
         }

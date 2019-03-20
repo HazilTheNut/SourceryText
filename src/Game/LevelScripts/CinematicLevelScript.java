@@ -4,6 +4,7 @@ import Data.Coordinate;
 import Data.SerializationVersion;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.FactionManager;
 
 import java.util.ArrayList;
 
@@ -39,7 +40,7 @@ public class CinematicLevelScript extends LevelScript {
                     if (combatEntity.pathToPosition(goalPos) > 0) entitiesMoved = true;
                 }
             }
-            if (entitiesMoved) sleep(150);
+            if (entitiesMoved) sleep(interval);
             else return;
         }
     }
@@ -50,5 +51,14 @@ public class CinematicLevelScript extends LevelScript {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    protected byte getFactionPlayerOpinion(String factionName){
+        byte bonus = (gi.getPlayer().getFactionAlignments().contains(factionName.toLowerCase())) ? gi.getFactionManager().getMembershipOpinionBonus() : 0;
+        FactionManager.Faction faction = gi.getFactionManager().getFaction(factionName);
+        if (faction != null) {
+            return (byte)(bonus + faction.getOpinionOf("player"));
+        } else
+            return bonus;
     }
 }

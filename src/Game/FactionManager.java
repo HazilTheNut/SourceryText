@@ -70,12 +70,16 @@ public class FactionManager implements Serializable {
                     }
                 }
                 if (target.getFactionAlignments().contains(faction.name))
-                    totalOpinion += 7;
+                    totalOpinion += getMembershipOpinionBonus();
             }
         }
         if (source.hasTag(TagRegistry.BERSERK))
             return (byte)(-1 * totalOpinion);
         return totalOpinion;
+    }
+
+    public byte getMembershipOpinionBonus(){
+        return 7;
     }
 
     private void createFaction(String name, FactionOpinion... opinions){
@@ -114,7 +118,7 @@ public class FactionManager implements Serializable {
             return builder.toString();
         }
 
-        private byte getOpinionOf(String factionName){
+        public byte getOpinionOf(String factionName){
             for (FactionOpinion relation : relations){
                 if (relation.name.equals(factionName))
                     return relation.opinion;
