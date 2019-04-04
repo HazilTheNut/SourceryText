@@ -81,6 +81,11 @@ public class GameDeathMenu implements MouseInputReceiver{
         gi.getGameMaster().getMouseInput().removeInputListener(this);
     }
 
+    void dispose(){
+        close();
+        gi = null;
+    }
+
     private void sleep(long millis){
         try {
             Thread.sleep(millis);

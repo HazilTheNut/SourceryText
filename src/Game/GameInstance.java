@@ -44,7 +44,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private transient GameMaster gameMaster;
 
     private Level currentLevel;
-    private ArrayList<Level> levels;
+    private Zone currentZone;
 
     private String currentZoneName; //Name of the Zone. Used to check if a Level being loaded is still in the same Zone or not.
 
@@ -63,7 +63,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private Layer loadingScreenLayer;
 
     public GameInstance(){
-        levels = new ArrayList<>();
+        currentZone = new Zone("");
         entityOperations = new ArrayList<>();
         gameEvents = new ArrayList<>();
     }
@@ -91,6 +91,8 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             factionManager = new FactionManager();
             factionManager.initialize();
         }
+
+        if (currentZone == null) currentZone = new Zone("");
 
         if (player == null) {
             player = new Player(this);
@@ -146,7 +148,8 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         textBox.setPlayer(null);
         quickMenu.setPlayer(null);
         quickMenu.clearMenu();
-        deathMenu.close();
+        deathMenu.dispose();
+        getLayerManager().removeFrameUpdateListener(this);
     }
 
     /**
@@ -162,12 +165,10 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             currentLevel.removeEntity(getPlayer());
             loadingScreenLayer.setVisible(true);
         }
-        String zoneName = getFilePathParentFolder(levelFilePath);
-        if (currentZoneName == null || !currentZoneName.equals(zoneName)){ //If moved to a new zone
-            currentZoneName = zoneName;
-            levels.clear();
+        if (!currentZone.isLevelWithinZone(levelFilePath)){ //If moved to a new zone
+            currentZone = new Zone(levelFilePath);
         }
-        for (Level level : levels){
+        for (Level level : currentZone.getActiveLevels()){
             if (level.getFilePath().equals(levelFilePath)){
                 DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.enterLevel","Level already found loaded at %1$s", levelFilePath);
                 currentLevel = level;
@@ -176,21 +177,8 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             }
         }
         currentLevel = loadLevel(levelFilePath);
+        currentZone.addLevel(currentLevel);
         startLevel(currentLevel, playerPos);
-    }
-
-    /**
-     * Gets the name of the containing folder of a file.
-     *
-     * @param path The file path of the file
-     * @return Name of containing folder
-     */
-    private String getFilePathParentFolder(String path){
-        int strEndLoc   = path.lastIndexOf('/');
-        int strStartLoc = path.substring(0, strEndLoc-1).lastIndexOf('/');
-        String output = path.substring(strStartLoc+1, strEndLoc);
-        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.getFilePathParentFolder","Level folder name: %1$s memory: %2$d", output, levels.size());
-        return output;
     }
 
     public void resumeCurrentLevel(){
@@ -243,8 +231,6 @@ public class GameInstance implements Serializable, FrameUpdateListener {
 
         DebugWindow.reportf(DebugWindow.STAGE, "GameInstance.loadLevel", "Assign warp zones...");
         newLevel.setWarpZones(ldata.getWarpZones());
-
-        levels.add(newLevel);
 
         newLevel.onLevelLoad();
 
@@ -341,7 +327,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     }
 
     public void unloadLevel(Level level){
-        levels.remove(level);
+        currentZone.removeLevel(level);
     }
 
     public void addEntity(EntityStruct entityStruct, Coordinate loc){

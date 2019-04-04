@@ -81,6 +81,15 @@ public class Level implements Serializable {
         frameDrawListeners = new ArrayList<>();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Level) {
+            Level level = (Level) obj;
+            return level.getFilePath().equals(filePath);
+        }
+        return false;
+    }
+
     void initialize(LevelData ldata){
 
         backdrop = new Layer(ldata.getBackdrop().getCols(), ldata.getBackdrop().getCols(), "backdrop (" + getName() + ")", 0, 0, LayerImportances.BACKDROP);

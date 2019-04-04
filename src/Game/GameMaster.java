@@ -101,6 +101,7 @@ public class GameMaster {
     void exitGame(){
         if (currentGameInstance != null)
             currentGameInstance.dispose();
+        currentGameInstance = null;
         layerManager.clearLayers();
         mouseInput.clearInputReceivers();
         gameRunning = false;

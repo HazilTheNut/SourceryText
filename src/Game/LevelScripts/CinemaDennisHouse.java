@@ -21,9 +21,9 @@ public class CinemaDennisHouse extends LevelScript {
             gi.getTextBox().showMessage("Hunh?<p1> OH! You're awake!<np>" +
                     "You must be pretty dazzled, yeah? All these colors?<p1><nl> If you ask me, it's disgusting.<np>" +
                     "Someone went down The Source - that giant pit just outside my house - and got to change the universe's source code. Made everything all colorful and whatnot.<np>" +
-                    "As a side effect, it knocked the lights out of everybody! Must've hit you extra hard, 'cause it took you months to wake up.<np>" +
+                    "As a side effect, it knocked the lights out of everybody! Must've hit you extra hard, 'cause it took you a long while to wake up.<np>" +
                     "Well, at least you seem to have made it all in one piece. All those wolves and bandits out there would'a spelled your end!<np>" +
-                    "That means you owe me your life, don't it? How about you pay me back by changing things back to what they were before!<np>" +
+                    "That means you owe me your life, don't it? Hmm, how about you change things back! I find all these new colors to be totally tacky!<np>" +
                     "You'll need to fetch two things: <cy>The Documentation<cw>, which lets you figure out how to rewrite the universe, and a <cc>magic rope<cw> which can withstand exiting the universe. Without it, you have no way of getting back out of The Source, which makes it suicide.", "Dennis");
         }
         if (getMaskDataAt("Warning", gi.getPlayer().getLocation()) && !warningConvoHappened){
