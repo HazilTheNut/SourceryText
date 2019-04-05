@@ -288,7 +288,7 @@ public class TextBox implements MouseInputReceiver{
 
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton) {
-        return doClick();
+        return false;
     }
 
     @Override
@@ -298,6 +298,8 @@ public class TextBox implements MouseInputReceiver{
 
     @Override
     public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
+        if (actions.contains(InputMap.TEXTBOX_NEXT))
+            return doClick();
         return textBoxLayer.getVisible();
     }
 

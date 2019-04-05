@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static javax.swing.UIManager.get;
+
 public class InputMap implements Serializable {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
@@ -37,6 +39,7 @@ public class InputMap implements Serializable {
     public static final int INV_MOVE_WHOLE = 27;
     public static final int INV_MOVE_ONE   = 28;
     //Misc
+    public static final int TEXTBOX_NEXT   = 80;
     public static final int OPEN_MENU      = 90;
     //Spell selection
     public static final int SELECT_SPELL_1 = 101;
@@ -104,9 +107,28 @@ public class InputMap implements Serializable {
     }
 
     ArrayList<Integer> getAction(InputType inputType){
-        if (primaryInputMap.containsKey(inputType)) return primaryInputMap.get(inputType);
-        if (secondaryInputMap.containsKey(inputType)) return secondaryInputMap.get(inputType);
-        return new ArrayList<>();
+        return getAction(inputType, true, true);
+    }
+
+    ArrayList<Integer> getAction(InputType inputType, boolean checkPrimary, boolean checkSecondary){
+        ArrayList<Integer> actions = new ArrayList<>();
+        if (checkPrimary && primaryInputMap.containsKey(inputType)) actions.addAll(primaryInputMap.get(inputType));
+        if (checkSecondary && secondaryInputMap.containsKey(inputType)) actions.addAll(secondaryInputMap.get(inputType));
+        return actions;
+    }
+
+    public InputType getInputForAction(int actionID) { return getInputForAction(actionID, true, true); }
+
+    public InputType getInputForAction(int actionID, boolean checkPrimary, boolean checkSecondary){
+        for (InputType inputType : primaryInputMap.keySet()){
+            if (primaryInputMap.get(inputType).contains(actionID))
+                return inputType;
+        }
+        for (InputType inputType : secondaryInputMap.keySet()){
+            if (primaryInputMap.get(inputType).contains(actionID))
+                return inputType;
+        }
+        return null;
     }
 
     public HashMap<InputType, ArrayList<Integer>> getPrimaryInputMap() {
@@ -153,6 +175,8 @@ public class InputMap implements Serializable {
                 return "Open Menu";
             case THROW_ITEM:
                 return "Throw Item";
+            case TEXTBOX_NEXT:
+                return "Text Box: Next Panel";
             case SELECT_SPELL_1:
                 return "Select Spell 1";
             case SELECT_SPELL_2:

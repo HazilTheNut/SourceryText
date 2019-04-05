@@ -63,7 +63,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private Layer loadingScreenLayer;
 
     public GameInstance(){
-        currentZone = new Zone("");
+        currentZone = new Zone("", getLayerManager());
         entityOperations = new ArrayList<>();
         gameEvents = new ArrayList<>();
     }
@@ -92,7 +92,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             factionManager.initialize();
         }
 
-        if (currentZone == null) currentZone = new Zone("");
+        if (currentZone == null) currentZone = new Zone("", getLayerManager());
 
         if (player == null) {
             player = new Player(this);
@@ -166,7 +166,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             loadingScreenLayer.setVisible(true);
         }
         if (!currentZone.isLevelWithinZone(levelFilePath)){ //If moved to a new zone
-            currentZone = new Zone(levelFilePath);
+            currentZone = new Zone(levelFilePath, getLayerManager());
         }
         for (Level level : currentZone.getActiveLevels()){
             if (level.getFilePath().equals(levelFilePath)){

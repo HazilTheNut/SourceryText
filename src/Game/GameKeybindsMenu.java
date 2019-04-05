@@ -155,10 +155,10 @@ public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
             if (inputMap != null){
                 //Compile all keybindings from input inputMap
                 for (InputType inputType : inputMap.getPrimaryInputMap().keySet()){
-                    addToKeyListing(inputType, inputMap.getAction(inputType), true);
+                    addToKeyListing(inputType, inputMap.getAction(inputType, true, false), true);
                 }
                 for (InputType inputType : inputMap.getSecondaryInputMap().keySet()){
-                    addToKeyListing(inputType, inputMap.getAction(inputType), false);
+                    addToKeyListing(inputType, inputMap.getAction(inputType, false, true), false);
                 }
             }
             sortKeybindListing();

@@ -286,7 +286,7 @@ public class HUD implements MouseInputReceiver, Serializable {
 
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButtons) {
-        if (mousePos.equals(new Coordinate(0,0))){ //The little inventory button in the corner
+        if (screenPos.equals(new Coordinate(0,0))){ //The little inventory button in the corner
             if (player.getInv().getPlayerInv().isShowing())
                 player.getInv().getPlayerInv().close();
             else

@@ -1,12 +1,16 @@
 package Game;
 
+import Data.Coordinate;
+import Data.LayerImportances;
 import Data.SerializationVersion;
+import Engine.Layer;
+import Engine.LayerManager;
 import Game.Debug.DebugWindow;
 
 import java.io.*;
 import java.util.ArrayList;
 
-public class Zone implements Serializable {
+public class Zone implements Serializable, MouseInputReceiver {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
@@ -15,7 +19,12 @@ public class Zone implements Serializable {
 
     private String zoneName;
 
-    public Zone(String levelFilePath){
+    private int magicPotatoCounter;
+
+    private Layer scorecardLayer;
+
+    public Zone(String levelFilePath, LayerManager manager){
+        magicPotatoCounter = 0;
         activeLevels = new ArrayList<>();
         parentFolder = findParentFolder(levelFilePath);
         if (levelFilePath.length() > 2) {
@@ -26,7 +35,16 @@ public class Zone implements Serializable {
             parentFolder = "EMPTY";
             zoneName = "ERROR";
         }
+        if (manager != null)
+            scorecardLayer = new Layer(manager.getWindow().RESOLUTION_WIDTH, manager.getWindow().RESOLUTION_HEIGHT, "scorecard:" + zoneName, 0, 0, LayerImportances.MAIN_MENU);
+        else
+            scorecardLayer = new Layer(0, 0, "scorecard:" + zoneName, 0, 0, LayerImportances.MAIN_MENU);
+        scorecardLayer.setVisible(false);
         DebugWindow.reportf(DebugWindow.STAGE, "Zone", "Name: \"%1$s\" Path: %2$s", zoneName, parentFolder);
+    }
+
+    public void incrementMagicPotatoCounter(){
+        magicPotatoCounter++;
     }
 
     private String findParentFolder(String levelFilePath){
@@ -84,4 +102,33 @@ public class Zone implements Serializable {
         return null;
     }
 
+    @Override
+    public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
+        return scorecardLayer.getVisible();
+    }
+
+    @Override
+    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton) {
+        return scorecardLayer.getVisible();
+    }
+
+    @Override
+    public boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement) {
+        return scorecardLayer.getVisible();
+    }
+
+    @Override
+    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
+        return scorecardLayer.getVisible();
+    }
+
+    @Override
+    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
+        return scorecardLayer.getVisible();
+    }
+
+    @Override
+    public boolean onNumberKey(Coordinate levelPos, Coordinate screenPos, int number) {
+        return scorecardLayer.getVisible();
+    }
 }

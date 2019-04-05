@@ -106,12 +106,10 @@ public class CinemaTutorialBasement extends LevelScript {
     }
 
     private String getInput(int actionID){
-        InputMap inputMap = gi.getGameMaster().getMouseInput().getInputMap();
-        for (InputType inputType : inputMap.getPrimaryInputMap().keySet()){
-            if (inputMap.getPrimaryInputMap().get(inputType).contains(actionID)){
-                return (String.format("<cc>%1$s<cw>", inputType.toString()));
-            }
+        InputType input = gi.getGameMaster().getMouseInput().getInputMap().getInputForAction(actionID);
+        if (input != null) {
+            return (String.format("<cc>%1$s<cw>", input.toString()));
         }
-        return null;
+        return "<cs>(unbound)<cw>";
     }
 }
