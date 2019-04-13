@@ -27,7 +27,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
      * Although the word "mouse" is in the name of this class and associates, keyboard input also passes through this system too.
      *
      * All MouseInputReceivers are placed into an ArrayList, and are ran in the opposite order of their addition to the list.
-     * As input passes through each MouseInputReceiver, each has the choice to stop the input short by returning true to any of the mouse input methods (onMouseClick, onMouseMove, etc.).
+     * As input passes through each GameInputReciever, each has the choice to stop the input short by returning true to any of the mouse input methods (onMouseClick, onMouseMove, etc.).
      * This acts as MouseInputReceivers layering on top of each other and preventing input to receivers beneath it.
      */
 
@@ -36,7 +36,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
 
     private Layer mouseHighlight;
 
-    private ArrayList<MouseInputReceiver> inputReceivers = new ArrayList<>();
+    private ArrayList<GameInputReciever> inputReceivers = new ArrayList<>();
     private Coordinate mouseRawPos;
     private InputMap inputMap;
     private ArrayList<DownInput> downInputs; //A List of InputTypes that represent the buttons currently held down.
@@ -78,16 +78,16 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         return new Coordinate(window.getSnappedMouseX(mousePos.getX()), window.getSnappedMouseY(mousePos.getY()));
     }
 
-    void addInputReceiver(MouseInputReceiver receiver) { inputReceivers.add(receiver); }
+    void addInputReceiver(GameInputReciever receiver) { inputReceivers.add(receiver); }
 
-    void addInputReceiver(MouseInputReceiver receiver, int pos) { inputReceivers.add(pos, receiver); }
+    void addInputReceiver(GameInputReciever receiver, int pos) { inputReceivers.add(pos, receiver); }
 
-    void removeInputListener(MouseInputReceiver receiver) {inputReceivers.remove(receiver); }
+    void removeInputListener(GameInputReciever receiver) {inputReceivers.remove(receiver); }
 
     void clearInputReceivers(){ inputReceivers.clear(); }
 
     public void performInputEvent(InputEventAction eventAction){
-        for (MouseInputReceiver receiver : inputReceivers){
+        for (GameInputReciever receiver : inputReceivers){
             if (eventAction.doAction(receiver)) return;
         }
     }
@@ -103,7 +103,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     }
 
     public interface InputEventAction {
-        boolean doAction(MouseInputReceiver receiver);
+        boolean doAction(GameInputReciever receiver);
     }
 
     public void setInputMap(InputMap inputMap) {
@@ -293,10 +293,10 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
 
     private class DownInput{
         InputType type;
-        MouseInputReceiver receiver;
-        private DownInput(InputType inputType, MouseInputReceiver mouseInputReceiver){
+        GameInputReciever receiver;
+        private DownInput(InputType inputType, GameInputReciever gameInputReciever){
             type = inputType;
-            receiver = mouseInputReceiver;
+            receiver = gameInputReciever;
         }
     }
 

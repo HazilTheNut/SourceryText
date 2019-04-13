@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class GameSaveMenu implements MouseInputReceiver{
+public class GameSaveMenu implements GameInputReciever {
 
     /**
      * GameSaveMenu:
@@ -288,7 +288,7 @@ public class GameSaveMenu implements MouseInputReceiver{
                 String fileName = String.format("Save %1$03d", getSaveFileCount() + 1);
                 FileIO io = new FileIO();
                 String fullPath = io.getRootFilePath() + "Saves/" + fileName + ".sts";
-                runGameSaveRoutine(new File(fullPath));
+                saveGameInstance(new File(fullPath));
             }
         }
         return true;
@@ -306,7 +306,7 @@ public class GameSaveMenu implements MouseInputReceiver{
                     }
                     close();
                     if (isSaving) //Should probably save when you are trying to save and load when you are trying to load.
-                        runGameSaveRoutine(saveOptions.get(listPos).file);
+                        saveGameInstance(saveOptions.get(listPos).file);
                     else
                         gameMaster.loadGame(saveOptions.get(listPos).file);
                 });
@@ -318,7 +318,7 @@ public class GameSaveMenu implements MouseInputReceiver{
         }
     }
 
-    private void runGameSaveRoutine(File saveFile){
+    private void saveGameInstance(File saveFile){
         inputLocked = true;
         FileIO io = new FileIO();
         File savesFolder = new File(io.getRootFilePath() + "Saves");

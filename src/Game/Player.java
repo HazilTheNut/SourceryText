@@ -22,7 +22,7 @@ import java.util.ConcurrentModificationException;
 /**
  * Created by Jared on 3/27/2018.
  */
-public class Player extends GameCharacter implements MouseInputReceiver{
+public class Player extends GameCharacter implements GameInputReciever {
 
     /**
      * Player:

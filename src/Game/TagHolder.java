@@ -145,15 +145,15 @@ public class TagHolder implements Serializable {
     public void onContact(TagHolder other, GameInstance gi, int contactStrength){
         if (other == null || !shouldContact(this, other))
             return;
-        contactEvent(this, other, gi);
-        contactEvent(other, this, gi);
+        contactEvent(this, other, gi, contactStrength);
+        contactEvent(other, this, gi, contactStrength);
         DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact", "TagHolder \'" + this.getClass().getSimpleName() + "\'");
         DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact  SELF", "Tags: " + getTagList());
         DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact OTHER", "Tags: " + other.getTagList());
     }
 
-    private void contactEvent(TagHolder source, TagHolder target, GameInstance gi){
-        TagEvent e = new TagEvent(0, true, source, target, gi, source);
+    private void contactEvent(TagHolder source, TagHolder target, GameInstance gi, int strength){
+        TagEvent e = new TagEvent(strength, true, source, target, gi, source);
         for (Tag tag : source.getTags()){
             tag.onContact(e);
         }

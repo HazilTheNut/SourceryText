@@ -12,7 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by Jared on 5/14/2018.
  */
-public class QuickMenu implements MouseInputReceiver {
+public class QuickMenu implements GameInputReciever {
 
     /**
      * QuickMenu:

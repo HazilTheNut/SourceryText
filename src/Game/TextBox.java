@@ -13,7 +13,7 @@ import java.util.ArrayList;
 /**
  * Created by Jared on 5/9/2018.
  */
-public class TextBox implements MouseInputReceiver{
+public class TextBox implements GameInputReciever {
 
     /**
      * TextBox:

@@ -13,6 +13,7 @@ import Game.Entities.LootPile;
 import Game.LevelScripts.LevelScript;
 import Game.Registries.EntityRegistry;
 import Game.Registries.TagRegistry;
+import Game.Tags.Tag;
 
 import java.awt.*;
 import java.io.File;
@@ -46,8 +47,6 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private Level currentLevel;
     private Zone currentZone;
 
-    private String currentZoneName; //Name of the Zone. Used to check if a Level being loaded is still in the same Zone or not.
-
     private transient LayerManager lm;
     private transient TextBox textBox;
     private transient QuickMenu quickMenu;
@@ -63,7 +62,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private Layer loadingScreenLayer;
 
     public GameInstance(){
-        currentZone = new Zone("", getLayerManager());
+        currentZone = new Zone("");
         entityOperations = new ArrayList<>();
         gameEvents = new ArrayList<>();
     }
@@ -92,7 +91,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             factionManager.initialize();
         }
 
-        if (currentZone == null) currentZone = new Zone("", getLayerManager());
+        if (currentZone == null) currentZone = new Zone("");
 
         if (player == null) {
             player = new Player(this);
@@ -159,14 +158,19 @@ public class GameInstance implements Serializable, FrameUpdateListener {
      * @param playerPos The player's new position to be in.
      */
     void enterLevel(String levelFilePath, Coordinate playerPos){
+        boolean isNewZone = !currentZone.isLevelWithinZone(levelFilePath);
         getPlayer().freeze();
+        if (isNewZone) { //Draw scorecard
+            ZoneScorecard scorecard = new ZoneScorecard(getLayerManager(), currentZone, gameMaster.getMouseInput());
+            scorecard.drawScorecardForZone(this);
+        }
         if (currentLevel != null) {
             currentLevel.onExit(lm);
             currentLevel.removeEntity(getPlayer());
-            loadingScreenLayer.setVisible(true);
+            if (!isNewZone) loadingScreenLayer.setVisible(true);
         }
         if (!currentZone.isLevelWithinZone(levelFilePath)){ //If moved to a new zone
-            currentZone = new Zone(levelFilePath, getLayerManager());
+            currentZone = new Zone(levelFilePath);
         }
         for (Level level : currentZone.getActiveLevels()){
             if (level.getFilePath().equals(levelFilePath)){
@@ -181,7 +185,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         startLevel(currentLevel, playerPos);
     }
 
-    public void resumeCurrentLevel(){
+    void resumeCurrentLevel(){
         currentLevel.removeEntity(player);
         startLevel(currentLevel, player.getLocation());
     }
@@ -381,8 +385,9 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         reportUpdatePerformance(runTimes);
         getPlayer().updateHUD();
         turnCounter++;
-        DebugWindow.reportf(DebugWindow.STAGE, "GameInstace:turnCounter", "%1$d", turnCounter);
-        DebugWindow.reportf(DebugWindow.GAME,  "GameInstace", "TURN %1$d", turnCounter);
+        currentZone.incrementTurnCounter();
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance:turnCounter", "%1$d", turnCounter);
+        DebugWindow.reportf(DebugWindow.GAME,  "GameInstance", "TURN %1$d", turnCounter);
         getPlayer().updateSynopsis();
         isPlayerTurn = true;
         //});
@@ -394,7 +399,11 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     }
 
     public String getCurrentZoneName() {
-        return currentZoneName;
+        return currentZone.getZoneName();
+    }
+
+    public Zone getCurrentZone() {
+        return currentZone;
     }
 
     private void reportUpdatePerformance(long[] times){

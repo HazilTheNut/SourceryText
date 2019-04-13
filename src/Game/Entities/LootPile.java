@@ -5,10 +5,7 @@ import Data.EntityArg;
 import Data.EntityStruct;
 import Data.SerializationVersion;
 import Engine.LayerManager;
-import Game.GameInstance;
-import Game.Item;
-import Game.Player;
-import Game.TagHolder;
+import Game.*;
 import Game.Tags.Tag;
 
 import java.util.ArrayList;
@@ -27,6 +24,7 @@ public class LootPile extends Chest {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private boolean autoPickup = false;
+    private int contactType = Tag.CONTACT_LIGHT;
 
     @Override
     public ArrayList<EntityArg> generateArgs() {
@@ -105,7 +103,7 @@ public class LootPile extends Chest {
     @Override
     public void addItem(Item item) {
         super.addItem(item);
-        item.onContact(gi.getCurrentLevel().getTileAt(getLocation()), gi, Tag.CONTACT_LIGHT);
+        item.onContact(gi.getCurrentLevel().getTileAt(getLocation()), gi, contactType);
     }
 
     @Override
@@ -113,6 +111,10 @@ public class LootPile extends Chest {
         super.addTag(tag, source);
         for (Item item : getItems())
             item.addTag(tag.copy(), source);
+    }
+
+    public void setContactType(int contactType) {
+        this.contactType = contactType;
     }
 
     /*

@@ -8,7 +8,7 @@ import Engine.SpecialText;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class GameDeathMenu implements MouseInputReceiver{
+public class GameDeathMenu implements GameInputReciever {
 
     private Layer shadeLayer;
     private Layer menuLayer;

@@ -27,6 +27,7 @@ public class ThrowWaterBalloonTag extends Tag {
                     Entity target = (Entity) e.getTarget();
                     explodeAt(target.getLocation(), e.getGameInstance());
                 }
+                e.getTagOwner().onReceiveDamage(1, e.getSource(), e.getGameInstance());
             });
         }
     }

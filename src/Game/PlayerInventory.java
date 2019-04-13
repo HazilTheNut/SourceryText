@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by Jared on 3/29/2018.
  */
-public class PlayerInventory implements MouseInputReceiver, Serializable {
+public class PlayerInventory implements GameInputReciever, Serializable {
 
     /**
      * PlayerInventory:

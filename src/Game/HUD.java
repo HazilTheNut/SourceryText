@@ -18,7 +18,7 @@ import java.util.ArrayList;
 /**
  * Created by Jared on 01-Apr-18.
  */
-public class HUD implements MouseInputReceiver, Serializable {
+public class HUD implements GameInputReciever, Serializable {
 
     /**
      * HUD:

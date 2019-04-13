@@ -9,7 +9,7 @@ import Engine.SpecialText;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class GameMainMenu implements MouseInputReceiver{
+public class GameMainMenu implements GameInputReciever {
 
     private Layer menuLayer;
     private Layer selectorLayer;

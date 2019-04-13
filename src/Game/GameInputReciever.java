@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by Jared on 3/29/2018.
  */
-public interface MouseInputReceiver {
+public interface GameInputReciever {
 
     //Ran whenever mouse moves. Return true to prevent mouse input reaching elements below current one
     boolean onMouseMove(Coordinate levelPos, Coordinate screenPos);

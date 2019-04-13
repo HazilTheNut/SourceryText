@@ -13,7 +13,7 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.ArrayList;
 
-public class GameKeybindsMenu implements MouseInputReceiver, KeyListener {
+public class GameKeybindsMenu implements GameInputReciever, KeyListener {
 
     /**
      * GameSaveMenu:

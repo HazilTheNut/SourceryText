@@ -84,5 +84,6 @@ public class LevelUpTag extends Tag{
         player.scanInventory();
         player.updateHUD();
         player.updateInventory();
+        player.getGameInstance().getCurrentZone().incrementMagicPotatoCounter();
     }
 }

@@ -1,0 +1,12 @@
+name="The Rocky Road"
+sign="^"
+chapter=1
+showIntro=0
+showScorecard=1
+magicPotatoes=14
+events:
+"DennisKilled"="Killed Dennis"
+"BanditsJoined"="Joined The Bandits"
+"BanditKingKilled"="Killed Bandit King"
+"BanditKingStungToDeath"="Bandit King Stung To Death"
+"WitchKilled"="Killed The Witch"

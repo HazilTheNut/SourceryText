@@ -1,0 +1,7 @@
+name="The Temple of Terrible Traps"
+sign="!"
+chapter=6
+showIntro=1
+showScorecard=1
+magicPotatoes=0
+events:

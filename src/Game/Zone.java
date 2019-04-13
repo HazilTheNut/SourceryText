@@ -1,16 +1,13 @@
 package Game;
 
-import Data.Coordinate;
-import Data.LayerImportances;
 import Data.SerializationVersion;
-import Engine.Layer;
-import Engine.LayerManager;
 import Game.Debug.DebugWindow;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class Zone implements Serializable, MouseInputReceiver {
+public class Zone implements Serializable {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
@@ -20,10 +17,9 @@ public class Zone implements Serializable, MouseInputReceiver {
     private String zoneName;
 
     private int magicPotatoCounter;
+    private long turnCounter;
 
-    private Layer scorecardLayer;
-
-    public Zone(String levelFilePath, LayerManager manager){
+    public Zone(String levelFilePath){
         magicPotatoCounter = 0;
         activeLevels = new ArrayList<>();
         parentFolder = findParentFolder(levelFilePath);
@@ -35,16 +31,29 @@ public class Zone implements Serializable, MouseInputReceiver {
             parentFolder = "EMPTY";
             zoneName = "ERROR";
         }
-        if (manager != null)
-            scorecardLayer = new Layer(manager.getWindow().RESOLUTION_WIDTH, manager.getWindow().RESOLUTION_HEIGHT, "scorecard:" + zoneName, 0, 0, LayerImportances.MAIN_MENU);
-        else
-            scorecardLayer = new Layer(0, 0, "scorecard:" + zoneName, 0, 0, LayerImportances.MAIN_MENU);
-        scorecardLayer.setVisible(false);
+        buildZoneInfo();
         DebugWindow.reportf(DebugWindow.STAGE, "Zone", "Name: \"%1$s\" Path: %2$s", zoneName, parentFolder);
     }
 
     public void incrementMagicPotatoCounter(){
         magicPotatoCounter++;
+    }
+
+    public void incrementTurnCounter(){
+        turnCounter++;
+        DebugWindow.reportf(DebugWindow.STAGE, "Zone.incrementTurnCounter", "Turn Counter: %1$d", turnCounter);
+    }
+
+    public int getMagicPotatoCounter() {
+        return magicPotatoCounter;
+    }
+
+    public long getTurnCounter() {
+        return turnCounter;
+    }
+
+    public String getZoneName() {
+        return zoneName;
     }
 
     private String findParentFolder(String levelFilePath){
@@ -88,8 +97,12 @@ public class Zone implements Serializable, MouseInputReceiver {
         return activeLevels;
     }
 
+    File getScorecardFile(){
+        return new File(parentFolder.concat("scorecard.zinfo"));
+    }
+
     private String getZoneNameFromInfoFile(){
-        File infoTxt = new File(parentFolder.concat("scorecard.zinfo"));
+        File infoTxt = getScorecardFile();
         if (infoTxt.exists()){
             try {
                 FileReader fr = new FileReader(infoTxt);
@@ -102,33 +115,31 @@ public class Zone implements Serializable, MouseInputReceiver {
         return null;
     }
 
-    @Override
-    public boolean onMouseMove(Coordinate levelPos, Coordinate screenPos) {
-        return scorecardLayer.getVisible();
+    private HashMap<String, String> zoneInfoMap;
+
+    private void buildZoneInfo(){
+        if (zoneInfoMap == null)
+            zoneInfoMap = new HashMap<>();
+        File infoTxt = getScorecardFile();
+        if (infoTxt.exists()){
+            try {
+                FileReader fr = new FileReader(infoTxt);
+                BufferedReader bufferedReader = new BufferedReader(fr);
+                String nextLine;
+                do { //Loop is ran at minimum of one time so that the buffered reader can read a line once
+                    nextLine = bufferedReader.readLine();
+                    if (nextLine != null) { //Input sanitation - empty info files should not cause errors
+                        int dividerIndex = nextLine.indexOf('=');
+                        if (dividerIndex != -1){ //If an equals sign exists, add data to mapping
+                            zoneInfoMap.put(nextLine.substring(0, dividerIndex), nextLine.substring(dividerIndex+1));
+                        }
+                    }
+                } while (nextLine != null);
+            } catch (IOException ignored) {}
+        }
     }
 
-    @Override
-    public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButton) {
-        return scorecardLayer.getVisible();
-    }
-
-    @Override
-    public boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement) {
-        return scorecardLayer.getVisible();
-    }
-
-    @Override
-    public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
-        return scorecardLayer.getVisible();
-    }
-
-    @Override
-    public boolean onInputUp(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
-        return scorecardLayer.getVisible();
-    }
-
-    @Override
-    public boolean onNumberKey(Coordinate levelPos, Coordinate screenPos, int number) {
-        return scorecardLayer.getVisible();
+    public HashMap<String, String> getZoneInfoMap() {
+        return zoneInfoMap;
     }
 }
