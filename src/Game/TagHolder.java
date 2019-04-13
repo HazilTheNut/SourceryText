@@ -142,14 +142,48 @@ public class TagHolder implements Serializable {
         return 0; //Override this
     }
 
+    public void selfDestruct(){
+
+    }
+
+    /*
+    * CONTACT
+    *
+    * Objects contacting each other is a very common occurrence in Sourcery Text, but the nature of contact can be tricky to properly implement.
+    *
+    * For example, water balloons would explode upon being dropped on the ground, as the loot pile that represents it had just been instantiated and must then contact the ground.
+    * This is totally logical behavior, but it's important to remember how that feels to the player. The player is strategically dropping items out of their inventory (probably due to weight limits), and the reward for this behavior is...destroying the items they dropped.
+    * Plus, what if "dropping" an item is interpreted as "gently setting on the ground?"
+    *
+    * Therefore, "contact" must be more complex.
+    *
+    * Thus, there is such a thing as contact "strength." Getting the water balloon tag to work in all cases except the very specific case where it is dropped on the ground is hard to properly accomplish.
+    * Therefore, when calling the onContact() method, one must specify how "strong" that contact is. So when an item is dropped on the ground, it is treated as "light" and the water balloon can then check for "heavy" contact and then conditionally do its behavior.
+    *
+    * The "older" contact system works fairly well, but fails spectacularly when dealing with Loot Piles.
+    * The main problem of Loot Piles is that it's one TagHolder trying to behave as a group of other TagHolders (the items it contains).
+    * When you contact a Loot Pile, you should instead be contacting every item in its inventory and bypass the Loot Pile entirely. That way, the contact events have the proper source and targets to behave correctly.
+    *
+    * The solution I found is to give the contact receiving end the full responsibility instead of the "sending" side.
+    * */
+
     public void onContact(TagHolder other, GameInstance gi, int contactStrength){
         if (other == null || !shouldContact(this, other))
             return;
-        contactEvent(this, other, gi, contactStrength);
-        contactEvent(other, this, gi, contactStrength);
-        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact", "TagHolder \'" + this.getClass().getSimpleName() + "\'");
-        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact  SELF", "Tags: " + getTagList());
-        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.onContact OTHER", "Tags: " + other.getTagList());
+        other.receiveContact(this, gi, contactStrength);
+    }
+
+    //This method can be overwritten to allow Loot Piles to behave differently regarding contact, and perhaps others too.
+    protected void receiveContact(TagHolder source, GameInstance gi, int contactStrength){
+        performTwoWayContact(source, this, gi, contactStrength);
+    }
+
+    protected void performTwoWayContact(TagHolder obj1, TagHolder obj2, GameInstance gi, int contactStrength){
+        contactEvent(obj1, obj2, gi, contactStrength);
+        contactEvent(obj2, obj1, gi, contactStrength);
+        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.performTwoWayContact", "\'" + obj1.getClass().getSimpleName() + "\' & \'" + obj2.getClass().getSimpleName() + "\'");
+        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.performTwoWayContact OBJ 1", "Tags: " + obj1.getTagList());
+        DebugWindow.reportf(DebugWindow.TAGS, "TagHolder.performTwoWayContact OBJ 2", "Tags: " + obj2.getTagList());
     }
 
     private void contactEvent(TagHolder source, TagHolder target, GameInstance gi, int strength){

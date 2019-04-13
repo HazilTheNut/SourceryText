@@ -197,6 +197,7 @@ public class Entity extends TagHolder implements Serializable {
         contactAt(location);
     }
 
+    @Override
     public void selfDestruct(){
         isAlive = false;
         getSprite().setVisible(false);

@@ -46,6 +46,11 @@ public class ItemProjectile extends Projectile {
     }
 
     @Override
+    protected void receiveContact(TagHolder source, GameInstance gi, int contactStrength) {
+        performTwoWayContact(item, source, gi, contactStrength);
+    }
+
+    @Override
     protected void collide(TagHolder other) {
         super.collide(other, baseDamage);
         boolean shouldNotDrop = other instanceof CombatEntity && item.hasTag(TagRegistry.SHARP) && item.isStackable();

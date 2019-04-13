@@ -134,6 +134,11 @@ public class Item extends TagHolder implements Serializable {
     }
 
     @Override
+    public void selfDestruct() {
+        receiveDamage(itemData.getQty());
+    }
+
+    @Override
     public int getCurrentHealth() {
         return itemData.getQty();
     }

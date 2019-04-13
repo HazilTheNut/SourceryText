@@ -113,6 +113,14 @@ public class LootPile extends Chest {
             item.addTag(tag.copy(), source);
     }
 
+    @Override
+    protected void receiveContact(TagHolder source, GameInstance gi, int contactStrength) {
+        for (Item item : getItems()) {
+            performTwoWayContact(source, item, gi, contactStrength);
+        }
+        updateInventory();
+    }
+
     public void setContactType(int contactType) {
         this.contactType = contactType;
     }
