@@ -38,6 +38,8 @@ public class GameMaster {
 
         this.layerManager.getWindow().requestFocusInWindow();
 
+        DebugWindow.setCommandLineGameMaster(this);
+
         //Menus
         saveMenu = new GameSaveMenu(this.layerManager, mouseInput, this);
         mainMenu = new GameMainMenu(mouseInput, layerManager, this);
@@ -162,7 +164,7 @@ public class GameMaster {
         keybindsMenu.open();
     }
 
-    GameInstance getCurrentGameInstance() {
+    public GameInstance getCurrentGameInstance() {
         return currentGameInstance;
     }
 

@@ -20,12 +20,18 @@ public class DebugLogPane extends JComponent {
 
     private boolean captionSensitive;
     private boolean requiresUpdate = false;
+    private boolean showCaptions = true;
 
     private JScrollPane scrollPane;
 
     public DebugLogPane(boolean captionSensitive){
         this.captionSensitive = captionSensitive;
         setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+    }
+
+    public DebugLogPane(boolean captionSensitive, boolean showCaptions){
+        this(captionSensitive);
+        this.showCaptions = showCaptions;
     }
 
     public boolean isCaptionSensitive() {
@@ -86,14 +92,14 @@ public class DebugLogPane extends JComponent {
     @Override
     public void paint(Graphics g) {
         g.setColor(Color.BLACK);
-        Rectangle viewRect = scrollPane.getViewport().getViewRect();
+        Rectangle viewRect = (scrollPane != null) ? scrollPane.getViewport().getViewRect() : new Rectangle(getWidth(), getHeight());
         g.fillRect((int)viewRect.getX(), (int)viewRect.getY(), (int)viewRect.getWidth(), (int)viewRect.getHeight());
         g.setColor(DebugWindow.textColor);
         for (int i = 0 ; i < debugEntries.size(); i++) {
             int ypos = (i+1) * VERT_SEP - 5;
             if (ypos - (int)viewRect.getY() >= -1 * VERT_SEP && ypos - (int)viewRect.getY() <= viewRect.getHeight() + VERT_SEP) { //Don't draw what will not be seen.
                 DebugEntry entry = debugEntries.get(i);
-                String entryText = String.format("[%1$s] %2$s", entry.caption, entry.text);
+                String entryText = (showCaptions) ? String.format("[%1$s] %2$s", entry.caption, entry.text) : entry.text;
                 g.drawString(entryText, 1, ypos);
             }
         }

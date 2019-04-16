@@ -1,6 +1,7 @@
 package Game.Debug;
 
 import Engine.Layer;
+import Game.GameMaster;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,6 +36,7 @@ public class DebugWindow{
     private static DebugLogPane misc;
     private static DebugLogPane cursor;
     private static DebugLayerPanel layers;
+    private static DebugCommandLine commandLine;
 
     private static ArrayList<TextDispenseUpdate> dispenseUpdates;
 
@@ -67,6 +69,7 @@ public class DebugWindow{
         misc = new DebugLogPane(false);
         cursor = new DebugLogPane(true);
         layers = new DebugLayerPanel();
+        commandLine = new DebugCommandLine();
 
         //Create UI
         tabbedPane = new JTabbedPane();
@@ -78,6 +81,7 @@ public class DebugWindow{
         tabbedPane.addTab("Misc",   createScrollPane(tabbedPane, misc));
         tabbedPane.addTab("Cursor", createScrollPane(tabbedPane, cursor));
         tabbedPane.addTab("Layers", layers);
+        tabbedPane.addTab("Command", commandLine);
 
         frame.add(tabbedPane, BorderLayout.CENTER);
 
@@ -212,6 +216,10 @@ public class DebugWindow{
     //Update the Layers in the Layers pane to keep the check box states consistent with the Layers they are tracking.
     public static void updateLayerInfo(){
         layers.updateLayerCheckBoxes();
+    }
+
+    public static void setCommandLineGameMaster(GameMaster master){
+        commandLine.setGameMaster(master);
     }
 
     private static DebugLogPane getDebugLog(int screen){
