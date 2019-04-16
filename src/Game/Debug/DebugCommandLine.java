@@ -8,7 +8,11 @@ import Game.Item;
 import Game.Registries.ItemRegistry;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 public class DebugCommandLine extends JPanel {
@@ -23,11 +27,14 @@ public class DebugCommandLine extends JPanel {
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
 
-        JTextArea inputField = new JTextArea();
-        inputField.setBackground(Color.BLACK);
-        inputField.setForeground(Color.WHITE);
-
+        JTextField inputField = new JTextField();
         JButton sendButton = new JButton("Send");
+
+        inputField.addActionListener(e -> sendButton.doClick());
+        inputField.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        inputField.setBackground(Color.BLACK);
+        inputField.setForeground(DebugWindow.textColor);
+
         sendButton.addActionListener(e -> {
             outputPane.addEntry("", processCommand(divideInput(inputField.getText())));
             outputPane.update();

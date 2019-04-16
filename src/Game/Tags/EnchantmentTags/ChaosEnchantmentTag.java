@@ -17,7 +17,7 @@ public class ChaosEnchantmentTag extends EnchantmentTag {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     @Override
-    public void onDealDamage(TagEvent e) {
+    public void onContact(TagEvent e) {
         e.addCancelableAction(event -> {
             if (e.getTarget() instanceof  Entity){
                 Entity target = (Entity)e.getTarget();
