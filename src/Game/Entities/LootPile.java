@@ -77,7 +77,7 @@ public class LootPile extends Chest {
 
     @Override
     public boolean tagsVisible() {
-        return true; //Tag list looks super messy, so let's just hide it.
+        return false; //Tag list looks super messy, so let's just hide it.
     }
 
     private void doAutoPickup(Player player){
@@ -115,6 +115,15 @@ public class LootPile extends Chest {
 
     @Override
     protected void receiveContact(TagHolder source, GameInstance gi, int contactStrength) {
+        if (source instanceof LootPile) {
+            LootPile lootPile = (LootPile) source;
+            while (getItems().size() > 0){
+                Item item = getItems().get(0);
+                item.onContact(lootPile, gi, contactStrength);
+                lootPile.addItem(item);
+                removeItem(item);
+            }
+        }
         for (Item item : getItems()) {
             performTwoWayContact(source, item, gi, contactStrength);
         }
