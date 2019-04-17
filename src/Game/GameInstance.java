@@ -157,7 +157,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
      * @param levelFilePath The full (non-relative) file path to the .lda file being entered into.
      * @param playerPos The player's new position to be in.
      */
-    void enterLevel(String levelFilePath, Coordinate playerPos){
+    public void enterLevel(String levelFilePath, Coordinate playerPos){
         boolean isNewZone = !currentZone.isLevelWithinZone(levelFilePath);
         getPlayer().freeze();
         if (isNewZone) { //Draw scorecard
