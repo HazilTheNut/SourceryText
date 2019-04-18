@@ -50,15 +50,21 @@ public class GameMainMenu implements GameInputReciever {
         menuLayer.clearLayer();
         menuLayer.convertNullToOpaque();
 
+        //Draw Game Title
         int startX = getTextStartX();
         menuLayer.inscribeString(gameTitle, startX, 1);
 
         menuLayer.editLayer(menuLayer.getCols() / 2, 3, new SpecialText('@', new Color(223, 255, 214)));
-        
+
+        //Draw menu options
         menuLayer.inscribeString("New Game",  startX, optionsStartY);
         menuLayer.inscribeString("Load Game", startX, optionsStartY + 1);
         menuLayer.inscribeString("Controls",  startX, optionsStartY + 2);
         menuLayer.inscribeString("Quit",      startX, optionsStartY + 3);
+
+        //Draw version number
+        String gameVersion = "DEMO_A_1";
+        menuLayer.inscribeString(gameVersion, 0, menuLayer.getRows() - 1, new Color(100, 100, 100));
     }
 
     void close(){

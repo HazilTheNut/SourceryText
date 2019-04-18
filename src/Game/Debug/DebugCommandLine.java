@@ -16,6 +16,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.util.ArrayList;
 
 public class DebugCommandLine extends JPanel {
@@ -162,8 +163,12 @@ public class DebugCommandLine extends JPanel {
             if (args.size() > 3)
                 newPos = new Coordinate(Integer.valueOf(args.get(2)), Integer.valueOf(args.get(3)));
             FileIO io = new FileIO();
-            gameMaster.getCurrentGameInstance().enterLevel(io.getRootFilePath().concat(args.get(1)), newPos);
-            return "Level Loaded!";
+            File levelFile = new File(io.getRootFilePath().concat(args.get(1)));
+            if (levelFile.exists()) {
+                gameMaster.getCurrentGameInstance().enterLevel(io.getRootFilePath().concat(args.get(1)), newPos);
+                return "Level Loaded!";
+            } else
+                return "ERROR: Level not found! path: " + levelFile.getPath();
         } catch (NumberFormatException e){
             e.printStackTrace();
             return "ERROR: Args improper!";

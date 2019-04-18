@@ -162,6 +162,7 @@ public class TextBox implements GameInputReciever {
             } else if (isFormattedElement(message, index, "<cs>")){ textColor = txt_silver; index += 3;
             } else if (isFormattedElement(message, index, "<cp>")){ textColor = txt_purple; index += 3;
             } else { //It's not a special or formatted character?
+                if (message.charAt(index) == '\\') index++; //Escaped characters should display normally
                 textBoxLayer.editLayer(xpos, row, new SpecialText(message.charAt(index), textColor, bkg));
                 xpos++;
                 if (message.charAt(index) == ',')
