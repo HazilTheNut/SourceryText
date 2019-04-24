@@ -178,7 +178,7 @@ public class Level implements Serializable {
     public void addEntity(Entity e){
         entities.add(e);
         e.onLevelEnter();
-        e.onContact(getTileAt(e.getLocation()), e.getGameInstance(), Tag.CONTACT_HEAVY);
+        e.onContact(getTileAt(e.getLocation()), e.getGameInstance(), Tag.CONTACT_LIGHT);
         for (LevelScript levelScript : levelScripts) levelScript.onAddEntity(e);
     }
 

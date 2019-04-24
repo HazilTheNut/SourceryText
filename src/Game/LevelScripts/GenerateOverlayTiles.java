@@ -34,6 +34,7 @@ public class GenerateOverlayTiles extends LevelScript {
                 } else if (getMaskDataAt("fireplace", loc)){
                     Tile tile = createFireTile(loc, otg);
                     tile.addTag(TagRegistry.BURN_NOSPREAD, tile);
+                    tile.addTag(TagRegistry.TILE_WALL, tile);
                 }
             }
         }

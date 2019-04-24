@@ -49,7 +49,7 @@ public class CombatEntity extends Entity {
 
     private static final int[] directions = {RIGHT, UP_RIGHT, UP, UP_LEFT, LEFT, DOWN_LEFT, DOWN, DOWN_RIGHT, RIGHT_360};
 
-    public Item noWeapon;
+    public NoWeaponItem noWeapon;
 
     Item weapon;
     protected Layer swooshLayer;
@@ -102,10 +102,11 @@ public class CombatEntity extends Entity {
     }
 
     protected void initNoWeapon(){
-        noWeapon = new Item(new ItemStruct(-1, 1, "no_weapon", 0), gi);
+        noWeapon = new NoWeaponItem(new ItemStruct(-1, 1, "no_weapon", 0), gi);
         for (Tag tag : getTags())
             noWeapon.addTag(tag.copy(), this);
         noWeapon.addTag(TagRegistry.WEAPON_STRIKE, noWeapon);
+        noWeapon.startTrackingTags();
     }
 
     @Override
@@ -132,7 +133,8 @@ public class CombatEntity extends Entity {
      */
     private void performAttack(Coordinate loc){
         if (shouldDoAction()){
-            if (getWeapon().getItemData().getItemId() < 0)
+            boolean usingNoWeapon = getWeapon().getItemData().getItemId() < 0;
+            if (usingNoWeapon)
                 initNoWeapon();
             swooshLayer.setVisible(true);
             swooshLayer.setPos(loc);
@@ -149,6 +151,10 @@ public class CombatEntity extends Entity {
                 getWeapon().onContact(toContact, getGameInstance(), Tag.CONTACT_HEAVY);
             else
                 onContact(toContact, getGameInstance(), Tag.CONTACT_HEAVY);
+            if (usingNoWeapon){
+                for (int tagId : noWeapon.addedTags) addTag(tagId, this);
+                for (int tagId : noWeapon.removedTags) removeTag(tagId);
+            }
         }
     }
 
@@ -218,13 +224,14 @@ public class CombatEntity extends Entity {
     }
 
     /**
-     * Acts as a wrapper for performAttack() [The animation one], allowing for weapon performAttack patterns.
+     * Acts as a wrapper for performAttack() [The animation one], allowing for weapon attack patterns.
      *
      * @param loc The location to performAttack
      */
     protected void doWeaponAttack(Coordinate loc){
-        for (int i = 0; i < getWeapon().getTags().size(); i++) {
-            Tag tag = getWeapon().getTags().get(i);
+        Item weapon = getWeapon(); //Believe it or not, but this line of code fixes a bug. Turns out buggy things happen when the weapon being used has its tags altered whilst attacking.
+        for (int i = 0; i < weapon.getTags().size(); i++) {
+            Tag tag = weapon.getTags().get(i);
             switch (tag.getId()) {
                 case TagRegistry.WEAPON_THRUST:
                     doThrustWeaponAttack(calculateMeleeDirection(loc));
@@ -572,6 +579,35 @@ public class CombatEntity extends Entity {
                 return pathPoint.pos.equals(pos);
             }
             return false;
+        }
+    }
+
+    private class NoWeaponItem extends Item {
+
+        private ArrayList<Integer> addedTags;
+        private ArrayList<Integer> removedTags;
+        private boolean trackTags = false;
+
+        public NoWeaponItem(ItemStruct itemData, GameInstance gi) {
+            super(itemData, gi);
+            addedTags = new ArrayList<>();
+            removedTags = new ArrayList<>();
+        }
+
+        @Override
+        public void addTag(Tag tag, TagHolder source) {
+            super.addTag(tag, source);
+            if (trackTags && !addedTags.contains(tag.getId())) addedTags.add(tag.getId());
+        }
+
+        @Override
+        public void removeTag(int id) {
+            super.removeTag(id);
+            if (trackTags && !removedTags.contains(id)) removedTags.add(id);
+        }
+
+        void startTrackingTags(){
+            trackTags = true;
         }
     }
 }

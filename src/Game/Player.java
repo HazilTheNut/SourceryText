@@ -158,7 +158,7 @@ public class Player extends GameCharacter implements GameInputReciever {
                     String path = io.getRootFilePath() + wz.getRoomFilePath();
                     Coordinate wzNewPos = new Coordinate(wz.getNewRoomStartX(), wz.getNewRoomStartY());
                     DebugWindow.reportf(DebugWindow.GAME, "Player.checkForWarpZones","Attempting level file path: %1$s \n* wz pos: %2$s\n", path, wzNewPos);
-                    gi.enterLevel(path, wzNewPos.add(nextPos).subtract(new Coordinate(wz.getXpos(), wz.getYpos())));
+                    gi.enterLevel(path, wzNewPos.add(nextPos).subtract(new Coordinate(wz.getXpos(), wz.getYpos())), false);
                     return true;
                 }
             }

@@ -62,10 +62,12 @@ public class DebugCommandLine extends JPanel {
         ArrayList<String> output = new ArrayList<>();
         while (index != -1){
             int nextIndex = input.indexOf(' ', index + 1);
+            String toAdd;
             if (nextIndex != -1)
-                output.add(input.substring(index, nextIndex).trim());
+                toAdd = (input.substring(index, nextIndex).trim());
             else
-                output.add(input.substring(index).trim());
+                toAdd = (input.substring(index).trim());
+            if (!toAdd.equals("")) output.add(toAdd);
             index = nextIndex;
         }
         return output;
@@ -156,16 +158,20 @@ public class DebugCommandLine extends JPanel {
     }
 
     private String processLoadCommand(ArrayList<String> args){
-        if (args.size() < 2 || args.size() == 3) return "ERROR: Improper args (format: \"load <relative path> [<x> <y>]\")";
+        if (args.size() < 2 || args.size() == 3) return "ERROR: Improper args (format: \"load <relative path> [<x> <y> <skip scorecard>]\")";
         if (gameMaster == null || gameMaster.getCurrentGameInstance() == null) return "ERROR: Game currently not running!";
         try {
             Coordinate newPos = gameMaster.getCurrentGameInstance().getPlayer().getLocation();
             if (args.size() > 3)
                 newPos = new Coordinate(Integer.valueOf(args.get(2)), Integer.valueOf(args.get(3)));
             FileIO io = new FileIO();
-            File levelFile = new File(io.getRootFilePath().concat(args.get(1)));
+            String path = io.getRootFilePath().concat(args.get(1));
+            File levelFile = new File(path);
             if (levelFile.exists()) {
-                gameMaster.getCurrentGameInstance().enterLevel(io.getRootFilePath().concat(args.get(1)), newPos);
+                if (args.size() > 4)
+                    gameMaster.getCurrentGameInstance().enterLevel(path, newPos, args.get(4).equals("true"));
+                else
+                    gameMaster.getCurrentGameInstance().enterLevel(path, newPos, false);
                 return "Level Loaded!";
             } else
                 return "ERROR: Level not found! path: " + levelFile.getPath();

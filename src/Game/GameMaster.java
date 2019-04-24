@@ -58,7 +58,7 @@ public class GameMaster {
         mouseInput.clearInputReceivers();
         currentGameInstance.establishMouseInput();
         FileIO io = new FileIO();
-        currentGameInstance.enterLevel(io.getRootFilePath() + "LevelData/gameStart.lda", new Coordinate(0, 0));
+        currentGameInstance.enterLevel(io.getRootFilePath() + "LevelData/gameStart.lda", new Coordinate(0, 0), true);
         currentGameInstance.getPlayer().checkForWarpZones(new Coordinate(0, 0));
         gameRunning = true;
         layerManager.addLayer(mouseInput.getMouseHighlight());
@@ -127,8 +127,8 @@ public class GameMaster {
             //Cleanup old GameInstance
             FileIO io = new FileIO();
             if (gameRunning) {
-                exitGame();
                 currentGameInstance.getDeathMenu().close();
+                exitGame();
             }
             mainMenu.close();
             //Generate new one

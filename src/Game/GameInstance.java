@@ -157,10 +157,10 @@ public class GameInstance implements Serializable, FrameUpdateListener {
      * @param levelFilePath The full (non-relative) file path to the .lda file being entered into.
      * @param playerPos The player's new position to be in.
      */
-    public void enterLevel(String levelFilePath, Coordinate playerPos){
+    public void enterLevel(String levelFilePath, Coordinate playerPos, boolean skipScorecard){
         boolean isNewZone = !currentZone.isLevelWithinZone(levelFilePath);
         getPlayer().freeze();
-        if (isNewZone) { //Draw scorecard
+        if (isNewZone && !skipScorecard) { //Draw scorecard
             ZoneScorecard scorecard = new ZoneScorecard(getLayerManager(), currentZone, gameMaster.getMouseInput());
             scorecard.drawScorecardForZone(this);
         }
@@ -169,7 +169,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             currentLevel.removeEntity(getPlayer());
             if (!isNewZone) loadingScreenLayer.setVisible(true);
         }
-        if (!currentZone.isLevelWithinZone(levelFilePath)){ //If moved to a new zone
+        if (isNewZone){ //If moved to a new zone
             currentZone = new Zone(levelFilePath);
         }
         for (Level level : currentZone.getActiveLevels()){
