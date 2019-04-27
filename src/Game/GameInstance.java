@@ -55,7 +55,6 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private FactionManager factionManager;
 
     private long currentUID = 1;
-    private long turnCounter = 0;
 
     private ArrayList<String> gameEvents;
 
@@ -384,10 +383,9 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         runTimes[5] = System.nanoTime();
         reportUpdatePerformance(runTimes);
         getPlayer().updateHUD();
-        turnCounter++;
         currentZone.incrementTurnCounter();
-        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance:turnCounter", "%1$d", turnCounter);
-        DebugWindow.reportf(DebugWindow.GAME,  "GameInstance", "TURN %1$d", turnCounter);
+        DebugWindow.reportf(DebugWindow.STAGE, "GameInstance:turnCounter", "%1$d", currentZone.getTurnCounter());
+        DebugWindow.reportf(DebugWindow.GAME,  "GameInstance", "TURN %1$d", currentZone.getTurnCounter());
         getPlayer().updateSynopsis();
         isPlayerTurn = true;
         //});
@@ -440,8 +438,8 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         return quickMenu;
     }
 
-    public long getTurnCounter() {
-        return turnCounter;
+    long getTurnCounter() {
+        return currentZone.getTurnCounter();
     }
 
     public ArrayList<String> getGameEvents() {

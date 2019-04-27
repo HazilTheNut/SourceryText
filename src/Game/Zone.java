@@ -32,7 +32,7 @@ public class Zone implements Serializable {
             zoneName = "ERROR";
         }
         buildZoneInfo();
-        DebugWindow.reportf(DebugWindow.STAGE, "Zone", "Name: \"%1$s\" Path: %2$s", zoneName, parentFolder);
+        DebugWindow.reportf(DebugWindow.STAGE, "Zone.init", "Name: \"%1$s\" Path: %2$s", zoneName, parentFolder);
     }
 
     public void incrementMagicPotatoCounter(){
