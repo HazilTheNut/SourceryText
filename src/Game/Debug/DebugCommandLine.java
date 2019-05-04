@@ -3,11 +3,10 @@ package Game.Debug;
 import Data.Coordinate;
 import Data.FileIO;
 import Data.ItemStruct;
+import Game.*;
+import Game.Entities.BasicEnemy;
 import Game.Entities.Entity;
-import Game.GameInstance;
-import Game.GameMaster;
-import Game.Item;
-import Game.Level;
+import Game.Entities.GameCharacter;
 import Game.Registries.ItemRegistry;
 
 import javax.swing.*;
@@ -74,6 +73,7 @@ public class DebugCommandLine extends JPanel {
     }
 
     private String processCommand(ArrayList<String> args){
+        if (args.size() <= 0) return "";
         switch (args.get(0)){
             case "item":
                 return processItemCmd(args);
@@ -85,6 +85,10 @@ public class DebugCommandLine extends JPanel {
                 return processEventCommand(args);
             case "load":
                 return processLoadCommand(args);
+            case "unload":
+                return processUnloadCommand(args);
+            case "wipe":
+                return processWipeCmd(args);
             default:
                 return "ERROR: Command mnemonic invalid";
         }
@@ -124,6 +128,22 @@ public class DebugCommandLine extends JPanel {
                     return "Entity \'" + e.getName() + "\' has received damage.";
                 }
             return "ERROR: Entity not found.";
+        } catch (NumberFormatException e){
+            e.printStackTrace();
+            return "ERROR: Args improper!";
+        }
+    }
+
+    private String processWipeCmd(ArrayList<String> args){
+        if (gameMaster == null || gameMaster.getCurrentGameInstance() == null) return "ERROR: Game currently not running!";
+        try {
+            ArrayList<Entity> entities = gameMaster.getCurrentGameInstance().getCurrentLevel().getEntities();
+            long playerUID = gameMaster.getCurrentGameInstance().getPlayer().getUniqueID();
+            for (Entity e : entities)
+                if (e instanceof BasicEnemy && e.getUniqueID() != playerUID) {
+                    e.selfDestruct();
+                }
+            return "Enemies neutralized.";
         } catch (NumberFormatException e){
             e.printStackTrace();
             return "ERROR: Args improper!";
@@ -175,6 +195,27 @@ public class DebugCommandLine extends JPanel {
                 return "Level Loaded!";
             } else
                 return "ERROR: Level not found! path: " + levelFile.getPath();
+        } catch (NumberFormatException e){
+            e.printStackTrace();
+            return "ERROR: Args improper!";
+        }
+    }
+
+    private String processUnloadCommand(ArrayList<String> args){
+        if (args.size() < 2 || args.get(1).length() <= 2) return "ERROR: Improper args (format: \"unload <level name (use \'_\' for spaces)>\")";
+        if (gameMaster == null || gameMaster.getCurrentGameInstance() == null) return "ERROR: Game currently not running!";
+        try {
+            String levelName = args.get(1).replace('_', ' ');
+            if (gameMaster.getCurrentGameInstance().getCurrentLevel().getName().equals(levelName))
+                return "ERROR: That level is the current level!";
+            for (Level level : gameMaster.getCurrentGameInstance().getCurrentZone().getActiveLevels()){
+                String activeLevelName = level.getName();
+                if (activeLevelName.equals(levelName)) {
+                    gameMaster.getCurrentGameInstance().unloadLevel(level);
+                    return "Level successfully unloaded!";
+                }
+            }
+            return "ERROR: Level not found";
         } catch (NumberFormatException e){
             e.printStackTrace();
             return "ERROR: Args improper!";

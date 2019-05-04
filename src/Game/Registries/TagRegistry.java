@@ -6,6 +6,7 @@ import Game.Tags.*;
 import Game.Tags.EnchantmentTags.*;
 import Game.Tags.PotionEffectTags.*;
 import Game.Tags.PropertyTags.*;
+import Game.Tags.PropertyTags.DimGlowingTag;
 import Game.Tags.SpellLearningTags.*;
 import Game.Tags.TempTags.*;
 
@@ -62,6 +63,7 @@ public class TagRegistry {
     public final static int VENOM_ENCHANT = 21;
     public final static int PRICKLY       = 22;
     public final static int EXPLOSIVE     = 23;
+    public final static int LUMINANT      = 24;
 
     public final static int EFFECT_RECOVERING = 150;
     public final static int EFFECT_MAGNETIC   = 151;
@@ -178,6 +180,7 @@ public class TagRegistry {
         registerTag(MAGNETIC, "Magnetic", MagneticTag.class);
         registerTag(PRICKLY, "Prickly", PricklyTag.class);
         registerTag(EXPLOSIVE, "Explosive", ExplosiveTag.class);
+        registerTag(LUMINANT, "Luminary", DimGlowingTag.class);
 
         registerTag(FROZEN, "Frozen", FrozenTag.class);
         registerTag(FROST_ENCHANT, "Frost Enchantment", FrostEnchantmentTag.class);

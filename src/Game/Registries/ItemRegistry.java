@@ -89,11 +89,13 @@ public class ItemRegistry {
         registerItem(129, "Electro Spear",   6,   TagRegistry.DAMAGE_START + 10, TagRegistry.WEAPON_THRUST, TagRegistry.ELECTRIC_ENCHANT, TagRegistry.SHARP);
         registerItem(130, "Venom Bow",       2.5, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_BOW, TagRegistry.VENOM_ENCHANT);
         registerItem(131, "Torch",           1,   TagRegistry.DAMAGE_START + 1, TagRegistry.WEAPON_STRIKE, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER);
+        itemFlavorTextMap.put(131, "Note:\nFire not included");
         registerItem(132, "Pitchfork",       3,   TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.METALLIC, TagRegistry.SHARP);
         itemFlavorTextMap.put(132,  "Great for farming,\nAmazing for mob riots");
         registerItem(133, "Rapier",          3.5, TagRegistry.DAMAGE_START + 3, TagRegistry.WEAPON_THRUST, TagRegistry.METALLIC, TagRegistry.SHARP, TagRegistry.DUELING_ENCHANT);
         registerItem(134, "Maddening Bow",   2,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_BOW, TagRegistry.FLAMMABLE, TagRegistry.BERSERK_ENCHANT);
         registerItem(135, "Vine Spear",      3,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT, TagRegistry.VENOM_ENCHANT);
+        itemFlavorTextMap.put(135, "Do not let fire\ntouch this!");
 
         //Healing items / potions with various effects
         registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10, TagRegistry.POTION, TagRegistry.FRAGILE);
@@ -119,11 +121,12 @@ public class ItemRegistry {
         registerItem(1101, "Throwing Knife", 0.25, TagRegistry.DAMAGE_START + 4,  TagRegistry.WEAPON_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP);
         registerItem(1102, "Magic Dagger",   0.33, TagRegistry.DAMAGE_START + 6,  TagRegistry.WEAPON_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT);
         registerItem(ID_WATERBALLOON, "Water Balloon",  0.10, TagRegistry.THROW_WATERBALLOON, TagRegistry.FRAGILE);
+        registerItem(1104, "Shine Crystal",  0.75, TagRegistry.LUMINANT);
 
         registerItem(1200, "Carrot",    0.05, TagRegistry.HEALTH_START + 4);
         itemFlavorTextMap.put(1200, "A popular veggie");
         registerItem(1201, "Cured Meat", 0.08, TagRegistry.HEALTH_START + 8);
-        itemFlavorTextMap.put(1201, "Probably seen a few \nyears, but it's also\nvery well salted.");
+        itemFlavorTextMap.put(1201, "Kept well salted\nin a dark room.");
 
         registerItem(ID_ARROW, "Arrow",           0.03, TagRegistry.ARROW, TagRegistry.FLAMMABLE, TagRegistry.METALLIC, TagRegistry.SHARP);
 

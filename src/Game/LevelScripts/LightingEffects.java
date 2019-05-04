@@ -11,7 +11,7 @@ import Game.Entities.Entity;
 import Game.Player;
 import Game.Registries.TagRegistry;
 import Game.TagHolder;
-import Game.Tags.LuminantTag;
+import Game.Tags.LuminanceTag;
 import Game.Tags.Tag;
 
 import java.awt.*;
@@ -103,7 +103,7 @@ public class LightingEffects extends LevelScript {
         }
         Player player = gi.getPlayer();
         if (level.getEntities().contains(player)){
-            addLightNode(new LightNode(player.getLocation().getX(), player.getLocation().getY(), 0.125));
+            addLightNode(new LightNode(player.getLocation().getX(), player.getLocation().getY(), 0.1));
         }
         //reportLightNodes();
     }
@@ -131,8 +131,8 @@ public class LightingEffects extends LevelScript {
     public double testForLightTag(TagHolder holder){
         double sum = 0;
         for (Tag tag : holder.getTags()){
-            if (tag instanceof LuminantTag) {
-                sum += ((LuminantTag)tag).getLuminance();
+            if (tag instanceof LuminanceTag) {
+                sum += ((LuminanceTag)tag).getLuminance();
             }
         }
         return sum;
@@ -147,13 +147,15 @@ public class LightingEffects extends LevelScript {
         Layer tempLayer = new Layer(shadingLayer.getCols(), shadingLayer.getRows(), "shandingtemp", 0, 0, 0);
         for (int col = 0; col < level.getBackdrop().getCols(); col++) { //Iterate over every part of the level.
             for (int row = 0; row < level.getBackdrop().getRows(); row++) {
-                double lightness = masterLightMap[col][row];
-                double warmLightingCutoff = 3.75;
+                //double lightness = (masterLightMap[col][row]);
+                double lightness = Math.sqrt(masterLightMap[col][row]);
+                double warmLightingCutoff = 1;
                 if (lightness < 1){ //Draw the cold colors if it is dim.
                     int opacity = (int)(MAX_OPACITY_COLD * (1 - lightness));
                     tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(lightingCold.getRed(), lightingCold.getGreen(), lightingCold.getBlue(), opacity)));
                 } else if (lightness > warmLightingCutoff){ //Draw the warm colors if it is bright.
-                    int opacity = Math.min((int)(6 * (lightness - warmLightingCutoff)), MAX_OPACITY_WARM);
+                    double effectiveWarmth = (lightness - warmLightingCutoff);
+                    int opacity = Math.min((int)(6 * effectiveWarmth), MAX_OPACITY_WARM);
                     tempLayer.editLayer(col, row, new SpecialText(' ', Color.WHITE, new Color(lightingWarm.getRed(), lightingWarm.getGreen(), lightingWarm.getBlue(), opacity)));
                 }
             }

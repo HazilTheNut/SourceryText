@@ -1,6 +1,6 @@
 package Game.Tags;
 
-public interface LuminantTag {
+public interface LuminanceTag {
 
     double getLuminance();
 

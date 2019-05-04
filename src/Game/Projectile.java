@@ -222,7 +222,11 @@ public class Projectile extends TagHolder {
     protected void collide(TagHolder other){ collide(other, 0); }
 
     void collide(TagHolder other, int baseDamage){
-        TagEvent dmgEvent = new TagEvent(baseDamage, true, this, other, gi, this);
+        TagEvent dmgEvent;
+        if (source != null)
+            dmgEvent = new TagEvent(baseDamage, true, source, other, gi, this);
+        else
+            dmgEvent = new TagEvent(baseDamage, true, this, other, gi, this);
         iconLayer.setVisible(false);
         for (Tag tag : getTags()) tag.onDealDamage(dmgEvent);
         dmgEvent.doFutureActions();

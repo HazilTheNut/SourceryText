@@ -2,12 +2,12 @@ package Game.Tags.PotionEffectTags;
 
 import Data.SerializationVersion;
 import Game.TagEvent;
-import Game.Tags.LuminantTag;
+import Game.Tags.LuminanceTag;
 import Game.Tags.TempTags.TempTag;
 
 import java.awt.*;
 
-public class GlowingEffectTag extends TempTag implements LuminantTag {
+public class GlowingEffectTag extends TempTag implements LuminanceTag {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 

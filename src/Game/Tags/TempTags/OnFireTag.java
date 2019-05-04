@@ -7,7 +7,7 @@ import Game.AnimatedTiles.FireAnimation;
 import Game.Entities.Entity;
 import Game.*;
 import Game.Registries.TagRegistry;
-import Game.Tags.LuminantTag;
+import Game.Tags.LuminanceTag;
 import Game.Tags.Tag;
 
 import java.awt.*;
@@ -17,7 +17,7 @@ import java.util.Random;
 /**
  * Created by Jared on 4/10/2018.
  */
-public class OnFireTag extends Tag implements FrameDrawListener, LuminantTag {
+public class OnFireTag extends Tag implements FrameDrawListener, LuminanceTag {
 
     /**
      * OnFireTag:
