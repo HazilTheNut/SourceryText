@@ -3,11 +3,13 @@ package Game.Spells;
 import Data.Coordinate;
 import Data.EntityStruct;
 import Data.SerializationVersion;
+import Engine.Layer;
 import Game.Entities.Entity;
 import Game.GameInstance;
 import Game.Player;
 import Game.PlayerShadow;
 import Game.Registries.EntityRegistry;
+import Game.UI.InventoryPanel;
 
 import java.awt.*;
 
@@ -19,6 +21,8 @@ public class ShadowmancySpell extends Spell {
     public String getName() {
         return "Shadowmancy";
     }
+
+    private static final int BASE_COOLDOWN = 18;
 
     @Override
     public Color getColor() {
@@ -32,10 +36,10 @@ public class ShadowmancySpell extends Spell {
             if (ps == null) {
                 EntityStruct shadowStruct = new EntityStruct(EntityRegistry.PLAYER_SHADOW, "Shadow", null);
                 gi.instantiateEntity(shadowStruct, targetLoc, gi.getCurrentLevel());
-                return calculateCooldown(18, magicPower);
+                return calculateCooldown(BASE_COOLDOWN, magicPower);
             } else {
                 ps.setOffset(targetLoc.subtract(spellCaster.getLocation()));
-                return calculateCooldown(10, magicPower);
+                return calculateCooldown(BASE_COOLDOWN / 2, magicPower);
             }
         }
         return 0;
@@ -47,6 +51,23 @@ public class ShadowmancySpell extends Spell {
                 return e;
         }
         return null;
+    }
+
+    @Override
+    public int getDescriptionHeight() {
+        return 4;
+    }
+
+    @Override
+    public Layer drawDescription(Layer baseLayer, int magicPower) {
+        //Draw flavor text
+        baseLayer.inscribeString("Project your shadow\nthat will copy your\nactions", 1, 1, InventoryPanel.FONT_WHITE, true);
+        baseLayer.inscribeString(" ~~~ ", 1, 4, InventoryPanel.FONT_GRAY);
+        //Draw base stats
+        baseLayer.inscribeString(String.format("Cooldown : %1$d", BASE_COOLDOWN), 1, 5, InventoryPanel.FONT_WHITE);
+        //Draw modifiers
+        baseLayer.inscribeString(String.format("(-%1$d)", BASE_COOLDOWN - calculateCooldown(BASE_COOLDOWN, magicPower)),  15, 5, InventoryPanel.FONT_BLUE);
+        return baseLayer;
     }
 
     @Override

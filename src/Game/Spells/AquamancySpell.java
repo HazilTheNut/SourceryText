@@ -9,6 +9,7 @@ import Engine.SpecialText;
 import Game.Entities.Entity;
 import Game.GameInstance;
 import Game.Registries.TagRegistry;
+import Game.UI.InventoryPanel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 public class AquamancySpell extends Spell {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
+
+    private static final int BASE_COOLDOWN = 25;
 
     @Override
     public String getName() {
@@ -90,7 +93,7 @@ public class AquamancySpell extends Spell {
             playTeleportAnimation(targetLoc, gi.getLayerManager());
             spellCaster.getSprite().setVisible(true);
             spellCaster.teleport(targetLoc);
-            return calculateCooldown(25, magicPower);
+            return calculateCooldown(BASE_COOLDOWN, magicPower);
         }
         return 0;
     }
@@ -116,5 +119,22 @@ public class AquamancySpell extends Spell {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public int getDescriptionHeight() {
+        return 3;
+    }
+
+    @Override
+    public Layer drawDescription(Layer baseLayer, int magicPower) {
+        //Draw flavor text
+        baseLayer.inscribeString("Teleport to any\nwet surface", 1, 1, InventoryPanel.FONT_WHITE, true);
+        baseLayer.inscribeString(" ~~~ ", 1, 3, InventoryPanel.FONT_GRAY);
+        //Draw base stats
+        baseLayer.inscribeString(String.format("Cooldown : %1$d", BASE_COOLDOWN), 1, 4, InventoryPanel.FONT_WHITE);
+        //Draw modifiers
+        baseLayer.inscribeString(String.format("(-%1$d)", BASE_COOLDOWN - calculateCooldown(BASE_COOLDOWN, magicPower)),  15, 4, InventoryPanel.FONT_BLUE);
+        return baseLayer;
     }
 }

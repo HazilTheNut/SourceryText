@@ -8,6 +8,7 @@ import Engine.SpecialText;
 import Game.Entities.Entity;
 import Game.GameInstance;
 import Game.Registries.TagRegistry;
+import Game.UI.InventoryPanel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -20,6 +21,11 @@ public class LocumancySpell extends Spell {
     private transient ArrayList<Coordinate> validLocations;
     private transient ArrayList<Entity> toTransport;
     private transient Layer previewLayer;
+
+    private static final int BASE_RANGE   = 5;
+    private static final int BASE_COOLDOWN = 26;
+
+    private static final double SCALAR_RANGE = 0.0625;
 
     @Override
     public String getName() {
@@ -34,7 +40,7 @@ public class LocumancySpell extends Spell {
     @Override
     public void readySpell(Coordinate targetLoc, Entity spellCaster, GameInstance gi, int magicPower) {
         validLocations = new ArrayList<>();
-        int range = calculatePower(5, magicPower, 0.0625); //At 80 (max) magic power, range doubles.
+        int range = calculatePower(BASE_RANGE, magicPower, SCALAR_RANGE); //At 80 (max) magic power, range doubles.
         previewLayer = new Layer(range * 2 + 1, range * 2 + 1, "Locumancy_preview:" + spellCaster.getName(), targetLoc.getX() - range, targetLoc.getY() - range, LayerImportances.ANIMATION);
         ArrayList<Entity> atLoc = gi.getCurrentLevel().getEntitiesAt(targetLoc);
         toTransport = new ArrayList<>();
@@ -77,7 +83,7 @@ public class LocumancySpell extends Spell {
         for (Entity e : toTransport) {
             e.teleport(targetLoc);
         }
-        return calculateCooldown(26, magicPower);
+        return calculateCooldown(BASE_COOLDOWN, magicPower);
     }
 
     public void teleportEntity(Entity e, Coordinate pos){
@@ -111,6 +117,25 @@ public class LocumancySpell extends Spell {
         }
         gi.getLayerManager().removeLayer(fromLayer);
         gi.getLayerManager().removeLayer(toLayer);
+    }
+
+    @Override
+    public int getDescriptionHeight() {
+        return 5;
+    }
+
+    @Override
+    public Layer drawDescription(Layer baseLayer, int magicPower) {
+        //Draw flavor text
+        baseLayer.inscribeString("Relocates a target\nobject.\nUse via drag-&-drop", 1, 1, InventoryPanel.FONT_WHITE, true);
+        baseLayer.inscribeString(" ~~~ ", 1, 4, InventoryPanel.FONT_GRAY);
+        //Draw base stats
+        baseLayer.inscribeString(String.format("Distance : %1$d", BASE_RANGE),   1, 5, InventoryPanel.FONT_WHITE);
+        baseLayer.inscribeString(String.format("Cooldown : %1$d", BASE_COOLDOWN), 1, 6, InventoryPanel.FONT_WHITE);
+        //Draw modifiers
+        baseLayer.inscribeString(String.format("(+%1$d)", calculatePower(0, magicPower, SCALAR_RANGE)), 15, 5, InventoryPanel.FONT_BLUE);
+        baseLayer.inscribeString(String.format("(-%1$d)", BASE_COOLDOWN - calculateCooldown(BASE_COOLDOWN, magicPower)),  15, 6, InventoryPanel.FONT_BLUE);
+        return baseLayer;
     }
 
     @Override

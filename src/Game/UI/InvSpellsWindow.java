@@ -3,6 +3,8 @@ package Game.UI;
 import Data.Coordinate;
 import Engine.Layer;
 import Engine.SpecialText;
+import Game.InputMap;
+import Game.Player;
 import Game.Spells.Spell;
 
 import java.awt.*;
@@ -44,6 +46,44 @@ public class InvSpellsWindow extends InvWindow {
         }
     }
 
-    //TODO: Spell Descriptions
-    //TODO: Click Spell to Equip
+    @Override
+    ArrayList<InvInputKey> provideContentInputKeySet() {
+        ArrayList<InvInputKey> invInputKeys = super.provideContentInputKeySet();
+        ArrayList<Spell> spells = ((Player) inventoryPanel.getViewingEntity()).getSpells();
+        for (int i = 0; i < spells.size(); i++) {
+            SpellInputKey spellInputKey = new SpellInputKey(i + 1);
+            spellInputKey.spell = spells.get(i);
+            invInputKeys.add(spellInputKey);
+        }
+        return invInputKeys;
+    }
+
+    private class SpellInputKey extends InvInputKey {
+
+        Spell spell;
+
+        public SpellInputKey(int ypos) {
+            super(ypos);
+        }
+
+        @Override
+        public Layer drawDescription() {
+            Layer layer = drawBasicDescription(spell.getDescriptionHeight() + 1, spell.getName());
+            if (inventoryPanel.getViewingEntity() instanceof Player) {
+                Player player = (Player) inventoryPanel.getViewingEntity();
+                return spell.drawDescription(layer, player.getMagicPower());
+            }
+            return spell.drawDescription(layer, 0);
+        }
+
+        @Override
+        public void onMouseAction(int action) {
+            if (action == InputMap.INV_USE)
+                if (inventoryPanel.getViewingEntity() instanceof Player) {
+                    Player player = (Player) inventoryPanel.getViewingEntity();
+                    player.setEquippedSpell(spell);
+                    player.updateHUD();
+                }
+        }
+    }
 }

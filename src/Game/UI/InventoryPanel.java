@@ -35,13 +35,14 @@ public class InventoryPanel {
 
     static final Color CURSOR_FILL      = new Color(200, 200, 200, 100);
 
-    static final Color FONT_WHITE       = new Color(230, 230, 230);
+    public static final Color FONT_WHITE       = new Color(230, 230, 230);
     static final Color FONT_GREEN       = new Color(180, 230, 177);
-    static final Color FONT_GRAY        = new Color(77, 77, 77);
+    public static final Color FONT_GRAY        = new Color(77, 77, 77);
     static final Color FONT_LIGHT_GRAY  = new Color(166, 166, 166);
     static final Color FONT_RED         = new Color(199, 159, 159);
     static final Color FONT_YELLOW      = new Color(240, 255, 200);
     static final Color FONT_CYAN        = new Color(179, 255, 255);
+    public static final Color FONT_BLUE        = new Color(150, 152, 255);
 
     private static final Color BKG_EMPTY  = new Color(17, 17, 17);
     static final Color BKG_BANNER = new Color(45, 45, 46);

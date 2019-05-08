@@ -333,11 +333,16 @@ public class Layer implements Serializable{
                 } else
                     return;
             }
-            if (getSpecialText(drawX, drawY) != null)
-                editLayer(drawX, drawY, new SpecialText(str.charAt(index), fontColor, getSpecialText(drawX, drawY).getBkgColor()));
-            else
-                editLayer(drawX, drawY, new SpecialText(str.charAt(index), fontColor));
-            drawX++;
+            if (wrapping && str.charAt(index) == '\n'){ //Wrap text if encounter newline character
+                drawX = col;
+                drawY++;
+            } else {
+                if (getSpecialText(drawX, drawY) != null)
+                    editLayer(drawX, drawY, new SpecialText(str.charAt(index), fontColor, getSpecialText(drawX, drawY).getBkgColor()));
+                else
+                    editLayer(drawX, drawY, new SpecialText(str.charAt(index), fontColor));
+                drawX++;
+            }
         }
     }
 

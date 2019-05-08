@@ -29,7 +29,7 @@ public class ArrowProjectile extends Projectile {
     protected void collide(TagHolder other) {
         super.collide(other, bonusDamage);
         //Drop arrow item
-        if (!(other instanceof CombatEntity)) {
+        if (!(other instanceof CombatEntity) && !hasTag(TagRegistry.FRAGILE)) {
             Item toDrop = ItemRegistry.generateItem(ItemRegistry.ID_ARROW, gi);
             for (Tag tag : getTags()) {
                 if (!transmissionBlacklist.contains(tag)) toDrop.addTag(tag, this);

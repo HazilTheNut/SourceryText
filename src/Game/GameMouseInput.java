@@ -171,6 +171,7 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_8, InputType.TYPE_KEY), InputMap.SELECT_SPELL_8);
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_9, InputType.TYPE_KEY), InputMap.SELECT_SPELL_9);
             */
+            defMap.setNumberKeysSelectSpells(true);
             io.serializeInputMap(defMap, defaultInputMapFile.getPath());
         }
     }

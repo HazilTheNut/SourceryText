@@ -2,6 +2,7 @@ package Game.Spells;
 
 import Data.Coordinate;
 import Data.SerializationVersion;
+import Engine.Layer;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.GameInstance;
@@ -62,9 +63,13 @@ public class Spell implements Serializable {
     }
 
     int calculatePower(int baseAmount, int magicPower, double scalar){
-        return baseAmount + (int)Math.round((double)magicPower * scalar);
+        double mult = Math.round((double)magicPower * scalar);
+        return baseAmount + (int)mult;
     }
 
     public Spell copy(){ return new Spell(); }
 
+    public int getDescriptionHeight(){ return 0; }
+
+    public Layer drawDescription(Layer baseLayer, int magicPower) { return baseLayer; }
 }

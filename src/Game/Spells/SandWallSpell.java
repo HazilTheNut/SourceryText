@@ -11,12 +11,18 @@ import Game.GameInstance;
 import Game.OverlayTileGenerator;
 import Game.Registries.TagRegistry;
 import Game.Tile;
+import Game.UI.InventoryPanel;
 
 import java.awt.*;
 
 public class SandWallSpell extends Spell {
 
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
+
+    private static final int BASE_LENGTH   = 3;
+    private static final int BASE_COOLDOWN = 22;
+
+    private static final double SCALAR_LENGTH = 0.075;
 
     @Override
     public String getName() {
@@ -49,7 +55,7 @@ public class SandWallSpell extends Spell {
         if (!isSandyAt(spreadOrigin, gi) || targetLoc.equals(spreadOrigin)) return 0;
         createWall(spreadOrigin, gi);
         spreadFromOrigin(targetLoc, gi, magicPower, pos -> createWall(pos, gi), true);
-        return calculateCooldown(22, magicPower);
+        return calculateCooldown(BASE_COOLDOWN, magicPower);
     }
 
     private void spreadFromOrigin(Coordinate target, GameInstance gi, int magicPower, SpreadAction spreadAction, boolean beSlow){
@@ -60,7 +66,7 @@ public class SandWallSpell extends Spell {
         double angle = (180 / Math.PI) * Math.atan2(dy, dx);
         if (angle < 0) angle += 180;
         //Use angle to pick direction
-        int range = calculatePower(3, magicPower, 0.075);
+        int range = calculatePower(BASE_LENGTH, magicPower, SCALAR_LENGTH);
         if (angle <= 22.5){ //E & W
             doSpread(spreadOrigin, gi, new Coordinate(1, 0), new Coordinate(-1, 0), range, spreadAction, beSlow);
         } else if (angle <= 67.5){ //NE & SW
@@ -134,6 +140,25 @@ public class SandWallSpell extends Spell {
         preview.clearLayer();
         preview.editLayer(spreadOrigin, new SpecialText(' ', Color.WHITE, new Color(153, 82, 46, 45)));
         spreadFromOrigin(target, gi, magicPower, pos -> preview.editLayer(pos, new SpecialText(' ', Color.WHITE, new Color(155, 120, 45, 45))), false);
+    }
+
+    @Override
+    public int getDescriptionHeight() {
+        return 5;
+    }
+
+    @Override
+    public Layer drawDescription(Layer baseLayer, int magicPower) {
+        //Draw flavor text
+        baseLayer.inscribeString("Builds a wall out\nof soft ground.\nUse via click-&-drag", 1, 1, InventoryPanel.FONT_WHITE, true);
+        baseLayer.inscribeString(" ~~~ ", 1, 4, InventoryPanel.FONT_GRAY);
+        //Draw base stats
+        baseLayer.inscribeString(String.format("Length   : %1$d", BASE_LENGTH * 2 + 1),   1, 5, InventoryPanel.FONT_WHITE);
+        baseLayer.inscribeString(String.format("Cooldown : %1$d", BASE_COOLDOWN), 1, 6, InventoryPanel.FONT_WHITE);
+        //Draw modifiers
+        baseLayer.inscribeString(String.format("(+%1$d)", calculatePower(0, magicPower, SCALAR_LENGTH) * 2), 15, 5, InventoryPanel.FONT_BLUE);
+        baseLayer.inscribeString(String.format("(-%1$d)", BASE_COOLDOWN - calculateCooldown(BASE_COOLDOWN, magicPower)),  15, 6, InventoryPanel.FONT_BLUE);
+        return baseLayer;
     }
 
     private interface SpreadAction{

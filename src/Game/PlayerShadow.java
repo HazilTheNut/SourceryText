@@ -79,6 +79,7 @@ public class PlayerShadow extends CombatEntity implements PlayerActionCollector 
     @Override
     protected void fireArrowProjectile(Projectile arrow) {
         toFire = arrow;
+        toFire.addTag(TagRegistry.FRAGILE, this);
         fireTimer = 1;
     }
 
