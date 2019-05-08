@@ -1,4 +1,4 @@
-package Game;
+package Game.UI;
 
 import Data.Coordinate;
 import Data.FileIO;
@@ -6,6 +6,10 @@ import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.GameInputReciever;
+import Game.GameMouseInput;
+import Game.InputMap;
+import Game.InputType;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -292,9 +296,21 @@ public class GameKeybindsMenu implements GameInputReciever, KeyListener {
 
     @Override
     public boolean onMouseWheel(Coordinate levelPos, Coordinate screenPos, double wheelMovement) {
-        int maxScroll = keybindListng.size() - MAX_VISISLE_OPTIONS; //The save/load dialog can only show 15 at once, without running out of screen space
-        scrollPos = Math.max(Math.min(scrollPos + (int)wheelMovement, maxScroll), 0);
-        updateDisplay();
+        if (selectedKeybindSet == null) {
+            int maxScroll = keybindListng.size() - MAX_VISISLE_OPTIONS; //The save/load dialog can only show 15 at once, without running out of screen space
+            scrollPos = Math.max(Math.min(scrollPos + (int) wheelMovement, maxScroll), 0);
+            updateDisplay();
+        } else {
+            int inputCode = mi.convertPreciseWheelRotationToInputCode(wheelMovement);
+            if (settingPrimary)
+                selectedKeybindSet.primaryInput = new InputType(inputCode, InputType.TYPE_SCROLLWHEEL);
+            else
+                selectedKeybindSet.secondaryInput = new InputType(inputCode, InputType.TYPE_SCROLLWHEEL);
+            selectedKeybindSet = null;
+            selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, selectorStandby));
+            changesDetected = true;
+            updateDisplay();
+        }
         return true;
     }
 
@@ -327,10 +343,10 @@ public class GameKeybindsMenu implements GameInputReciever, KeyListener {
                 else
                     selectedKeybindSet.secondaryInput = new InputType(e.getKeyCode(), InputType.TYPE_KEY);
             } else
-            if (settingPrimary)
-                selectedKeybindSet.primaryInput = null;
-            else
-                selectedKeybindSet.secondaryInput = null;
+                if (settingPrimary)
+                    selectedKeybindSet.primaryInput = null;
+                else
+                    selectedKeybindSet.secondaryInput = null;
             selectedKeybindSet = null;
             selectorLayer.fillLayer(new SpecialText(' ', Color.WHITE, selectorStandby));
             changesDetected = true;

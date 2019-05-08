@@ -19,8 +19,13 @@ public class InputType implements Serializable {
     private int inputCode; //The integer 'code' of the input
 
     private int inputType; //The type of input
-    static final int TYPE_KEY   = 0;
-    static final int TYPE_MOUSE = 1;
+    public static final int TYPE_KEY         = 0;
+    public static final int TYPE_MOUSE       = 1;
+    public static final int TYPE_SCROLLWHEEL = 2;
+
+    public static final int CODE_SCROLL_UP   = 0;
+    public static final int CODE_SCROLL_DOWN = 1;
+    public static final int CODE_SCROLL_NULL = 2;
 
     public InputType(int code, int type){
         inputCode = code;
@@ -440,6 +445,15 @@ public class InputType implements Serializable {
                     return "MOUES5";
                 case 6:
                     return "MOUES6";
+            }
+        } else if (inputType == TYPE_SCROLLWHEEL){
+            switch (inputCode){
+                case CODE_SCROLL_UP:
+                    return "SCROLL UP";
+                case CODE_SCROLL_DOWN:
+                    return "SCROLL DOWN";
+                case CODE_SCROLL_NULL:
+                    return "SCROLL ZERO";
             }
         }
         return "UNKNOWN";

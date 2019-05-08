@@ -78,11 +78,11 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
         return new Coordinate(window.getSnappedMouseX(mousePos.getX()), window.getSnappedMouseY(mousePos.getY()));
     }
 
-    void addInputReceiver(GameInputReciever receiver) { inputReceivers.add(receiver); }
+    public void addInputReceiver(GameInputReciever receiver) { inputReceivers.add(receiver); }
 
-    void addInputReceiver(GameInputReciever receiver, int pos) { inputReceivers.add(pos, receiver); }
+    public void addInputReceiver(GameInputReciever receiver, int pos) { inputReceivers.add(pos, receiver); }
 
-    void removeInputListener(GameInputReciever receiver) {inputReceivers.remove(receiver); }
+    public void removeInputListener(GameInputReciever receiver) {inputReceivers.remove(receiver); }
 
     void clearInputReceivers(){ inputReceivers.clear(); }
 
@@ -148,6 +148,9 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
             defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON3, InputType.TYPE_MOUSE), InputMap.INV_DROP);
             defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON3, InputType.TYPE_MOUSE), InputMap.INV_MOVE_ONE);
             defMap.bindKeyPrimary(new InputType(MouseEvent.BUTTON1, InputType.TYPE_MOUSE), InputMap.INV_MOVE_WHOLE);
+            defMap.bindKeyPrimary(new InputType(KeyEvent.VK_X, InputType.TYPE_KEY), InputMap.INV_SORT_ITEMS);
+            defMap.bindKeyPrimary(new InputType(InputType.CODE_SCROLL_UP, InputType.TYPE_SCROLLWHEEL), InputMap.INV_SCROLL_UP);
+            defMap.bindKeyPrimary(new InputType(InputType.CODE_SCROLL_DOWN, InputType.TYPE_SCROLLWHEEL), InputMap.INV_SCROLL_DOWN);
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_SHIFT, InputType.TYPE_KEY), InputMap.THROW_ITEM);
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_SPACE, InputType.TYPE_KEY), InputMap.PASS_TURN);
             defMap.bindKeyPrimary(new InputType(KeyEvent.VK_ESCAPE, InputType.TYPE_KEY), InputMap.OPEN_MENU);
@@ -231,6 +234,15 @@ public class GameMouseInput implements MouseInputListener, MouseWheelListener, K
     public void mouseWheelMoved(MouseWheelEvent e) {
         mouseRawPos = new Coordinate(e.getX(), e.getY());
         performInputEvent(receiver -> receiver.onMouseWheel(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), e.getPreciseWheelRotation()));
+        //Below processes mouse wheel movement for onInputDown()
+        int code = convertPreciseWheelRotationToInputCode(e.getPreciseWheelRotation());
+        performInputEvent(receiver -> receiver.onInputDown(getLevelPos(mouseRawPos), getScreenPos(mouseRawPos), getInputMap().getAction(new InputType(code, InputType.TYPE_SCROLLWHEEL))));
+    }
+
+    public int convertPreciseWheelRotationToInputCode(double preciseWheelRotation){
+        if (preciseWheelRotation < 0) return InputType.CODE_SCROLL_UP;
+        else if (preciseWheelRotation > 0) return InputType.CODE_SCROLL_DOWN;
+        return InputType.CODE_SCROLL_NULL;
     }
 
     @Override

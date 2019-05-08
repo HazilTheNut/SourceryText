@@ -1,4 +1,4 @@
-package Game;
+package Game.UI;
 
 import Data.Coordinate;
 import Data.FileIO;
@@ -7,6 +7,10 @@ import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.Debug.DebugWindow;
+import Game.GameInputReciever;
+import Game.GameMaster;
+import Game.GameMouseInput;
+import Game.TextBox;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -75,7 +79,7 @@ public class GameSaveMenu implements GameInputReciever {
     /**
      * Opens the "Load Game" menu
      */
-    void openLoadDialog(){
+    public void openLoadDialog(){
         isSaving = false;
         open();
     }
@@ -83,7 +87,7 @@ public class GameSaveMenu implements GameInputReciever {
     /**
      * Opens the "Save Game" menu
      */
-    void openSaveDialog(){
+    public void openSaveDialog(){
         isSaving = true;
         open();
     }

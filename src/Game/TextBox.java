@@ -84,8 +84,8 @@ public class TextBox implements GameInputReciever {
             textBoxLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
             textBoxLayer.setVisible(true);
             player.freeze();
-            player.getInv().getPlayerInv().close();
-            player.getInv().getOtherInv().close();
+            player.getInv().closePlayerInventory();
+            player.getInv().closeOtherInventory();
             if (message.indexOf(' ') > 0)
                 DebugWindow.reportf(DebugWindow.MISC, "TextBox.showMessage","First word: \"%1$s\"", message.substring(0, message.indexOf(' ')));
             postMessageAction = action;

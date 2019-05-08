@@ -33,7 +33,7 @@ public class Player extends GameCharacter implements GameInputReciever {
     private static final long serialVersionUID = SerializationVersion.SERIALIZATION_VERSION;
 
     private HUD hud;
-    private PlayerInventory inv;
+    private transient PlayerInventory inv;
 
     private transient Thread pathingThread;
     private boolean terminatePathing;
@@ -169,8 +169,7 @@ public class Player extends GameCharacter implements GameInputReciever {
     @Override
     public void scanInventory() {
         super.scanInventory();
-        if (inv.getPlayerInv().isShowing())
-            inv.getPlayerInv().updateDisplay();
+        inv.rebuildPlayerInventory();
         updateHUD();
     }
 
@@ -204,10 +203,11 @@ public class Player extends GameCharacter implements GameInputReciever {
      * Performs checks after any kind of movement, aside from setPos()
      */
     private void postMovementCheck(){
-        if (inv.getOtherInv().getMode() == PlayerInventory.CONFIG_OTHER_EXCHANGE && inv.getOtherInv().isShowing()){
+        if (inv.getMode() == PlayerInventory.MODE_TRADE && inv.isOtherInventoryShowing()){
             inv.closeOtherInventory();
-            inv.getPlayerInv().close();
+            inv.closePlayerInventory();
         }
+
     }
 
     /**
@@ -522,7 +522,7 @@ public class Player extends GameCharacter implements GameInputReciever {
                 movementKeyDown(PASS);
             }
             if (actions.contains(InputMap.THROW_ITEM)){
-                if (getWeapon().getItemData().getItemId() > 0)
+                if (getWeapon().getItemData().getItemId() > 0 && itemToThrow == null)
                     enterThrowingMode(getWeapon());
             }
             if (actions.contains(InputMap.MOVE_INTERACT)){
@@ -586,6 +586,7 @@ public class Player extends GameCharacter implements GameInputReciever {
 
     private void inspect(Coordinate levelPos){
         ArrayList<Entity> entities = gi.getCurrentLevel().getEntitiesAt(levelPos);
+        inv.setMode(PlayerInventory.MODE_USE_AND_VIEW);
         if (entities.size() == 1) inv.openOtherInventory(entities.get(0));
         else if (entities.size() > 1){
             QuickMenu quickMenu = gi.getQuickMenu();
@@ -679,7 +680,7 @@ public class Player extends GameCharacter implements GameInputReciever {
         doWeaponAttack(levelPos);
     }
 
-    void enterThrowingMode(Item toThrow){
+    public void enterThrowingMode(Item toThrow){
         itemToThrow = toThrow;
         updateHUD();
     }

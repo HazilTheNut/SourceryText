@@ -4,6 +4,9 @@ import Data.Coordinate;
 import Data.FileIO;
 import Engine.LayerManager;
 import Game.Debug.DebugWindow;
+import Game.UI.GameKeybindsMenu;
+import Game.UI.GameMainMenu;
+import Game.UI.GameSaveMenu;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
@@ -122,7 +125,7 @@ public class GameMaster {
      *
      * @param gameFile The File that is the saved game (the serialized GameInstance)
      */
-    void loadGame(File gameFile){
+    public void loadGame(File gameFile){
         Thread loadGameThread = new Thread(() -> {
             //Cleanup old GameInstance
             FileIO io = new FileIO();

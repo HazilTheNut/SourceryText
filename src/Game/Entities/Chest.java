@@ -19,9 +19,8 @@ public class Chest extends Entity {
 
     @Override
     public void onInteract(Player player) {
-        player.getInv().getPlayerInv().changeMode(PlayerInventory.CONFIG_PLAYER_EXCHANGE);
-        player.getInv().getPlayerInv().show();
-        player.getInv().getOtherInv().configure(PlayerInventory.PLACEMENT_TOP_RIGHT, getName(), this, PlayerInventory.CONFIG_OTHER_EXCHANGE);
-        player.getInv().getOtherInv().show();
+        player.getInv().setMode(PlayerInventory.MODE_TRADE);
+        player.getInv().openOtherInventory(this);
+        player.getInv().openPlayerInventory();
     }
 }

@@ -32,12 +32,15 @@ public class InputMap implements Serializable {
     public static final int THROW_ITEM     = 13;
     public static final int PASS_TURN      = 14;
     //Inventory
-    public static final int INVENTORY      = 20;
-    public static final int INSPECT        = 21;
-    public static final int INV_USE        = 25;
-    public static final int INV_DROP       = 26;
-    public static final int INV_MOVE_WHOLE = 27;
-    public static final int INV_MOVE_ONE   = 28;
+    public static final int INVENTORY       = 20;
+    public static final int INSPECT         = 21;
+    public static final int INV_USE         = 25;
+    public static final int INV_DROP        = 26;
+    public static final int INV_MOVE_WHOLE  = 27;
+    public static final int INV_MOVE_ONE    = 28;
+    public static final int INV_SORT_ITEMS  = 29;
+    public static final int INV_SCROLL_UP   = 30;
+    public static final int INV_SCROLL_DOWN = 31;
     //Misc
     public static final int TEXTBOX_NEXT   = 80;
     public static final int OPEN_MENU      = 90;
@@ -110,7 +113,7 @@ public class InputMap implements Serializable {
         return getAction(inputType, true, true);
     }
 
-    ArrayList<Integer> getAction(InputType inputType, boolean checkPrimary, boolean checkSecondary){
+    public ArrayList<Integer> getAction(InputType inputType, boolean checkPrimary, boolean checkSecondary){
         ArrayList<Integer> actions = new ArrayList<>();
         if (checkPrimary && primaryInputMap.containsKey(inputType)) actions.addAll(primaryInputMap.get(inputType));
         if (checkSecondary && secondaryInputMap.containsKey(inputType)) actions.addAll(secondaryInputMap.get(inputType));
@@ -169,6 +172,12 @@ public class InputMap implements Serializable {
                 return "Inv: Move Whole Item";
             case INV_MOVE_ONE:
                 return "Inv: Move One Item";
+            case INV_SORT_ITEMS:
+                return "Inv: Sort Inventory";
+            case INV_SCROLL_UP:
+                return "Inv: Scroll Up";
+            case INV_SCROLL_DOWN:
+                return "Inv: Scroll Down";
             case PASS_TURN:
                 return "Pass Turn";
             case OPEN_MENU:

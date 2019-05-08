@@ -1,10 +1,13 @@
-package Game;
+package Game.UI;
 
 import Data.Coordinate;
 import Data.LayerImportances;
 import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
+import Game.GameInputReciever;
+import Game.GameMaster;
+import Game.GameMouseInput;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -67,7 +70,7 @@ public class GameMainMenu implements GameInputReciever {
         menuLayer.inscribeString(gameVersion, 0, menuLayer.getRows() - 1, new Color(100, 100, 100));
     }
 
-    void close(){
+    public void close(){
         gmi.removeInputListener(this);
         layerManager.removeLayer(menuLayer);
         layerManager.removeLayer(selectorLayer);

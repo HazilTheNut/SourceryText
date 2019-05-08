@@ -73,7 +73,7 @@ public class HUD implements GameInputReciever, Serializable {
         Color bkg = new Color(15, 15, 15);
         tempLayer.fillLayer(new SpecialText(' ', Color.WHITE, bkg));
 
-        if ((mousePos != null && mousePos.equals(new Coordinate(0,0))) ||(player.getInv().getPlayerInv().isShowing())) //Inventory Button
+        if ((mousePos != null && mousePos.equals(new Coordinate(0,0))) ||(player.getInv().isPlayerInventoryShowing())) //Inventory Button
             tempLayer.editLayer(0, 0, new SpecialText('V', Color.WHITE, new Color(70, 70, 70)));
         else
             tempLayer.editLayer(0, 0, new SpecialText('V', Color.WHITE, new Color(30, 30, 30)));
@@ -287,10 +287,10 @@ public class HUD implements GameInputReciever, Serializable {
     @Override
     public boolean onMouseClick(Coordinate levelPos, Coordinate screenPos, int mouseButtons) {
         if (screenPos.equals(new Coordinate(0,0))){ //The little inventory button in the corner
-            if (player.getInv().getPlayerInv().isShowing())
-                player.getInv().getPlayerInv().close();
+            if (player.getInv().isPlayerInventoryShowing())
+                player.getInv().closePlayerInventory();
             else
-                player.getInv().getPlayerInv().show();
+                player.getInv().openPlayerInventory();
             updateHUD();
             return true;
         }

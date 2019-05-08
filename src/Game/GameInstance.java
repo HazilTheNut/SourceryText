@@ -286,7 +286,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
             }
         }
         //Create a new loot pile, since one obviously doesn't exist
-        DebugWindow.reportf(DebugWindow.GAME, "SubInventory.dropItem","Creating new loot pile");
+        DebugWindow.reportf(DebugWindow.GAME, "GameInstance.dropItem","Creating new loot pile");
         EntityStruct lootPileStruct = new EntityStruct(EntityRegistry.LOOT_PILE, "Loot", null);
         LootPile pile = (LootPile)instantiateEntity(lootPileStruct, loc, getCurrentLevel());
         pile.addItem(toDrop);

@@ -38,8 +38,8 @@ public class LevelUpTag extends Tag{
     public void onItemUse(TagEvent e) {
         e.cancel();
         Player player = e.getGameInstance().getPlayer();
-        player.getInv().getPlayerInv().close();
-        player.getInv().getOtherInv().close();
+        player.getInv().closePlayerInventory();
+        player.getInv().closeOtherInventory();
         QuickMenu quickMenu = e.getGameInstance().getQuickMenu();
         quickMenu.clearMenu();
         if (player.getMaxHealth() < VIT_MAX) { //The stuff below roughly matches the code behind this menu option
