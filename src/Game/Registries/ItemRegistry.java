@@ -117,7 +117,8 @@ public class ItemRegistry {
         registerItem(1055, "Armor Potion",   0.50, TagRegistry.POTION_ARMOR, TagRegistry.POTION, TagRegistry.FRAGILE);
         registerItem(1056, "Glowing Potion",   0.50, TagRegistry.POTION_GLOWING, TagRegistry.POTION, TagRegistry.FRAGILE);
 
-        registerItem(1100, "Brick",          1.50, TagRegistry.DAMAGE_START + 7);
+        registerItem(1100, "Brick",          4.5);
+        itemFlavorTextMap.put(1100, "Sometimes, the\nsimplest solution\nis the best one.");
         registerItem(1101, "Throwing Knife", 0.25, TagRegistry.DAMAGE_START + 4,  TagRegistry.WEAPON_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP);
         registerItem(1102, "Magic Dagger",   0.33, TagRegistry.DAMAGE_START + 6,  TagRegistry.WEAPON_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT);
         registerItem(ID_WATERBALLOON, "Water Balloon",  0.10, TagRegistry.THROW_WATERBALLOON, TagRegistry.FRAGILE);
@@ -159,6 +160,7 @@ public class ItemRegistry {
         //Important items
         registerItem(2500, "Shovel",       1, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_STRIKE, TagRegistry.UNLIMITED_USAGE, TagRegistry.DIGGING);
         registerItem(ID_POLAR_BEAR_CROWN, "Polar Bear Crown", 0.5, TagRegistry.METALLIC);
+        itemFlavorTextMap.put(ID_POLAR_BEAR_CROWN, "It's covered in\nglistening jewels.");
 
         registerItem(3000, "Coins",        0, TagRegistry.MONEY);
         registerItem(3001, "Fondant Bits", 0, TagRegistry.MONEY);
@@ -204,6 +206,7 @@ public class ItemRegistry {
         for (int tagId : fromReg.getTags()){
             item.addTag(tagId, item);
         }
+        item.setFlavorText(getItemFlavorText(itemStruct.getItemId()));
         return item;
     }
 

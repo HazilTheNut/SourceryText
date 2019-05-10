@@ -360,7 +360,7 @@ public class CombatEntity extends Entity {
         else removeItem(item);
         Item copy = item.copy(gi);
         copy.setQty(copy.getIndivisibleQty()); //Only a singular amount of the item is desirable.
-        int bonusDamage = (int)Math.ceil(getStrength() * (1 + (copy.getItemData().getRawWeight() / 10)));
+        int bonusDamage = (int)Math.round(getStrength() * copy.getItemData().getRawWeight() / 2);
         if (item.hasTag(TagRegistry.SHARP)) bonusDamage *= 1.25;
         ItemProjectile itemProjectile = new ItemProjectile(this, loc, new SpecialText('%'), copy, bonusDamage);
         itemProjectile.launchProjectile(10);

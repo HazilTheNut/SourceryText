@@ -8,13 +8,10 @@ import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
 import Game.GameInstance;
 import Game.InputMap;
-import Game.Item;
 import Game.PlayerInventory;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.SortedSet;
 
 public class InventoryPanel {
 
@@ -25,13 +22,14 @@ public class InventoryPanel {
     private Layer showingSelectLayer;
     private Layer itemSelectLayer;
     private Layer windowSelectLayer;
-    private Layer tradingPlayerSelectLayer;
-    private Layer tradingOtherSelectLayer;
+    private Layer tradingSelectLayer;
+    private Layer statSelectLayer;
 
     static final int SELECT_ITEM = 0;
     static final int SELECT_WINDOW = 1;
-    static final int SELECT_TRADE_PLAYER = 2;
-    static final int SELECT_TRADE_OTHER  = 3;
+    static final int SELECT_TRADE = 2;
+    static final int SELECT_STAT_LEFT = 3;
+    static final int SELECT_STAT_RIGHT = 4;
 
     private ArrayList<InvWindow> invWindows;
     private InvInputKey[] inputKeys;
@@ -84,16 +82,16 @@ public class InventoryPanel {
         windowSelectLayer.fixedScreenPos = true;
         windowSelectLayer.setVisible(false);
 
-        tradingPlayerSelectLayer = new Layer(PANEL_WIDTH + 1, 1, layerName + ":trade_player", 0, 0, LayerImportances.MENU_CURSOR);
-        tradingPlayerSelectLayer.setVisible(false);
-        tradingPlayerSelectLayer.fillLayer(new SpecialText(' ', Color.WHITE, CURSOR_FILL_TRADE), new Coordinate(1, 0), new Coordinate(tradingPlayerSelectLayer.getCols() - 2, 0));
-        tradingPlayerSelectLayer.editLayer(0, 0, new SpecialText('<', FONT_LIGHT_GRAY));
-        tradingPlayerSelectLayer.editLayer(tradingPlayerSelectLayer.getCols()-1, 0, new SpecialText('>', FONT_LIGHT_GRAY));
-        //tradingPlayerSelectLayer.inscribeString("-->", PANEL_WIDTH - 6, 0, FONT_MAGENTA);
+        tradingSelectLayer = new Layer(PANEL_WIDTH + 1, 1, layerName + ":trade_player", 0, 0, LayerImportances.MENU_CURSOR);
+        tradingSelectLayer.setVisible(false);
+        tradingSelectLayer.fillLayer(new SpecialText(' ', Color.WHITE, CURSOR_FILL_TRADE), new Coordinate(1, 0), new Coordinate(tradingSelectLayer.getCols() - 2, 0));
+        tradingSelectLayer.editLayer(0, 0, new SpecialText('<', FONT_LIGHT_GRAY));
+        tradingSelectLayer.editLayer(tradingSelectLayer.getCols()-1, 0, new SpecialText('>', FONT_LIGHT_GRAY));
 
-        tradingOtherSelectLayer = tradingPlayerSelectLayer.copy();
-        tradingOtherSelectLayer.setVisible(false);
-        //tradingOtherSelectLayer.inscribeString("<--", 0, 0, FONT_MAGENTA);
+        statSelectLayer = new Layer((PANEL_WIDTH / 2) - 1, 1, layerName + ":stat_select", 0, 0, LayerImportances.MENU_CURSOR);
+        statSelectLayer.fillLayer(new SpecialText(' ', Color.WHITE, CURSOR_FILL));
+        statSelectLayer.fixedScreenPos = true;
+        statSelectLayer.setVisible(false);
 
         invWindows = new ArrayList<>();
         gi.getLayerManager().addLayer(panelLayer);
@@ -214,12 +212,16 @@ public class InventoryPanel {
                 playerInventory.getDescriptionLayer().setVisible(true);
                 int xpos = panelLayer.getX();
                 switch (selectorID){
+                    case SELECT_STAT_RIGHT:
+                        xpos += (PANEL_WIDTH / 2) + 1;
+                        xpos += getContentOffset();
+                        break;
                     case SELECT_ITEM:
                         xpos += getContentOffset(); //The "Content Offset" accounts for the border that appears on the right side for the player side and left for the other side.
                         break;
-                    //case SELECT_TRADE_OTHER:
-                    case SELECT_TRADE_PLAYER:
+                    case SELECT_TRADE:
                         xpos--; //The selector layers are slightly large to allow drawing an arrow at the end, and so the increased size is accounted for.
+                        xpos += getContentOffset();
                 }
                 showingSelectLayer.setPos(xpos, layerPos.getY() + panelLayer.getY());
                 showingSelectLayer.setVisible(true);
@@ -261,10 +263,11 @@ public class InventoryPanel {
                 return itemSelectLayer;
             case SELECT_WINDOW:
                 return windowSelectLayer;
-            case SELECT_TRADE_PLAYER:
-                return tradingPlayerSelectLayer;
-            case SELECT_TRADE_OTHER:
-                return tradingOtherSelectLayer;
+            case SELECT_TRADE:
+                return tradingSelectLayer;
+            case SELECT_STAT_LEFT:
+            case SELECT_STAT_RIGHT:
+                return statSelectLayer;
         }
         return new Layer(new SpecialText[1][1], "", 0, 0);
     }

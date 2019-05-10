@@ -80,7 +80,6 @@ public class Entity extends TagHolder implements Serializable {
         }
         for (ItemStruct struct : entityStruct.getItems()){
             Item item = ItemRegistry.generateItem(struct, gameInstance);
-            item.setFlavorText(ItemRegistry.getItemFlavorText(struct.getItemId()));
             addItem(item);
         }
     }

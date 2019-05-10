@@ -79,7 +79,7 @@ public class InvItemsWindow extends InvWindow {
             //Find the font color to draw. If too heavy to pick up, show red. Otherwise if the item is important, make it gray, and white if it is not.
             Color mainFontColor = InventoryPanel.FONT_WHITE;
             if (item.hasTag(TagRegistry.IMPORTANT)) mainFontColor = InventoryPanel.FONT_LIGHT_GRAY;
-            if (!inventoryPanel.isPlayerPanel() && itemTooHeavyForPlayerToCarry(item)) mainFontColor = InventoryPanel.FONT_RED;
+            if (!inventoryPanel.isPlayerPanel() && itemTooHeavyForPlayerToCarry(item, item.calculateWeight())) mainFontColor = InventoryPanel.FONT_RED;
             //Begin drawing
             windowLayer.inscribeString(item.getItemData().getName(), itemDisplayOffset, i + getExtraTopDrawSpace(), mainFontColor);
             if (item.getStackability() != Item.NO_QUANTITY) {
@@ -110,9 +110,9 @@ public class InvItemsWindow extends InvWindow {
         return sum;
     }
 
-    private boolean itemTooHeavyForPlayerToCarry(Item item){
+    private boolean itemTooHeavyForPlayerToCarry(Item item, double weight){
         Entity player = inventoryPanel.getPlayerInventory().getPlayerPanel().getViewingEntity();
-        return calculateTotalWeight(player) + item.getItemData().getRawWeight() > ((Player)player).getWeightCapacity();
+        return calculateTotalWeight(player) + weight > ((Player)player).getWeightCapacity();
     }
 
     @Override
@@ -173,12 +173,8 @@ public class InvItemsWindow extends InvWindow {
 
         @Override
         public int getSelectorType(int xpos) {
-            if (inventoryPanel.getPlayerInventory().getMode() == PlayerInventory.MODE_TRADE){
-                if (inventoryPanel.isPlayerPanel())
-                    return InventoryPanel.SELECT_TRADE_PLAYER;
-                else
-                    return InventoryPanel.SELECT_TRADE_OTHER;
-            }
+            if (inventoryPanel.getPlayerInventory().getMode() == PlayerInventory.MODE_TRADE)
+                return InventoryPanel.SELECT_TRADE;
             return InventoryPanel.SELECT_ITEM;
         }
 
@@ -204,7 +200,7 @@ public class InvItemsWindow extends InvWindow {
         public Layer drawDescription() {
             Layer descLayer;
             if (item != null) {
-                int weightSectionHeight = (!inventoryPanel.isPlayerPanel() && itemTooHeavyForPlayerToCarry(item)) ? 2 : 1; //Allot extra space to write message
+                int weightSectionHeight = (!inventoryPanel.isPlayerPanel() && itemTooHeavyForPlayerToCarry(item, item.calculateWeight())) ? 2 : 1; //Allot extra space to write message
                 //Create basic background
                 descLayer = drawBasicDescription(item.getTags().size() + weightSectionHeight, item.getItemData().getName());
                 //Draw item weight
@@ -274,7 +270,7 @@ public class InvItemsWindow extends InvWindow {
         private void moveOneItem(Item selected, Entity from, Entity to){
             if (selected.isStackable()) {
                 if (to instanceof Player){
-                    if (itemTooHeavyForPlayerToCarry(selected)) return;
+                    if (itemTooHeavyForPlayerToCarry(selected, selected.getItemData().getRawWeight())) return;
                 }
                 if (from instanceof Player && selected.hasTag(TagRegistry.IMPORTANT)) return;
                 //Remove item from 'from'
@@ -294,7 +290,7 @@ public class InvItemsWindow extends InvWindow {
 
         private void moveWholeItem(Item selected, Entity from, Entity to){
             if (to instanceof Player){
-                if (itemTooHeavyForPlayerToCarry(selected)) return;
+                if (itemTooHeavyForPlayerToCarry(selected, selected.calculateWeight())) return;
             }
             DebugWindow.reportf(DebugWindow.GAME, "SubInventory.moveWholeItem","");
             if (from instanceof Player && selected.hasTag(TagRegistry.IMPORTANT)) return;
