@@ -2,7 +2,6 @@ package Game.Debug;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class DebugLogPane extends JComponent {
 
@@ -15,8 +14,11 @@ public class DebugLogPane extends JComponent {
      * The DebugLogPane is capable of replacing text that have matching captions, keeping the DebugWindow more tidy.
      */
 
-    private ArrayList<DebugEntry> debugEntries = new ArrayList<>();
+    private DebugEntry[] debugEntries;
     private final int VERT_SEP = 18;
+    private int mostRecentEntry;
+    private static final int ARRAY_SIZE = 5000;
+    private int entryCount;
 
     private boolean captionSensitive;
     private boolean requiresUpdate = false;
@@ -27,6 +29,9 @@ public class DebugLogPane extends JComponent {
     public DebugLogPane(boolean captionSensitive){
         this.captionSensitive = captionSensitive;
         setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        debugEntries = new DebugEntry[ARRAY_SIZE];
+        mostRecentEntry = 0;
+        entryCount = 0;
     }
 
     public DebugLogPane(boolean captionSensitive, boolean showCaptions){
@@ -41,22 +46,26 @@ public class DebugLogPane extends JComponent {
     void addEntry(String caption, String text){
         requiresUpdate = true;
         if (captionSensitive) {
-            for (int i = 0; i < debugEntries.size(); i++) {
-                if (debugEntries.get(i).caption.equals(caption)) {
-                    debugEntries.get(i).text = text;
+            for (DebugEntry debugEntry : debugEntries) {
+                if (debugEntry != null && debugEntry.caption.equals(caption)) {
+                    debugEntry.text = text;
                     return;
                 }
             }
         }
-        debugEntries.add(new DebugEntry(caption, text));
+        mostRecentEntry++;
+        if (mostRecentEntry >= debugEntries.length) mostRecentEntry = 0;
+        debugEntries[mostRecentEntry] = new DebugEntry(caption, text);
+        entryCount = Math.min(entryCount + 1, ARRAY_SIZE);
     }
 
     void removeEntry(String caption){
         requiresUpdate = true;
         if (captionSensitive) {
-            for (int i = 0; i < debugEntries.size(); i++) {
-                if (debugEntries.get(i).caption.equals(caption)) {
-                    debugEntries.remove(i);
+            for (DebugEntry debugEntry : debugEntries) {
+                if (debugEntry != null && debugEntry.caption.equals(caption)) {
+                    debugEntry.text = null; //Null elements will get skipped over when rendering
+                    entryCount--;
                     return;
                 }
             }
@@ -65,8 +74,7 @@ public class DebugLogPane extends JComponent {
 
     public void update(){
         if (requiresUpdate) { //Don't need to redraw if nothing has changed
-            debugEntries.removeAll(debugEntries.subList(0, Math.max(0, debugEntries.size() - 100000))); //Prevents memory leaks!
-            setPreferredSize(new Dimension(calculatePreferredWidth(), VERT_SEP * debugEntries.size()));
+            setPreferredSize(new Dimension(calculatePreferredWidth(), VERT_SEP * entryCount));
             repaint();
             requiresUpdate = false;
         }
@@ -76,16 +84,17 @@ public class DebugLogPane extends JComponent {
         int max = 0;
         FontMetrics metrics = getFontMetrics(getFont());
         int charLength = metrics.stringWidth("#");
-        for (int i = 0 ; i < debugEntries.size(); i++) {
-            DebugEntry entry = debugEntries.get(i);
-            int stringLength = entry.caption.length() + entry.text.length() + 5; //You could do String.format for a more accurate picture, but that's inefficient to do ~1000 times / 0.1 sec
-            max = Math.max(charLength * stringLength, max);
+        for (DebugEntry entry : debugEntries) {
+            if (entry != null) {
+                int stringLength = entry.caption.length() + entry.text.length() + 5; //You could do String.format for a more accurate picture, but that's inefficient to do ~1000 times / 0.1 sec
+                max = Math.max(charLength * stringLength, max);
+            }
         }
         return max + 10;
     }
 
     void clear(){
-        debugEntries.clear();
+        debugEntries = new DebugEntry[ARRAY_SIZE];
         repaint();
     }
 
@@ -95,14 +104,20 @@ public class DebugLogPane extends JComponent {
         Rectangle viewRect = (scrollPane != null) ? scrollPane.getViewport().getViewRect() : new Rectangle(getWidth(), getHeight());
         g.fillRect((int)viewRect.getX(), (int)viewRect.getY(), (int)viewRect.getWidth(), (int)viewRect.getHeight());
         g.setColor(DebugWindow.textColor);
-        for (int i = 0 ; i < debugEntries.size(); i++) {
-            int ypos = (i+1) * VERT_SEP - 5;
+        if (entryCount <= 0) return;
+        int arrayIndex = mostRecentEntry;
+        do {
+            int ypos = (arrayIndex) * VERT_SEP - 5;
             if (ypos - (int)viewRect.getY() >= -1 * VERT_SEP && ypos - (int)viewRect.getY() <= viewRect.getHeight() + VERT_SEP) { //Don't draw what will not be seen.
-                DebugEntry entry = debugEntries.get(i);
-                String entryText = (showCaptions) ? String.format("[%1$s] %2$s", entry.caption, entry.text) : entry.text;
-                g.drawString(entryText, 1, ypos);
+                DebugEntry entry = debugEntries[arrayIndex];
+                if (entry != null) {
+                    String entryText = (showCaptions) ? String.format("[%1$s] %2$s", entry.caption, entry.text) : entry.text;
+                    g.drawString(entryText, 1, ypos);
+                }
             }
-        }
+            arrayIndex--;
+            if (arrayIndex <= 0) arrayIndex = debugEntries.length - 1;
+        } while (arrayIndex != mostRecentEntry);
     }
 
     public void setScrollPane(JScrollPane scrollPane) {

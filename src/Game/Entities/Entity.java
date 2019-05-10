@@ -124,7 +124,7 @@ public class Entity extends TagHolder implements Serializable {
 
     public void onLevelExit(){
         if (isVisible()) gi.getLayerManager().removeLayer(sprite);
-        DebugWindow.removeLine(DebugWindow.ENTITY, String.format("Entity#%1$05d.onTurn", getUniqueID()));
+        DebugWindow.reportf(DebugWindow.ENTITY, "Entity#%1$05d.onTurn", "- - -");
     }
 
     private String createEntityLayerName(EntityStruct struct, Coordinate coordinate){

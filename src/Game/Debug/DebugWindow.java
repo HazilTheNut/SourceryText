@@ -190,12 +190,6 @@ public class DebugWindow{
         addLine(screen, caption, String.format(value, args));
     }
 
-    public static void removeLine(int screen, String caption){
-        DebugLogPane logPane = getDebugLog(screen);
-        if (logPane != null && logPane.isCaptionSensitive())
-            addLine(screen, caption, null);
-    }
-
     private static void addLine(int screen, String caption, String message){
         entriesToAdd.add(new LogEntry(screen, caption, message));
         DebugLogPane logPane = getDebugLog(screen);
