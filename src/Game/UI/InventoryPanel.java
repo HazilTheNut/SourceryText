@@ -22,18 +22,22 @@ public class InventoryPanel {
     private Layer panelLayer;
     private PlayerInventory playerInventory;
 
+    private Layer showingSelectLayer;
     private Layer itemSelectLayer;
     private Layer windowSelectLayer;
+    private Layer tradingPlayerSelectLayer;
+    private Layer tradingOtherSelectLayer;
 
     static final int SELECT_ITEM = 0;
     static final int SELECT_WINDOW = 1;
-
-    private int activeSelector = 0;
+    static final int SELECT_TRADE_PLAYER = 2;
+    static final int SELECT_TRADE_OTHER  = 3;
 
     private ArrayList<InvWindow> invWindows;
     private InvInputKey[] inputKeys;
 
-    static final Color CURSOR_FILL      = new Color(200, 200, 200, 100);
+    private static final Color CURSOR_FILL       = new Color(200, 200, 200, 100);
+    private static final Color CURSOR_FILL_TRADE = new Color(198, 199, 181, 100);
 
     public static final Color FONT_WHITE       = new Color(230, 230, 230);
     static final Color FONT_GREEN       = new Color(180, 230, 177);
@@ -43,6 +47,7 @@ public class InventoryPanel {
     static final Color FONT_YELLOW      = new Color(240, 255, 200);
     static final Color FONT_CYAN        = new Color(179, 255, 255);
     public static final Color FONT_BLUE        = new Color(150, 152, 255);
+    static final Color FONT_MAGENTA     = new Color(240, 103, 255);
 
     private static final Color BKG_EMPTY  = new Color(17, 17, 17);
     static final Color BKG_BANNER = new Color(45, 45, 46);
@@ -65,6 +70,10 @@ public class InventoryPanel {
         panelLayer.fixedScreenPos = true;
         panelLayer.setVisible(false);
 
+        showingSelectLayer = new Layer(PANEL_WIDTH, 1, layerName + ":select", 0, 0, LayerImportances.MENU_CURSOR);
+        showingSelectLayer.fixedScreenPos = true;
+        showingSelectLayer.setVisible(false);
+
         itemSelectLayer = new Layer(PANEL_WIDTH - 1, 1, layerName + ":item_select", 0, 0, LayerImportances.MENU_CURSOR);
         itemSelectLayer.fillLayer(new SpecialText(' ', Color.WHITE, CURSOR_FILL));
         itemSelectLayer.fixedScreenPos = true;
@@ -75,13 +84,20 @@ public class InventoryPanel {
         windowSelectLayer.fixedScreenPos = true;
         windowSelectLayer.setVisible(false);
 
-        //TODO: Trading selector layers
-        //TODO: Reduce selector layer footprint
+        tradingPlayerSelectLayer = new Layer(PANEL_WIDTH + 1, 1, layerName + ":trade_player", 0, 0, LayerImportances.MENU_CURSOR);
+        tradingPlayerSelectLayer.setVisible(false);
+        tradingPlayerSelectLayer.fillLayer(new SpecialText(' ', Color.WHITE, CURSOR_FILL_TRADE), new Coordinate(1, 0), new Coordinate(tradingPlayerSelectLayer.getCols() - 2, 0));
+        tradingPlayerSelectLayer.editLayer(0, 0, new SpecialText('<', FONT_LIGHT_GRAY));
+        tradingPlayerSelectLayer.editLayer(tradingPlayerSelectLayer.getCols()-1, 0, new SpecialText('>', FONT_LIGHT_GRAY));
+        //tradingPlayerSelectLayer.inscribeString("-->", PANEL_WIDTH - 6, 0, FONT_MAGENTA);
+
+        tradingOtherSelectLayer = tradingPlayerSelectLayer.copy();
+        tradingOtherSelectLayer.setVisible(false);
+        //tradingOtherSelectLayer.inscribeString("<--", 0, 0, FONT_MAGENTA);
 
         invWindows = new ArrayList<>();
         gi.getLayerManager().addLayer(panelLayer);
-        gi.getLayerManager().addLayer(itemSelectLayer);
-        gi.getLayerManager().addLayer(windowSelectLayer);
+        gi.getLayerManager().addLayer(showingSelectLayer);
     }
 
     public Entity getViewingEntity() {
@@ -192,19 +208,25 @@ public class InventoryPanel {
         if (isShowing() && !panelLayer.isLayerLocInvalid(layerPos)) {
             InvInputKey inputKey = inputKeys[layerPos.getY()];
             if (inputKey != null) {
-                getSelectorOfID(activeSelector).setVisible(false); //Make previous selector layer invisible
-                activeSelector = inputKey.getSelectorType(layerPos.getX());
+                int selectorID = inputKey.getSelectorType(layerPos.getX());
+                showingSelectLayer.transpose(getSelectorOfID(selectorID));
                 playerInventory.getDescriptionLayer().transpose(inputKey.drawDescription());
                 playerInventory.getDescriptionLayer().setVisible(true);
-                if (activeSelector == SELECT_ITEM)
-                    getSelectorOfID(activeSelector).setPos(panelLayer.getX() + getContentOffset(), layerPos.getY() + panelLayer.getY());
-                else
-                    getSelectorOfID(activeSelector).setPos(panelLayer.getX(), layerPos.getY() + panelLayer.getY());
-                getSelectorOfID(activeSelector).setVisible(true);
+                int xpos = panelLayer.getX();
+                switch (selectorID){
+                    case SELECT_ITEM:
+                        xpos += getContentOffset(); //The "Content Offset" accounts for the border that appears on the right side for the player side and left for the other side.
+                        break;
+                    //case SELECT_TRADE_OTHER:
+                    case SELECT_TRADE_PLAYER:
+                        xpos--; //The selector layers are slightly large to allow drawing an arrow at the end, and so the increased size is accounted for.
+                }
+                showingSelectLayer.setPos(xpos, layerPos.getY() + panelLayer.getY());
+                showingSelectLayer.setVisible(true);
                 return;
             }
         }
-        getSelectorOfID(activeSelector).setVisible(false);
+        showingSelectLayer.setVisible(false);
     }
 
     public void onInvAction(Coordinate layerPos, int action){
@@ -239,6 +261,10 @@ public class InventoryPanel {
                 return itemSelectLayer;
             case SELECT_WINDOW:
                 return windowSelectLayer;
+            case SELECT_TRADE_PLAYER:
+                return tradingPlayerSelectLayer;
+            case SELECT_TRADE_OTHER:
+                return tradingOtherSelectLayer;
         }
         return new Layer(new SpecialText[1][1], "", 0, 0);
     }

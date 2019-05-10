@@ -171,6 +171,17 @@ public class InvItemsWindow extends InvWindow {
             }
         }
 
+        @Override
+        public int getSelectorType(int xpos) {
+            if (inventoryPanel.getPlayerInventory().getMode() == PlayerInventory.MODE_TRADE){
+                if (inventoryPanel.isPlayerPanel())
+                    return InventoryPanel.SELECT_TRADE_PLAYER;
+                else
+                    return InventoryPanel.SELECT_TRADE_OTHER;
+            }
+            return InventoryPanel.SELECT_ITEM;
+        }
+
         private void playerUseItem(){
             if (inventoryPanel.getViewingEntity() instanceof Player) {
                 Thread useItemThread = new Thread(() -> {
