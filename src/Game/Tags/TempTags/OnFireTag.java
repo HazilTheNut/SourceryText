@@ -159,7 +159,8 @@ public class OnFireTag extends Tag implements FrameDrawListener, LuminanceTag {
             if (fireAnimation != null) {
                 tile.getLevel().removeAnimatedTile(fireAnimation.getLocation());
             }
-        } else if (this.owner != null) {
+        }
+        if (this.owner != null) {
             this.owner.getGameInstance().getCurrentLevel().removeFrameDrawListener(this);
         }
     }

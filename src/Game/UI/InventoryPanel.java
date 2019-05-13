@@ -59,6 +59,33 @@ public class InventoryPanel {
     private int contentOffset;
     private boolean isPlayerPanel;
 
+    /*
+
+    InventoryPanel:
+
+    The Inventory panel represents one of the panels seen when opening the inventory, spanning the entire height of the screen (with the exception of the HUD)
+    It is responsible for managing each InvWindow that it contains. It does the following:
+        * Calculate and assign heights to each InvWindow based on the minimum and maximum heights provided by each InvWindow
+        * Compiling each drawn Layer provided by each InvWindow (after the InvWindow is assigned their respective height)
+        * Distributing input (in the form of InputKeys)
+
+    A brief note on InputKeys:
+
+    The Inventory Panel is built on a one-dimensional formatting logic: everything is arranged based on height.
+        This does have some downsides that had to be overcome, but they're more edge cases than anything else, and aren't hard to remedy.
+
+    InputKeys are a convenient way to transfer input to InputWindows that aligns nicely with how the system is arranged.
+    Every horizontal "stripe" of the panel can be assigned a single InputKey. All the InputWindows have to do is provide a list of them to receive input.
+    Each InputKey can two things: handle input and draw the item description layer.
+        * For input handling, the InputKey uses the same action ID's that the InputMap uses (much like everything else)
+        * The InventoryPanel calculates which InputKey to display the description, so the InputKeys don't need to figure if they need to display or not
+        * InputKeys also tell the InventoryPanel which selector layer to use. That's how the InvWindow collapse buttons and the ItemWindow's items can be highlighted differently.
+        * InputKeys are also notified of which x-coordinate the cursor is at, which allows the character stat and window collapse buttons to work correctly.
+
+    InvWindows also receive input, but it is only used to do scrolling for the Items window.
+
+     */
+
     public InventoryPanel(GameInstance gi, String layerName, PlayerInventory owner, Coordinate origin, boolean isPlayerPanel){
         this.isPlayerPanel = isPlayerPanel;
         playerInventory = owner;

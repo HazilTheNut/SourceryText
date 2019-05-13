@@ -123,7 +123,7 @@ public class Entity extends TagHolder implements Serializable {
     }
 
     public void onLevelExit(){
-        if (isVisible()) gi.getLayerManager().removeLayer(sprite);
+        gi.getLayerManager().removeLayer(sprite);
         DebugWindow.reportf(DebugWindow.ENTITY, "Entity#%1$05d.onTurn", "- - -");
     }
 
@@ -397,7 +397,10 @@ public class Entity extends TagHolder implements Serializable {
     public void updateSprite(){
         SpecialText originalSprite = icon;
         //DebugWindow.reportf(DebugWindow.MISC, "Entity.updateSprite","Original sprite for %1$s: %2$s", getClass().getSimpleName(), originalSprite);
-        sprite.editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), colorateWithTags(originalSprite.getFgColor()), originalSprite.getBkgColor()));
+        if (isVisible())
+            sprite.editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), colorateWithTags(originalSprite.getFgColor()), originalSprite.getBkgColor()));
+        else
+            sprite.editLayer(0, 0, new SpecialText(' '));
     }
 
     public void setIcon(SpecialText icon) {

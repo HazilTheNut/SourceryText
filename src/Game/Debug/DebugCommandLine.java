@@ -188,10 +188,14 @@ public class DebugCommandLine extends JPanel {
             String path = io.getRootFilePath().concat(args.get(1));
             File levelFile = new File(path);
             if (levelFile.exists()) {
-                if (args.size() > 4)
-                    gameMaster.getCurrentGameInstance().enterLevel(path, newPos, args.get(4).equals("true"));
-                else
-                    gameMaster.getCurrentGameInstance().enterLevel(path, newPos, false);
+                Coordinate finalNewPos = newPos;
+                Thread loadThread = new Thread(() -> {
+                    if (args.size() > 4)
+                        gameMaster.getCurrentGameInstance().enterLevel(path, finalNewPos, args.get(4).equals("true"));
+                    else
+                        gameMaster.getCurrentGameInstance().enterLevel(path, finalNewPos, false);
+                });
+                loadThread.start();
                 return "Level Loaded!";
             } else
                 return "ERROR: Level not found! path: " + levelFile.getPath();

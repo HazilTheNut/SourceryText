@@ -45,7 +45,7 @@ public class BrambleEnchantmentTag extends Tag {
         int BRAMBLES_PER_GROWTH = 2;
         int TOTAL_BRAMBLES = 10;
 
-        ArrayList<Coordinate> growPoints = new ArrayList<>(); //List of points of brambles to spread outwards
+        ArrayList<Coordinate> growPoints = new ArrayList<>(); //List of points of brambles to create
         ArrayList<Coordinate> nextPoints = new ArrayList<>(); //List of points to be used in the following growth cycle
         Coordinate[] spreadVectors = { new Coordinate(1, 0), new Coordinate(-1, 0), new Coordinate(0, 1), new Coordinate(0, -1)};
         growPoints.add(origin);
@@ -81,11 +81,18 @@ public class BrambleEnchantmentTag extends Tag {
         if (cooldown > 0) cooldown--;
     }
 
+    /**
+     * Instantiates a Bramble at a specified location
+     *
+     * @param loc The location to instantiate the bramble
+     * @param gi The GameInstance running the game
+     * @return If a bramble was successfully placed
+     */
     private boolean placeBramble(Coordinate loc, GameInstance gi){
         if (gi.isSpaceAvailable(loc, TagRegistry.NO_PATHING)) {
             Bramble bramble = (Bramble) gi.instantiateEntity(EntityRegistry.getEntityStruct(EntityRegistry.BRAMBLE), loc, gi.getCurrentLevel());
             bramble.resetLifetime();
-            bramble.setMaxHealth(6);
+            bramble.setMaxHealth(10);
             return true;
         }
         return false;

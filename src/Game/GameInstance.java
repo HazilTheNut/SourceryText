@@ -52,6 +52,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     private transient QuickMenu quickMenu;
     private transient DialogueOptionsMenu dialogueOptions;
     private transient GameDeathMenu deathMenu;
+    private transient Layer attackAnimLayer;
     private FactionManager factionManager;
 
     private long currentUID = 1;
@@ -108,6 +109,11 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         pathTestLayer.setVisible(false);
         lm.addLayer(pathTestLayer);
 
+        attackAnimLayer = new Layer(new SpecialText[1][1], "attack_anim", -1, -1, LayerImportances.ANIMATION);
+        attackAnimLayer.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 200)));
+        attackAnimLayer.setVisible(false);
+        lm.addLayer(attackAnimLayer);
+
         loadingScreenLayer = new Layer(lm.getWindow().RESOLUTION_WIDTH, lm.getWindow().RESOLUTION_HEIGHT, "loading_screen", 0, 0, LayerImportances.LOADING_SCREEN);
         loadingScreenLayer.fixedScreenPos = true;
         drawLoadingScreen();
@@ -118,6 +124,10 @@ public class GameInstance implements Serializable, FrameUpdateListener {
         loadingScreenLayer.fillLayer(new SpecialText(' ', Color.BLACK, Color.BLACK));
         String phrase = "Loading...";
         loadingScreenLayer.inscribeString(phrase, (loadingScreenLayer.getCols() - phrase.length()) / 2, loadingScreenLayer.getRows() / 2);
+    }
+
+    public Layer getAttackAnimLayer() {
+        return attackAnimLayer;
     }
 
     void stopAnimations(){

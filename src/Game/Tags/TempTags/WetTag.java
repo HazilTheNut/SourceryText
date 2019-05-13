@@ -99,7 +99,7 @@ public class WetTag extends Tag {
     @Override
     public Color getTagTileColor() {
         if (drying)
-            return new Color(15, 15, 30, 30);
+            return new Color(19, 19, 64, 50);
         return super.getTagTileColor();
     }
 

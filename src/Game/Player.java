@@ -108,7 +108,6 @@ public class Player extends GameCharacter implements GameInputReciever {
     void playerInit(){
         inv = new PlayerInventory(gi.getLayerManager(), this);
         hud = new HUD(gi);
-        initSwooshLayer();
         movementVectorList = new ArrayList<>();
         startMovementThread();
     }

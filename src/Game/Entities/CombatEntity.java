@@ -52,7 +52,6 @@ public class CombatEntity extends Entity {
     public NoWeaponItem noWeapon;
 
     Item weapon;
-    protected Layer swooshLayer;
 
     public void setMaxHealth(int maxHP){
         maxHealth = maxHP;
@@ -91,14 +90,7 @@ public class CombatEntity extends Entity {
         setMaxHealth(readIntArg(hpArg, defaultMaxHealth));
         EntityArg strArg = searchForArg(entityStruct.getArgs(), "strength");
         setStrength(readIntArg(strArg, defaultStrength));
-        initSwooshLayer(); //The 'swooshLayer' is the white flash that happens during performAttack animations.
         initNoWeapon();
-    }
-
-    protected void initSwooshLayer(){
-        swooshLayer = new Layer(new SpecialText[1][1], getSprite().getName().concat("_attack"), -1, -1, LayerImportances.ANIMATION);
-        swooshLayer.editLayer(0, 0, new SpecialText(' ', Color.WHITE, new Color(255, 255, 255, 150)));
-        swooshLayer.setVisible(false);
     }
 
     protected void initNoWeapon(){
@@ -136,10 +128,10 @@ public class CombatEntity extends Entity {
             boolean usingNoWeapon = getWeapon().getItemData().getItemId() < 0;
             if (usingNoWeapon)
                 initNoWeapon();
-            swooshLayer.setVisible(true);
-            swooshLayer.setPos(loc);
+            gi.getAttackAnimLayer().setVisible(true);
+            gi.getAttackAnimLayer().setPos(loc);
             turnSleep(75);
-            swooshLayer.setVisible(false);
+            gi.getAttackAnimLayer().setVisible(false);
             Entity entity = getGameInstance().getCurrentLevel().getSolidEntityAt(loc);
             TagHolder toContact = getGameInstance().getCurrentLevel().getTileAt(loc);
             if (entity instanceof CombatEntity) {
@@ -404,13 +396,11 @@ public class CombatEntity extends Entity {
     @Override
     public void onLevelEnter() {
         super.onLevelEnter();
-        gi.getLayerManager().addLayer(swooshLayer);
     }
 
     @Override
     public void onLevelExit() {
         super.onLevelExit();
-        gi.getLayerManager().removeLayer(swooshLayer);
     }
 
     @Override

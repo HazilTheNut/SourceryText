@@ -42,6 +42,8 @@ public class ItemRegistry {
         registerItem(1, "Ethereal Weapon", 0, TagRegistry.WEAPON_STRIKE, TagRegistry.DAMAGE_START + 3, TagRegistry.ETHEREAL, TagRegistry.FLAME_ENCHANT);
         registerItem(2, "Enchanted Weapon", 1, TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_STRIKE, TagRegistry.BLEED_ENCHANT);
         registerItem(3, "Enchanted Bow", 1, TagRegistry.DAMAGE_START + 5, TagRegistry.WEAPON_BOW, TagRegistry.BRAMBLE_ENCHANT);
+        registerItem(5, "Blank Slate", 0);
+        itemFlavorTextMap.put(5, "Great for testing\nnew items");
 
         //Generic Weapons
         //Tier 1
@@ -123,10 +125,11 @@ public class ItemRegistry {
         registerItem(1102, "Magic Dagger",   0.33, TagRegistry.DAMAGE_START + 6,  TagRegistry.WEAPON_KNIFE, TagRegistry.METALLIC, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT);
         registerItem(ID_WATERBALLOON, "Water Balloon",  0.10, TagRegistry.THROW_WATERBALLOON, TagRegistry.FRAGILE);
         registerItem(1104, "Shine Crystal",  0.75, TagRegistry.LUMINANT);
+        registerItem(1105, "Bramble Seed",   0.10, TagRegistry.BRAMBLE_ENCHANT, TagRegistry.FRAGILE);
 
-        registerItem(1200, "Carrot",    0.05, TagRegistry.HEALTH_START + 4);
+        registerItem(1200, "Carrot",    0.05, TagRegistry.HEALTH_START + 4, TagRegistry.FLAMMABLE);
         itemFlavorTextMap.put(1200, "A popular veggie");
-        registerItem(1201, "Cured Meat", 0.08, TagRegistry.HEALTH_START + 8);
+        registerItem(1201, "Cured Meat", 0.08, TagRegistry.HEALTH_START + 8, TagRegistry.FLAMMABLE);
         itemFlavorTextMap.put(1201, "Kept well salted\nin a dark room.");
 
         registerItem(ID_ARROW, "Arrow",           0.03, TagRegistry.ARROW, TagRegistry.FLAMMABLE, TagRegistry.METALLIC, TagRegistry.SHARP);

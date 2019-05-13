@@ -12,22 +12,30 @@ import java.util.ArrayList;
 public class ZoneScorecard implements GameInputReciever {
 
     private Layer scorecardLayer;
+    private GameMouseInput mouseInput;
     private Zone zone;
 
     public ZoneScorecard(LayerManager manager, Zone zone,  GameMouseInput mouseInput){
-        if (manager != null)
-            scorecardLayer = new Layer(manager.getWindow().RESOLUTION_WIDTH, manager.getWindow().RESOLUTION_HEIGHT, "scorecard", 0, 0, LayerImportances.MAIN_MENU);
-        else
-            scorecardLayer = new Layer(0, 0, "scorecard", 0, 0, LayerImportances.MAIN_MENU);
-        scorecardLayer.setVisible(false);
-        scorecardLayer.fixedScreenPos = true;
         this.zone = zone;
-        mouseInput.addInputReceiver(this);
+        this.mouseInput = mouseInput;
+        if (shouldShowScorecard()) {
+            if (manager != null)
+                scorecardLayer = new Layer(manager.getWindow().RESOLUTION_WIDTH, manager.getWindow().RESOLUTION_HEIGHT, "scorecard", 0, 0, LayerImportances.MAIN_MENU);
+            else
+                scorecardLayer = new Layer(0, 0, "scorecard", 0, 0, LayerImportances.MAIN_MENU);
+            scorecardLayer.setVisible(false);
+            scorecardLayer.fixedScreenPos = true;
+            mouseInput.addInputReceiver(this, 0);
+        }
+    }
+
+    private boolean shouldShowScorecard(){
+        return zone.getZoneInfoMap() != null && getZoneInfoInt("showScorecard") >= 1;
     }
 
     void drawScorecardForZone(GameInstance gi){
         //Don't draw scorecard if the zone is improperly configured
-        if (zone.getZoneInfoMap() == null || getZoneInfoInt("showScorecard") == 0)
+        if (!shouldShowScorecard())
             return;
         //Initialize scorecard layer
         scorecardLayer.fillLayer(new SpecialText(' ', Color.WHITE, Color.BLACK));
@@ -60,7 +68,7 @@ public class ZoneScorecard implements GameInputReciever {
         String toContinue = String.format("Press %1$s to continue...", gi.getGameMaster().getMouseInput().getInputMap().getInputForAction(InputMap.TEXTBOX_NEXT));
         scorecardLayer.inscribeString(toContinue, 1, 15 + yOffset);
         //Await input
-        waitForInput();
+        //waitForInput();
     }
 
     private void waitForInput(){
@@ -70,6 +78,11 @@ public class ZoneScorecard implements GameInputReciever {
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
+    }
+
+    private void close(){
+        scorecardLayer.setVisible(false);
+        mouseInput.removeInputListener(this);
     }
 
     private String getZoneInfoString(String key){
@@ -106,6 +119,10 @@ public class ZoneScorecard implements GameInputReciever {
 
     @Override
     public boolean onInputDown(Coordinate levelPos, Coordinate screenPos, ArrayList<Integer> actions) {
+        if (actions.contains(InputMap.TEXTBOX_NEXT)) {
+            close();
+            return true;
+        }
         return scorecardLayer.getVisible();
     }
 

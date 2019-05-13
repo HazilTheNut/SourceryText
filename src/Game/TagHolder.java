@@ -81,7 +81,7 @@ public class TagHolder implements Serializable {
 
     public void onLevelEnter(GameInstance gi){
         TagEvent event = new TagEvent(0, true, this, this, gi, this);
-        for (Tag tag : tags) {
+        for (Tag tag : getTags()) {
             tag.onLevelEnter(event);
         }
         event.doFutureActions();
@@ -120,7 +120,7 @@ public class TagHolder implements Serializable {
     public void onReceiveDamage(int amount, TagHolder source, GameInstance gi){
         if (!shouldContact(source, this)) return;
         TagEvent dmgEvent = new TagEvent(amount, true, source, this, gi, this);
-        for (Tag tag : tags){
+        for (Tag tag : getTags()){
             tag.onReceiveDamage(dmgEvent);
         }
         dmgEvent.doFutureActions();
@@ -199,9 +199,9 @@ public class TagHolder implements Serializable {
 
     protected String getTagList(){
         StringBuilder output = new StringBuilder();
-        for (int i = 0; i < tags.size(); i++) {
-            output.append(tags.get(i).getName());
-            if (i < tags.size() - 1) output.append(", ");
+        for (int i = 0; i < getTags().size(); i++) {
+            output.append(getTags().get(i).getName());
+            if (i < getTags().size() - 1) output.append(", ");
         }
         return output.toString();
     }
@@ -209,7 +209,7 @@ public class TagHolder implements Serializable {
     public Color colorateWithTags(Color baseColor){
         int baseAlpha = baseColor.getAlpha();
         int[] colorTotals = {baseColor.getRed() * baseAlpha, baseColor.getGreen() * baseAlpha, baseColor.getBlue() * baseAlpha, baseAlpha}; //Elements refer to r,g,b,a in order
-        for (Tag tag : tags){
+        for (Tag tag : getTags()){
             Color color = tag.getTagColor();
             colorTotals[0] += color.getRed()   * color.getAlpha();
             colorTotals[1] += color.getGreen() * color.getAlpha();

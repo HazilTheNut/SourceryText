@@ -75,7 +75,7 @@ public class WaterFlow extends LevelScript {
 
     @Override
     public void onAnimatedTileUpdate() {
-        if (particleLayer.getVisible()) {
+        if (particleLayer != null && particleLayer.getVisible()) {
             updateTimer--;
             if (updateTimer < 1) {
                 updateParticles();

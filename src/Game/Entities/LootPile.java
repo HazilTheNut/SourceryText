@@ -62,7 +62,7 @@ public class LootPile extends Chest {
     /*
     *
     * A general principle is that upon contacting a LootPile, you are effectively contacting every Item it contains.
-    * Re-routing contact events is potentially very buggy, so a good shortcut is for the LootPile to have its list of tags assume the sum of all of the tags of its component Items.
+    * Re-routing contact events is potentially very buggy (although it does do this), the following method should plug up any leaks in the boat, so to speak.
     *
     * This composite tag list should not care about "duplicate" tags because each Item will have a different Tag object of the same ID.
     * */
@@ -104,6 +104,13 @@ public class LootPile extends Chest {
     public void addItem(Item item) {
         super.addItem(item);
         item.onContact(gi.getCurrentLevel().getTileAt(getLocation()), gi, contactType);
+        updateSprite();
+    }
+
+    @Override
+    public void removeItem(Item item) {
+        super.removeItem(item);
+        updateSprite();
     }
 
     @Override
