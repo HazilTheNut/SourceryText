@@ -59,6 +59,12 @@ public class LootPile extends Chest {
             super.onInteract(player);
     }
 
+    @Override
+    public void selfDestruct() {
+        dropItemsOnDestruct = false;
+        super.selfDestruct();
+    }
+
     /*
     *
     * A general principle is that upon contacting a LootPile, you are effectively contacting every Item it contains.

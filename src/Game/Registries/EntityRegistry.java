@@ -39,7 +39,7 @@ public class EntityRegistry {
         registerEntity(1,  "Save Point",   new SpecialText('S', new Color(40, 225, 115), new Color(20, 100, 80, 40)),    SavePoint.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(2,  "Basic Enemy",  new SpecialText('E', new Color(255, 130, 130), new Color(255, 180, 180, 15)), BasicEnemy.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING);
         registerEntity(3,  "Sign",         new SpecialText('S', new Color(110, 100, 250), new Color(55, 50, 125, 30)),   Sign.class, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE);
-        registerEntity(4,  "Chest",        new SpecialText('C', new Color(245, 245, 175), new Color(175, 100,  35, 45)), Chest.class, TagRegistry.NO_PATHING);
+        registerEntity(4,  "Chest",        new SpecialText('C', new Color(245, 245, 175), new Color(175, 100,  35, 45)), Chest.class, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE);
         registerEntity(5,  "Door",         new SpecialText('-', new Color(143, 74, 17),   new Color(75, 45, 10, 50)),    Door.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(6,  "Locked Door",  new SpecialText('-', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    LockedDoor.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(LOOT_PILE, "Loot",  new SpecialText('%', new Color(191, 191, 75),  new Color(155, 155, 60, 15)),  LootPile.class);
@@ -54,7 +54,7 @@ public class EntityRegistry {
         registerEntity(15, "Room Cover",   new SpecialText(' ', new Color(42,  42,  86),  Color.BLACK),                  RoomCover.class,   TagRegistry.IMMOVABLE);
         registerEntity(16, "Wall Torch",   new SpecialText('*', new Color(212, 195, 140), new Color(142, 120, 50, 50)),  WallTorch.class, TagRegistry.FLAMMABLE, TagRegistry.BURN_FOREVER, TagRegistry.BURN_NOSPREAD, TagRegistry.ON_FIRE);
         registerEntity(MAGIC_BOMB, "MagicBomb", new SpecialText('b'),                                                    MagicBomb.class, TagRegistry.LIVING, TagRegistry.NO_PATHING);
-        registerEntity(RAFT, "Raft",       new SpecialText('=', new Color(142, 94, 60),   new Color(71, 47, 30, 240)),   Marker.class);
+        registerEntity(RAFT, "Raft",       new SpecialText('=', new Color(142, 94, 60),   new Color(71, 47, 30, 240)),   Marker.class, TagRegistry.FLAMMABLE);
         registerEntity(19, "Store Item",   new SpecialText('$', new Color(171, 201, 75),  new Color(145, 165, 60, 15)),  StoreItem.class);
         registerEntity(PLAYER_SHADOW, "Player Shadow", new SpecialText('@', new Color(65, 75, 65), new Color(0, 0, 0, 25)), PlayerShadow.class, TagRegistry.ETHEREAL);
 

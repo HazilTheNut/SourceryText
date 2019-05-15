@@ -4,6 +4,7 @@ import Data.Coordinate;
 import Data.SerializationVersion;
 import Engine.SpecialText;
 import Game.AnimatedTiles.FireAnimation;
+import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
 import Game.*;
 import Game.Registries.TagRegistry;
@@ -42,7 +43,7 @@ public class OnFireTag extends Tag implements FrameDrawListener, LuminanceTag {
     protected boolean burnForever = false;
 
     private FireAnimation fireAnimation;
-    private Entity owner;
+    private Entity entityOwner;
 
     private double spreadLikelihood = 0.4;
     private boolean shouldSpread = false;
@@ -56,10 +57,10 @@ public class OnFireTag extends Tag implements FrameDrawListener, LuminanceTag {
                 fireAnimation = new FireAnimation(target.getLocation());
                 target.getLevel().addAnimatedTile(fireAnimation);
             } else if (e.getTarget() instanceof Entity) {
-                owner = (Entity) e.getTarget();
-                fireAnimation = new FireAnimation(owner.getLocation());
+                entityOwner = (Entity) e.getTarget();
+                fireAnimation = new FireAnimation(entityOwner.getLocation());
                 //Animation tile is not added to the level because Entities can move and the animation should follow it, and it's much easier to just modify the sprite of the Entity
-                owner.getGameInstance().getCurrentLevel().addFrameDrawListener(this); //Instead, the OnFireTag will act as an animated tile on behalf of the Entity owner.
+                entityOwner.getGameInstance().getCurrentLevel().addFrameDrawListener(this); //Instead, the OnFireTag will act as an animated tile on behalf of the Entity owner.
             }
         });
         defineFireBehavior(e.getTarget());
@@ -160,8 +161,11 @@ public class OnFireTag extends Tag implements FrameDrawListener, LuminanceTag {
                 tile.getLevel().removeAnimatedTile(fireAnimation.getLocation());
             }
         }
-        if (this.owner != null) {
-            this.owner.getGameInstance().getCurrentLevel().removeFrameDrawListener(this);
+        if (this.entityOwner != null) {
+            this.entityOwner.getGameInstance().getCurrentLevel().removeFrameDrawListener(this);
+            if (lifetime <= 0 && !(owner instanceof CombatEntity)) {
+                owner.selfDestruct();
+            }
         }
     }
 
@@ -207,12 +211,12 @@ public class OnFireTag extends Tag implements FrameDrawListener, LuminanceTag {
 
     @Override
     public void onFrameDraw() {
-        if (owner != null) { //If an Entity owns this tag
+        if (entityOwner != null) { //If an Entity owns this tag
             SpecialText frame = fireAnimation.onDisplayUpdate(); //Use a FireAnimation tile to generate the fire animation
-            SpecialText ownerSprite = owner.getSprite().getSpecialText(0, 0);
+            SpecialText ownerSprite = entityOwner.getSprite().getSpecialText(0, 0);
             int alpha = Math.max(ownerSprite.getBkgColor().getAlpha(), 35);
             Color bkg = new Color(frame.getBkgColor().getRed(), frame.getBkgColor().getGreen(), frame.getBkgColor().getBlue(), alpha);
-            owner.getSprite().editLayer(0, 0, new SpecialText(ownerSprite.getCharacter(), ownerSprite.getFgColor(), bkg));
+            entityOwner.getSprite().editLayer(0, 0, new SpecialText(ownerSprite.getCharacter(), ownerSprite.getFgColor(), bkg));
         }
     }
 

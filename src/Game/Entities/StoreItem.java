@@ -107,4 +107,10 @@ public class StoreItem extends LootPile {
     public boolean isSolid() {
         return false;
     }
+
+    @Override
+    public void selfDestruct() {
+        dropItemsOnDestruct = false;
+        super.selfDestruct();
+    }
 }
