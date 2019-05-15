@@ -43,6 +43,16 @@ public class BasicEnemy extends CombatEntity {
         detectRange = readIntArg(searchForArg(entityStruct.getArgs(), "detectRange"), detectRange);
         alertRadius = readIntArg(searchForArg(entityStruct.getArgs(), "alertRadius"), alertRadius);
         originalLocation = getLocation().copy();
+        switch (readStrArg(searchForArg(entityStruct.getArgs(), "specialBehavior"), "").toLowerCase()){
+            case "orbiting":
+                behavior = BEHAVIOR_ORBITING;
+                break;
+            case "grouping":
+                behavior = BEHAVIOR_GROUPING;
+                break;
+            default:
+                behavior = BEHAVIOR_DEFAULT;
+        }
     }
 
     protected int detectRange = 15;
@@ -67,6 +77,13 @@ public class BasicEnemy extends CombatEntity {
     public static final int STATE_BERSERK = 3;
     public static final int STATE_SCARED = 4;
 
+    //Behaviors
+    private int behavior;
+    private int behaviorTime; //Useful field for various behaviors
+    public static final int BEHAVIOR_DEFAULT = 0;
+    public static final int BEHAVIOR_ORBITING = 1;
+    public static final int BEHAVIOR_GROUPING = 2;
+
     private Coordinate searchPos;
     private Coordinate originalLocation;
 
@@ -75,6 +92,7 @@ public class BasicEnemy extends CombatEntity {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("detectRange",String.valueOf(detectRange)));
         args.add(new EntityArg("alertRadius",String.valueOf(alertRadius)));
+        args.add(new EntityArg("specialBehavior",""));
         return args;
     }
 
@@ -140,11 +158,20 @@ public class BasicEnemy extends CombatEntity {
         }
     }
 
-    protected void doHostileBehavior(){
-        if (isRanged())
-            doRangedBehavior();
-        else
-            doMeleeBehavior();
+    private void doHostileBehavior(){
+        boolean performNormalBehavior = true;
+        if (behaviorTime > 0){ //Special behaviors override normal behavior
+            if (behavior == BEHAVIOR_ORBITING)
+                performNormalBehavior = doOrbitingSpecialBehavior();
+            else if (behavior == BEHAVIOR_GROUPING)
+                performNormalBehavior = doGroupingSpecialBehavior();
+        }
+        if (performNormalBehavior){
+            if (isRanged())
+                doRangedBehavior();
+            else
+                doMeleeBehavior();
+        }
         if (target != null && isEntityVisible(target)){
             searchPos = target.getLocation().copy();
         } else {
@@ -170,6 +197,38 @@ public class BasicEnemy extends CombatEntity {
             target = getNearestBasicEnemy();
         Coordinate movementVector = getLocation().subtract(target.getLocation()).normalize().multiply(-1);
         pathToPosition(getLocation().add(movementVector));
+    }
+
+    private boolean doOrbitingSpecialBehavior(){
+        double dist = getLocation().hypDistance(target.getLocation());
+        if (dist > 2 && dist <= 4){
+            moveTangentToTarget();
+            behaviorTime--;
+            return false; //Return value is written onto performNormalBehavior
+        }
+        return true;
+    }
+
+    private boolean doGroupingSpecialBehavior(){
+        double minDist = Double.MAX_VALUE;
+        BasicEnemy nearestFriend = null;
+        //Find nearest friendly BasicEnemy
+        for (Entity e : gi.getCurrentLevel().getEntities()){
+            if (e instanceof BasicEnemy && isAlly(e) && !e.equals(this)) {
+                BasicEnemy other = (BasicEnemy) e;
+                double dist = getLocation().hypDistance(other.getLocation());
+                if (dist < minDist){
+                    minDist = dist;
+                    nearestFriend = other;
+                }
+            }
+        }
+        if (minDist > 1 && nearestFriend != null){
+            pathToPosition(nearestFriend.getLocation());
+            behaviorTime--;
+            return false;
+        }
+        return true;
     }
 
     protected boolean isEnemy(Entity e){
@@ -264,11 +323,12 @@ public class BasicEnemy extends CombatEntity {
     }
 
     private void setTarget(CombatEntity target, boolean urgent){
-        boolean targetValid = (isEnemy(target) || urgent);
+        boolean targetValid = !target.equals(this.target) && (isEnemy(target) || urgent);
         boolean correctMentalState = mentalState == STATE_IDLE || mentalState == STATE_SEARCHING || urgent;
-        if (target != null && !target.equals(this) && targetValid && correctMentalState) {
+        if (!target.equals(this) && targetValid && correctMentalState) {
             this.target = target;
             mentalState = STATE_HOSTILE;
+            behaviorTime = 10; //TODO: Time spent on special behavior may need to change for each type of behavior
             searchPos = target.getLocation().copy();
         }
     }
