@@ -79,6 +79,28 @@ public class TagHolder implements Serializable {
         return null;
     }
 
+    /**
+     * Receives an array of strings that each describe how to modify the pre-existing tags of this TagHolder
+     * Each string is expected to represent a number:
+     *  If the number is positive, this TagHolder will add a tag whose ID is the number provided.
+     *  If the number is negative, this TagHolder will remove a tag whose ID is the absolute value of the number provided.
+     *
+     * @param adjustments The ArrayList of Strings to parse
+     */
+    public void interpretTagAdjustments(ArrayList<String> adjustments){
+        for (String str : adjustments) {
+            try {
+                int tagId = Math.abs(Integer.valueOf(str));
+                if (str.charAt(0) == '-') // "-0" should indicate removing the flammable tag
+                    removeTag(tagId);
+                else
+                    addTag(tagId, this);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void onLevelEnter(GameInstance gi){
         TagEvent event = new TagEvent(0, true, this, this, gi, this);
         for (Tag tag : getTags()) {

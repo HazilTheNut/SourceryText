@@ -27,7 +27,6 @@ public class GameCharacter extends BasicEnemy {
 
     private GameCharacter recentDamageDealer;
 
-    private ArrayList<String> interactText;
     private String rawInteractText;
     private int interactTextPointer = 0;
 
@@ -50,7 +49,6 @@ public class GameCharacter extends BasicEnemy {
         }
         originalSprite = readSpecTxtArg(searchForArg(entityStruct.getArgs(), "icon"), entityStruct.getDisplayChar());
         super.initialize(pos, lm, entityStruct, gameInstance);
-        interactText = readStringList(searchForArg(entityStruct.getArgs(), "interactText"));
         rawInteractText = readStrArg(searchForArg(entityStruct.getArgs(), "interactText"), "");
         dialogueParser = new DialogueParser(getGameInstance(), rawInteractText);
     }

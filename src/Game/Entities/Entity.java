@@ -75,6 +75,17 @@ public class Entity extends TagHolder implements Serializable {
         sprite = new Layer(new SpecialText[1][1], createEntityLayerName(entityStruct, pos), getLocation().getX(), getLocation().getY(), layerPriority);
         sprite.editLayer(0, 0, icon);
 
+        String tagAdjustments = readStrArg(searchForArg(entityStruct.getArgs(), "tagAdj"), "");
+        int index = 0;
+        ArrayList<String> adjustmentList = new ArrayList<>();
+        while (index < tagAdjustments.length()){
+            int nextIndex = tagAdjustments.indexOf(' ', index);
+            if (nextIndex <= -1) nextIndex = tagAdjustments.length();
+            adjustmentList.add(tagAdjustments.substring(index, nextIndex).trim());
+            index = nextIndex + 1;
+        }
+        interpretTagAdjustments(adjustmentList);
+
         for (int id : entityStruct.getTagIDs()){
             addTag(id, this);
         }
@@ -353,6 +364,7 @@ public class Entity extends TagHolder implements Serializable {
         ArrayList<EntityArg> args = new ArrayList<>();
         args.add(new EntityArg("name", name));
         args.add(new EntityArg("icon", icon.toString()));
+        args.add(new EntityArg("tagAdj", ""));
         return args;
     }
 

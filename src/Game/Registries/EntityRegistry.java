@@ -7,6 +7,7 @@ import Game.Entities.PuzzleElements.*;
 import Game.PlayerShadow;
 
 import java.awt.*;
+import java.awt.print.Paper;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -62,6 +63,7 @@ public class EntityRegistry {
         registerEntity(23, "Photogate",    new SpecialText('!', new Color(42,  42,  86),  new Color(20, 20, 51, 100)),   Photogate.class, TagRegistry.IMMOVABLE);
         registerEntity(BRAMBLE, "Bramble", new SpecialText('#', new Color(126, 255, 109), new Color(82, 230, 91, 75)),   Bramble.class, TagRegistry.FLAMMABLE, TagRegistry.PRICKLY, TagRegistry.NO_PATHING, TagRegistry.BURN_SPREAD);
         registerEntity(25, "Explosive Crate",    new SpecialText('X', new Color(220, 128, 61), new Color(134, 82, 11)),  Photogate.class, TagRegistry.IMMOVABLE, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE, TagRegistry.EXPLOSIVE);
+        registerEntity(26, "Paperweight",  new SpecialText('.', new Color(200, 200, 220), new Color(100, 100, 110)),     Paperweight.class);
 
         //Registering stuff ends here
     }

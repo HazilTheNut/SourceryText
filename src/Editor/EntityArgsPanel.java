@@ -47,8 +47,9 @@ public class EntityArgsPanel extends JPanel {
                 }
             }
         }
+        int width = calculateLabelWidth(entityStruct);
         for (EntityArg arg : entityStruct.getArgs()){
-            argEditorPanel.add(new ArgEditor(arg));
+            argEditorPanel.add(new ArgEditor(arg, width));
         }
 
         JScrollPane scrollPane = new JScrollPane(argEditorPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -89,12 +90,21 @@ public class EntityArgsPanel extends JPanel {
                     writeArgValue(entityStruct, arg.getArgName(), arg.getArgValue()); //Write stuff onto the entity struct
                 }
             }
+            int width = calculateLabelWidth(entityStruct);
             for (EntityArg arg : entityStruct.getArgs()){ //Update editors once finished
-                argEditorPanel.add(new ArgEditor(arg));
+                argEditorPanel.add(new ArgEditor(arg, width));
             }
             argEditorPanel.validate();
             argEditorPanel.repaint();
         }
+    }
+
+    private int calculateLabelWidth(EntityStruct entityStruct){
+        FontMetrics metrics = getFontMetrics(getFont());
+        int maxWidth = 0;
+        for (EntityArg arg : entityStruct.getArgs())
+            maxWidth = Math.max(maxWidth, metrics.stringWidth(arg.getArgName()));
+        return maxWidth + 15;
     }
 
     private void writeArgValue(EntityStruct entityStruct, String name, String value){
@@ -118,11 +128,11 @@ public class EntityArgsPanel extends JPanel {
         JLabel argNameLabel;
         JTextField argValueField;
 
-        private ArgEditor(EntityArg arg){
+        private ArgEditor(EntityArg arg, int labelWidth){
             setLayout(new BorderLayout()); //BorderLayout used because it does pack things.
 
             argNameLabel = new JLabel(arg.getArgName() + ": ", SwingConstants.TRAILING);
-            argNameLabel.setPreferredSize(new Dimension(80, 25));
+            argNameLabel.setPreferredSize(new Dimension(labelWidth, 25));
             argNameLabel.setBorder(BorderFactory.createEtchedBorder());
 
             argValueField = new JTextField(arg.getArgValue());

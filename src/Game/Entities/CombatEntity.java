@@ -139,7 +139,7 @@ public class CombatEntity extends Entity {
             } else if (entity != null) {
                 toContact = entity;
             }
-            if (getWeapon() != null)
+            if (getWeapon() != noWeapon)
                 getWeapon().onContact(toContact, getGameInstance(), Tag.CONTACT_HEAVY);
             else
                 onContact(toContact, getGameInstance(), Tag.CONTACT_HEAVY);

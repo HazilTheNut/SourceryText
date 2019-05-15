@@ -101,12 +101,9 @@ public class DebugCommandLine extends JPanel {
         try {
             Item item = ItemRegistry.generateItem(Integer.valueOf(args.get(1)), gameMaster.getCurrentGameInstance());
             item.setQty(Integer.valueOf(args.get(2)));
-            for (int i = 3; i < args.size(); i++) {
-                int tagId = Integer.valueOf(args.get(i));
-                if (args.get(i).charAt(0) == '-')
-                    item.removeTag(Math.abs(tagId));
-                else
-                    item.addTag(tagId, item);
+            if (args.size() > 3) {
+                ArrayList<String> adjustments = new ArrayList<>(args.subList(3, args.size()));
+                item.interpretTagAdjustments(adjustments);
             }
             gameMaster.getCurrentGameInstance().getPlayer().addItem(item);
             return "Item \'" + item.getItemData().toString() + "\' added to player inventory";
