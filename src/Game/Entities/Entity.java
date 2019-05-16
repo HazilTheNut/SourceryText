@@ -411,8 +411,6 @@ public class Entity extends TagHolder implements Serializable {
         //DebugWindow.reportf(DebugWindow.MISC, "Entity.updateSprite","Original sprite for %1$s: %2$s", getClass().getSimpleName(), originalSprite);
         if (isVisible())
             sprite.editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), colorateWithTags(originalSprite.getFgColor()), originalSprite.getBkgColor()));
-        else
-            sprite.editLayer(0, 0, new SpecialText(' '));
     }
 
     public void setIcon(SpecialText icon) {

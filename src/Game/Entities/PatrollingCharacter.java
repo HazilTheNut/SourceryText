@@ -28,6 +28,7 @@ public class PatrollingCharacter extends GameCharacter {
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("patrolPath","[0,0],[0,0],[0,0],..."));
+        args.add(new EntityArg("startDir","NORTH"));
         return args;
     }
 
@@ -37,6 +38,16 @@ public class PatrollingCharacter extends GameCharacter {
         patrolPath = readCoordListArg(searchForArg(entityStruct.getArgs(), "patrolPath"));
         patrolPath.add(0, getLocation().copy());
         patrolPathPointer = 0;
+        switch (readStrArg(searchForArg(entityStruct.getArgs(), "startDir"), "NORTH").toUpperCase()){
+            case "NORTH":
+                direction = NORTH;
+            case "SOUTH":
+                direction = SOUTH;
+            case "EAST":
+                direction = EAST;
+            case "WEST":
+                direction = WEST;
+        }
     }
 
     private boolean shouldMove = false;
@@ -44,8 +55,8 @@ public class PatrollingCharacter extends GameCharacter {
     @Override
     protected void doIdleBehavior() {
         super.doIdleBehavior();
-        if (getLocation().equals(patrolPath.get(patrolPathPointer))){
-            patrolPathPointer++;
+        if (getLocation().equals(patrolPath.get(patrolPathPointer))){ //If reached one of the points in the walking path
+            patrolPathPointer++; //Start going towards next path point
             if (patrolPathPointer >= patrolPath.size()) patrolPathPointer = 0;
         } else {
             if (shouldMove) //Moves every other turn
@@ -56,7 +67,7 @@ public class PatrollingCharacter extends GameCharacter {
 
     @Override
     protected void wanderTo(Coordinate pos) {
-        if (mentalState == STATE_SEARCHING) super.wanderTo(pos);
+        if (!searchForEnemies() && mentalState == STATE_SEARCHING) super.wanderTo(pos);
     }
 
     @Override

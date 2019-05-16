@@ -59,6 +59,10 @@ public class RoomCover extends Entity implements Powerable {
     }
 
     private void createCover(){
+        if (ignoreWalls){
+            coverLayer.fillLayer(getSprite().getSpecialText(0, 0));
+            return;
+        }
         ArrayList<Coordinate> locs = new ArrayList<>();
         locs.add(getLocation());
         for (int i = 0; i < locs.size();) {
@@ -78,11 +82,11 @@ public class RoomCover extends Entity implements Powerable {
             coverLayer.editLayer(loc.subtract(coverLayer.getPos()), getSprite().getSpecialText(0,0));
         }
         if (!getSprite().getSpecialText(0,0).getBkgColor().equals(Color.BLACK))
-            DebugWindow.reportf(DebugWindow.STAGE, "RoomCover.createCover","txt: %1$s", getSprite().getSpecialText(0,0));
+            DebugWindow.reportf(DebugWindow.MISC, "RoomCover.createCover","txt: %1$s", getSprite().getSpecialText(0,0));
     }
 
     private void attemptPoint(Coordinate origin, Coordinate attempt, ArrayList<Coordinate> locs){
-        boolean isSpace = ignoreWalls || (includeWalls && gi.isSpaceAvailable(origin, TagRegistry.TILE_WALL)) || (!includeWalls && gi.isSpaceAvailable(attempt, TagRegistry.TILE_WALL));
+        boolean isSpace = (includeWalls && gi.isSpaceAvailable(origin, TagRegistry.TILE_WALL)) || (!includeWalls && gi.isSpaceAvailable(attempt, TagRegistry.TILE_WALL));
         boolean alreadyThere = !locs.contains(attempt);
         boolean isBounded = !coverLayer.isLayerLocInvalid(attempt.subtract(coverLayer.getPos()));
         if (isSpace && alreadyThere && isBounded){

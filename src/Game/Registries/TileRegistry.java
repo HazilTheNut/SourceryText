@@ -32,6 +32,7 @@ public class TileRegistry {
         registerTile(12, "Space",         new SpecialText('+', new Color(45, 45, 45),    new Color(10, 10, 10)),    TagRegistry.SLIDING, TagRegistry.NO_GRAVITY);
         registerTile(13, "Clay",          new SpecialText(' ', new Color(20, 20, 20),    new Color(110, 70, 20)),   TagRegistry.NO_PATHING, TagRegistry.TILE_WALL, TagRegistry.DIGGABLE, TagRegistry.SAND);
         registerTile(14, "Wooden Table",  new SpecialText('m', new Color(136, 68, 20),   new Color(95, 45, 10)),    TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE);
+        registerTile(15, "Metallic Wall", new SpecialText('x', new Color(255, 255, 220), new Color(175, 175, 150)), TagRegistry.NO_PATHING, TagRegistry.TILE_WALL, TagRegistry.METALLIC);
 
         //Registering stuff ends here
     }

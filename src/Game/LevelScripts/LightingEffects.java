@@ -148,7 +148,7 @@ public class LightingEffects extends LevelScript {
         for (int col = 0; col < level.getBackdrop().getCols(); col++) { //Iterate over every part of the level.
             for (int row = 0; row < level.getBackdrop().getRows(); row++) {
                 //double lightness = (masterLightMap[col][row]);
-                double lightness = Math.sqrt(masterLightMap[col][row]);
+                double lightness = (masterLightMap[col][row]);
                 double warmLightingCutoff = 1;
                 if (lightness < 1){ //Draw the cold colors if it is dim.
                     int opacity = (int)(MAX_OPACITY_COLD * (1 - lightness));
@@ -220,7 +220,7 @@ public class LightingEffects extends LevelScript {
         //Apply smoothing
         smoothLightMap();
         smoothLightMap(); //Run a second pass to smooth things out further.
-        //curveLightmap();
+        curveLightmap();
     }
 
     private void smoothLightMap(){
@@ -262,7 +262,10 @@ public class LightingEffects extends LevelScript {
                 if (masterLightMap[col][row] < 1)
                     curvedLightMap[col][row] = Math.sqrt(masterLightMap[col][row]);
                 else
-                    curvedLightMap[col][row] = masterLightMap[col][row];
+                    curvedLightMap[col][row] = ((2 * masterLightMap[col][row]) + 1) / 3;
+                // L - ((L - 1) / D)
+                // (DL - (L - 1)) / D
+                // ((D - 1)L + 1) / D
             }
         }
         masterLightMap = curvedLightMap;

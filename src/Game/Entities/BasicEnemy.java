@@ -11,6 +11,7 @@ import Game.*;
 import Game.LevelScripts.LightingEffects;
 import Game.Registries.TagRegistry;
 import Game.Tags.RangeTag;
+import Game.Tags.Tag;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -114,7 +115,10 @@ public class BasicEnemy extends CombatEntity {
     }
 
     private void doAutonomousAI(){
-        if (weapon == null && getItems().size() > 0) pickNewWeapon(); //No Weapon? Try picking new ones if there's something in the inventory
+        if (weapon == null && getItems().size() > 0){ //No Weapon? Try picking new ones if there's something in the inventory
+            if (pickNewWeapon())
+                return; //Just like for the player, picking a weapon should take one turn.
+        }
         if (target != null) {
             int hp = target.getHealth();
             if (hp <= 0) {
@@ -147,24 +151,35 @@ public class BasicEnemy extends CombatEntity {
     }
 
     protected void wanderTo(Coordinate pos){
-        CombatEntity nearest = getNearestEnemy();
-        if (nearest != null) {
-            setTarget(nearest);
-            alertNearbyAllies(); //Let everyone know
-        } else if (pos != null && getLocation().stepDistance(pos) > 0){
+        if (!searchForEnemies() && pos != null && getLocation().stepDistance(pos) > 0){
             pathToPosition(pos);
         } else {
             mentalState = STATE_IDLE;
         }
     }
 
+    /**
+     * A wrapper for getNearestEnemy() which also sets its target and alerts friendlies if something is found
+     *
+     * @return If an enemy has been found.
+     */
+    protected boolean searchForEnemies(){
+        CombatEntity nearest = getNearestEnemy();
+        if (nearest != null) {
+            setTarget(nearest);
+            alertNearbyAllies(); //Let everyone know
+            return true;
+        }
+        return false;
+    }
+
     private void doHostileBehavior(){
-        boolean performNormalBehavior = true;
+        boolean performNormalBehavior = target != null;
         if (behaviorTime > 0){ //Special behaviors override normal behavior
             if (behavior == BEHAVIOR_ORBITING)
-                performNormalBehavior = doOrbitingSpecialBehavior();
+                performNormalBehavior &= doOrbitingSpecialBehavior();
             else if (behavior == BEHAVIOR_GROUPING)
-                performNormalBehavior = doGroupingSpecialBehavior();
+                performNormalBehavior &= doGroupingSpecialBehavior();
         }
         if (performNormalBehavior){
             if (isRanged())
@@ -199,12 +214,14 @@ public class BasicEnemy extends CombatEntity {
         pathToPosition(getLocation().add(movementVector));
     }
 
+    //For Special Behaviors, they return false if the normal behavior should be overridden, and return true if normal behavior should instead continue
+
     private boolean doOrbitingSpecialBehavior(){
         double dist = getLocation().hypDistance(target.getLocation());
         if (dist > 2 && dist <= 4){
             moveTangentToTarget();
             behaviorTime--;
-            return false; //Return value is written onto performNormalBehavior
+            return false;
         }
         return true;
     }
@@ -319,7 +336,6 @@ public class BasicEnemy extends CombatEntity {
             setTarget((CombatEntity)source, true); //Target the source of the damage
             alertNearbyAllies();
         }
-        pickNewWeapon();
     }
 
     private void setTarget(CombatEntity target, boolean urgent){
@@ -328,7 +344,7 @@ public class BasicEnemy extends CombatEntity {
         if (!target.equals(this) && targetValid && correctMentalState) {
             this.target = target;
             mentalState = STATE_HOSTILE;
-            behaviorTime = 10; //TODO: Time spent on special behavior may need to change for each type of behavior
+            behaviorTime = 10; //Time spent on special behavior may need to change for each type of behavior
             searchPos = target.getLocation().copy();
         }
     }
@@ -391,26 +407,29 @@ public class BasicEnemy extends CombatEntity {
      *
      * It evaluates each tag of an item based upon pre-defined biases to calculate the 'value' of an item.
      * Item with highest value wins, becomes equipped as weapon.
+     *
+     * @return Whether or not a new weapon was selected
      */
-    protected void pickNewWeapon(){
+    protected boolean pickNewWeapon(){
         //Biases; The higher the number, the more valuable it is
         final double MULT_RANGED = (target != null && target.getLocation().boxDistance(getLocation()) <= 1) ? 0 : 3;
         final double MULT_SWEEP = 0.75; //Larger area of attack means accidentally hurting other enemies, so it devalues for enemies.
         final double MULT_THRUST = 1.5;
         final double MULT_FIRE = 1.5;
-        final double MULT_ICE = 2.5;
+        final double MULT_ENCH = 2;
         //Calculation
         double topScore = 0;
         Item bestItem = null;
         DebugWindow.reportf(DebugWindow.GAME, "BasicEnemy.pickNewWeapon", "Evaluating...");
         for (Item item : getItems()){
             double value = item.getDamageTagAmount();
-            if (item.hasTag(TagRegistry.WEAPON_SWEEP))  value *= MULT_SWEEP;
-            if (item.hasTag(TagRegistry.WEAPON_THRUST)) value *= MULT_THRUST;
-            if (item.hasTag(TagRegistry.ON_FIRE))       value *= MULT_FIRE;
-            if (item.hasTag(TagRegistry.FLAME_ENCHANT)) value *= MULT_FIRE;
-            if (item.hasTag(TagRegistry.FROST_ENCHANT)) value *= MULT_ICE;
-            if (item.hasTag(TagRegistry.WEAPON_BOW))    value *= MULT_RANGED;
+            for (Tag tag : item.getTags()) {
+                if (tag.getId() == (TagRegistry.WEAPON_SWEEP)) value *= MULT_SWEEP;
+                if (tag.getId() == (TagRegistry.WEAPON_THRUST)) value *= MULT_THRUST;
+                if (tag.getId() == (TagRegistry.ON_FIRE)) value *= MULT_FIRE;
+                if (tag.getId() == (TagRegistry.WEAPON_BOW)) value *= MULT_RANGED;
+                if (tag.getTagType() == Tag.TYPE_ENCHANTMENT) value *= MULT_ENCH;
+            }
             if (value > topScore){
                 topScore = value;
                 bestItem = item;
@@ -418,8 +437,11 @@ public class BasicEnemy extends CombatEntity {
             DebugWindow.reportf(DebugWindow.GAME, "","> item: %1$-17s value: %2$f", item.getItemData().getName(), value); //The 'Game' tab is not caption-sensitive, so this is fine
         }
         if (bestItem != null) {
+            boolean isNewWeapon = !bestItem.equals(weapon);
             setWeapon(bestItem);
+            return isNewWeapon; //Boolean stored as temp since setWeapon() would alter result
         }
+        return false;
     }
 
     private boolean targetWithinAttackRange(){

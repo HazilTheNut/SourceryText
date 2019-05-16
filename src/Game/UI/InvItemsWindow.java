@@ -80,6 +80,8 @@ public class InvItemsWindow extends InvWindow {
             Color mainFontColor = InventoryPanel.FONT_WHITE;
             if (item.hasTag(TagRegistry.IMPORTANT)) mainFontColor = InventoryPanel.FONT_LIGHT_GRAY;
             if (!inventoryPanel.isPlayerPanel() && itemTooHeavyForPlayerToCarry(item, item.calculateWeight())) mainFontColor = InventoryPanel.FONT_RED;
+            if (inventoryPanel.getViewingEntity() instanceof CombatEntity)
+                if (((CombatEntity)inventoryPanel.getViewingEntity()).getWeapon().equals(item)) mainFontColor = InventoryPanel.FONT_GREEN;
             //Begin drawing
             windowLayer.inscribeString(item.getItemData().getName(), itemDisplayOffset, i + getExtraTopDrawSpace(), mainFontColor);
             if (item.getStackability() != Item.NO_QUANTITY) {

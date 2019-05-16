@@ -355,8 +355,8 @@ public class Player extends GameCharacter implements GameInputReciever {
     }
 
     @Override
-    protected void pickNewWeapon() {
-
+    protected boolean pickNewWeapon() {
+        return false;
     }
 
     @Override
