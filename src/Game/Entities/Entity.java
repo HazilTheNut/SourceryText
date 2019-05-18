@@ -70,22 +70,6 @@ public class Entity extends TagHolder implements Serializable {
         String defName = EntityRegistry.getEntityStruct(entityStruct.getEntityId()).getEntityName(); //Default name
         name = readStrArg(searchForArg(entityStruct.getArgs(), "name"), defName); //Searches for name in args list
 
-        icon = readSpecTxtArg(searchForArg(entityStruct.getArgs(), "icon"), icon);
-        int layerPriority = (isSolid()) ? LayerImportances.ENTITY_SOLID : LayerImportances.ENTITY;
-        sprite = new Layer(new SpecialText[1][1], createEntityLayerName(entityStruct, pos), getLocation().getX(), getLocation().getY(), layerPriority);
-        sprite.editLayer(0, 0, icon);
-
-        String tagAdjustments = readStrArg(searchForArg(entityStruct.getArgs(), "tagAdj"), "");
-        int index = 0;
-        ArrayList<String> adjustmentList = new ArrayList<>();
-        while (index < tagAdjustments.length()){
-            int nextIndex = tagAdjustments.indexOf(' ', index);
-            if (nextIndex <= -1) nextIndex = tagAdjustments.length();
-            adjustmentList.add(tagAdjustments.substring(index, nextIndex).trim());
-            index = nextIndex + 1;
-        }
-        interpretTagAdjustments(adjustmentList);
-
         for (int id : entityStruct.getTagIDs()){
             addTag(id, this);
         }
@@ -93,12 +77,30 @@ public class Entity extends TagHolder implements Serializable {
             Item item = ItemRegistry.generateItem(struct, gameInstance);
             addItem(item);
         }
+
+        //Process tag adjustments
+        String tagAdjustments = readStrArg(searchForArg(entityStruct.getArgs(), "tagAdj"), "");
+        int index = 0;
+        ArrayList<String> adjustmentList = new ArrayList<>();
+        while (index < tagAdjustments.length()){ //Split up string using the ' ' character as a separator.
+            int nextIndex = tagAdjustments.indexOf(' ', index);
+            if (nextIndex <= -1) nextIndex = tagAdjustments.length();
+            adjustmentList.add(tagAdjustments.substring(index, nextIndex).trim());
+            index = nextIndex + 1;
+        }
+        interpretTagAdjustments(adjustmentList);
+
+        //Display stuff. Entity solidity is defined by presence of NO_PATHING tag, which can be altered by the tag adjustments.
+        icon = readSpecTxtArg(searchForArg(entityStruct.getArgs(), "icon"), icon);
+        int layerPriority = (isSolid()) ? LayerImportances.ENTITY_SOLID : LayerImportances.ENTITY;
+        sprite = new Layer(new SpecialText[1][1], createEntityLayerName(entityStruct, pos), getLocation().getX(), getLocation().getY(), layerPriority);
+        sprite.editLayer(0, 0, icon);
     }
 
-    public boolean isSolid() { return isAlive; }
+    public boolean isSolid() { return isAlive && hasTag(TagRegistry.NO_PATHING); }
 
     //Marking this is false will totally conceal the entity
-    public boolean isVisible() { return getSprite().getVisible(); }
+    public boolean isVisible() { return getSprite() != null && getSprite().getVisible(); }
 
     //Being "alive" means that this Entity has not self-destructed yet, and therefore "in the game".
     public boolean isAlive() {
@@ -560,6 +562,7 @@ public class Entity extends TagHolder implements Serializable {
             if (arg.getArgName().equals(name))
                 return arg;
         }
+        DebugWindow.reportf(DebugWindow.MISC, "Entity.searchForArg","Arg \"%1$s\" could not be found!", name);
         return null;
     }
 

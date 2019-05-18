@@ -28,19 +28,23 @@ public class Sign extends Entity {
 
     private String text;
     private int fireLifetime = -1;
+    private boolean showSpeaker;
 
     @Override
     public ArrayList<EntityArg> generateArgs() {
         ArrayList<EntityArg> args = super.generateArgs();
         args.add(new EntityArg("text", ""));
-        args.add(new EntityArg("flammable", "true"));
+        args.add(new EntityArg("showSpeaker","true"));
         return args;
     }
 
     @Override
     public void onInteract(Player player) {
         if (!text.equals("")){
-            gi.getTextBox().showMessage(text, getName());
+            if (showSpeaker)
+                gi.getTextBox().showMessage(text, getName());
+            else
+                gi.getTextBox().showMessage(text);
         }
     }
 
@@ -48,9 +52,7 @@ public class Sign extends Entity {
     public void initialize(Coordinate pos, LayerManager lm, EntityStruct entityStruct, GameInstance gameInstance) {
         super.initialize(pos, lm, entityStruct, gameInstance);
         text = readStrArg(searchForArg(entityStruct.getArgs(), "text"), "");
-        if (!readBoolArg(searchForArg(entityStruct.getArgs(), "flammable"), true)){
-            removeTag(TagRegistry.FLAMMABLE);
-        }
+        showSpeaker = readBoolArg(searchForArg(entityStruct.getArgs(), "showSpeaker"), true);
     }
 
     @Override
