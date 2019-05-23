@@ -224,9 +224,9 @@ public class Projectile extends TagHolder {
     void collide(TagHolder other, int baseDamage){
         TagEvent dmgEvent;
         if (source != null)
-            dmgEvent = new TagEvent(baseDamage, true, source, other, gi, this);
+            dmgEvent = new TagEvent(baseDamage, source, other, gi, this);
         else
-            dmgEvent = new TagEvent(baseDamage, true, this, other, gi, this);
+            dmgEvent = new TagEvent(baseDamage, this, other, gi, this);
         iconLayer.setVisible(false);
         for (Tag tag : getTags()) tag.onDealDamage(dmgEvent);
         dmgEvent.doFutureActions();
@@ -261,7 +261,7 @@ public class Projectile extends TagHolder {
             return;
         Tile belowTile = gi.getTileAt(loc);
         if (belowTile != null) {
-            TagEvent e = new TagEvent(0, true, this, belowTile, gi, this);
+            TagEvent e = new TagEvent(0, this, belowTile, gi, this);
             for (Tag tag : getTags()){
                 tag.onFlyOver(e);
             }

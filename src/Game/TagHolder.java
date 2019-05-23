@@ -46,7 +46,7 @@ public class TagHolder implements Serializable {
             return;
         if (!hasTag(tag.getId())) {
             tags.add(tag);
-            TagEvent e = new TagEvent(0, true, source, this, null, this);
+            TagEvent e = new TagEvent(0, source, this, null, this);
             for (int i = 0; i < tags.size(); i++){
                 tags.get(i).onAdd(e);
             }
@@ -102,7 +102,7 @@ public class TagHolder implements Serializable {
     }
 
     public void onLevelEnter(GameInstance gi){
-        TagEvent event = new TagEvent(0, true, this, this, gi, this);
+        TagEvent event = new TagEvent(0, this, this, gi, this);
         for (Tag tag : getTags()) {
             tag.onLevelEnter(event);
         }
@@ -141,7 +141,7 @@ public class TagHolder implements Serializable {
 
     public void onReceiveDamage(int amount, TagHolder source, GameInstance gi){
         if (!shouldContact(source, this)) return;
-        TagEvent dmgEvent = new TagEvent(amount, true, source, this, gi, this);
+        TagEvent dmgEvent = new TagEvent(amount, source, this, gi, this);
         for (Tag tag : getTags()){
             tag.onReceiveDamage(dmgEvent);
         }
@@ -209,7 +209,7 @@ public class TagHolder implements Serializable {
     }
 
     private void contactEvent(TagHolder source, TagHolder target, GameInstance gi, int strength){
-        TagEvent e = new TagEvent(strength, true, source, target, gi, source);
+        TagEvent e = new TagEvent(strength, source, target, gi, source);
         for (Tag tag : source.getTags()){
             tag.onContact(e);
         }

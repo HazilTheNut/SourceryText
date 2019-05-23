@@ -106,7 +106,7 @@ public class Explosion extends TagHolder{
     public void addTag(Tag tag, TagHolder source) {
         if (!hasTag(tag.getId())) {
             getTags().add(tag);
-            TagEvent e = new TagEvent(0, true, source, this, null, this);
+            TagEvent e = new TagEvent(0, source, this, null, this);
             for (int i = 0; i < getTags().size(); i++){
                 getTags().get(i).onAdd(e);
             }

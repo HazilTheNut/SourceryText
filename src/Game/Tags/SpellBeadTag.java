@@ -1,6 +1,7 @@
 package Game.Tags;
 
 import Data.SerializationVersion;
+import Game.Item;
 import Game.Player;
 import Game.TagEvent;
 
@@ -12,6 +13,6 @@ public class SpellBeadTag extends Tag {
     public void onItemUse(TagEvent e) {
         Player player = e.getGameInstance().getPlayer();
         player.incrementSpellBeads();
-        e.setSuccess(true);
+        e.setAmount(Item.EVENT_QTY_CONSUMED);
     }
 }

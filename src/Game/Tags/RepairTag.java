@@ -2,6 +2,7 @@ package Game.Tags;
 
 import Data.SerializationVersion;
 import Game.Entities.CombatEntity;
+import Game.Item;
 import Game.TagEvent;
 
 /**
@@ -36,7 +37,7 @@ public class RepairTag extends Tag{
             if (combatEntity.getWeapon().getItemData().getItemId() > 0){
                 int durability = combatEntity.getWeapon().getItemData().getQty();
                 e.addCancelableAction(event -> combatEntity.getWeapon().getItemData().setQty(Math.min(durability + repairAmount, 99)));
-                e.setSuccess(true);
+                e.setAmount(Item.EVENT_QTY_CONSUMED);
             }
         }
     }

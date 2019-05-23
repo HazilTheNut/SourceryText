@@ -1,6 +1,7 @@
 package Game.Tags.SpellLearningTags;
 
 import Data.SerializationVersion;
+import Game.Item;
 import Game.Spells.MagicBombSpell;
 import Game.TagEvent;
 
@@ -13,6 +14,6 @@ public class LearnMagicBombTag extends LearnSpellTag {
 
     @Override
     public void onItemUse(TagEvent e) {
-        e.setSuccess(givePlayerSpell(e.getTarget(), new MagicBombSpell()));
+        if (givePlayerSpell(e.getTarget(), new MagicBombSpell())) e.setAmount(Item.EVENT_QTY_CONSUMED);
     }
 }

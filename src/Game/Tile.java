@@ -58,7 +58,7 @@ public class Tile extends TagHolder implements Serializable {
     }
 
     public void onTurn(GameInstance gi){
-        TagEvent event = new TagEvent(0, true, this, gi.getCurrentLevel().getSolidEntityAt(location), gi, this);
+        TagEvent event = new TagEvent(0, this, gi.getCurrentLevel().getSolidEntityAt(location), gi, this);
         for (Tag tag : getTags()){
             tag.onTurn(event);
         }

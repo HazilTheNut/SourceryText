@@ -1,6 +1,7 @@
 package Game.Tags.SpellLearningTags;
 
 import Data.SerializationVersion;
+import Game.Item;
 import Game.Spells.MagicArrowSpell;
 import Game.TagEvent;
 
@@ -13,6 +14,6 @@ public class LearnMagicBoltTag extends LearnSpellTag {
 
     @Override
     public void onItemUse(TagEvent e) {
-        e.setSuccess(givePlayerSpell(e.getTarget(), new MagicArrowSpell()));
+        if (givePlayerSpell(e.getTarget(), new MagicArrowSpell())) e.setAmount(Item.EVENT_QTY_CONSUMED);
     }
 }

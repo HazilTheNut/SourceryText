@@ -14,16 +14,15 @@ public class TagEvent {
      *
      * It has the following features:
      *  > amount             : An adjustable number throughout the event. Be careful with multiplicative types of operations, considering that Tags can be called upon in any order
-     *  > success            : An adjustable boolean throughout the event. Events that are not successful will prevent that action. (Although there are special cases)
-     *  > cancel             : The entire event can be canceled, overriding the 'success' feature, and it cannot be undone.
+     *  > cancel             : The entire event can be canceled; once set to true, it cannot be set back to false.
      *  > target and source  : The cause of the event and the receiving end are both known to all the Tags
+     *  > tagOwner           : The TagHolder that owns the Tag. Target and Source are occasionally both not the tag owner.
      *  > cancelable actions : Some actions can be set to only run if the event is successful and is not canceled.
      *  > future actions     : Some actions can be set to only run after all Tags are parsed. For example, adding and removing Tags will cause ConcurrentModificationExceptions if they are done in the future.
      *  > gi (GameInstance)  : In most cases, the GameInstance is known.
      */
 
     private int amount;
-    private boolean successful;
     private boolean canceled;
 
     private TagHolder target;
@@ -35,9 +34,8 @@ public class TagEvent {
     private ArrayList<EventAction> cancelableActions = new ArrayList<>(); //Useful for when you want do something when the event doesn't get cancelled
     private ArrayList<EventAction> futureActions     = new ArrayList<>(); //Useful for when you wnt to do things after all the tags are processed
 
-    public TagEvent(int startingAmount, boolean successful, TagHolder source, TagHolder target, GameInstance gameInstance, TagHolder tagOwner){
+    public TagEvent(int startingAmount, TagHolder source, TagHolder target, GameInstance gameInstance, TagHolder tagOwner){
         amount = startingAmount;
-        this.successful = successful;
         canceled = false;
         this.target = target;
         this.source = source;
@@ -47,12 +45,6 @@ public class TagEvent {
 
     public GameInstance getGameInstance() {
         return gi;
-    }
-
-    public void setSuccess(boolean success) { successful = success; }
-
-    public boolean isSuccessful() {
-        return successful;
     }
 
     public boolean isCanceled() {
@@ -81,7 +73,7 @@ public class TagEvent {
         return tagOwner;
     }
 
-    public boolean eventPassed() { return isSuccessful() && !isCanceled(); }
+    public boolean eventPassed() { return !isCanceled(); }
 
     public void addCancelableAction(EventAction e){ cancelableActions.add(e); }
 

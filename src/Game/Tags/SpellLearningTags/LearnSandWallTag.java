@@ -1,6 +1,7 @@
 package Game.Tags.SpellLearningTags;
 
 import Data.SerializationVersion;
+import Game.Item;
 import Game.Spells.SandWallSpell;
 import Game.TagEvent;
 
@@ -13,6 +14,6 @@ public class LearnSandWallTag extends LearnSpellTag {
 
     @Override
     public void onItemUse(TagEvent e) {
-        e.setSuccess(givePlayerSpell(e.getTarget(), new SandWallSpell()));
+        if (givePlayerSpell(e.getTarget(), new SandWallSpell())) e.setAmount(Item.EVENT_QTY_CONSUMED);
     }
 }

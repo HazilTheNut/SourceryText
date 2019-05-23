@@ -78,7 +78,7 @@ public class Tag implements Serializable {
 
     //Upon when the TagHolder Item is 'used'
     //Source: the item being used
-    //Target: tag owner
+    //Target: the TagHolder the item is being used on
     public void onItemUse(TagEvent e) {}
 
     //Upon dealing damage, useful for calculating the total damage of an attack

@@ -1,6 +1,8 @@
 package Game.Tags.SpellLearningTags;
 
 import Data.SerializationVersion;
+import Game.Item;
+import Game.Spells.AquamancySpell;
 import Game.Spells.FireBoltSpell;
 import Game.TagEvent;
 
@@ -13,6 +15,6 @@ public class LearnFireBoltTag extends LearnSpellTag {
 
     @Override
     public void onItemUse(TagEvent e) {
-        e.setSuccess(givePlayerSpell(e.getTarget(), new FireBoltSpell()));
+        if (givePlayerSpell(e.getTarget(), new FireBoltSpell())) e.setAmount(Item.EVENT_QTY_CONSUMED);
     }
 }

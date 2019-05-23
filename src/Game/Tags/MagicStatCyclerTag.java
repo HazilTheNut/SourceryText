@@ -1,6 +1,7 @@
 package Game.Tags;
 
 import Data.SerializationVersion;
+import Game.Item;
 import Game.Player;
 import Game.TagEvent;
 
@@ -16,12 +17,12 @@ public class MagicStatCyclerTag extends Tag {
             for (int i = 0; i < cycleValues.length; i++) {
                 if (target.getMagicPower() == cycleValues[i]) {
                     target.setMagicPower(cycleValues[(i + 1) % cycleValues.length]);
-                    e.setSuccess(true);
+                    e.setAmount(Item.EVENT_TURN_USED);
                     return;
                 }
             }
             target.setMagicPower(0);
-            e.setSuccess(true);
+            e.setAmount(Item.EVENT_TURN_USED);
         }
     }
 }

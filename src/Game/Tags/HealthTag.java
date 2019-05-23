@@ -5,6 +5,7 @@ import Data.SerializationVersion;
 import Engine.Layer;
 import Engine.SpecialText;
 import Game.Entities.Entity;
+import Game.Item;
 import Game.TagEvent;
 
 import java.awt.*;
@@ -41,7 +42,7 @@ public class HealthTag extends Tag{
             }
             e.getTarget().heal(healthAmount);
         });
-        e.setSuccess(true);
+        e.setAmount(Item.EVENT_QTY_CONSUMED);
     }
 
     public int getHealthAmount() {

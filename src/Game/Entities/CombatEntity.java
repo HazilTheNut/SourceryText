@@ -1,7 +1,6 @@
 package Game.Entities;
 
 import Data.*;
-import Engine.Layer;
 import Engine.LayerManager;
 import Engine.SpecialText;
 import Game.*;
@@ -159,7 +158,7 @@ public class CombatEntity extends Entity {
      */
     protected void doAttackEvent(CombatEntity ce){
         if (getWeapon() != null && doSwingEvent(ce)) {
-            TagEvent event = new TagEvent(strength, true, this, ce, getGameInstance(), getWeapon());
+            TagEvent event = new TagEvent(strength, this, ce, getGameInstance(), getWeapon());
             for (Tag tag : getWeapon().getTags())
                 tag.onDealDamage(event);
             event.doFutureActions();
@@ -180,7 +179,7 @@ public class CombatEntity extends Entity {
 
     private boolean doSwingEvent(CombatEntity target){
         if (!shouldContact(getWeapon(), target)) return false;
-        TagEvent swingEvent = new TagEvent(100, true, this, getWeapon(), getGameInstance(), this);
+        TagEvent swingEvent = new TagEvent(100, this, getWeapon(), getGameInstance(), this);
         for (Tag tag : getTags())
             tag.onWeaponSwing(swingEvent);
         swingEvent.doFutureActions();

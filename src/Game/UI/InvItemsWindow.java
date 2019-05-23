@@ -188,7 +188,7 @@ public class InvItemsWindow extends InvWindow {
                     TagEvent e = item.onItemUse(player);
                     if (!e.isCanceled()){
                         inventoryPanel.rebuildPanel();
-                        if (e.eventPassed())
+                        if (e.getAmount() >= Item.EVENT_TURN_USED)
                             player.doEnemyTurn();
                     }
                     player.unfreeze();

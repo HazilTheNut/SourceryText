@@ -1,6 +1,7 @@
 package Game.Tags.SpellLearningTags;
 
 import Data.SerializationVersion;
+import Game.Item;
 import Game.Spells.LocumancySpell;
 import Game.TagEvent;
 
@@ -13,6 +14,6 @@ public class LearnLocumancyTag extends LearnSpellTag {
 
     @Override
     public void onItemUse(TagEvent e) {
-        e.setSuccess(givePlayerSpell(e.getTarget(), new LocumancySpell()));
+        if (givePlayerSpell(e.getTarget(), new LocumancySpell())) e.setAmount(Item.EVENT_QTY_CONSUMED);
     }
 }

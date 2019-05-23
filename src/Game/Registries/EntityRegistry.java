@@ -37,14 +37,14 @@ public class EntityRegistry {
 
         registerEntity(0,  "Dummy",        new SpecialText('D'),                                                         Dummy.class, TagRegistry.FLAMMABLE, TagRegistry.NO_PATHING, TagRegistry.LIVING);
         registerEntity(1,  "Save Point",   new SpecialText('S', new Color(40, 225, 115), new Color(20, 100, 80, 40)),    SavePoint.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
-        registerEntity(2,  "Basic Enemy",  new SpecialText('E', new Color(255, 130, 130), new Color(255, 180, 180, 15)), BasicEnemy.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING);
+        registerEntity(2,  "Basic Enemy",  new SpecialText('E', new Color(255, 130, 130), new Color(255, 180, 180, 15)), BasicEnemy.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING, TagRegistry.NO_PATHING);
         registerEntity(3,  "Sign",         new SpecialText('S', new Color(110, 100, 250), new Color(55, 50, 125, 30)),   Sign.class, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE);
         registerEntity(4,  "Chest",        new SpecialText('C', new Color(245, 245, 175), new Color(175, 100,  35, 45)), Chest.class, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE);
         registerEntity(5,  "Door",         new SpecialText('-', new Color(143, 74, 17),   new Color(75, 45, 10, 50)),    Door.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(6,  "Locked Door",  new SpecialText('-', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    LockedDoor.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(LOOT_PILE, "Loot",  new SpecialText('%', new Color(191, 191, 75),  new Color(155, 155, 60, 15)),  LootPile.class);
         registerEntity(8,  "One-Way Door", new SpecialText('x', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    OneWayDoor.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
-        registerEntity(9,  "Magnet",       new SpecialText('M', new Color(145, 145, 145), new Color(45, 45, 45, 45)),    Magnet.class, TagRegistry.METALLIC);
+        registerEntity(9,  "Magnet",       new SpecialText('M', new Color(145, 145, 145), new Color(45, 45, 45, 45)),    Magnet.class, TagRegistry.METALLIC, TagRegistry.NO_PATHING);
         registerEntity(10, "Character",    new SpecialText('C', new Color(130, 255, 225), new Color(180, 255, 225, 15)), GameCharacter.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING, TagRegistry.NO_PATHING);
 
         registerEntity(11, "Floor Switch", new SpecialText('o', new Color(165, 165, 135), new Color(70, 70, 50, 75)),    FloorSwitch.class, TagRegistry.IMMOVABLE);
@@ -62,7 +62,7 @@ public class EntityRegistry {
         registerEntity(22, "Fan",          new SpecialText('/', new Color(150, 150, 200), new Color(100, 100, 125, 50)), Fan.class, TagRegistry.NO_PATHING, TagRegistry.METALLIC, TagRegistry.IMMOVABLE);
         registerEntity(23, "Photogate",    new SpecialText('!', new Color(42,  42,  86),  new Color(20, 20, 51, 100)),   Photogate.class, TagRegistry.IMMOVABLE);
         registerEntity(BRAMBLE, "Bramble", new SpecialText('#', new Color(126, 255, 109), new Color(82, 230, 91, 75)),   Bramble.class, TagRegistry.FLAMMABLE, TagRegistry.PRICKLY, TagRegistry.NO_PATHING, TagRegistry.BURN_SPREAD);
-        registerEntity(25, "Explosive Crate",    new SpecialText('X', new Color(220, 128, 61), new Color(134, 82, 11)),  Photogate.class, TagRegistry.IMMOVABLE, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE, TagRegistry.EXPLOSIVE);
+        registerEntity(25, "Explosive Crate",    new SpecialText('X', new Color(220, 128, 61), new Color(134, 82, 11)),  MovableCrate.class, TagRegistry.IMMOVABLE, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE, TagRegistry.EXPLOSIVE);
         registerEntity(26, "Paperweight",  new SpecialText('.', new Color(200, 200, 220), new Color(100, 100, 110)),     Paperweight.class);
 
         //Registering stuff ends here

@@ -102,6 +102,11 @@ public class Player extends GameCharacter implements GameInputReciever {
         factionAlignments.add("player");
     }
 
+    @Override
+    public boolean isSolid() {
+        return true;
+    }
+
     /**
      * Occurs upon the GameInstance initializing, gets the Player ready for game play.
      */

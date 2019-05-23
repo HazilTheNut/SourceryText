@@ -4,7 +4,6 @@ import Data.ItemStruct;
 import Data.SerializationVersion;
 import Game.Debug.DebugWindow;
 import Game.Entities.Entity;
-import Game.Registries.ItemRegistry;
 import Game.Tags.Tag;
 
 import java.io.Serializable;
@@ -31,6 +30,10 @@ public class Item extends TagHolder implements Serializable {
     public final static int STACKABLE     = 0; //Item can stack
     public final static int NON_STACKABLE = 1; //Item does not stack
     public final static int NO_QUANTITY   = 2; //Item does not degrade with usage, and also cannot stack. Quantity is unlisted.
+
+    public final static int EVENT_NO_EFFECT       = 0; //Default state for item usage event, where nothing happens
+    public final static int EVENT_TURN_USED       = 1; //Item usage event state where the turn of the item user should be used up, but the quantity of the item shouldn't decrease.
+    public final static int EVENT_QTY_CONSUMED    = 2; //Effectively states that the item's quantity got used up and the turn should accordingly be used up as well.
 
     public ItemStruct getItemData() { return itemData; }
 
@@ -91,9 +94,9 @@ public class Item extends TagHolder implements Serializable {
         TagEvent useEvent;
         if (target instanceof Entity) {
             Entity entity = (Entity) target;
-            useEvent = new TagEvent(0, false, this, target, entity.getGameInstance(), this);
+            useEvent = new TagEvent(EVENT_NO_EFFECT, this, target, entity.getGameInstance(), this);
         } else {
-            useEvent = new TagEvent(0, false, this, target, null, this);
+            useEvent = new TagEvent(EVENT_NO_EFFECT, this, target, null, this);
         }
         //Process event
         for (Tag tag : getTags()) {
@@ -104,7 +107,7 @@ public class Item extends TagHolder implements Serializable {
         useEvent.doFutureActions();
         if (!useEvent.isCanceled()){
             useEvent.doCancelableActions();
-            if (useEvent.isSuccessful())
+            if (useEvent.getAmount() >= EVENT_QTY_CONSUMED)
                 decrementQty();
         }
         return useEvent;

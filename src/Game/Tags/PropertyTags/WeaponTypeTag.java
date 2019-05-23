@@ -25,6 +25,7 @@ public class WeaponTypeTag extends Tag {
     @Override
     public void onItemUse(TagEvent e) {
         e.addCancelableAction(event -> assignWeapon(e));
+        e.setAmount(Item.EVENT_TURN_USED);
     }
 
     private void assignWeapon(TagEvent e){

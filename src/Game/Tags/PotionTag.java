@@ -3,7 +3,6 @@ package Game.Tags;
 import Data.SerializationVersion;
 import Game.Item;
 import Game.TagEvent;
-import Game.Tags.PotionEffectTags.PotionEffectTag;
 
 public class PotionTag extends Tag{
 
@@ -19,7 +18,7 @@ public class PotionTag extends Tag{
 
     @Override
     public void onItemUse(TagEvent e) {
-        e.setSuccess(true);
+        e.setAmount(Item.EVENT_QTY_CONSUMED);
         e.addCancelableAction(event -> {
             for (Tag tag : e.getTagOwner().getTags()){
                 if (tag.getTagType() == Tag.TYPE_POTIONEFFECT) {

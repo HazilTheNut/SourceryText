@@ -19,7 +19,9 @@ public class WeaponEnchantTag extends Tag {
         if (e.getTarget() instanceof CombatEntity) {
             CombatEntity combatEntity = (CombatEntity) e.getTarget();
             if (combatEntity.getWeapon().getItemData().getItemId() > 0){
-                e.setSuccess(enchantItem(combatEntity.getWeapon(), e.getGameInstance()));
+                boolean success = enchantItem(combatEntity.getWeapon(), e.getGameInstance());
+                if (success)
+                    e.setAmount(Item.EVENT_QTY_CONSUMED);
             }
         }
     }

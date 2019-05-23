@@ -157,7 +157,7 @@ public class Entity extends TagHolder implements Serializable {
     protected void setLocation(Coordinate pos) { location = pos; }
 
     public void move(int relativeX, int relativeY){
-        TagEvent moveEvent = new TagEvent(0, true, this, gi.getTileAt(getLocation().add(new Coordinate(relativeX, relativeY))), gi, this);
+        TagEvent moveEvent = new TagEvent(0, this, gi.getTileAt(getLocation().add(new Coordinate(relativeX, relativeY))), gi, this);
         for (Tag tag : getTags()) tag.onEntityMove(moveEvent);
         moveEvent.doFutureActions();
         if (moveEvent.eventPassed() && shouldDoAction() && getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)), TagRegistry.NO_PATHING)) {
@@ -340,7 +340,7 @@ public class Entity extends TagHolder implements Serializable {
             if (items.get(ii).getItemData().getQty() <= 0){
                 items.remove(items.get(ii));
             } else {
-                TagEvent updateEvent = new TagEvent(0, true, items.get(ii), items.get(ii), getGameInstance(), items.get(ii));
+                TagEvent updateEvent = new TagEvent(0, items.get(ii), items.get(ii), getGameInstance(), items.get(ii));
                 for (Tag tag : items.get(ii).getTags()) tag.onTurn(updateEvent);
                 updateEvent.doFutureActions();
                 if (updateEvent.eventPassed()) updateEvent.doCancelableActions();
@@ -372,7 +372,7 @@ public class Entity extends TagHolder implements Serializable {
 
     //Ran when it is their turn to do something
     public void onTurn(){
-        TagEvent turnEvent = new TagEvent(0, true, this, this, getGameInstance(), this);
+        TagEvent turnEvent = new TagEvent(0, this, this, getGameInstance(), this);
         for (Tag tag : getTags()){
             tag.onTurn(turnEvent);
         }
@@ -396,7 +396,7 @@ public class Entity extends TagHolder implements Serializable {
     }
 
     protected boolean shouldDoAction(){
-        TagEvent actionEvent = new TagEvent(0, true, this, null, gi, this);
+        TagEvent actionEvent = new TagEvent(0, this, null, gi, this);
         for (Tag tag : getTags()){
             tag.onEntityAction(actionEvent);
         }
