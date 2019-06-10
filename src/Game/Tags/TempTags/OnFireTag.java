@@ -217,6 +217,7 @@ public class OnFireTag extends Tag implements FrameDrawListener, LuminanceTag {
             int alpha = Math.max(ownerSprite.getBkgColor().getAlpha(), 35);
             Color bkg = new Color(frame.getBkgColor().getRed(), frame.getBkgColor().getGreen(), frame.getBkgColor().getBlue(), alpha);
             entityOwner.getSprite().editLayer(0, 0, new SpecialText(ownerSprite.getCharacter(), ownerSprite.getFgColor(), bkg));
+            entityOwner.drawIfSolid();
         }
     }
 

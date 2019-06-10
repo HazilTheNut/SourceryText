@@ -229,7 +229,7 @@ public class HUD implements GameInputReciever, Serializable {
     }
 
     private void drawEntitySynopsis(Entity e){
-        DebugWindow.reportf(DebugWindow.MISC, "HUD.drawEntitySynopsis","Entity name: \"%1$s\"", e.getName());
+        //DebugWindow.reportf(DebugWindow.MISC, "HUD.drawEntitySynopsis","Entity name: \"%1$s\"", e.getName());
         boxLength = Math.max(boxLength, e.getName().length() + 2);
         synopsisLayer.inscribeString(e.getName(), 1, startRow, txt_entity);
         //Draw Important Tags

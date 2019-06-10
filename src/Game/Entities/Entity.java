@@ -48,6 +48,7 @@ public class Entity extends TagHolder implements Serializable {
     private long uniqueID;
 
     boolean isAlive = true;
+    boolean isDisplayOnSolidLayer;
 
     /**
      * Initializes an Entity, configuring it such that it can be used by the GameInstance.
@@ -91,6 +92,7 @@ public class Entity extends TagHolder implements Serializable {
         interpretTagAdjustments(adjustmentList);
 
         //Display stuff. Entity solidity is defined by presence of NO_PATHING tag, which can be altered by the tag adjustments.
+        isDisplayOnSolidLayer = isSolid();
         icon = readSpecTxtArg(searchForArg(entityStruct.getArgs(), "icon"), icon);
         int layerPriority = (isSolid()) ? LayerImportances.ENTITY_SOLID : LayerImportances.ENTITY;
         sprite = new Layer(new SpecialText[1][1], createEntityLayerName(entityStruct, pos), getLocation().getX(), getLocation().getY(), layerPriority);
@@ -127,7 +129,12 @@ public class Entity extends TagHolder implements Serializable {
 
     @Override
     public void onLevelEnter(GameInstance gameInstance){
-        if (isVisible()) gi.getLayerManager().addLayer(sprite);
+        if (isVisible()){
+            if (isDisplayOnSolidLayer)
+                drawIfSolid();
+            else
+                gi.getLayerManager().addLayer(sprite);
+        }
         super.onLevelEnter(gi);
     }
 
@@ -136,7 +143,8 @@ public class Entity extends TagHolder implements Serializable {
     }
 
     public void onLevelExit(){
-        gi.getLayerManager().removeLayer(sprite);
+        gi.getLayerManager().removeLayer(sprite); //If this entity was on the solid display layer, layer manager would obviously not contain this layer. However, error handling for this stuff already exists.
+
         DebugWindow.reportf(DebugWindow.ENTITY, "Entity#%1$05d.onTurn", "- - -");
     }
 
@@ -147,6 +155,10 @@ public class Entity extends TagHolder implements Serializable {
     public Coordinate getLocation(){ return location; }
 
     public Layer getSprite() { return sprite; }
+
+    public SpecialText getIcon() {
+        return icon;
+    }
 
     public void setSprite(Layer sprite) { this.sprite = sprite; }
 
@@ -162,8 +174,7 @@ public class Entity extends TagHolder implements Serializable {
         moveEvent.doFutureActions();
         if (moveEvent.eventPassed() && shouldDoAction() && getGameInstance().isSpaceAvailable(getLocation().add(new Coordinate(relativeX, relativeY)), TagRegistry.NO_PATHING)) {
             moveEvent.doCancelableActions();
-            location.movePos(relativeX, relativeY);
-            sprite.movePos(relativeX, relativeY);
+            relocate(getLocation().add(new Coordinate(relativeX, relativeY)));
             contactAt(location);
             checkForSlidingSurface(relativeX, relativeY);
         }
@@ -196,6 +207,7 @@ public class Entity extends TagHolder implements Serializable {
      */
     public void teleport(Coordinate pos){
         move(pos.getX() - location.getX(), pos.getY() - location.getY());
+        //This method doesn't just use the private relocate method because it is meant to run the normal movement events and whatnot.
     }
 
     /**
@@ -204,9 +216,23 @@ public class Entity extends TagHolder implements Serializable {
      * @param pos The position to relocate to
      */
     public void setPos(Coordinate pos){
-        location.setPos(pos.getX(), pos.getY());
-        sprite.setPos(pos.getX(), pos.getY());
+        relocate(pos);
         contactAt(location);
+    }
+
+    private void relocate(Coordinate newPos){
+        clearDisplayIfSolid();
+        location.setPos(newPos.getX(), newPos.getY());
+        sprite.setPos(newPos.getX(), newPos.getY());
+        drawIfSolid();
+    }
+
+    public void drawIfSolid(){
+        if (isDisplayOnSolidLayer) gi.getCurrentLevel().getSolidEntityLayer().insert(getSprite(), getSprite().getPos());
+    }
+
+    void clearDisplayIfSolid(){
+        if (isDisplayOnSolidLayer) gi.getCurrentLevel().getSolidEntityLayer().editLayer(getLocation(), null);
     }
 
     @Override
@@ -217,6 +243,7 @@ public class Entity extends TagHolder implements Serializable {
         onLevelExit();
         for (Tag tag : getTags())
             tag.onEntityDestruct(this);
+        clearDisplayIfSolid();
     }
 
     /**
@@ -413,6 +440,7 @@ public class Entity extends TagHolder implements Serializable {
         //DebugWindow.reportf(DebugWindow.MISC, "Entity.updateSprite","Original sprite for %1$s: %2$s", getClass().getSimpleName(), originalSprite);
         if (isVisible())
             sprite.editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), colorateWithTags(originalSprite.getFgColor()), originalSprite.getBkgColor()));
+        drawIfSolid();
     }
 
     public void setIcon(SpecialText icon) {

@@ -61,6 +61,7 @@ public class Level implements Serializable {
     private ArrayList<Entity> entities;
     private ArrayList<ProjectileListener> projectileListeners;
     private ArrayList<FrameDrawListener> frameDrawListeners;
+    private Layer solidEntityLayer;
 
     private Layer animatedTileLayer;
     private ArrayList<AnimatedTile> animatedTiles;
@@ -96,6 +97,7 @@ public class Level implements Serializable {
         backdrop.transpose(ldata.getBackdrop());
         overlayTileLayer = new Layer(new SpecialText[backdrop.getCols()][backdrop.getRows()], "tile_overlay (" + getName() + ")", 0, 0, LayerImportances.TILE_OVERLAY);
         tileTagLayer = new Layer(new SpecialText[backdrop.getCols()][backdrop.getRows()], "tile_tag (" + getName() + ")", 0, 0, LayerImportances.TILE_TAG);
+        solidEntityLayer = new Layer(new SpecialText[backdrop.getCols()][backdrop.getRows()], "solid_entity (" + getName() + ")", 0, 0, LayerImportances.ENTITY_SOLID);
 
         baseTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
         overlayTiles = new Tile[backdrop.getCols()][backdrop.getRows()];
@@ -199,6 +201,10 @@ public class Level implements Serializable {
         return overlayTileLayer;
     }
 
+    public Layer getSolidEntityLayer() {
+        return solidEntityLayer;
+    }
+
     public void addOverlayTile (Tile tile){
         overlayTiles[tile.getLocation().getX()][tile.getLocation().getY()] = tile;
         for (LevelScript levelScript : levelScripts) levelScript.onAddOverlayTile(tile);
@@ -246,11 +252,14 @@ public class Level implements Serializable {
         for (Tile t : getAllTiles()) t.onLevelEnter(gi);
         if (highContrastFilter == null)
             generateHighContrastFilter();
+        if (solidEntityLayer == null)
+            solidEntityLayer = new Layer(backdrop.getCols(), backdrop.getRows(), "solid entity (" + getName() + ")", 0, 0, LayerImportances.ENTITY_SOLID);
         lm.addLayer(backdrop);
         lm.addLayer(overlayTileLayer);
         lm.addLayer(tileTagLayer);
         lm.addLayer(animatedTileLayer);
         lm.addLayer(highContrastFilter);
+        lm.addLayer(solidEntityLayer);
         for (LevelScript ls : levelScripts) ls.onLevelEnter();
     }
 
@@ -261,6 +270,7 @@ public class Level implements Serializable {
         lm.removeLayer(tileTagLayer);
         lm.removeLayer(animatedTileLayer);
         lm.removeLayer(highContrastFilter);
+        lm.removeLayer(solidEntityLayer);
         for (LevelScript ls : levelScripts) ls.onLevelExit();
     }
 

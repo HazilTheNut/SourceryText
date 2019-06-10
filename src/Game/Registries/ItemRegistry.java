@@ -159,6 +159,7 @@ public class ItemRegistry {
         registerItem(2008, "Secret Key",   0, TagRegistry.KEY);
         registerItem(2009, "Store Key",    0, TagRegistry.KEY);
         registerItem(2010, "Backdoor Key", 0, TagRegistry.KEY);
+        registerItem(2011, "Bedroom Key",  0, TagRegistry.KEY);
 
         //Important items
         registerItem(2500, "Shovel",       1, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_STRIKE, TagRegistry.UNLIMITED_USAGE, TagRegistry.DIGGING);

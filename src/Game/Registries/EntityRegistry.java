@@ -64,6 +64,7 @@ public class EntityRegistry {
         registerEntity(BRAMBLE, "Bramble", new SpecialText('#', new Color(126, 255, 109), new Color(82, 230, 91, 75)),   Bramble.class, TagRegistry.FLAMMABLE, TagRegistry.PRICKLY, TagRegistry.NO_PATHING, TagRegistry.BURN_SPREAD);
         registerEntity(25, "Explosive Crate",    new SpecialText('X', new Color(220, 128, 61), new Color(134, 82, 11)),  MovableCrate.class, TagRegistry.IMMOVABLE, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE, TagRegistry.EXPLOSIVE);
         registerEntity(26, "Paperweight",  new SpecialText('.', new Color(200, 200, 220), new Color(100, 100, 110)),     Paperweight.class);
+        registerEntity(27, "Combo Button", new SpecialText('.', new Color(90,  90,  90),  new Color(30, 30, 30, 100)),   ComboButton.class, TagRegistry.IMMOVABLE, TagRegistry.NO_PATHING);
 
         //Registering stuff ends here
     }

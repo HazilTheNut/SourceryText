@@ -487,6 +487,7 @@ public class GameInstance implements Serializable, FrameUpdateListener {
     @Override
     public void onFrameDrawEnd() {
         DebugWindow.reportf(DebugWindow.PERFORMANCE, "DrawTime"," %1$.3f", lm.getPreviousCompileTime() / 1000000f);
+        DebugWindow.reportf(DebugWindow.PERFORMANCE, "Total Layers"," %1$d", lm.getLayerStack().size());
     }
 
     public GameDeathMenu getDeathMenu() {
