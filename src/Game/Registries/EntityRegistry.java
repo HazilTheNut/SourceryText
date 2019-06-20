@@ -4,6 +4,7 @@ import Data.EntityStruct;
 import Engine.SpecialText;
 import Game.Entities.*;
 import Game.Entities.PuzzleElements.*;
+import Game.LockedChest;
 import Game.PlayerShadow;
 
 import java.awt.*;
@@ -19,6 +20,7 @@ public class EntityRegistry {
     private static TreeMap<Integer, EntityStruct> entityStructMap = new TreeMap<>();
     private static TreeMap<Integer, Class> entityObjMap = new TreeMap<>();
 
+    public static final int CHEST = 4;
     public static final int LOOT_PILE = 7;
     public static final int PLAYER_SHADOW = 20;
     public static final int MAGIC_BOMB = 17;
@@ -39,7 +41,7 @@ public class EntityRegistry {
         registerEntity(1,  "Save Point",   new SpecialText('S', new Color(40, 225, 115), new Color(20, 100, 80, 40)),    SavePoint.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(2,  "Basic Enemy",  new SpecialText('E', new Color(255, 130, 130), new Color(255, 180, 180, 15)), BasicEnemy.class, TagRegistry.FLAMMABLE, TagRegistry.LIVING, TagRegistry.NO_PATHING);
         registerEntity(3,  "Sign",         new SpecialText('S', new Color(110, 100, 250), new Color(55, 50, 125, 30)),   Sign.class, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE);
-        registerEntity(4,  "Chest",        new SpecialText('C', new Color(245, 245, 175), new Color(175, 100,  35, 45)), Chest.class, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE);
+        registerEntity(CHEST,  "Chest",    new SpecialText('C', new Color(245, 245, 175), new Color(175, 100,  35, 45)), Chest.class, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE);
         registerEntity(5,  "Door",         new SpecialText('-', new Color(143, 74, 17),   new Color(75, 45, 10, 50)),    Door.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(6,  "Locked Door",  new SpecialText('-', new Color(143, 123, 107), new Color(74, 65, 55, 50)),    LockedDoor.class, TagRegistry.NO_PATHING, TagRegistry.IMMOVABLE);
         registerEntity(LOOT_PILE, "Loot",  new SpecialText('%', new Color(191, 191, 75),  new Color(155, 155, 60, 15)),  LootPile.class);
@@ -65,6 +67,7 @@ public class EntityRegistry {
         registerEntity(25, "Explosive Crate",    new SpecialText('X', new Color(220, 128, 61), new Color(134, 82, 11)),  MovableCrate.class, TagRegistry.IMMOVABLE, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE, TagRegistry.EXPLOSIVE);
         registerEntity(26, "Paperweight",  new SpecialText('.', new Color(200, 200, 220), new Color(100, 100, 110)),     Paperweight.class);
         registerEntity(27, "Combo Button", new SpecialText('.', new Color(90,  90,  90),  new Color(30, 30, 30, 100)),   ComboButton.class, TagRegistry.IMMOVABLE, TagRegistry.NO_PATHING);
+        registerEntity(28, "Locked Chest", new SpecialText('L', new Color(255, 235, 155), new Color(225, 100,  35, 45)), LockedChest.class, TagRegistry.NO_PATHING, TagRegistry.FLAMMABLE);
 
         //Registering stuff ends here
     }

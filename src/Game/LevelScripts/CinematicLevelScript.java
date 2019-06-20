@@ -4,6 +4,7 @@ import Data.Coordinate;
 import Data.SerializationVersion;
 import Game.Entities.CombatEntity;
 import Game.Entities.Entity;
+import Game.Entities.GameCharacter;
 import Game.FactionManager;
 
 import java.util.ArrayList;
@@ -17,6 +18,13 @@ public class CinematicLevelScript extends LevelScript {
         for (Entity e : level.getEntities())
             if (e.getName().equals(name)) list.add(e);
         return list;
+    }
+
+    protected ArrayList<GameCharacter> castToGameCharacters(ArrayList<Entity> entities){
+        ArrayList<GameCharacter> characters = new ArrayList<>();
+        for (Entity e : entities)
+            characters.add((GameCharacter)e);
+        return characters;
     }
 
     protected Entity getFirstEntityofName(String name){

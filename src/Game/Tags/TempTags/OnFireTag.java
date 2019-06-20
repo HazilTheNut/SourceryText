@@ -170,6 +170,11 @@ public class OnFireTag extends Tag implements FrameDrawListener, LuminanceTag {
     }
 
     @Override
+    public void onEntityDestruct(Entity owner) {
+        owner.getGameInstance().getCurrentLevel().removeFrameDrawListener(this);
+    }
+
+    @Override
     public void onContact(TagEvent e) {
         setOnFire(e.getTarget(), e.getSource());
     }

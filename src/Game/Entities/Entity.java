@@ -144,7 +144,6 @@ public class Entity extends TagHolder implements Serializable {
 
     public void onLevelExit(){
         gi.getLayerManager().removeLayer(sprite); //If this entity was on the solid display layer, layer manager would obviously not contain this layer. However, error handling for this stuff already exists.
-
         DebugWindow.reportf(DebugWindow.ENTITY, "Entity#%1$05d.onTurn", "- - -");
     }
 
@@ -228,7 +227,7 @@ public class Entity extends TagHolder implements Serializable {
     }
 
     public void drawIfSolid(){
-        if (isDisplayOnSolidLayer) gi.getCurrentLevel().getSolidEntityLayer().insert(getSprite(), getSprite().getPos());
+        if (isDisplayOnSolidLayer) gi.getCurrentLevel().getSolidEntityLayer().insert(getSprite(), getLocation());
     }
 
     void clearDisplayIfSolid(){
@@ -436,11 +435,16 @@ public class Entity extends TagHolder implements Serializable {
     }
 
     public void updateSprite(){
-        SpecialText originalSprite = icon;
-        //DebugWindow.reportf(DebugWindow.MISC, "Entity.updateSprite","Original sprite for %1$s: %2$s", getClass().getSimpleName(), originalSprite);
-        if (isVisible())
-            sprite.editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), colorateWithTags(originalSprite.getFgColor()), originalSprite.getBkgColor()));
-        drawIfSolid();
+        if (isAlive()) {
+            SpecialText originalSprite = icon;
+            //DebugWindow.reportf(DebugWindow.MISC, "Entity.updateSprite","Original sprite for %1$s: %2$s", getClass().getSimpleName(), originalSprite);
+            if (isVisible())
+                sprite.editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), colorateWithTags(originalSprite.getFgColor()), originalSprite.getBkgColor()));
+            drawIfSolid();
+        } else {
+            sprite.editLayer(0, 0, null);
+            clearDisplayIfSolid();
+        }
     }
 
     public void setIcon(SpecialText icon) {

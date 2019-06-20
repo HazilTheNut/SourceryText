@@ -98,6 +98,7 @@ public class ItemRegistry {
         registerItem(134, "Maddening Bow",   2,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_BOW, TagRegistry.FLAMMABLE, TagRegistry.BERSERK_ENCHANT);
         registerItem(135, "Vine Spear",      3,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT, TagRegistry.VENOM_ENCHANT);
         itemFlavorTextMap.put(135, "Do not let fire\ntouch this!");
+        registerItem(136, "Witching Bow",    4,   TagRegistry.DAMAGE_START + 3, TagRegistry.RANGE_START + 20, TagRegistry.WEAPON_BOW, TagRegistry.UNLIMITED_USAGE);
 
         //Healing items / potions with various effects
         registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10, TagRegistry.POTION, TagRegistry.FRAGILE);
@@ -160,6 +161,7 @@ public class ItemRegistry {
         registerItem(2009, "Store Key",    0, TagRegistry.KEY);
         registerItem(2010, "Backdoor Key", 0, TagRegistry.KEY);
         registerItem(2011, "Bedroom Key",  0, TagRegistry.KEY);
+        registerItem(2012, "Vault Key",    0, TagRegistry.KEY);
 
         //Important items
         registerItem(2500, "Shovel",       1, TagRegistry.DAMAGE_START + 2, TagRegistry.WEAPON_STRIKE, TagRegistry.UNLIMITED_USAGE, TagRegistry.DIGGING);
@@ -172,6 +174,12 @@ public class ItemRegistry {
         registerItem(3003, "Pages",        0, TagRegistry.MONEY);
         registerItem(3004, "Doubloons",    0, TagRegistry.MONEY);
         registerItem(3005, "Space Money",  0, TagRegistry.MONEY);
+
+        //Fancy Paperweights
+        registerItem(4000, "Small Hammer", 0.75, TagRegistry.METALLIC);
+        registerItem(4001, "Screwdriver",  0.65, TagRegistry.METALLIC);
+        itemFlavorTextMap.put(4001, "The head is chipped\n and worn away");
+        registerItem(4002, "Broken Bottle", 0.5, TagRegistry.FRAGILE, TagRegistry.SHARP);
 
         //Registering stuff ends here
     }

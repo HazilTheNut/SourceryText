@@ -72,11 +72,12 @@ public class BasicEnemy extends CombatEntity {
 
     //States of "Mentality"
     protected int mentalState = 0;
-    private static final int STATE_IDLE = 0;
+    public static final int STATE_IDLE = 0;
     private static final int STATE_HOSTILE = 1;
     public static final int STATE_SEARCHING = 2;
     public static final int STATE_BERSERK = 3;
     public static final int STATE_SCARED = 4;
+    public static final int STATE_INACTIVE = 5;
 
     //Behaviors
     private int behavior;
@@ -114,8 +115,8 @@ public class BasicEnemy extends CombatEntity {
         this.mentalState = mentalState;
     }
 
-    private void doAutonomousAI(){
-        if (weapon == null && getItems().size() > 0){ //No Weapon? Try picking new ones if there's something in the inventory
+    private void doAutonomousAI() {
+        if (weapon == null && getItems().size() > 0) { //No Weapon? Try picking new ones if there's something in the inventory
             if (pickNewWeapon())
                 return; //Just like for the player, picking a weapon should take one turn.
         }
@@ -127,7 +128,7 @@ public class BasicEnemy extends CombatEntity {
             }
         }
         displayMentalState();
-        switch (mentalState){
+        switch (mentalState) {
             case STATE_IDLE:
                 doIdleBehavior();
                 break;
@@ -153,7 +154,7 @@ public class BasicEnemy extends CombatEntity {
     protected void wanderTo(Coordinate pos){
         if (!searchForEnemies() && pos != null && getLocation().stepDistance(pos) > 0){
             pathToPosition(pos);
-        } else {
+        } else if (mentalState == STATE_SEARCHING){ //Mental state can transition to hostile within this method, and we don't want to revert back to idle immediately.
             mentalState = STATE_IDLE;
         }
     }
@@ -339,7 +340,7 @@ public class BasicEnemy extends CombatEntity {
     }
 
     private void setTarget(CombatEntity target, boolean urgent){
-        boolean targetValid = !target.equals(this.target) && (isEnemy(target) || urgent);
+        boolean targetValid = (isEnemy(target) || urgent); // this used to be here -> "!target.equals(this.target) && " ; may have been in there to solve another bug.
         boolean correctMentalState = mentalState == STATE_IDLE || mentalState == STATE_SEARCHING || urgent;
         if (!target.equals(this) && targetValid && correctMentalState) {
             this.target = target;
@@ -540,6 +541,9 @@ public class BasicEnemy extends CombatEntity {
                 break;
             case STATE_SCARED:
                 toDisplay = "Scared";
+                break;
+            case STATE_INACTIVE:
+                toDisplay = "Inactive";
         }
         DebugWindow.reportf(DebugWindow.ENTITY, String.format("Entity#%1$d.displayMentalState", getUniqueID()), "State: %1$s", toDisplay);
     }

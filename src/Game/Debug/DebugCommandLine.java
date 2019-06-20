@@ -17,6 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 public class DebugCommandLine extends JPanel {
 
@@ -144,6 +145,9 @@ public class DebugCommandLine extends JPanel {
         } catch (NumberFormatException e){
             e.printStackTrace();
             return "ERROR: Args improper!";
+        } catch (ConcurrentModificationException e){
+            e.printStackTrace();
+            return "ERROR: Co-modification! (internal, try again)";
         }
     }
 

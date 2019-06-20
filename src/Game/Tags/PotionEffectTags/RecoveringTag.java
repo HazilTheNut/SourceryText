@@ -26,7 +26,7 @@ public class RecoveringTag extends Tag {
     }
 
     private boolean shouldHeal(TagHolder owner){
-        return (!(owner instanceof Item && ((Item)owner).getStackability() == Item.NON_STACKABLE));
+        return !(owner instanceof Item) || ((Item)owner).getStackability() == Item.NON_STACKABLE;
     }
 
     private boolean hasHealth(TagHolder owner){
