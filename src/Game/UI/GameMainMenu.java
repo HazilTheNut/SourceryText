@@ -66,7 +66,7 @@ public class GameMainMenu implements GameInputReciever {
         menuLayer.inscribeString("Quit",      startX, optionsStartY + 3);
 
         //Draw version number
-        String gameVersion = "DEMO_A_1";
+        String gameVersion = "DEMO_A_2";
         menuLayer.inscribeString(gameVersion, 0, menuLayer.getRows() - 1, new Color(100, 100, 100));
     }
 
