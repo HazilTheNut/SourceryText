@@ -99,6 +99,7 @@ public class ItemRegistry {
         registerItem(135, "Vine Spear",      3,   TagRegistry.DAMAGE_START + 4, TagRegistry.WEAPON_THRUST, TagRegistry.FLAMMABLE, TagRegistry.SHARP, TagRegistry.REGEN_ENCHANT, TagRegistry.VENOM_ENCHANT);
         itemFlavorTextMap.put(135, "Do not let fire\ntouch this!");
         registerItem(136, "Witching Bow",    4,   TagRegistry.DAMAGE_START + 3, TagRegistry.RANGE_START + 20, TagRegistry.WEAPON_BOW, TagRegistry.UNLIMITED_USAGE);
+        registerItem(137, "Flaming Bow",     3,   TagRegistry.DAMAGE_START + 3, TagRegistry.RANGE_START + 20, TagRegistry.WEAPON_BOW, TagRegistry.FLAME_ENCHANT);
 
         //Healing items / potions with various effects
         registerItem(1000, "Health Tincture", 0.05, TagRegistry.HEALTH_START + 10, TagRegistry.POTION, TagRegistry.FRAGILE);

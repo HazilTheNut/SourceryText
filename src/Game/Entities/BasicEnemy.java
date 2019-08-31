@@ -368,13 +368,7 @@ public class BasicEnemy extends CombatEntity {
 
     private void doRangedBehavior(){
         if (readyArrow != null) { //Test for an arrow ready to fire
-            RangeTag rangeTag = (RangeTag)weapon.getTag(TagRegistry.RANGE_START);
-            if (rangeTag != null) {
-                readyArrow.launchProjectile(rangeTag.getRange());
-            } else {
-                readyArrow.launchProjectile(RangeTag.RANGE_DEFAULT);
-            }
-            readyArrow = null;
+            launchArrow();
         } else if (targetWithinAttackRange()) { //Otherwise, do normal business
             switch (raycastToTarget()){
                 case RAYCAST_CLEAR: //No obstacle between enemy and target
@@ -396,6 +390,18 @@ public class BasicEnemy extends CombatEntity {
     protected void fireArrowProjectile(Projectile arrow) {
         doYellowFlash();
         readyArrow = arrow;
+    }
+
+    private void launchArrow(){
+        RangeTag rangeTag = (RangeTag)weapon.getTag(TagRegistry.RANGE_START);
+        Coordinate realignmentOffset = getLocation().subtract(readyArrow.getRoundedPos()); //If the player relocates the enemy after drawing the arrow but before firing, the arrow needs to be moved.
+        readyArrow.adjust(realignmentOffset.getX(), realignmentOffset.getY(), 0, 0);
+        if (rangeTag != null) {
+            readyArrow.launchProjectile(rangeTag.getRange());
+        } else {
+            readyArrow.launchProjectile(RangeTag.RANGE_DEFAULT);
+        }
+        readyArrow = null;
     }
 
     private void doPathing(){

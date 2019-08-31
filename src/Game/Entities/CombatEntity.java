@@ -365,8 +365,10 @@ public class CombatEntity extends Entity {
     protected void doYellowFlash(){
         SpecialText originalText = getSprite().getSpecialText(0, 0);
         getSprite().editLayer(0, 0, new SpecialText(originalText.getCharacter(), originalText.getFgColor(), new Color(255, 255, 0, 55)));
+        drawIfSolid();
         turnSleep(300);
         getSprite().editLayer(0, 0, originalText);
+        drawIfSolid();
     }
 
     public int getHealth() {
