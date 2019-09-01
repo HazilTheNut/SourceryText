@@ -216,7 +216,7 @@ public class OnFireTag extends Tag implements FrameDrawListener, LuminanceTag {
 
     @Override
     public void onFrameDraw() {
-        if (entityOwner != null) { //If an Entity owns this tag
+        if (entityOwner != null && entityOwner.getSprite().getSpecialText(0,0) != null) { //If an Entity owns this tag
             SpecialText frame = fireAnimation.onDisplayUpdate(); //Use a FireAnimation tile to generate the fire animation
             SpecialText ownerSprite = entityOwner.getSprite().getSpecialText(0, 0);
             int alpha = Math.max(ownerSprite.getBkgColor().getAlpha(), 35);

@@ -110,7 +110,9 @@ public class CombatEntity extends Entity {
             //Flash is more red if performAttack deals a larger portion of maximum health
             getSprite().editLayer(0, 0, new SpecialText(originalSprite.getCharacter(), originalSprite.getFgColor(), new Color(255, 0, 0, (int) (255 * percentage))));
             drawIfSolid();
-            turnSleep(100 + (int) (500 * percentage)); //Also waits a little longer for more painful attacks, in order to sell the hit even more.
+            int waitTime = 100 + (int) (500 * percentage);
+            if (hasTag(TagRegistry.ON_FIRE)) waitTime /= 4;
+            turnSleep(waitTime); //Also waits a little longer for more painful attacks, in order to sell the hit even more.
             getSprite().editLayer(0, 0, originalSprite);
             drawIfSolid();
             if (health <= 0) selfDestruct();

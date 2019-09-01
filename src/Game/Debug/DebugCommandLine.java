@@ -90,6 +90,10 @@ public class DebugCommandLine extends JPanel {
                 return processUnloadCommand(args);
             case "wipe":
                 return processWipeCmd(args);
+            case "unfreeze":
+                return processUnloadCommand(args);
+            case "help":
+                return "Commands: item, dmg, tp, event, load, unload, wipe, unfreeze";
             default:
                 return "ERROR: Command mnemonic invalid";
         }
@@ -175,6 +179,20 @@ public class DebugCommandLine extends JPanel {
         } catch (NumberFormatException e){
             e.printStackTrace();
             return "ERROR: Args improper!";
+        }
+    }
+
+    private String processUnfreezeCommand(ArrayList<String> args){
+        if (gameMaster == null || gameMaster.getCurrentGameInstance() == null) return "ERROR: Game currently not running!";
+        try {
+            gameMaster.getCurrentGameInstance().getPlayer().unfreeze();
+            return "Player forcibly unfrozen";
+        } catch (NumberFormatException e){
+            e.printStackTrace();
+            return "ERROR: Args improper!";
+        } catch (ConcurrentModificationException e){
+            e.printStackTrace();
+            return "ERROR: Co-modification! (internal, try again)";
         }
     }
 

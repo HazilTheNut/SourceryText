@@ -342,7 +342,7 @@ public class BasicEnemy extends CombatEntity {
     private void setTarget(CombatEntity target, boolean urgent){
         boolean targetValid = (isEnemy(target) || urgent); // this used to be here -> "!target.equals(this.target) && " ; may have been in there to solve another bug.
         boolean correctMentalState = mentalState == STATE_IDLE || mentalState == STATE_SEARCHING || urgent;
-        if (!target.equals(this) && targetValid && correctMentalState) {
+        if (target != null && !target.equals(this) && targetValid && correctMentalState) {
             this.target = target;
             mentalState = STATE_HOSTILE;
             behaviorTime = 10; //Time spent on special behavior may need to change for each type of behavior
