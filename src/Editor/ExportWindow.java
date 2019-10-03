@@ -37,6 +37,21 @@ public class ExportWindow extends JFrame {
         textAllData.addActionListener(e -> exportToDataDump(exportedTextField, levelData));
         topPanel.add(textAllData);
 
+        JTextField discordRenderXField = new JTextField("0");
+        JTextField discordRenderYField = new JTextField("0");
+
+        JButton textDiscordRender = new JButton("to Discord Render");
+        textDiscordRender.addActionListener(e -> {
+            try {
+                exportToDiscordRender(exportedTextField, levelData, Integer.valueOf(discordRenderXField.getText()), Integer.valueOf(discordRenderYField.getText()));
+            } catch (NumberFormatException ignored){}
+        });
+        topPanel.add(textDiscordRender);
+        topPanel.add(new JLabel("x:"));
+        topPanel.add(discordRenderXField);
+        topPanel.add(new JLabel("y:"));
+        topPanel.add(discordRenderYField);
+
         add(topPanel, BorderLayout.PAGE_START);
 
         setSize(500, 350);
@@ -161,7 +176,7 @@ public class ExportWindow extends JFrame {
             }
             builder.append("\n");
         }
-        return builder.toString();
+        return builder.toString();k
     }
 
     private String drawMask(LevelScriptMask mask){
@@ -176,5 +191,66 @@ public class ExportWindow extends JFrame {
             builder.append(" |\n");
         }
         return builder.toString();
+    }
+
+    private void exportToDiscordRender(JTextPane textPane, LevelData levelData, int startX, int startY){
+        //Draw the layer
+        Layer renderLayer = drawDiscordRender(levelData, startX, startY);
+        StringBuilder builder = new StringBuilder("```java\n");
+        for (int row = 0; row < renderLayer.getRows(); row++){
+            for (int col = 0; col < renderLayer.getCols(); col++){
+                if (renderLayer.getSpecialText(col, row) == null){
+                    builder.append(' ');
+                } else
+                    builder.append(renderLayer.getSpecialText(col, row).getCharacter());
+            }
+            builder.append('\n');
+        }
+        builder.append("```");
+        textPane.setText(builder.toString());
+    }
+
+    private Layer drawDiscordRender(LevelData ldata, int startX, int startY){
+        int renderRows = 23;
+        char[] colLetters = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+        int renderCols = colLetters.length;
+        Layer renderLayer = new Layer(renderCols + 4, renderRows + 3, "discord_render", 0, 0, 0);
+        renderLayer.insert(ldata.getBackdrop(), new Coordinate(4, 2), new Coordinate(startX, startY));
+        renderLayer.fillLayer(new SpecialText('|'), new Coordinate(2, 2), new Coordinate(2, renderRows + 1));
+        renderLayer.fillLayer(new SpecialText('|'), new Coordinate(renderCols + 3, 2), new Coordinate(renderCols + 3, renderRows + 1));
+        renderLayer.fillLayer(new SpecialText('-'), new Coordinate(3, 1), new Coordinate(renderCols + 2, 1));
+        renderLayer.fillLayer(new SpecialText('-'), new Coordinate(3, renderRows + 2), new Coordinate(renderCols + 2, renderRows + 2));
+        renderLayer.editLayer(2, 1, '+');
+        renderLayer.editLayer(renderCols + 3, 1, '+');
+        renderLayer.editLayer(2, renderRows + 2, '+');
+        renderLayer.editLayer(renderCols + 3, renderRows + 2, '+');
+        drawDiscordRenderDots(renderLayer, renderCols, renderRows, 3, 2);
+        //Draw rows
+        for (int i = 0; i < renderRows; i++) {
+            renderLayer.inscribeString(String.valueOf(i), 0, i+2);
+        }
+        //Draw columns
+        for (int i = 0; i < renderCols; i++) {
+            renderLayer.editLayer(i+3, 0, colLetters[i]);
+        }
+        return renderLayer;
+    }
+
+    private void drawDiscordRenderDots(Layer renderLayer, int renderWidth, int renderHeight, int offsetX, int offsetY){
+        int x = 0;
+        int y = 0;
+        while (y < renderHeight){
+            while (x < renderWidth){
+                SpecialText atLoc = renderLayer.getSpecialText(x + offsetX, y + offsetY);
+                boolean unfilled = atLoc == null || atLoc.getCharacter() == ' ';
+                boolean xSatisfied = (x-1) % 4 == 0;
+                boolean ySatisfied = (y-1) % 4 == 0; // && (x-1) % 2 == 0
+                if (unfilled && (xSatisfied || ySatisfied))
+                    renderLayer.editLayer(x + offsetX, y + offsetY, '.');
+                x++;
+            }
+            x = 0;
+            y++;
+        }
     }
 }
