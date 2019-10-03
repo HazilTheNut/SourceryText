@@ -176,7 +176,7 @@ public class ExportWindow extends JFrame {
             }
             builder.append("\n");
         }
-        return builder.toString();k
+        return builder.toString();
     }
 
     private String drawMask(LevelScriptMask mask){
